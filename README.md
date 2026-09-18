@@ -33,4 +33,21 @@
 
 ## 更新方式
 
-本地路径 `E:\Bannerlord-UserData\ModdingJournal.md` 是活文档，改动同步到此仓库需要手动拷贝 + push。
+**权威源**：`E:\Bannerlord-UserData\ModdingJournal.md`（游戏用户目录下的活文档，日常直接编辑这里）
+
+**同步到 GitHub**：仓库根目录下的 [`sync-journal.ps1`](./sync-journal.ps1) 一键脚本：
+
+```powershell
+# 默认提交信息（"sync journal"）
+.\sync-journal.ps1
+
+# 自定义提交信息
+.\sync-journal.ps1 -Message "add RBM food economy findings"
+```
+
+脚本会做三件事：
+1. 从 `E:\Bannerlord-UserData\ModdingJournal.md` 拷贝到本仓库
+2. 检查是否有实际改动（没改动就跳过 commit）
+3. `git add` + `git commit` + `git push origin main`
+
+无改动时不会造 empty commit，无副作用可以随时跑。

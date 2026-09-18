@@ -255,6 +255,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [ ] **Retinues · House 单位 tier 上限**：能否把 Retinues 里"House"级别的自定义部队直接调到最高 tier（6/7）？需扒 `Retinues.dll` 里的 troop 定义/upgrade 路径限制，找 tier cap 相关字段
 - [ ] **Retinues · Clan Traditions 跳过**：Clan Traditions 系统（族群传统）是否有内置开关能整个禁用/跳过？如果没有，找它绑定的 CampaignBehavior 名称，评估直接不加载该 behavior 的可行性
 - [ ] **RBM · Bot 武器优先度**：RBM 的 AI 是否有"给 bot 挑武器"的优先度设定（比如偏好长杆 vs 双手）？看 `RBMAI.dll` 或 `RBMCombat.dll` 里 `Formation` / `WeaponPreference` / `EquipmentSelection` 相关字段，判断能否 config 调节
+- [ ] **PlayerSettlement · 村庄绑定机制**：扒 `PlayerSettlement.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 时能否指定绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）来打造食物爆棚 fief。附带查：绑定村庄数量是否有硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
 
 ### 食物经济 · 观察中的问题
 

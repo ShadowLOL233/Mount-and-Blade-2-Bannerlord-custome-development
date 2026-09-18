@@ -176,6 +176,64 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 - 启用 Cheats mod 后用 console `retinues.troop_xp_add <troop_stringid> <amount>` 官方后门直给 XP
 - Retinues UI 切换到 Studio Mode（Culture/Kingdom 编辑）→ `SkillPointXpCost` 直接 return 0
 
+### 8. Retinues Doctrine 系统限制完全解除（2026-09-18）
+
+**文件**：`Configs\ModSettings\Retinues\Retinues.Settings.xml`
+
+**改动**：三键改零
+
+```xml
+<EnableFeatRequirements>true</EnableFeatRequirements>            → false
+<DoctrineGoldCostMultiplier>1</DoctrineGoldCostMultiplier>       → 0
+<DoctrineInfluenceCostMultiplier>1</DoctrineInfluenceCostMultiplier> → 0
+```
+
+**效果**：
+- Feat 进度要求 bypass（`GetDoctrineStatus` 里 `if (!Config.EnableFeatRequirements) return DoctrineStatus.InProgress`——feat 检查直接跳过，doctrine 立即可购买）
+- Gold cost 归零（`num × 0 = 0`）
+- Influence cost 归零（同上）
+- **唯一保留门槛**：前置 doctrine 必须先解锁——UI 里按 Column × Row 0→3 顺序点即可，全部免费即时
+
+**Doctrine 系统架构**（`DoctrineServiceBehavior.GetDoctrineStatus` + `TryAcquireDoctrine`）：
+
+- 20 个 doctrine，5 Column × 4 Row 布局
+- 每 doctrine 有：Column/Row（决定 gold/influence 基础 cost）+ Feats（前置进度）+ Prerequisite（前置 doctrine）+ IsDisabled 自检
+- Row 0/1/2/3 基础 cost = 1000/5000/25000/100000 gold + 50/100/200/500 influence
+- **`IsDisabled` 自检机制**：当 config 已经赐予该 doctrine 的效果时，doctrine 自动 disabled——避免重复
+- Status 枚举：`Locked`（前置未满足）→ `Unlockable`（前置满足但 feat 未完成）→ `InProgress`（feat 完成，可购买）→ `Unlocked`
+
+**当前 config 已自动灰化的 8 个 doctrine**（不需要解锁，功能已由 config 赐予）：
+
+| Doctrine | 灰化原因 |
+|---|---|
+| LionsShare / BattlefieldTithes / PragmaticScavengers (C0R0-R2) | `UnlockItemsFromKills=true` |
+| AncestralHeritage (C0R3) | `AllCultureEquipmentUnlocked=true` |
+| ArmedPeasantry / StalwartMilitia / RoadWardens (C2R0-R2) | `NoDoctrineRequirements=true` |
+| AdaptiveTraining (C3R3) | `ForceXpRefunds=true` + XP cost=0 |
+
+**剩余 12 个可解锁 doctrine 及效果**：
+
+| 位置 | Doctrine | 效果 |
+|---|---|---|
+| C1R0 | CulturalPride | 20% clan 文化装备返现 |
+| C1R1 | ClanicTraditions | 兵种可装备打造武器 |
+| C1R2 | RoyalPatronage | 20% kingdom 文化装备返现 |
+| C1R3 | **Ironclad** | 无 tier 限制装备（突破 AllowedTierDifference）|
+| C2R3 | Captains | 解锁 Captains |
+| C3R0 | **IronDiscipline** | +5 技能上限（每 skill cap +5）|
+| C3R1 | **SteadfastSoldiers** | +10 技能点（总预算 +10）|
+| C3R2 | MastersAtArms | +1 elite 升级分叉数（2→3）|
+| C4R0 | Indomitable | +5 HP 给 retinue |
+| C4R1 | BoundByHonor | +20% retinue morale |
+| C4R2 | **Vanguard** | +15% retinue 上限（比例卡放宽）|
+| C4R3 | Immortals | +20% retinue 存活率 |
+
+**备份**：`Retinues.Settings.xml.bak-Doctrines-20260918`
+
+**替代路径**（未采用，作参考）：
+- 保持 `EnableFeatRequirements=true`，用 console `retinues.feat_unlock_all` 一键完成所有 feat 进度（需 Cheats mod）
+- 或单独 `retinues.feat_unlock <FeatKey>` 精准解锁；`retinues.feat_list` 查全表
+
 ---
 
 ## Retinues 机制备忘（2026-09-18 反编译结论）
@@ -341,6 +399,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | 5 × `IGConfiguration_*_TdthS0Oa3xcE.xml.bak-DailyFood10-20260917` | IG `DailyFoodGatheringAmount` 从 10 改前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
+| `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
 
 ---
 
@@ -422,6 +481,9 @@ E:\Bannerlord-UserData\Mount and Blade II Bannerlord\Configs\
 | 5 | 同上 | `<SkillXpCostPerPoint>` | 1 | **0** |
 | 5 | 同上 | `<SharedXpPool>` | false | **true** |
 | 5 | 同上 | `<ForceXpRefunds>` | false | **true** |
+| 6 | 同上 | `<EnableFeatRequirements>` | true | **false** |
+| 6 | 同上 | `<DoctrineGoldCostMultiplier>` | 1 | **0** |
+| 6 | 同上 | `<DoctrineInfluenceCostMultiplier>` | 1 | **0** |
 
 **Step 4**：DLL 补丁（GarrisonDrills 训练效果翻倍）——**这个需要重跑**，Workshop 每次更新覆盖后重做：
 
@@ -460,6 +522,7 @@ $bytes[2365] = 0x64   # Masterful 50 → 100
 - [ ] Garrison Drills 训练面板显示 **+20 / +60 / +100 XP**
 - [ ] House Champion tier 能升到 **10**（`MaxTroopTier` 生效）
 - [ ] 大战一场后 House Champion / Guard 的 XP 池是**同一个数字**（`SharedXpPool` 生效）
+- [ ] Retinues UI → Doctrine 页面：可解锁的 12 个 doctrine 显示为 `In Progress`（feat 已 bypass），点击后 gold/influence cost 显示 **0**，可立即解锁
 
 如果某项不符，回查本 journal 对应 modification 小节。
 

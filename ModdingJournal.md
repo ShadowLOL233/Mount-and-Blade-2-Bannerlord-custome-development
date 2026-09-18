@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-09-17
+**最后更新**：2026-09-18
 
 ## 目录
 - [环境与路径](#环境与路径)
@@ -10,7 +10,10 @@
 - [模组间交互与已知风险](#模组间交互与已知风险)
 - [备份与回滚](#备份与回滚)
 - [待办 / 开放问题](#待办--开放问题)
+- [在另一台设备上复刻本套配置](#在另一台设备上复刻本套配置)
 - [调试参考](#调试参考如何找信息)
+
+**相关文档**：`TroopDesignReference.md`（同目录，T1-T7 兵种技能模板与装备指南）
 
 ---
 
@@ -135,6 +138,109 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 - 5 × `IGConfiguration_*_TdthS0Oa3xcE.xml.bak-20260917`（IG 开关改前）
 - 5 × `IGConfiguration_*_TdthS0Oa3xcE.xml.bak-DailyFood10-20260917`（DailyFood 从 10 改前）
 
+### 6. Retinues `MaxTroopTier` 8 → 10（2026-09-18）
+
+**文件**：`Configs\ModSettings\Retinues\Retinues.Settings.xml`
+
+**改动**：`<MaxTroopTier>` 从 `8` 拉到 `10`（schema 里 `SkillTotalTierN` / `SkillCapTierN` 已经定义到 tier 10，作者留了坑）。
+
+**效果**：House Champion / House Guard 可以升到 tier 9 / tier 10，属性配置池扩到 `SkillTotalTier10=2350` + `SkillCapTier7Plus=360`。**新 tier 不自动应用到已有兵种**——玩家要手动进 Clan → Troops 花 `RankUpCostPerTier=1000` 金 + `RenownRequiredPerTier=10` renown 升上去。
+
+**装备侧不变**：引擎硬顶在 `ItemTiers.Tier6`（见 Retinues 机制备忘 · 装备 tier 天花板）；抬 troop tier 只放宽属性，不解锁新装备。
+
+**备份**：`Retinues.Settings.xml.bak-MaxTroopTier8-20260918`
+
+### 7. Retinues XP 经济完全归零（2026-09-18）
+
+**文件**：`Configs\ModSettings\Retinues\Retinues.Settings.xml`
+
+**改动**：三个键一起改
+
+```xml
+<BaseSkillXpCost>100</BaseSkillXpCost>       → 0
+<SkillXpCostPerPoint>1</SkillXpCostPerPoint> → 0
+<SharedXpPool>false</SharedXpPool>           → true
+<ForceXpRefunds>false</ForceXpRefunds>       → true
+```
+
+**效果**：
+- 加技能 0 XP、降技能 100% 退款——**自定义兵种技能任意调整无成本**
+- `SharedXpPool=true` 后 House Champion / House Guard / 所有自定义兵**共用同一 XP 池**（`TroopXpBehavior.PoolKey` 返回 `"_shared"`）——即使还在攒 XP 场景，Guard 打的 XP 也能给 Champion 用
+- UI 里"降点扣 XP"警告变成 no-op（可能仍弹窗但零损失）
+
+**为什么这样改**：目的是让自定义兵种**设计**完全自由，不用被 XP 经济卡住迭代节奏。反编译发现 XP 系统所有关键常量（`XpPerTier=10`、`AutoResolveXpPerTier=2.5f`、`TrainingXpMultiplier=0.2f`）都是硬编码，改配置是最干净的绕过路径。
+
+**备份**：`Retinues.Settings.xml.bak-XpEconomy-20260918`
+
+**替代路径**（未采用，作参考）：
+- 启用 Cheats mod 后用 console `retinues.troop_xp_add <troop_stringid> <amount>` 官方后门直给 XP
+- Retinues UI 切换到 Studio Mode（Culture/Kingdom 编辑）→ `SkillPointXpCost` 直接 return 0
+
+---
+
+## Retinues 机制备忘（2026-09-18 反编译结论）
+
+反编译 `E:\SteamLibrary\...\workshop\content\261550\3599557394\bin\Win64_Shipping_Client\Retinues.dll` + `TaleWorlds.Core.dll` 得到的确切机制，避免以后再问：
+
+### House 单位是什么
+
+- `ret_retinue_house_champion` = Clan 的 `RetinueElite`
+- `ret_retinue_house_guard` = Clan 的 `RetinueBasic`
+- 玩家成为国王后名字变成 King's/Queen's Champion + Royal Guard（`TroopBuilder.MakeRetinueName`）
+
+### 招募流程（100% vanilla + 轻量 patch）
+
+- 招募本身走 vanilla `RecruitmentCampaignBehavior`——从村庄 notable 处雇兵
+- Retinues 的干预：进入 settlement 时 patch `notable.Hero.VolunteerTypes[]`，用 custom troop 替换 vanilla 兵种；离开或存档前 `RestoreSnapshot` 还原（避免污染存档）
+- 关键类：`Retinues.Features.Volunteers.Patches.VolunteerSwapForPlayer` / `WNotable.SwapVolunteers` / `WSettlement.SwapVolunteers`
+- `RestrictToOwnedSettlements=true` → 只有自家 Clan 的 fief 才做替换；别人的村照常给 vanilla 兵
+- `CustomVolunteerProportion=1` → 自家村里 100% volunteer 都是 custom
+- **招募没有名额上限**——`MaxBasicRetinueRatio=0.2` / `MaxEliteRetinueRatio=0.1` **只影响"用普通兵转换成 retinue"**（`RetinueManager.RetinueCapFor`），不限制 volunteer
+
+### 装备语义：多套 set + 每 agent 独立随机
+
+- 每个 CharacterObject 的 `MBEquipmentRoster.AllEquipments` 是一个 `List<Equipment>`——**同一兵种可以有多套 battle set 和多套 civilian set**
+- 战场 spawn 规则（`Retinues.Features.Agents.Patches.Mission_SpawnAgent_Prefix.Prefix`）：
+  - 若 agent 是 civilian → 从 civilian sets 均匀随机
+  - 否则若 `ForceMainBattleSetInCombat=true` → 强制第一套 battle set
+  - 否则（**当前设置 = false**）→ 遍历所有 battle set 按 `CombatAgentBehavior.IsEnabled` 过滤后均匀随机
+- **同一支部队里不同 agent 穿不同 set 是正常现象**，不是 bug
+- 想统一装扮：Retinues UI 里删多余 set，或把 `ForceMainBattleSetInCombat` 改成 true
+
+### 装备刷新语义：引用不是快照
+
+- TroopRoster 只存 `CharacterObject` 引用 + 计数，无装备快照
+- `WLoadout.SetEquipments` 直接写共享的 `_equipmentRoster`
+- 保存 UI 改动的瞬间，**世界上所有该兵种（队里的、别的 lord 的、村里 volunteer 的）下一场战斗都读新装备**
+- **不需要遣散再招**——那只是浪费 renown/兵源，没有刷新意义
+
+### 装备 tier 天花板：引擎硬顶 Tier6
+
+`TaleWorlds.Core.ItemObject+ItemTiers` 枚举只有：
+
+```csharp
+public enum ItemTiers { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, NumTiers }
+```
+
+**Bannerlord 引擎里所有装备的 tier 只到 6**，没有 tier 7-10 的物品。抬 `MaxTroopTier` 或 `AllowedTierDifference` 都不能创造新装备，只能让**属性槽位**变大。想要更多装备选择：装 BahamutArmory / swadian armoury / XorberaxLegacy 等加装备的 mod（仍然 tier 6 上限，但**数量**更多）。
+
+### 相关设置速查（当前生效值）
+
+| 设置 | 值 | 作用 |
+|---|---|---|
+| `MaxTroopTier` | 10 | Troop tier 上限（作者预留到 10）|
+| `AllEquipmentUnlocked` | true | 跳过击杀解锁，所有 tier 1-6 装备直接可选 |
+| `AllCultureEquipmentUnlocked` | true | 跨文化装备可选 |
+| `AllowedTierDifference` | 3 | `item.tier ≤ troop.tier + 3` 才可穿；因物品 tier 上限 6，troop tier ≥ 3 后不再起限制 |
+| `ForceMainBattleSetInCombat` | false | 每 agent 独立随机 battle set |
+| `CopyAllSetsOnUnlock` | true | 解锁物品时复制到所有 set |
+| `MaxEliteRetinueRatio` | 0.1 | Retinue 转换（非招募）上限 |
+| `MaxBasicRetinueRatio` | 0.2 | 同上 |
+| `CustomVolunteerProportion` | 1 | 自家村 volunteer 100% custom |
+| `RestrictToOwnedSettlements` | true | 只在自家 fief 做 volunteer 替换 |
+| `RankUpCostPerTier` | 1000 gold | 每 tier 升级金币消耗 |
+| `RenownRequiredPerTier` | 10 | 每 tier 升级 renown 门槛 |
+
 ---
 
 ## Bug 历史与修复
@@ -233,6 +339,8 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\RBM\config.xml.bak-TroopFoodWage05-20260917` | RBM `TroopFoodWageFraction` 改前 |
 | 5 × `IGConfiguration_*_TdthS0Oa3xcE.xml.bak-20260917` | IG 食物采集开关改前 |
 | 5 × `IGConfiguration_*_TdthS0Oa3xcE.xml.bak-DailyFood10-20260917` | IG `DailyFoodGatheringAmount` 从 10 改前 |
+| `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
+| `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 
 ---
 
@@ -242,24 +350,118 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [x] ~~进游戏在 town/castle 菜单里找 IG ribbon，打开 Food Gathering~~ ← 已通过直接改 XML 完成（修改 #5）
 - [ ] 观察新战役里 RBM Campaign 是否正确工作（看 `RBM\logs\garrison\`、消息栏 spoils/ledger）
 - [ ] 验证 Garrison Drills 训练效果翻倍（进城 → Train troops → 看 UI +20/+60/+100 XP）
-- [ ] 验证食物经济堆叠实测效果（进 fief → 食物变化条应有 `[IG-Cheats] Garrison Food Bonus: +1000` 且总变化转正）
+- [x] ~~验证食物经济堆叠实测效果（进 fief → 食物变化条应有 `[IG-Cheats] Garrison Food Bonus: +1000` 且总变化转正）~~ ← 2026-09-18 确认修复
 - [ ] Workshop 若自动更新 GarrisonDrills，DLL 补丁被覆盖，需重跑
-- [ ] 食物调优（若观察后需要）：
-  - 太富裕 → `DailyFoodGatheringAmount` 从 1000 降到 100-200
-  - NPC 世界还是穷 → `TroopSettlementFoodDays` 20 → 6-8
-  - 玩家 fief 仍赤字 → `VillageProductionMultiplier` 0.75 → 1.0
+- [x] ~~食物调优（若观察后需要）：太富裕/NPC 穷/玩家仍赤字三档旋钮~~ ← 2026-09-18 食物经济已稳定，无需再调
 - [ ] AutoParry 是否要启用（当前 false）
 
 ### 调查与开发项目（backlog）
 
-- [ ] **Retinues · House 单位 tier 上限**：能否把 Retinues 里"House"级别的自定义部队直接调到最高 tier（6/7）？需扒 `Retinues.dll` 里的 troop 定义/upgrade 路径限制，找 tier cap 相关字段
+- [x] ~~**Retinues · House 单位 tier 上限**~~ ← **2026-09-18 结案**：作者早已在 MCM 里预留 `MaxTroopTier` 到 10，改配置即可；改后需玩家手动 rank up 已有兵种。详见"Retinues 机制备忘"小节 + 修改 #6
 - [ ] **Retinues · Clan Traditions 跳过**：Clan Traditions 系统（族群传统）是否有内置开关能整个禁用/跳过？如果没有，找它绑定的 CampaignBehavior 名称，评估直接不加载该 behavior 的可行性
-- [ ] **RBM · Bot 武器优先度**：RBM 的 AI 是否有"给 bot 挑武器"的优先度设定（比如偏好长杆 vs 双手）？看 `RBMAI.dll` 或 `RBMCombat.dll` 里 `Formation` / `WeaponPreference` / `EquipmentSelection` 相关字段，判断能否 config 调节
+- [x] ~~**RBM · Bot 武器优先度**~~ ← **2026-09-18 结案**：RBM AI **不重写** vanilla 武器选择评分，只做辅助（posture 掉武器、盾墙方向、骑射队分配）；skill 通过 handling/speed 间接影响 AI 评分。完整 combo 表、"废装备"警告、骑马武器长度限制、Cataphract Lance 副武器陷阱见 `TroopDesignReference.md`
 - [ ] **PlayerSettlement · 村庄绑定机制**：扒 `PlayerSettlement.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 时能否指定绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）来打造食物爆棚 fief。附带查：绑定村庄数量是否有硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
 
-### 食物经济 · 观察中的问题
+### 食物经济 · 已解决（2026-09-18）
 
-- [ ] **每日食物变化在 +/- 之间震荡，无法稳定积累**：根因是 RBM `_measuredFoodChange` 每日重算，输入项（村庄产出、繁荣、驻军、作坊、民兵）各自浮动，均值接近 0。当前仅有 IG default 10 的加成不足以撑住。**待打 getter 补丁**（`get_DailyFoodGatheringAmount` 常返 1000）后重测；若仍震荡，考虑把 `VillageProductionMultiplier` 从 0.75 拉到 1.0
+- [x] ~~每日食物变化在 +/- 之间震荡，无法稳定积累~~ ← 食物经济堆叠（修改 #5）实测生效，问题关闭
+
+---
+
+## 在另一台设备上复刻本套配置
+
+**目标**：在一台全新安装 Bannerlord + 相同 mod 的设备上复现本 repo 记录的所有配置改动。
+
+### 前置条件
+
+1. Steam 上安装 **Mount & Blade II Bannerlord**，Beta 分支切到 **v1.4.7**（`Steam → 右键游戏 → Properties → Betas → 选 v1.4.7`）
+2. 订阅并启用（Workshop）以下 20 个 mod（详见"模组清单"章节）：
+   - 核心库：Harmony 2.4.2、ButterLib 2.12.0、UIExtenderEx 2.13.3、MCM 5.12.3
+   - Combat：**RBM 4.5.0**、RBM_WS 4.5.0、RTSCamera 5.4.16、RTSCamera.CommandSystem 5.4.16、DismembermentPlus 2.0.8.8
+   - Campaign：ImprovedGarrisons 4.2.0.7、Retinues 1.4.14.31、PartySizeReunited 2.2.0、ChooseYourTroops 1.8.3、PlayerSettlement 7.5.0、GarrisonDrills 1.1.0
+3. **游戏至少启动一次**——让 mod 生成默认 `Configs` 目录
+4. Steam Cloud **关掉**（Properties → General → 取消 "Keep game saves in Steam Cloud"）—— 避免 junction + Cloud 混乱丢档
+5. **用户数据 junction 化**（推荐但可选）：
+   ```powershell
+   $src = "$env:USERPROFILE\OneDrive\Documents\Mount and Blade II Bannerlord"
+   $dst = "E:\Bannerlord-UserData\Mount and Blade II Bannerlord"
+   # 先把 $src 里的内容复制到 $dst
+   Move-Item $src "$src.OneDriveBackup"
+   New-Item -ItemType Junction -Path $src -Target $dst
+   ```
+
+### 复刻步骤
+
+**Step 1**：Clone 本 repo 到新设备（用来查改动的目标值 + 备份 baseline）：
+
+```powershell
+cd $env:USERPROFILE\git
+git clone https://github.com/ShadowLOL233/Mount-and-Blade-2-Bannerlord-custome-development.git
+```
+
+**Step 2**：定位 Configs 根目录（**关闭 Bannerlord 后操作**）：
+
+```
+C:\Users\<你>\OneDrive\Documents\Mount and Blade II Bannerlord\Configs\
+或（junction 化后）
+E:\Bannerlord-UserData\Mount and Blade II Bannerlord\Configs\
+```
+
+**Step 3**：按以下清单在对应文件里改值。**每个文件都先备份**（`Copy-Item file file.bak-复刻日期`）。
+
+| # | 文件 | 键 | 改前 | 改后 |
+|---|---|---|---|---|
+| 1 | `ModSettings\PartySizeReunited\PartySizeReunited.json` | `psr_bonus_scope` | 2 | **0** |
+| 2 | `RBM\config.xml` | `<VillageProductionMultiplier>` | 0.5 | **0.75** |
+| 2 | `RBM\config.xml` | `<TroopFoodWageFraction>` | 0.5 | **0.1** |
+| 3 | `ImprovedGarrisons\Saves\IGConfiguration_<save>_TdthS0Oa3xcE.xml` × 5 | `<LoadFoodGatheringModule>` | false | **true** |
+| 3 | 同上 | `<EnablePlayerFoodBonus>` | false | **true** |
+| 3 | 同上 | `<DailyFoodGatheringAmount>` | 10 | **1000** |
+| 4 | `ModSettings\Retinues\Retinues.Settings.xml` | `<MaxTroopTier>` | 8 | **10** |
+| 5 | `ModSettings\Retinues\Retinues.Settings.xml` | `<BaseSkillXpCost>` | 100 | **0** |
+| 5 | 同上 | `<SkillXpCostPerPoint>` | 1 | **0** |
+| 5 | 同上 | `<SharedXpPool>` | false | **true** |
+| 5 | 同上 | `<ForceXpRefunds>` | false | **true** |
+
+**Step 4**：DLL 补丁（GarrisonDrills 训练效果翻倍）——**这个需要重跑**，Workshop 每次更新覆盖后重做：
+
+文件：`workshop\261550\3735834360\bin\Win64_Shipping_Client\GarrisonDrills.dll`
+
+三处字节修改（PowerShell 脚本）：
+
+```powershell
+$dll = 'E:\SteamLibrary\steamapps\workshop\content\261550\3735834360\bin\Win64_Shipping_Client\GarrisonDrills.dll'
+Copy-Item $dll "$dll.orig-复刻日期"
+$bytes = [IO.File]::ReadAllBytes($dll)
+$bytes[2332] = 0x14   # Basic XP  10 → 20
+$bytes[2348] = 0x3C   # Advanced  30 → 60
+$bytes[2365] = 0x64   # Masterful 50 → 100
+[IO.File]::WriteAllBytes($dll, $bytes)
+```
+
+同步改文案（可选，仅影响 UI 显示）：`workshop\261550\3735834360\ModuleData\Languages\std_GarrisonDrills_strings.xml` 和 `CNs\std_GarrisonDrills_strings_cns.xml`，把 +10/+30/+50 改成 +20/+60/+100。
+
+**Step 5**：LauncherData.xml——参考本 repo 的 `LauncherData.xml.bak-pre-rbm-disable-20260916` 或直接手动在启动器 UI 里勾选那 20 个 mod。
+
+**Step 6**：进游戏。**必须开新战役**（老 vanilla 存档 + RBM 4.4.9+ Campaign 会硬崩，见 Bug #3）。
+
+### 复刻后进入游戏做的事（一次性）
+
+1. Escape → Options → 确认 Bannerlord 语言 = English
+2. 首次进战役后，Retinues UI → 每个自定义兵种按 `TroopDesignReference.md` 分配技能（现在 XP 成本 0，随便调）
+3. House Champion 装备按 `TroopDesignReference.md` 第 5.1 节配（Cataphract Lance + Heavy Shield + 空 + 空）
+4. 战术：Cavalry 按 F1+F3 单独 Charge
+
+### 快速验证清单（复刻完打一场速验）
+
+- [ ] Retinues UI 里加技能显示 **Cost: 0 XP**
+- [ ] 220v240 大战结算界面**不卡死**（PSR 修复生效）
+- [ ] Fief 食物变化条含 `[IG-Cheats] Garrison Food Bonus: +1000` 且总变化转正
+- [ ] Garrison Drills 训练面板显示 **+20 / +60 / +100 XP**
+- [ ] House Champion tier 能升到 **10**（`MaxTroopTier` 生效）
+- [ ] 大战一场后 House Champion / Guard 的 XP 池是**同一个数字**（`SharedXpPool` 生效）
+
+如果某项不符，回查本 journal 对应 modification 小节。
 
 ---
 

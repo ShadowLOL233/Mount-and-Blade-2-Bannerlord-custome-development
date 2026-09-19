@@ -413,6 +413,45 @@ public enum ItemTiers { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, NumTiers }
 
 ---
 
+## 战斗编队 / 部署机制 · 为何不能按兵种细分（游戏机制笔记）
+
+> **验证状态**：vanilla 机制层面，未反编译（E: 未挂载）。含 decompile TODO。
+
+### Custom Battle vs Campaign：兵种为何一个能挑一个不能
+
+- **Custom Battle** = UI 选择器从零构建军队，兵种构成是**输入参数**（打完即弃）。
+- **Campaign/Sandbox** = 战斗兵力 = 真实队伍花名册(TroopRoster)，构成在上游（招募/升级/遣散）就定死；战斗时给的是**部署权**不是**重组权**。设计一致性：战役军队 = 队伍本身。
+
+### FormationClass：引擎 8 槽
+
+- 枚举 8 个常规编队：`Infantry(0) Ranged(1) Cavalry(2) HorseArcher(3) Skirmisher(4) HeavyInfantry(5) LightCavalry(6) HeavyCavalry(7)`。
+- 每兵种有**计算出的** `DefaultFormationClass` / `GetFormationClass()`（按装备/技能：有马+远程=骑射，有马=骑兵，有远程=远程，否则步兵）。
+- **默认自动分组只用前 4 类**（步/远/骑/骑射），F1–F8 指挥。这就是"按属性分组"。
+
+### 原版其实支持"按兵种编排"——在部署 / Order of Battle 阶段
+
+- 大型野战、你当指挥时有部署阶段（小规模/伏击/非指挥官会跳过）。
+- 兵以"兵种卡"呈现，可**拖进 8 个编队槽任意一个** + 指派 captain/阵型 → **同 class 不同兵种可拆到不同编队**。
+- **局限**：只在部署阶段、每场手动重来（无预案保存）、部分战斗跳过、**中途难按兵种重组**、**增援波按 class 自动归队可能打乱手动编排**。
+
+### Choose Your Troops 的层级
+
+- CYT 只作用在**花名册层**（决定带哪些部队进场），**不碰编队层**。与"进战斗后按兵种编组"是两个不同层，天生管不着。
+
+### 已有解法：RTSCamera.CommandSystem
+
+- 提供 RTS 俯视 + 框选/点选单位 + 扩展编队控制，是最接近"战斗中按实际单位重组指挥"的东西。优先榨干它再考虑新 mod。具体能力待反编译坐实。
+
+### decompile TODO（E: 挂载后核对）
+
+- [ ] `FormationClass` 枚举 + `GetFormationClass`/`DefaultFormationClass` 判定逻辑
+- [ ] Order of Battle 兵种分配代码（`OrderOfBattleVM`/`MissionOrderVM`/部署 controller）：v1.4.7 能拖到哪几个槽
+- [ ] **RTSCamera.CommandSystem** patch 了什么、能否按兵种类型建独立编队、中途能否重组（优先级最高）
+- [ ] CYT 花名册层 hook（确认不碰编队）
+- [ ] 增援波(reinforcement)如何按 class 分配到编队
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

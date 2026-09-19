@@ -13,6 +13,7 @@
   - 备份与回滚
   - 待办 / 调查项目
   - 调试参考
+- **[`INSTALL.md`](./INSTALL.md)** — 新增编队/战场规模 mod（TroopClassifier / Stop Shuffling / BattleSizeResized）的安装手续：Nexus 官方链接、版本、加载顺序、首启排查与验证清单（不含二进制）。
 
 ## 环境快照
 

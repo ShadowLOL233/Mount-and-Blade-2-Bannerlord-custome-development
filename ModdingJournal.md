@@ -301,6 +301,50 @@ public enum ItemTiers { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, NumTiers }
 
 ---
 
+## 俘虏 / 灭国收编 / 地牢机制（游戏机制笔记）
+
+> **验证状态**：以下为 vanilla 机制层面结论（general knowledge），**尚未反编译核对**——E: 盘（游戏 DLL + live journal 权威源）本次会话未挂载。确切触发条件与逃跑概率公式待 E: 挂载后扒 DLL 补齐，见文末 decompile TODO。当前 mod 清单里没有改写俘虏/灭国收编系统的项，故 vanilla 机制应照常生效（ImprovedGarrisons 只间接经"驻军规模→地牢逃跑率"相关）。
+
+### 敌国覆灭后，被俘贵族会自动加入我吗？
+
+**不会自动加入。"被俘" ≠ "效忠"。**
+
+- **自由身的敌国氏族**（没被你关押）：王国失去最后领地被摧毁（`DestroyKingdomAction`）后，其氏族变成"无王国"，由氏族 AI 自行决定去向（投靠现存王国当封臣/雇佣兵/游荡），基于关系、实力、文化、领地机会评分——**不强制归你**。
+- **被你关押的敌国贵族**：这才是收编敌将的正路 → 见下。
+
+### 收编俘虏贵族（劝降 / defection）
+
+- 你可对手里的俘虏贵族发起**招募/劝降**（persuasion 说服小游戏），成功后其**整个氏族并入你的王国，成为你的封臣（vassal clan）**。
+- **祖国被灭、无家可归（homeless）的贵族劝降成功率大幅提升**——失去领地与君主后最愿改旗易帜。
+- 实战正路：国战期间**尽量俘虏并关押敌方所有 lord**（别急着放/换）→ 打到对方只剩残地/刚灭国时他们变 homeless → 逐个劝降收编。
+- **关键定性**：收编来的敌将成为**独立封臣**（自带氏族、自领一支部队、AI 驱动），**不是加入你氏族的 companion**。这条直接决定了下面 perk/trait 的可控性。
+
+### 地牢 / 俘虏系统
+
+- **存放**：战斗胜利后俘虏进入**队伍俘虏栏**（容量有限，受 Roguery/Steward perk 影响）；进自己据点后可"关进地牢"腾队伍容量，据点地牢容量远大于行军队伍。
+- **逃跑（每日判定）**：
+  - 关在**行军队伍**里 → 逃跑率**高**（贵族尤甚）
+  - 关在**据点地牢** → 逃跑率**低**；**驻军越多/据点越安全越低**
+  - 据点被攻陷或叛乱（rebellion）→ 俘虏被放出/解救
+- **处置三条路**：① 收编（贵族→劝降入你王国；普通兵→随时间有概率自愿入队）② 赎金/释放（经 ransom broker 卖钱或对方赎回）③ 关着当战略资源（削弱敌国野战实力，加速其崩盘）。
+- **想稳住敌国 lord**：别带在身上，塞进一座**驻军充足**的城堡地牢。
+
+### 收编贵族的 perk / trait 可控性
+
+- **Perk**：vanilla 里**只有主角（player character）能手动选 perk**；companion、氏族成员、封臣都是随技能到里程碑**自动选 perk**，玩家不能手动分配。所以"像 companion 那样调 perk"这个前提本身对 vanilla 不成立——**companion 也不能手动调**（社区常年吐槽点，需 Improved Companions / Character Reload 之类 mod 才解锁；当前清单没装）。收编来的敌将是**独立封臣**，比 companion 更不可控（纯 AI 英雄）。
+- **Trait**（Honor / Valor / Mercy / Generosity / Calculating）：性格值。主角的 trait 随行为/抉择缓慢漂移；AI 英雄的 trait 生成时基本定死，只随其自身行为轻微漂移，**玩家无法直接编辑他人 trait**，无对应 UI。收编来的敌将保留自己的 trait，改不了。
+- **想要"技能/perk/装备全由我掌控"的英雄** → 只能走**酒馆 wanderer companion** 路线加入你氏族；即便如此 vanilla 也只能控装备/队伍角色/总督任命，perk 仍自动、技能靠使用成长。
+- ⚠ 以上 perk/trait 结论有 v1.4.7 版本差异风险，需反编译 perk 选择 UI 门禁（是否 gate 在 `Hero.MainHero`）核实。
+
+### decompile TODO（E: 挂载后核对）
+
+- [ ] `DestroyKingdomAction`：灭国触发条件 + 氏族选新王国的评分逻辑
+- [ ] 招募俘虏贵族的对话条件函数（`LordConversationsCampaignBehavior` 或相关）：确切 gate（是否要求祖国被灭 / 关系阈值 / 玩家是否为国王 / 氏族实力）
+- [ ] 逃跑概率模型（`EscapePrisoner...` behavior/model）：公式 + 驻军/安全度权重
+- [ ] perk 选择 UI 门禁：确认 v1.4.7 是否只允许 `Hero.MainHero` 选 perk；trait 是否存在任何 setter 路径
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

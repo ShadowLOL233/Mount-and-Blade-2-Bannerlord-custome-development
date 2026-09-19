@@ -285,6 +285,31 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 - 保持 `EnableFeatRequirements=true`，用 console `retinues.feat_unlock_all` 一键完成所有 feat 进度（需 Cheats mod）
 - 或单独 `retinues.feat_unlock <FeatKey>` 精准解锁；`retinues.feat_list` 查全表
 
+### 9. IG NPCSpawnGuards 从 false 改 true（2026-09-19）
+
+**背景**：探索 MapBlockade 与 PlayerSettlement 兼容性时（backlog `MapBlockadePSBridge`）发现 MapBlockade 对自建城支持成本高（需 face-index 精确烘焙），转而寻找"城堡驻军能派兵响应 raid"的更轻量方案。IG 自身早已实现 Guard 派兵系统，只是默认关着。
+
+**改法**：批量把 `E:\Bannerlord-UserData\Mount and Blade II Bannerlord\Configs\ImprovedGarrisons\Saves\IGConfiguration_*.xml`（共 13 个 save-hash 组合）里的 `<NPCSpawnGuards>false</NPCSpawnGuards>` 改成 `true`。每个先备份为 `.bak-NPCSpawnGuards-20260919`。
+
+**IG Guard 系统关键参数（生效值，未改）**：
+
+| 键 | 值 | 语义 |
+|---|---|---|
+| `NPCGuardSpawnThreshold` | 120 | 驻军 > 120 才会派 guard 出去 |
+| `NPCGuardCreationMultiplier` | 0.4 | 派兵规模 = 40% 驻军 |
+| `GuardReplenishPercentage` | 0.5 | 每期从驻军补回 50% |
+| `GuardAvailableTroopsPercentage` | 0.25 | 从驻军抽兵上限 25% |
+| `PatrolPartyHealPercentage` | 0.5 | 巡逻回城治愈 50% |
+| `CustomTransferAndGuardPartySize` | 200 | Guard party 兵力上限 |
+| `DefaultEnableGuardHideoutClear` | true | Guard 会清剿匪窝 |
+| `DefaultEnableGuardPrisonerSell` | true | Guard 会卖俘虏 |
+| `DefaultEnableGuardUpgrade` | true | Guard 会升级兵种 |
+
+**待观察风险**：
+- 与 RBM `RBMGarrisonRefillBehavior` 交互——两者都改 NPC 驻军补员。首次实测看：驻军流失是否合理、是否出现补员死循环
+- 玩家 fief 的 guard 会不会被自动派出去打不该打的目标（IG 有 town/castle 菜单里的 config UI，见 Bug #4）
+- 若不合意，回滚：批量 `.bak-NPCSpawnGuards-20260919` restore 即可
+
 ---
 
 ## Retinues 机制备忘（2026-09-18 反编译结论）
@@ -622,6 +647,26 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [ ] **Retinues · Clan Traditions 跳过**：Clan Traditions 系统（族群传统）是否有内置开关能整个禁用/跳过？如果没有，找它绑定的 CampaignBehavior 名称，评估直接不加载该 behavior 的可行性
 - [x] ~~**RBM · Bot 武器优先度**~~ ← **2026-09-18 结案**：RBM AI **不重写** vanilla 武器选择评分，只做辅助（posture 掉武器、盾墙方向、骑射队分配）；skill 通过 handling/speed 间接影响 AI 评分。完整 combo 表、"废装备"警告、骑马武器长度限制、Cataphract Lance 副武器陷阱见 `TroopDesignReference.md`
 - [ ] **PlayerSettlement · 村庄绑定机制**：扒 `PlayerSettlement.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 时能否指定绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）来打造食物爆棚 fief。附带查：绑定村庄数量是否有硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
+- [ ] **Tier6Injector · 自研模组（2026-09-19 立项 → v1.3 已发）**：热键 Ctrl+Alt+I 一键给主队 **Tier 3-6** 装备 ×20 + 对应战马/战马鞍 ×20，每件挂 `ItemModifierGroup` 里 `ItemQuality` 最高的 modifier（Legendary > Masterwork > Fine > Common > Inferior > Poor）。位置：本 repo `Tier6Injector/` 子目录，详见该子目录 `README.md`
+- [ ] **CalradianPatrolsV2 v4.0.2 安装（2026-09-19）**：作为 IG `NPCSpawnGuards` 之外的补充"城堡派兵防御 raid"方案；下载来源 Nexus 3536-v4.0.2；位置 `Modules\Calradian-Patrols-V2\`。**注意版本差**：SubModule.xml 声明 target Native v1.2.8，实际游戏 v1.4.7——按 Bug #3 结论 `DependentVersion` 只是 built-against 标记，launcher 黄字警告可加载但运行时兼容需实测。**bundled MCMv5.dll 是死代码**（系统 MCM v5.12.3 先加载）。**建议先只开 IG NPCSpawnGuards 实测，若够用可不勾选 CP2**
+- [ ] **RBM Poise/Stamina 系统调查结论（2026-09-19，未改）**：`Configs\RBM\config.xml` 里两个总开关 `<PostureEnabled>` + `<StaminaEnabled>`（默认均 1）。玩家侧调节靠 `<PlayerPostureMultiplier>`——**注意 RBMConfig.cs line 213-229 的解析是三档预设选择器，不是浮点乘数**：`"0"` → 1.0x（跟 AI 一样，**当前状态**）、`"1"` → 1.5x、`"2"` → 2.0x。反编译 `RBMAI\Stance.cs` 确认这个 multiplier **同时**乘 `maxPosture/postureRegenPerTick/maxStamina/staminaRegenPerTick`（池 + 回复绑定）。**要动的话**：`PostureEnabled=0` + `StaminaEnabled=0` 完全关整套（所有 agent 回归 vanilla）；或 `PlayerPostureMultiplier=1/2` 让玩家 1.5x/2x。**要独立控制回复速度**或**给玩家 0x 完全豁免**都需 DLL byte-patch（类似 GarrisonDrills 修改 #3）
+- [ ] **MapBlockadePSBridge · 自研桥接 mod（2026-09-19 立项，Phase 2A v0.1 已编译）**：让 PlayerSettlement 自建 settlement 被 MapBlockade 识别为可封锁目标。位置：本 repo `MapBlockadePSBridge/` 子目录，详见该子目录 `README.md`
+  - **原理**：订阅 `PlayerSettlementBehaviour.SettlementBuildCompleteEvent` → 反射注入 `MapBlockade.BlockadeReachabilityCache._cities` 等私有字段 → 调 `RebuildAll(string)` 重算
+  - **关键侦查发现**：MapBlockade v1.2.8 的 obfuscation **只碰方法体（局部变量 + 字符串常量），不碰 API 表面**——所有类名/字段名/方法名全明文可反射
+  - **v1.4.7 API 修正**：`settlement.Position2D` 不存在，改用 `settlement.Position.ToVec2()`（`Position` 是 `CampaignVec2`）
+  - **Phase 2A 已做**：骨架 + 反射注入 + `RebuildAll` 触发。v0.1 只走消息栏易漏，v0.2 加了文件日志（`Configs\ModLogs\PSBridge_YYYYMMDD.log`）
+  - **Phase 2A 侦查假设全部验证（2026-09-19 07:55）**：`GameType=CampaignStoryMode`（`is Campaign` 命中）；`MapBlockade.BlockadeReachabilityCache` 类反射成功；`BannerlordPlayerSettlement.Behaviours.PlayerSettlementBehaviour.SettlementBuildCompleteEvent` 是 `MbEvent<Settlement>`，订阅无异常。日志证据：`subscribe result: subscribed to SettlementBuildCompleteEvent (radius=5)`
+  - **Phase 2A 剩余测试**：实际建一座 PlayerSettlement 城，看日志追加 `injected ...` 还是 `no faces within radius 5` 还是异常。若"no faces"就 Phase 2B 加 MCM 调半径；若反射写字段异常就针对性调
+  - **Phase 2B 待做**：MCM 面板（半径可调）+ grace period 事件转发（`UpdateCityOwnership`）+ `ReachabilityGraph.Build` 直接调用（若 `RebuildAll` 只刷 top-level cache 使 AI 看不到）+ gate face 选择算法优化
+  - **设计**：`MBSubModuleBase.OnApplicationTick` 轮询 hotkey；触发时遍历 `MBObjectManager.Instance.GetObjectTypeList<ItemObject>()`，按 `Tier == Tier6` + `ItemType` 白名单（14 种装备类）调 `MobileParty.MainParty.ItemRoster.AddToCounts`；Horse/HorseHarness ×3 单独处理
+  - **零侵入**：无 Harmony patch，无 CampaignBehavior，无 SaveableField（不改存档结构）；关模组即完全撤除
+  - **构建**：`Tier6Injector/deploy.ps1`（`dotnet build -c Release` + 拷 `SubModule.xml`/DLL 到 `Modules\Tier6Injector\`）
+  - **首次 build TODO**：
+    - [x] ~~dnSpy 核对 v1.4.7 API 签名~~ ← 2026-09-19 完成，核对结果记 `Tier6Injector/README.md` 的 API 核对表；`HandArmor` 不是 `HandsArmor`，`InformationManager` 在 `TaleWorlds.Library`（不是 `TaleWorlds.Core`），已在源码里修
+    - [x] ~~装 .NET SDK 6+~~ ← 2026-09-19 装 SDK 8.0.425（winget）
+    - [x] ~~首次 build~~ ← 2026-09-19 编译一次 (`error CS0507: cannot change access modifiers`) → 把 `OnGameInitializationFinished` 从 `protected` 改 `public`（基类是 `public`）→ build 通过；`deploy.ps1` 成功拷贝到 `Modules\Tier6Injector\`
+    - [ ] launcher 勾选 Tier6 Injector → 战役内 Ctrl+Alt+I 试跑（**待用户操作，Claude 不能驱动 GUI/游戏输入**）
+    - [ ] 观察多次触发是否有性能/存档大小问题（单堆无上限，但物品对象引用会重复计入）
 
 ### 食物经济 · 已解决（2026-09-18）
 

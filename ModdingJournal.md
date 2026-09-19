@@ -62,6 +62,40 @@
 ### 已订阅但禁用
 BirthAndDeath / FastMode / Cheats / BahamutArmory / swadian armoury / XorberaxLegacy / CustomClanPartySize / AutoParry
 
+### 待下载 / 计划安装（2026-09-18 评估）
+
+**目标**：实现"严格按兵种编队"（全面战争式，8 编队上限内），并配套放大战场规模。
+
+| Mod | 版本 | 状态 | 用途 |
+|---|---|---|---|
+| **Stop Shuffling You Fools – Formation Manager** | 0.5.2 (Nexus 11869) | 已下载 `Downloads/` | 队伍界面把兵种钉到编队 I–VIII，持久化 + 防增援洗牌 |
+| **TroopClassifier** | ≥ v0.1.1 | ⚠ **未下载**（硬前置） | 兵种分类库，FormationManager 硬依赖，缺它无法加载 |
+| **BattleSizeResized** | 2.0.4 for 1.4.x (Nexus 8177) | 已下载 `Downloads/` | 改战场/攻城/海战兵力上限 + 增援波阈值 + 大战 LOD 优化 |
+
+（当前已装 20 mod 见上方"已启用"表；本节是在其之上计划新增。）
+
+#### 兼容性评估（基于 SubModule.xml + DLL 字符串扫描；dnSpy/E: 本次不在，未做反编译对比）
+
+**BattleSizeResized 2.0.4 —— 判定：低风险，可装**
+- 依赖 Harmony/ButterLib/UIExtenderEx/MCM（**全已装**），无版本硬约束；目标 1.4.x，匹配 v1.4.7。
+- 补丁全是 **Postfix**（`MaxBattleSizePostfix` / `MaxNumberOfAgentsForMissionPostfix` / `GetRealBattleSize*`），非破坏性、只改返回值 → 冲突面极小。
+- 自带海战/攻城/sally-out 分别的兵力设定（配合 NavalDLC）+ 增援波阈值 + 大战 LOD 优化。
+- ⚠ **唯一注意**：与 PSR（大部队）+ RBM（战斗计算）+ DismembermentPlus（断肢视效）叠加，超高兵力压性能/稳定性（参见 Bug #3 大战硬崩）。**兵力先调中档**，用它自带 LOD/增援阈值收敛。
+
+**Stop Shuffling You Fools 0.5.2 —— 判定：需补前置 + 需实测**
+- ⚠ **硬依赖 `TroopClassifier` v0.1.1（Optional=false），当前未下载** → 缺它 FormationManager **无法加载**。先从 FormationManager 的 Nexus 页 "Requirements" 栏下 TroopClassifier（同作者）。
+- 其余依赖 Harmony 2.4.2 / UIExtenderEx 2.13.2 / MCM 5.11.4 —— 你的 2.4.2.248 / 2.13.3 / 5.12.3 **均满足或更新**。
+- 目标 Native v1.4.6，游戏 v1.4.7 —— 差一档；按 Bug #3 结论 `DependentVersion` 只是 built-against 标记，原生启动器黄字警告但可加载。
+- **补丁面（DLL 扫描）**：`MissionAgentSpawnPatch`（兵按指定编队生成、含增援=防洗牌核心）+ `MissionConstructorPatch` + `OrderOfBattleVMInitializePatch` + 队伍界面 UI（`PartyTroopTupleFormationBadge/CustomSplitEditor/RolePlanEditor`、`PartyCharacterVMMixin`）。
+- **冲突面（需实测三处）**：
+  1. **队伍界面**：CYT + Retinues 也都改造队伍界面/兵种行（UIExtenderEx mixin）。三者叠在同一 `PartyCharacterVM`/party prefab 上 → UIExtenderEx 设计上可叠，但**必须实测队伍界面正常渲染**（最高风险）。
+  2. **MissionAgentSpawn**：RBM 也重度 patch mission/agent spawn（Bug #3 的 mission-startup 快照）。同方法多 patch 通常共存，但**开战瞬间盯崩**。
+  3. **OrderOfBattle / 战斗指挥**：与 RTSCamera.CommandSystem 同属"编队/指挥"域，可能 UI/操作重叠。
+- **建议**：补 TroopClassifier → 新存档小规模试 → 依次验证：队伍界面渲染正常、开战不崩、编队指定生效且增援不洗牌。
+
+#### 建议加载顺序（在现有基础上插入）
+`Harmony → ButterLib → UIExtenderEx → MCM → TroopClassifier → [其余现有 mod] → BattleSizeResized / FormationManager`（库全在前；FormationManager 放 CYT/Retinues 之后再试）
+
 ---
 
 ## 已做的定制修改

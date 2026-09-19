@@ -67,8 +67,7 @@ FormationManager               ← 新增，放在 CYT / Retinues 之后
 ## 六、验证清单（开**新存档**小规模试，别直接上主战役）
 
 - [ ] 启动器/日志无 `TroopClassifier` MissingMethod 报错
-- [ ] **队伍界面正常渲染**（与 CYT + Retinues 三家共存的最高风险点）
-- [ ] 队伍界面每个兵种旁出现编队徽章（I–VIII），可点选指定
+- [ ] 队伍界面每个兵种旁出现编队徽章（I–VIII），可点选指定（FM 是唯一 PartyCharacterVM mixin，队伍界面渲染不再是三家风险点）
 - [ ] **进战斗不崩**（与 RBM 的 MissionAgentSpawn patch 共处）
 - [ ] 指定的编队生效，且**增援波不再把编队洗乱**
 - [ ] BattleSizeResized 的兵力设定在 MCM 里可调；战场人数按设定放大
@@ -80,6 +79,6 @@ FormationManager               ← 新增，放在 CYT / Retinues 之后
 |---|---|---|
 | TroopClassifier v0.2.0 | ✅ 低风险 | 纯库仅依赖 Native/SandBoxCore，零冲突面；v0.2.0 满足 FormationManager 的 v0.1.1 要求，绑定符号 `TroopClassifier`/`TroopRoleClassifier`/`Classify` 在 v0.2.0 均存在 |
 | BattleSizeResized v2.0.4 | ✅ 低风险 | 全 Postfix 补丁（非破坏）；唯一注意是与 PSR/RBM/DismembermentPlus 叠加时超高兵力压性能 |
-| Stop Shuffling (FormationManager) v0.5.2 | ⚠ 需实测 | 前置已齐；patch 队伍界面 UI（与 CYT/Retinues 重叠）+ MissionAgentSpawn（与 RBM 重叠）+ OrderOfBattle（与 RTSCamera 重叠），三处需新存档实测 |
+| Stop Shuffling (FormationManager) v0.5.2 | ⚠ 需实测 | 前置已齐。2026-09-19 反编译核对：**FM 是唯一 mixin PartyCharacterVM 的 mod**（CYT 用独立屏，Retinues 全在 Clan Screen——早前"三家争队伍界面"评估已证伪）。Mission spawn 上三家 patch 不同 method 流水线协作。真正需实测：OoB 屏 vs RTSCamera.CommandSystem + 启动日志无 TroopClassifier v0.2.0 签名漂移报错 |
 
 详细补丁面分析见 [`ModdingJournal.md`](./ModdingJournal.md)。

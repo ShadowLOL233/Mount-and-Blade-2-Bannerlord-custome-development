@@ -93,11 +93,22 @@ BirthAndDeath / FastMode / Cheats / BahamutArmory / swadian armoury / XorberaxLe
 - 其余依赖 Harmony 2.4.2 / UIExtenderEx 2.13.2 / MCM 5.11.4 —— 你的 2.4.2.248 / 2.13.3 / 5.12.3 **均满足或更新**。
 - 目标 Native v1.4.6，游戏 v1.4.7 —— 差一档；按 Bug #3 结论 `DependentVersion` 只是 built-against 标记，原生启动器黄字警告但可加载。
 - **补丁面（DLL 扫描）**：`MissionAgentSpawnPatch`（兵按指定编队生成、含增援=防洗牌核心）+ `MissionConstructorPatch` + `OrderOfBattleVMInitializePatch` + 队伍界面 UI（`PartyTroopTupleFormationBadge/CustomSplitEditor/RolePlanEditor`、`PartyCharacterVMMixin`）。
-- **冲突面（需实测三处）**：
-  1. **队伍界面**：CYT + Retinues 也都改造队伍界面/兵种行（UIExtenderEx mixin）。三者叠在同一 `PartyCharacterVM`/party prefab 上 → UIExtenderEx 设计上可叠，但**必须实测队伍界面正常渲染**（最高风险）。
-  2. **MissionAgentSpawn**：RBM 也重度 patch mission/agent spawn（Bug #3 的 mission-startup 快照）。同方法多 patch 通常共存，但**开战瞬间盯崩**。
-  3. **OrderOfBattle / 战斗指挥**：与 RTSCamera.CommandSystem 同属"编队/指挥"域，可能 UI/操作重叠。
-- **建议**：补 TroopClassifier → 新存档小规模试 → 依次验证：队伍界面渲染正常、开战不崩、编队指定生效且增援不洗牌。
+- **冲突面（2026-09-19 反编译核对后更正）**：早前基于 DLL 字符串扫描的假设有误，反编译 FM + CYT + Retinues 后重新评估：
+  1. ~~**队伍界面**：CYT + Retinues + FM 三家争 `PartyCharacterVM`~~ ❌ **误判**。实际情况：
+     - **CYT 不 mixin PartyCharacterVM**——它用独立全屏 `CYTGauntletMenuTroopSelectionView`，从 game menu 触发（`AddGamesMenu`）
+     - **Retinues 不 mixin PartyCharacterVM**——它的 UI 全在 Clan Screen 的 Troops 标签（`ClanScreen_TroopsPanel` mixin）
+     - **只有 FM 一家改造 PartyCharacterVM**（`PartyCharacterVMMixin.cs`）→ 无三家冲突
+  2. **Mission spawn 三家 patch 三个不同方法，是流水线协作而非竞争**：
+     - **CYT**：`SandBoxBattleMissionSpawnHandlerPatch` / `SandBoxSiegeMissionSpawnHandlerPatch`（上游 roster 筛选）
+     - **FM**：`Mission.SpawnTroop` Postfix（每 troop 类型分配到 formation）
+     - **Retinues**：`Mission.SpawnAgent` Prefix（每 agent 装备 set 随机）
+     - **RBM**：其他 Mission/Agent 数值 patch（不与上三家撞 method）
+     - 执行链路：CYT 筛 roster → SpawnTroop 分 formation（FM）→ SpawnAgent 换装（Retinues）→ RBM 数值套用。**顺序稳定，无竞争**。
+  3. **Retinues.FormationQuerySystemPatch vs FM**：概念正交。Retinues patch 的是 `FormationQuerySystem.get_MainClass`（查询 "这 formation **算作** 哪一类"），FM 是 `agent.Formation = X` 的赋值。且 Retinues 该 patch 只在 `AllowFormationOverrides=true` 时生效——用户当前 `false`，Retinues 侧休眠。
+- **真正需要实测的两件事**：
+  1. **OoB 屏 vs RTSCamera.CommandSystem**：FM 的 `OrderOfBattleVMInitializePatch` 与 RTSCamera 的战场指挥扩展在 OoB 屏可能触及；风险低但值得进战斗前打开 OoB 屏看渲染
+  2. **TroopClassifier v0.2.0 vs v0.1.1 签名漂移**：FM 是针对 v0.1.1 编译的，若 API 签名有变会启动报 `MissingMethodException`。首启看 `Configs\ModLogs\trace<日期>.txt` / `butterlib*.txt`
+- **建议**：补 TroopClassifier → 新存档小规模试 → 验证 OoB 屏渲染 + 启动日志无 MissingMethod + 战场编队指定生效且增援不洗牌。**队伍界面渲染不再是风险点**（只 FM 一家 mixin）。
 
 #### 建议加载顺序（在现有基础上插入）
 `Harmony → ButterLib → UIExtenderEx → MCM → TroopClassifier → [其余现有 mod] → BattleSizeResized / FormationManager`（库全在前；FormationManager 放 CYT/Retinues 之后再试）

@@ -1,0 +1,10 @@
+# .NET build artifacts
+bin/
+obj/
+*.user
+*.suo
+*.cache
+
+# IDE
+.vs/
+.idea/

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Module>
+  <Name value="MapBlockade x PlayerSettlement Bridge" />
+  <Id value="MapBlockadePSBridge" />
+  <Version value="v0.3.0" />
+  <DefaultModule value="false" />
+  <ModuleCategory value="Singleplayer" />
+  <ModuleType value="Community" />
+  <DependedModules>
+    <DependedModule Id="Native" />
+    <DependedModule Id="SandBoxCore" />
+    <DependedModule Id="Sandbox" />
+    <DependedModule Id="MapBlockade" />
+    <DependedModule Id="PlayerSettlement" />
+  </DependedModules>
+  <DependedModuleMetadatas>
+    <DependedModuleMetadata id="MapBlockade" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="PlayerSettlement" order="LoadBeforeThis" />
+  </DependedModuleMetadatas>
+  <SubModules>
+    <SubModule>
+      <Name value="MapBlockade PS Bridge SubModule" />
+      <DLLName value="MapBlockadePSBridge.dll" />
+      <SubModuleClassType value="MapBlockadePSBridge.BridgeSubModule" />
+      <Tags>
+        <Tag key="DedicatedServerType" value="none" />
+        <Tag key="IsNoRenderModeElement" value="false" />
+      </Tags>
+    </SubModule>
+  </SubModules>
+</Module>

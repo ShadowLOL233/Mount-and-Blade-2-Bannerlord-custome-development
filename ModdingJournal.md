@@ -69,7 +69,7 @@ BirthAndDeath / FastMode / Cheats / BahamutArmory / swadian armoury / XorberaxLe
 | Mod | 版本 | 状态 | 用途 |
 |---|---|---|---|
 | **Stop Shuffling You Fools – Formation Manager** | 0.5.2 (Nexus 11869) | 已下载 `Downloads/` | 队伍界面把兵种钉到编队 I–VIII，持久化 + 防增援洗牌 |
-| **TroopClassifier** | ≥ v0.1.1 | ⚠ **未下载**（硬前置） | 兵种分类库，FormationManager 硬依赖，缺它无法加载 |
+| **TroopClassifier** | v0.2.0 (Nexus 12104) | 已下载 `Downloads/` | 兵种分类库，FormationManager 硬依赖 |
 | **BattleSizeResized** | 2.0.4 for 1.4.x (Nexus 8177) | 已下载 `Downloads/` | 改战场/攻城/海战兵力上限 + 增援波阈值 + 大战 LOD 优化 |
 
 （当前已装 20 mod 见上方"已启用"表；本节是在其之上计划新增。）
@@ -82,8 +82,14 @@ BirthAndDeath / FastMode / Cheats / BahamutArmory / swadian armoury / XorberaxLe
 - 自带海战/攻城/sally-out 分别的兵力设定（配合 NavalDLC）+ 增援波阈值 + 大战 LOD 优化。
 - ⚠ **唯一注意**：与 PSR（大部队）+ RBM（战斗计算）+ DismembermentPlus（断肢视效）叠加，超高兵力压性能/稳定性（参见 Bug #3 大战硬崩）。**兵力先调中档**，用它自带 LOD/增援阈值收敛。
 
-**Stop Shuffling You Fools 0.5.2 —— 判定：需补前置 + 需实测**
-- ⚠ **硬依赖 `TroopClassifier` v0.1.1（Optional=false），当前未下载** → 缺它 FormationManager **无法加载**。先从 FormationManager 的 Nexus 页 "Requirements" 栏下 TroopClassifier（同作者）。
+**TroopClassifier v0.2.0 —— 判定：低风险，可装（版本满足）**
+- 极轻量纯分类库，**只依赖 Native/SandBoxCore**（无 Harmony/UIExtender），冲突面几乎为零；.NET 4.7.2；目标 1.4.6，匹配 v1.4.7。
+- **版本核对**：FormationManager 0.5.2 要求 `TroopClassifier v0.1.1`，你下的是 **v0.2.0**（> 0.1.1，满足）。交叉扫描确认 FormationManager 实际绑定的符号 `TroopClassifier` / `TroopRoleClassifier` / `Classify` **在 v0.2.0 里都存在** → API 表面兼容。
+- ⚠ 残留风险：0.1.1→0.2.0 若某方法**签名**变了（同名不同参/返回），FormationManager 加载时会抛 `MissingMethodException` → **首启看 `Configs\ModLogs\trace<日期>.txt` / `butterlib*.txt`**；若真报错，退回 FormationManager Nexus "Requirements" 栏拿精确的 v0.1.1。
+- 加载顺序：**TroopClassifier 必须在 FormationManager 之前**（FormationManager 的 SubModule 已声明 LoadBeforeThis）。
+
+**Stop Shuffling You Fools 0.5.2 —— 判定：前置已齐 + 需实测**
+- ✅ **硬依赖 `TroopClassifier`（Optional=false）已下载 v0.2.0**，版本满足（见上）。
 - 其余依赖 Harmony 2.4.2 / UIExtenderEx 2.13.2 / MCM 5.11.4 —— 你的 2.4.2.248 / 2.13.3 / 5.12.3 **均满足或更新**。
 - 目标 Native v1.4.6，游戏 v1.4.7 —— 差一档；按 Bug #3 结论 `DependentVersion` 只是 built-against 标记，原生启动器黄字警告但可加载。
 - **补丁面（DLL 扫描）**：`MissionAgentSpawnPatch`（兵按指定编队生成、含增援=防洗牌核心）+ `MissionConstructorPatch` + `OrderOfBattleVMInitializePatch` + 队伍界面 UI（`PartyTroopTupleFormationBadge/CustomSplitEditor/RolePlanEditor`、`PartyCharacterVMMixin`）。

@@ -572,6 +572,37 @@ public enum ItemTiers { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, NumTiers }
 
 ---
 
+## OSA 三件套 × RBM 兼容核对（2026-09-19 本机 D: 实测）
+
+> 用本机 ilspycmd/脚本对 workshop 文件实测得出（游戏 + mod 都在 D:）。**已替换会崩的散装 armory**：`swadian armoury(2875090166)` + `BahamutArmory(2875496157)` 本会话期间已从 workshop 移除，改用 OSA 三件套。
+
+### 三件套构成（均 workshop，纯 XML 无 DLL）
+- Open Source Armory (OSA) `3011479883` v2.0.0 — 护甲/头盔
+- Open Source Weaponry (OSW) `3010984416` v2.0.1 — 武器 + 锻造件 + XSLT（weapon_descriptions/crafting_templates）
+- Open Source Saddlery `3010990914` v2.0.0 — 马具
+
+### 为什么安全（vs 崩溃的散装 armory）
+- **纯 XML，无任何 DLL** → 无版本敏感 Harmony 补丁（老 armory 最大崩因不存在）
+- 依赖仅 Native/SandBox 核心；无 `DependentVersion`（版本无关，v1.4.7 正常）
+- SubModule.xml 内建 `<DependedModuleMetadata id="RBM" order="LoadBeforeThis" optional="true"/>` → 自声明排在 RBM 之后，顺序自动正确
+- shaders 文件夹存在但 **0 文件** → 网传"shaders 致崩（1.4.8）"不适用
+
+### 与 RBM 的物品 ID 交集（脚本求交，硬结论）
+- OSA/OSW/Saddlery 定义 **1950** 个 item+piece ID；RBM 覆盖 **1343** 个原版 ID
+- **交集仅 20 个**：几乎全是原版锻造钝头件（`spear_blade_*_blunt` / `axe_craft_*_head_blunt` / 各文化 `*_blade_*_blunt`）+ 1 件 `empire_battle_crown_west`
+- 其余 **1930 个是全新 ID**（`OSA_*` / `AD_shield_*` 等），与 RBM 不撞
+- OSW 排 RBM 之后 → 这 20 个 **OSW 定义盖过 RBM**（丢 RBM 调校；影响极小：训练钝头件 + 冠冕）
+
+### 结论与残留风险
+- **可用，崩溃风险远低于 Bahamut/Swadian**。
+- 残留：① 1930 新装备非 RBM 数值口径（RBM `ArmorMultiplier=2` 下可能偏强）；② OSW 用 XSLT，别的 mod 畸形 XML 可能触发 `"XmlReader state should be Interactive"`，首启看 trace/butterlib。
+- **已自动生效的一半平衡**：OSA 物品引用标准 `modifier_group`（leather/chain/plate）→ RBM 的 `RBMCombat_item_modifiers.xml`（104 条）对修饰词分级的重平衡**这些新装备自动继承**；未调的只是**基础护甲值本身**。
+
+### 加载顺序
+`... RBM / RBM WS → OSA / OSW / Saddlery → Retinues / CYT / ...`
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

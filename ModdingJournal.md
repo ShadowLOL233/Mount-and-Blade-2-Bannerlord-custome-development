@@ -627,7 +627,22 @@ public enum ItemTiers { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, NumTiers }
 
 **机制（不动 OSA 本体）**：建**个人纯 XML 覆盖 mod**，加载排 OSA 之后，用相同 OSA 物品 ID 重定义护甲到 RBM 尺度 → Workshop 更新安全、无再分发、零崩溃面；本机工具链可脚本生成。
 
-**取值（修正后）**：**不能一律 ×1.75**（会把 Leather 严重超模）。应**材质相关**：Plate ×~1.8、Chainmail ×~1.5、Cloth ×~1.3、**Leather ≈跳过（×1.0）**；或方案 B 就近映射 RBM 原生件拷护甲档（最准）。**头/腿/手甲未量**，可能有类似材质差异，做 mod 前需逐类跑全。武器/锻造件另论。
+**取值（修正后）**：**不能一律 ×1.75**（会把 Leather 严重超模）。应**材质相关**：Plate ×~1.8、Chainmail ×~1.5、Cloth ×~1.3、**Leather ≈跳过（×1.0）**；或方案 B 就近映射 RBM 原生件拷护甲档（最准）。**头/腿/手甲未量**，可能有类似材质差异，做 mod 前需逐类跑全。武器见下。
+
+### OSW 武器 · RBM 方向与护甲相反（2026-09-19 实测）
+
+- **OSA 确加武器**（经 OSW）：完整武器 Item 少量（17，多为投掷/石头/远程）；**主体是锻造部件**（`OSA_crafting_pieces.xml` 刀刃/斧/枪头等——可锻造武器伤害来自部件）。OSW 的 4 个 XSLT 只改 mesh/name + 把新部件加进 crafting_templates/weapon_descriptions 的可用件列表，**不重算伤害**。
+- **实测 blade 部件 damage_factor**：
+
+| | Swing df | Thrust df |
+|---|---|---|
+| 原版 | 3.23 | 2.40 |
+| RBM | **0.96** | **0.84** |
+| OSW | **3.00（≈原版）** | 1.91 |
+
+- **方向与护甲相反**：RBM 把武器伤害系数**砍到原版 ~30%**（3.23→0.96），OSW 停在原版 → **OSW 武器 ≈ RBM 的 3× 伤害系数 → RBM 下大概率超模/过强**（护甲则是 RBM 抬高、OSA 偏弱）。一句话：同样"按原版设计"，护甲=太弱、武器=太强。
+- **平衡须双向**：护甲 ×~1.5–1.8（升）；**武器部件 damage_factor ×~0.3（降）向 RBM 靠**。社区 RBM-OSA 补丁只提"改 armor values"，**武器是否覆盖存疑**——若不覆盖则超模武器问题仍在。
+- 确定度：部件系数实测（blade 原版/RBM/OSW = 255/157/28 件）+ XSLT 无重算已确认；"超模"是基于 ~3× 原始差距的强推断，最终伤害仍过 RBM 公式，100% 坐实需反编译 RBM 伤害链。**只测了 blade**（斧/锤/枪未测）。
 
 ### 加载顺序
 `... RBM / RBM WS → OSA / OSW / Saddlery → Retinues / CYT / ...`
@@ -844,7 +859,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [x] ~~**RBM · Bot 武器优先度**~~ ← **2026-09-18 结案**：RBM AI **不重写** vanilla 武器选择评分，只做辅助（posture 掉武器、盾墙方向、骑射队分配）；skill 通过 handling/speed 间接影响 AI 评分。完整 combo 表、"废装备"警告、骑马武器长度限制、Cataphract Lance 副武器陷阱见 `TroopDesignReference.md`
 - [ ] **PlayerSettlement · 村庄绑定机制**：扒 `PlayerSettlement.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 时能否指定绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）来打造食物爆棚 fief。附带查：绑定村庄数量是否有硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
 - [ ] **Tier6Injector · 自研模组（2026-09-19 立项 → v1.3 已发）**：热键 Ctrl+Alt+I 一键给主队 **Tier 3-6** 装备 ×20 + 对应战马/战马鞍 ×20，每件挂 `ItemModifierGroup` 里 `ItemQuality` 最高的 modifier（Legendary > Masterwork > Fine > Common > Inferior > Poor）。位置：本 repo `Tier6Injector/` 子目录，详见该子目录 `README.md`
-- [ ] **OSA×RBM 护甲数值平衡（2026-09-19 立项，探讨完成待实施）**：建个人纯 XML 覆盖 mod，把 OSA 护甲拉到 RBM 尺度（材质倍率与三方案见"OSA 三件套 × RBM 兼容核对 → 数值平衡方案"节）。方案 A 脚本打底 + C 手工精修部队实穿件；先护甲后武器。**尚未生成 / 未部署**
+- [ ] **OSA×RBM 数值平衡（2026-09-19 立项，探讨完成待实施）· 需双向**：建个人纯 XML 覆盖 mod。**护甲**拉高到 RBM 尺度（材质相关 ×~1.5–1.8，跳过 leather）；**武器**部件是原版尺度而 RBM 已砍武器至 ~30% → 需**降** damage_factor ×~0.3（方向与护甲相反）。详见"OSA 三件套 × RBM 兼容核对"节的护甲/武器两小节。方案 A 脚本打底 + C 精修。**尚未生成 / 未部署**
 - [ ] **精英志愿兵修复（2026-09-19 探讨，未做）**：RBM `DefaultVolunteerModelPatch` 把精英志愿兵砍成全局 15%、废掉 vanilla"城堡村→精英"。可选自研 Harmony mod **恢复 vanilla 城堡村→精英线**（`[HarmonyBefore(RBM)]` + `Priority.First`，全局生效）。"只影响玩家阵营"版因 notable 池共享 + Retinues 自有据点 100% swap → 判定为**空转不划算**（详见"新兵/志愿兵生成机制"节）。自家 fief 要精英优先走 Retinues 设计
 - [ ] **CalradianPatrolsV2 v4.0.2 安装（2026-09-19）**：作为 IG `NPCSpawnGuards` 之外的补充"城堡派兵防御 raid"方案；下载来源 Nexus 3536-v4.0.2；位置 `Modules\Calradian-Patrols-V2\`。**注意版本差**：SubModule.xml 声明 target Native v1.2.8，实际游戏 v1.4.7——按 Bug #3 结论 `DependentVersion` 只是 built-against 标记，launcher 黄字警告可加载但运行时兼容需实测。**bundled MCMv5.dll 是死代码**（系统 MCM v5.12.3 先加载）。**建议先只开 IG NPCSpawnGuards 实测，若够用可不勾选 CP2**
 - [ ] **RBM Poise/Stamina 系统调查结论（2026-09-19，未改）**：`Configs\RBM\config.xml` 里两个总开关 `<PostureEnabled>` + `<StaminaEnabled>`（默认均 1）。玩家侧调节靠 `<PlayerPostureMultiplier>`——**注意 RBMConfig.cs line 213-229 的解析是三档预设选择器，不是浮点乘数**：`"0"` → 1.0x（跟 AI 一样，**当前状态**）、`"1"` → 1.5x、`"2"` → 2.0x。反编译 `RBMAI\Stance.cs` 确认这个 multiplier **同时**乘 `maxPosture/postureRegenPerTick/maxStamina/staminaRegenPerTick`（池 + 回复绑定）。**要动的话**：`PostureEnabled=0` + `StaminaEnabled=0` 完全关整套（所有 agent 回归 vanilla）；或 `PlayerPostureMultiplier=1/2` 让玩家 1.5x/2x。**要独立控制回复速度**或**给玩家 0x 完全豁免**都需 DLL byte-patch（类似 GarrisonDrills 修改 #3）

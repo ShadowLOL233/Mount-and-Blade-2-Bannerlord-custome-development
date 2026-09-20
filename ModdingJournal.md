@@ -595,8 +595,25 @@ public enum ItemTiers { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, NumTiers }
 
 ### 结论与残留风险
 - **可用，崩溃风险远低于 Bahamut/Swadian**。
-- 残留：① 1930 新装备非 RBM 数值口径（RBM `ArmorMultiplier=2` 下可能偏强）；② OSW 用 XSLT，别的 mod 畸形 XML 可能触发 `"XmlReader state should be Interactive"`，首启看 trace/butterlib。
+- 残留：① 1930 新装备非 RBM 数值口径——实测 RBM 把原版护甲**上调约 1.7–1.8×**（见下"数值平衡方案"），故 OSA 护甲在 RBM 下**偏弱（更易被砍穿），非偏强**（更正上一版记录）；② OSW 用 XSLT，别的 mod 畸形 XML 可能触发 `"XmlReader state should be Interactive"`，首启看 trace/butterlib。
 - **已自动生效的一半平衡**：OSA 物品引用标准 `modifier_group`（leather/chain/plate）→ RBM 的 `RBMCombat_item_modifiers.xml`（104 条）对修饰词分级的重平衡**这些新装备自动继承**；未调的只是**基础护甲值本身**。
+
+### OSA×RBM 数值平衡方案（待办，2026-09-19 探讨）
+
+**问题**：RBM 为配合更狠伤害模型把原版护甲整体上调（本机实测 246 件原版身甲，RBM 全覆盖）：
+
+| 材质 | RBM/原版 身甲均值倍率 | n | 离散 |
+|---|---|---|---|
+| Chainmail | ×1.70 | 44 | 1.04–2.85 |
+| Cloth | ×1.78 | 107 | 0.69–6.50 |
+| Leather | ×1.65 | 55 | 0.00–8.00 |
+| Plate | ×1.80 | 38 | 0.95–2.67 |
+
+OSA 护甲仍是原版低值 → RBM 下偏弱。**离散度大 = RBM 逐件手调，非统一公式**。
+
+**机制（不动 OSA 本体）**：建**个人纯 XML 覆盖 mod**，加载排 OSA 之后，用相同 OSA 物品 ID 重定义护甲到 RBM 尺度 → Workshop 更新安全、无再分发、零崩溃面；本机工具链可脚本生成。
+
+**三种取值**：A. 按材质倍率批量（×1.70/1.78/1.65/1.80，脚本一次 ~80% 到位）；B. 就近映射 RBM 原生件拷护甲档（最贴手调，需相似度匹配）；C. 手工精调（仅部队实穿的一小撮）。**推荐 A 打底 + C 精修**。武器/锻造件更复杂（RBM 靠武器数值 + weapon_descriptions XSLT，OSW 已带）→ **先做护甲**。
 
 ### 加载顺序
 `... RBM / RBM WS → OSA / OSW / Saddlery → Retinues / CYT / ...`
@@ -723,6 +740,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [x] ~~**RBM · Bot 武器优先度**~~ ← **2026-09-18 结案**：RBM AI **不重写** vanilla 武器选择评分，只做辅助（posture 掉武器、盾墙方向、骑射队分配）；skill 通过 handling/speed 间接影响 AI 评分。完整 combo 表、"废装备"警告、骑马武器长度限制、Cataphract Lance 副武器陷阱见 `TroopDesignReference.md`
 - [ ] **PlayerSettlement · 村庄绑定机制**：扒 `PlayerSettlement.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 时能否指定绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）来打造食物爆棚 fief。附带查：绑定村庄数量是否有硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
 - [ ] **Tier6Injector · 自研模组（2026-09-19 立项 → v1.3 已发）**：热键 Ctrl+Alt+I 一键给主队 **Tier 3-6** 装备 ×20 + 对应战马/战马鞍 ×20，每件挂 `ItemModifierGroup` 里 `ItemQuality` 最高的 modifier（Legendary > Masterwork > Fine > Common > Inferior > Poor）。位置：本 repo `Tier6Injector/` 子目录，详见该子目录 `README.md`
+- [ ] **OSA×RBM 护甲数值平衡（2026-09-19 立项，探讨完成待实施）**：建个人纯 XML 覆盖 mod，把 OSA 护甲拉到 RBM 尺度（材质倍率与三方案见"OSA 三件套 × RBM 兼容核对 → 数值平衡方案"节）。方案 A 脚本打底 + C 手工精修部队实穿件；先护甲后武器。**尚未生成 / 未部署**
 - [ ] **CalradianPatrolsV2 v4.0.2 安装（2026-09-19）**：作为 IG `NPCSpawnGuards` 之外的补充"城堡派兵防御 raid"方案；下载来源 Nexus 3536-v4.0.2；位置 `Modules\Calradian-Patrols-V2\`。**注意版本差**：SubModule.xml 声明 target Native v1.2.8，实际游戏 v1.4.7——按 Bug #3 结论 `DependentVersion` 只是 built-against 标记，launcher 黄字警告可加载但运行时兼容需实测。**bundled MCMv5.dll 是死代码**（系统 MCM v5.12.3 先加载）。**建议先只开 IG NPCSpawnGuards 实测，若够用可不勾选 CP2**
 - [ ] **RBM Poise/Stamina 系统调查结论（2026-09-19，未改）**：`Configs\RBM\config.xml` 里两个总开关 `<PostureEnabled>` + `<StaminaEnabled>`（默认均 1）。玩家侧调节靠 `<PlayerPostureMultiplier>`——**注意 RBMConfig.cs line 213-229 的解析是三档预设选择器，不是浮点乘数**：`"0"` → 1.0x（跟 AI 一样，**当前状态**）、`"1"` → 1.5x、`"2"` → 2.0x。反编译 `RBMAI\Stance.cs` 确认这个 multiplier **同时**乘 `maxPosture/postureRegenPerTick/maxStamina/staminaRegenPerTick`（池 + 回复绑定）。**要动的话**：`PostureEnabled=0` + `StaminaEnabled=0` 完全关整套（所有 agent 回归 vanilla）；或 `PlayerPostureMultiplier=1/2` 让玩家 1.5x/2x。**要独立控制回复速度**或**给玩家 0x 完全豁免**都需 DLL byte-patch（类似 GarrisonDrills 修改 #3）
 - [ ] **MapBlockadePSBridge · 自研桥接 mod（2026-09-19 立项，Phase 2A v0.1 已编译）**：让 PlayerSettlement 自建 settlement 被 MapBlockade 识别为可封锁目标。位置：本 repo `MapBlockadePSBridge/` 子目录，详见该子目录 `README.md`

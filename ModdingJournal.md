@@ -664,6 +664,35 @@ OSA 护甲仍是原版低值 → RBM 下偏弱。**离散度大 = RBM 逐件手�
 
 ---
 
+## 新兵 / 志愿兵（Volunteer）生成机制 + RBM/Retinues 覆盖（2026-09-19 反编译）
+
+### Vanilla `DefaultVolunteerModel`（三维度）
+- **线（精英 vs 基础）· `GetBasicVolunteer(sellerHero)`**：`IsRuralNotable && Village.Bound.IsCastle` → `Culture.EliteBasicTroop`；否则 `Culture.BasicTroop`。即**绑定城堡的村庄出精英线，绑定城镇的出基础线**——硬规则，不是"更高比例"。
+- **tier（能招多高）· `MaximumIndexHeroCanRecruitFromHero`**：主看**你与 notable 的关系**（≥5/10/20/40/60/80/100 → index 1..7），叠同阵营/非主角/战争/perk，`Min(6,…)`，`MaxVolunteerTier=4` 封顶。
+- **每日补充概率 · `GetDailyVolunteerProductionProbability`**：阵营 fief 数/繁荣、slot index（越高越稀）、Cantons 政策、骑兵 perk。
+- 文化决定用哪棵树。
+
+### ⚠ RBM 覆盖（关键发现）——`RBMCombat.CampaignChanges.DefaultVolunteerModelPatch`
+RBM 用 Harmony **Prefix `return false` 完全替换** `GetBasicVolunteer`：
+```csharp
+if (MBRandom.RandomFloat < 0.15f) __result = EliteBasicTroop; else __result = BasicTroop; return false;
+```
+→ **全局 15% 精英 / 85% 基础，无视城堡/城镇绑定**。vanilla"城堡村→精英"被废。**这就是"逛村招不到多少精锐"的根因**（不是 bug，是 RBM 设计）。`0.15f` 是**硬编码字面量，无 config 开关**。
+
+### PlayerSettlement 覆盖？——**覆盖**
+PS 建真正的 Village（`SetBound`/`GetPotentialVillageBoundOwners`）+ 生成 notable（`AddInitialNotables`/`CreateNotable`）+ 有 culture（`ForcePlayerCulture`/`SelectedCultureOnly`）→ vanilla 模型原样生效。**PS 村庄绑城堡 → 精英线（但仍被上面 RBM 15% patch 拦截）**。
+
+### Retinues 覆盖（你自有 fief）
+Retinues 在**自有据点**把志愿兵 100% 换成自定义兵（`VolunteerSwapForPlayer`，`RestrictToOwnedSettlements=true`，`CustomVolunteerProportion=1`）→ 自有 fief 里 vanilla/RBM 的线判定被 Retinues 盖掉。
+
+### "只影响玩家阵营 + 兼容 Retinues"的精英修复 · 可行性判定
+- 关键约束：`GetBasicVolunteer` **只有卖家无买家**，且 notable 的 `VolunteerTypes[]` **全阵营共享** → 生成层无法区分"谁来招"。
+- **只对自有据点生效**：可写（据点归属检查 + `[HarmonyBefore(RBM)]`），但**和 Retinues 100% swap 重叠 → 基本空转**（除非 Retinues proportion<1）。
+- **只玩家受益、AI 不变**：❌ 不干净（池共享、买家未知）。
+- **推荐替代**：① 逛别人村想刷精英 → 做"恢复 vanilla 城堡村→精英"的**全局** Harmony mod（简单，正统玩法）；② 自家 fief 要精英 → 直接在 **Retinues 设计精英自定义兵**（零代码）。
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死
@@ -785,6 +814,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [ ] **PlayerSettlement · 村庄绑定机制**：扒 `PlayerSettlement.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 时能否指定绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）来打造食物爆棚 fief。附带查：绑定村庄数量是否有硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
 - [ ] **Tier6Injector · 自研模组（2026-09-19 立项 → v1.3 已发）**：热键 Ctrl+Alt+I 一键给主队 **Tier 3-6** 装备 ×20 + 对应战马/战马鞍 ×20，每件挂 `ItemModifierGroup` 里 `ItemQuality` 最高的 modifier（Legendary > Masterwork > Fine > Common > Inferior > Poor）。位置：本 repo `Tier6Injector/` 子目录，详见该子目录 `README.md`
 - [ ] **OSA×RBM 护甲数值平衡（2026-09-19 立项，探讨完成待实施）**：建个人纯 XML 覆盖 mod，把 OSA 护甲拉到 RBM 尺度（材质倍率与三方案见"OSA 三件套 × RBM 兼容核对 → 数值平衡方案"节）。方案 A 脚本打底 + C 手工精修部队实穿件；先护甲后武器。**尚未生成 / 未部署**
+- [ ] **精英志愿兵修复（2026-09-19 探讨，未做）**：RBM `DefaultVolunteerModelPatch` 把精英志愿兵砍成全局 15%、废掉 vanilla"城堡村→精英"。可选自研 Harmony mod **恢复 vanilla 城堡村→精英线**（`[HarmonyBefore(RBM)]` + `Priority.First`，全局生效）。"只影响玩家阵营"版因 notable 池共享 + Retinues 自有据点 100% swap → 判定为**空转不划算**（详见"新兵/志愿兵生成机制"节）。自家 fief 要精英优先走 Retinues 设计
 - [ ] **CalradianPatrolsV2 v4.0.2 安装（2026-09-19）**：作为 IG `NPCSpawnGuards` 之外的补充"城堡派兵防御 raid"方案；下载来源 Nexus 3536-v4.0.2；位置 `Modules\Calradian-Patrols-V2\`。**注意版本差**：SubModule.xml 声明 target Native v1.2.8，实际游戏 v1.4.7——按 Bug #3 结论 `DependentVersion` 只是 built-against 标记，launcher 黄字警告可加载但运行时兼容需实测。**bundled MCMv5.dll 是死代码**（系统 MCM v5.12.3 先加载）。**建议先只开 IG NPCSpawnGuards 实测，若够用可不勾选 CP2**
 - [ ] **RBM Poise/Stamina 系统调查结论（2026-09-19，未改）**：`Configs\RBM\config.xml` 里两个总开关 `<PostureEnabled>` + `<StaminaEnabled>`（默认均 1）。玩家侧调节靠 `<PlayerPostureMultiplier>`——**注意 RBMConfig.cs line 213-229 的解析是三档预设选择器，不是浮点乘数**：`"0"` → 1.0x（跟 AI 一样，**当前状态**）、`"1"` → 1.5x、`"2"` → 2.0x。反编译 `RBMAI\Stance.cs` 确认这个 multiplier **同时**乘 `maxPosture/postureRegenPerTick/maxStamina/staminaRegenPerTick`（池 + 回复绑定）。**要动的话**：`PostureEnabled=0` + `StaminaEnabled=0` 完全关整套（所有 agent 回归 vanilla）；或 `PlayerPostureMultiplier=1/2` 让玩家 1.5x/2x。**要独立控制回复速度**或**给玩家 0x 完全豁免**都需 DLL byte-patch（类似 GarrisonDrills 修改 #3）
 - [ ] **MapBlockadePSBridge · 自研桥接 mod（2026-09-19 立项，Phase 2A v0.1 已编译）**：让 PlayerSettlement 自建 settlement 被 MapBlockade 识别为可封锁目标。位置：本 repo `MapBlockadePSBridge/` 子目录，详见该子目录 `README.md`

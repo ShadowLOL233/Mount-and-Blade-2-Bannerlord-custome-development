@@ -693,6 +693,23 @@ Retinues 在**自有据点**把志愿兵 100% 换成自定义兵（`VolunteerSwa
 
 ---
 
+## Retinues 自创兵种跨档保存（Export/Import，2026-09-19 反编译）
+
+**结论：能跨档保存，不必每开一档重做。** `Retinues.Troops.TroopImportExport` 提供 XML 导出/导入。
+
+- **导出** `ExportUnified(fileName, includeCustom, includeCultures)` → XML（`XmlSerializer` of `RetinuesTroopsPackage`）
+  - `includeCustom` = 你的**氏族 + 王国自定义兵**（`FactionSaveData(Player.Clan)` + `Player.Kingdom`）
+  - `includeCultures` = 连所有文化/氏族兵种树一起打包
+- **导入** `ImportUnified(fileName, scope)`，`ImportScope` = `CustomOnly` / `CulturesOnly` / `Both` → `clanData.Apply(Player.Clan)` 套用到当前存档
+- **游戏内入口**：Retinues 管理 UI 的 **Export All / Import** 按钮（`ExecuteExportAll` / `PickAndImportUnified`，导入弹文件选择、最新在前）
+- **文件位置**：`<Retinues 模块>\Exports\<前缀>_yyyy_MM_dd_HH_mm.xml`；workshop 版 = `D:\SteamLibrary\steamapps\workshop\content\261550\3599557394\Exports\`（首次导出自动建）
+- ⚠ **在 workshop 目录 → Steam 更新/校验可能清空**，导出后**务必另存**一份到 workshop 之外（E: 盘 / 本 repo）
+- 向下兼容旧导出格式（`LegacyTroopImporter`）
+
+**流程**：当前档设计好 → Export All（勾 includeCustom）→ **备份 XML** → 新档进游戏后 Import（scope=CustomOnly）→ 整套兵种套回。
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

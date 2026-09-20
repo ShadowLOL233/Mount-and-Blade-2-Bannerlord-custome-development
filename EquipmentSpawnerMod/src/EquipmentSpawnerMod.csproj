@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>9</LangVersion>
-    <AssemblyName>Tier6Injector</AssemblyName>
-    <RootNamespace>Tier6Injector</RootNamespace>
+    <AssemblyName>EquipmentSpawnerMod</AssemblyName>
+    <RootNamespace>EquipmentSpawnerMod</RootNamespace>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -39,6 +39,14 @@
     </Reference>
     <Reference Include="TaleWorlds.InputSystem">
       <HintPath>$(BannerlordBin)\TaleWorlds.InputSystem.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="TaleWorlds.Localization">
+      <HintPath>$(BannerlordBin)\TaleWorlds.Localization.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="TaleWorlds.SaveSystem">
+      <HintPath>$(BannerlordBin)\TaleWorlds.SaveSystem.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-09-18
+**最后更新**：2026-09-20
 
 ## 目录
 - [环境与路径](#环境与路径)
@@ -71,7 +71,7 @@ dotnet build <mod>\src\<mod>.csproj -c Release
 # 部署（本次未做）：deploy.ps1 -GameRoot "D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord"
 ```
 
-- **2026-09-19 实测**：`Tier6Injector` + `MapBlockadePSBridge` 均**编译通过（0 warn / 0 err）**。本次**只验证编译，未部署进游戏**。
+- **2026-09-19 实测**：`Tier6Injector` + `MapBlockadePSBridge` 均**编译通过（0 warn / 0 err）**。本次**只验证编译，未部署进游戏**。（`Tier6Injector` 已于 2026-09-20 主机改名 `EquipmentSpawnerMod`；`MapBlockadePSBridge` 已弃用删除）
 
 ### 反编译已验证的结论
 
@@ -353,6 +353,209 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 - 与 RBM `RBMGarrisonRefillBehavior` 交互——两者都改 NPC 驻军补员。首次实测看：驻军流失是否合理、是否出现补员死循环
 - 玩家 fief 的 guard 会不会被自动派出去打不该打的目标（IG 有 town/castle 菜单里的 config UI，见 Bug #4）
 - 若不合意，回滚：批量 `.bak-NPCSpawnGuards-20260919` restore 即可
+
+### 10. Tier6Injector → EquipmentSpawnerMod（改名 + v1.4b 个人库，2026-09-20）
+
+**变更**：
+- 本地 repo：`Tier6Injector/` 复制并改名为 `EquipmentSpawnerMod/`；`csproj` AssemblyName/RootNamespace、`SubModule.xml` Id/Name/DLLName/SubModuleClassType、`deploy.ps1` target 路径、README 全部改齐。namespace 与类名换到 `EquipmentSpawnerMod.EquipmentSpawnerSubModule`。**旧 `Tier6Injector/` 已从 repo 删除。**
+- **v1.4b 落地（v1.4a Banner/Book 未做）**：新增 `PersonalStashBehavior : CampaignBehaviorBase`，字段 `ItemRoster _stash`；`SyncData` 走 `dataStore.SyncData<ItemRoster>("EquipmentSpawnerMod_PersonalStash", ref _stash)`（ItemRoster 是 vanilla `[SaveableField]` 类型，无需自写 TypeDefiner）。SubModule 覆盖 `protected override void OnGameStart(Game, IGameStarter)` 在 `game.GameType is Campaign` 时 `cgs.AddBehavior(new PersonalStashBehavior())`。
+- 三热键：Ctrl+Alt+I（inject，保留 v1.3 行为）/ Ctrl+Alt+O（party → stash，`IsGear + Horse/HorseHarness` 白名单）/ Ctrl+Alt+P（stash → party）；均为 `Ctrl+Alt` 双键守门 + 单键 edge-trigger（latched 三独立标志），避免重放。
+- **实现细节**：`AddToCounts(elt, +n) + AddToCounts(elt, -n)` 对称转账；反向 `for i = Count-1 .. 0` + `GetElementCopyAtIndex(i)` 迭代——`AddToCounts(-n)` 会引起 `RemoveZeroCountsFromRoster` 重排、正向遍历会漏。空库 P 键提示 "stash is empty"；无 CampaignBehavior 时 O/P 提示 "save + reload once"。
+
+**API 核对（2026-09-20 用 `ilspycmd 8.2.0.7535` 反编译 v1.4.7 DLL）**：
+
+| API | 位置 | 结论 |
+|---|---|---|
+| `CampaignBehaviorBase` | `TaleWorlds.CampaignSystem` | `abstract void RegisterEvents()` + `abstract void SyncData(IDataStore)`，必须两个都实现 |
+| `IDataStore.SyncData<T>(string, ref T)` | `TaleWorlds.CampaignSystem` | 泛型直接 sync，返回 bool |
+| `ItemRoster` | `TaleWorlds.CampaignSystem.Roster.ItemRoster` | `ISerializableObject`，`[SaveableField(0)] ItemRosterElement[] _data` + `[SaveableField(1)] int _count`，public 无参 ctor 存在 |
+| `CampaignGameStarter.AddBehavior(CampaignBehaviorBase)` | 同上 | 直接 `_campaignBehaviors.Add()` |
+| `MBSubModuleBase.OnGameStart(Game, IGameStarter)` | `TaleWorlds.MountAndBlade` | `protected internal virtual`，**override 必须 `protected` 匹配**（原类 `OnGameInitializationFinished` 是 `public virtual` 所以修改 #9 那一次报的 CS0507 是把 protected 改 public，这次相反） |
+
+**部署 + LauncherData 变更**：
+- `Modules\EquipmentSpawnerMod\SubModule.xml + bin\Win64_Shipping_Client\EquipmentSpawnerMod.dll` 部署完成；旧 `Modules\Tier6Injector\` 删除。
+- `Configs\LauncherData.xml`：`<Id>Tier6Injector</Id> v1.3.0.0` → `<Id>EquipmentSpawnerMod</Id> v1.4.0.0 IsSelected=true`；`DLLCheckData Tier6Injector.dll` 条目移除（launcher 下次启动会自动为 `EquipmentSpawnerMod.dll` 建条目）。备份 `LauncherData.xml.bak-pre-equipspawner-rename-20260920`。
+
+**构建验证**：`dotnet build -c Release` → 0 warn / 0 err（1.79s）；deploy.ps1 全部拷贝 OK。
+
+**Claude 不能驱动的实机验证**（用户操作项）：
+- launcher 里确认 Equipment Spawner Mod 已勾选、加载在 Sandbox 之后
+- 战役内 save+reload 一次 → 让 `PersonalStashBehavior.SyncData` 首次写盘
+- Ctrl+Alt+I / O / P 三个热键各测一次；观察消息栏计数正确
+- 长期观察：stash 大到几百 stack 时存档大小/加载时间是否明显影响
+
+### 11. MapBlockade + MapBlockadePSBridge 彻底卸载（2026-09-20）
+
+**决策**：用户 2026-09-20 决定放弃 MapBlockade 相关工作。MapBlockade 本体（v1.2.8）对自建 settlement 支持成本过高（face-index 精确烘焙 + `ReachabilityGraph.Build` 复杂）；替代方案 IG `NPCSpawnGuards` + BetterPatrols（backlog）已能覆盖对城堡驻军响应 raid 的需求。PSBridge 桥接虽然 Phase 2A 侦查全部验证成功（订阅事件命中、反射注入无异常），但收益不足以支撑维护成本。
+
+**清除范围**：
+- **本地 repo**：删 `MapBlockadePSBridge/` 子目录整个（含 `src/`、`SubModule.xml`、`deploy.ps1`、`README.md`）
+- **游戏部署**：删 `Modules\MapBlockade\`（本地安装、非 workshop）+ `Modules\MapBlockadePSBridge\`
+- **日志**：删 `Configs\ModLogs\PSBridge_20260919.log`、`PSBridge_20260920.log`
+- **LauncherData**：删 `<Id>MapBlockade</Id>` + `<Id>MapBlockadePSBridge</Id>` 两个 `UserModData`；删 `MapBlockade.dll` + `MapBlockadePSBridge.dll` 两个 `DLLCheckData`。备份同上 `.bak-pre-equipspawner-rename-20260920`（同一次批量改动）。
+
+**保留**：Modding Journal 里的 Bug #7（OSA shader）中提到 PSBridge log 观察的历史记录不动——那是历史诊断轨迹的一部分。
+
+### 12. Open Source Armoury RBM Balance Patch（自研 mod 落地，2026-09-20）
+
+**做了什么**：把此前 backlog 里的"OSA×RBM 数值平衡"整个立项 + 落地为独立 mod。位置 `OpenSourceArmouryRBMBalance/` 子目录，纯 XML override（无 DLL / 无 Harmony patch）。
+
+**架构**：
+- `SubModule.xml` 声明依赖 OSA/OSW/RBM，`DependedModuleMetadata order="LoadBeforeThis"` 强制加载顺序在这三者之后
+- `ModuleData/OSABalance_armor_override.xml`（9042 行、1507 件 armor 覆盖）via `<XmlName id="Items">`
+- `ModuleData/OSABalance_pieces_override.xml`（182 行、18 件 Blade piece 覆盖）via `<XmlName id="CraftingPieces">`
+- Bannerlord XML 加载惯例：**同 id Item / CraftingPiece 后加载者完全替换前者**（whole-node replacement，非 attribute-merge），故 override 必须保留原节点全部属性只改需变的值
+
+**生成器 `src/generate.ps1`**：
+- 输入：OSA / OSW workshop 目录 + RBM / RBM_WS workshop 目录
+- 输出：上述两个 XML；跑一次约 5-10 秒
+- 幂等 + 完全数据驱动：OSA / RBM 版本升级后重跑一次即可
+- 核心逻辑：
+  1. 用 `TaleWorlds.Core.DefaultItemValueModel.CalculateArmorTier` 公式给每件 armor 算 tier（ilspycmd 反编译核实）
+  2. 建 RBM baseline 查询表：(Type, mat, tier, slot) → avg（n≥3）；material-level fallback (Type, mat, ANY tier)
+  3. 对每件 OSA armor：查 target avg，`max(1.0, factor)` 只升不降，跳过 `factor ≤ 1.05`
+  4. `LegArmor` 里 id 匹配 `/shoes|boots|moccasins/` 全跳（OSA cloth "腿甲" 实为鞋子）
+  5. `Cape.arm` 特例：flat target = 12
+  6. 头盔延伸：`mat ∈ {Chainmail, Plate}` 且 tier ≥ 4 → 补 `body_armor = head × 0.43` + `arm_armor = head × 0.37`
+  7. 武器 Blade piece：允许 factor < 1（RBM 有意压武器伤害 ~30%），仅跳过 `0.95 ≤ factor ≤ 1.05`
+
+**产出统计（2026-09-20 首跑）**：
+- 1507 / 1648 armor 被 override（91%）
+- 640 件头盔获颈+肩延伸（Chainmail/Plate T4+）
+- 59 件 shoes/boots/moccasins 跳过
+- 18 / 18 Blade piece 被 override
+- 最大值合理：head 102 / body 99 / arm 73 / leg 75（全部在 RBM T6 max 内：head 150 / body 135 / arm 100 / leg 122）
+
+**抽样验证**：
+- `AR_aserai_lamellar_a`（Plate T6 body armor）：body 48/leg 12/arm 10 → 77/31/27，比例匹配 ×1.61/2.61/2.71 ✓
+- `ao_subuwari_noblemans_helmet`（Plate helmet）：head 38 无延伸 → head 84 + body 36 (=84×0.43) + arm 31 (=84×0.37) ✓
+- `AR_axe_head_a`（axe Blade）：swing 3.4 → 0.93 (=3.4×0.98/3.6) ✓
+
+**部署 + LauncherData**：
+- `Modules\OpenSourceArmouryRBMBalance\SubModule.xml + ModuleData/*.xml` 部署完成
+- LauncherData 加 `<Id>OpenSourceArmouryRBMBalance</Id> v1.0.0.0 IsSelected=true`
+
+**Claude 不能驱动的实机验证**（用户操作项）：
+- launcher 里确认 mod 在 OSA/OSW/RBM 之后加载
+- 战役内 spawn 一件 OSA 头盔 / 身甲 / Cape / 手甲 / 腿甲，看 armor 数值是否已升到 RBM 尺度
+- 打一场战斗看伤害曲线是否变化合理（护甲更硬、武器伤害对 T6 装备穿透略难）
+- 若某件 OSA 装备手感失控（overtuned 或 undertuned），复算 `_scratch_*.ps1` 定位 cell、微调规则
+
+### 13. EquipmentSpawnerMod v1.5 - OSA 全 tier 注入 + 每城仓库（2026-09-20）
+
+**背景**：Balance Patch 落地后需要一键把 OSA 装备（含大量 T1-T2 民用/中低段）都拉进主队做前后对比；同时主队背包 4-6k kg 的重量上限迫使玩家分散装备到多个持久化容器——个人库（PersonalStash，v1.4）只有一份、随玩家走，远征时不方便"回大本营换套备用甲"。
+
+**两项扩展**：
+
+- **OSA id/mesh 前缀白名单**：`AR_ AD_ AO_ BA_ DZ_ TV_ ao_ ap_ bl_ hmj_ tv_`——匹配 `ItemObject.StringId` 或 `ItemObject.MultiMeshName` 任一起始的物品 = OSA 家族。这类物品在 Ctrl+Alt+I 中**绕过 T3+ tier 门槛**、无差别注入。**mesh 前缀是必要的补充**：OSA 部分文件（`OSA_bl_newequipment_items.xml` / `OSA_ap_armorpack_items.xml`）里的物品 id 用了 vanilla 风格（`pauldron_cape_z` / `mercenary_padding_cape`），只靠 id 会漏掉 20+ 件——但它们的 mesh 是 `bl_*` / `ap_*` 命名、mesh check 抓得住。合并两条 check = 覆盖 100% OSA。前缀源自 workshop 3011479883/3010984416/3010990914 三个 mod 的 `<Item id=` 频率统计（详见 sess 讨论）。**扫描频率参考**：AR_ 956 件、TV_ 596、ao_ 180、DZ_ 53、hmj_ 14、AD_ 8、BA_ 4——覆盖 96% 直接命中，剩余 4% 靠 mesh 前缀补齐
+
+- **每 fief 独立城仓 `TownStashBehavior`**：`Dictionary<Settlement.StringId, ItemRoster>` 存每个 clan 拥有的 settlement 的独立库。**存取都要求玩家 clan 拥有该 settlement + 玩家/主队当前在该 settlement 内**（`Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan`）。Bannerlord SaveSystem 原生支持 `Dictionary<string, ItemRoster>`（string 是 primitive、ItemRoster 是 `ISerializableObject`）——反编译核实 `IDataStore.SyncData<T>(string, ref T)` 泛型接受即可。fief 不再是 clan 拥有时（转手/丢失）→ 库仍存在于字典里、无法访问但不会丢；再夺回来即恢复访问
+
+**热键映射**（Ctrl+Alt+ 前缀）：I 注入 / O 主队→个人库 / P 个人库→主队 / **U 主队→当前城仓 / Y 当前城仓→主队**
+
+**编译验证**：0 warn / 0 err；新增 `TaleWorlds.Localization` 引用（Settlement.Name 是 `TextObject` 类型，第一次 build 报 CS0012 缺引用、加进 csproj 后过）；DLL 增 ~2 KB
+
+**LauncherData 已更新**：`<Id>EquipmentSpawnerMod</Id> v1.5.0.0`
+
+**Claude 不能驱动的实机验证**（用户操作项）：
+- launcher 确认 EquipmentSpawnerMod 勾选、Ctrl+Alt+I 消息栏出现"OSA below T3 included: N"提示
+- 战役内进自家 fief → `Ctrl+Alt+U` 主队装备→城仓；换个 fief → `Ctrl+Alt+Y` 应"stash is empty"（不同 fief 库隔离）；回原 fief → `Y` 应能取回
+- 存 + 读档 → 城仓字典内容保留（SyncData 落盘正常）
+
+### 14. EquipmentSpawnerMod v1.5.1 - SaveableTypeDefiner 修存档失败（2026-09-20）
+
+**bug**：v1.5 部署后用户报告"无法保存游戏"。反编译核实：`TaleWorlds.SaveSystem.SaveableBasicTypeDefiner.DefineGenericStructDefinitions` **只预注册了 7 种 Dictionary**：`Dictionary<int,string> / <string,int> / <int,int> / <string,string> / <long,int> / <string,object> / <string,float>`。我们用的 `Dictionary<string, ItemRoster>` **不在其中**——SyncData 时 `_definitionContext` 找不到该 container definition、抛异常、整个存档中止。这也是 v1.5 修改 #13 里"若字典 sync 失败"回退方案预警的场景。
+
+**修复**：加一个 `EquipmentSpawnerTypeDefiner : SaveableTypeDefiner`，Bannerlord SaveSystem 初始化时会自动反射发现所有 `SaveableTypeDefiner` 子类、调用其 `Define*` hooks。在 `DefineContainerDefinitions()` 里 `ConstructContainerDefinition(typeof(Dictionary<string, ItemRoster>))` 显式注册容器。`saveBaseId = 9527100` 是我们 mod 的 save 命名空间（vanilla 用 30000，本 mod 挑一个远离 vanilla 与常见 mod 的值避冲突）。
+
+**csproj 加 `TaleWorlds.SaveSystem.dll` 引用**（含 `SaveableTypeDefiner` 类型）。首次 build 报 CS0234/CS0246 缺 assembly，加进 csproj 后 0 warn / 0 err。**DLL 版本升到 v1.5.1**，已部署。
+
+**其他澄清（用户 2026-09-20 报告）**：
+- 用户观察"vanilla 城内 dropoff UI 只接受材料/牲畜，无法存装备" — 追查为 **`NavalDLC.dll`** 里的"dropoff"字符串命中；NavalDLC 的 dropoff UI 是**海运货舱卸货界面**，语义 = 从船货舱卸 cargo (trade goods) 到港口 town supply；按设计只接受材料/牲畜/食物，装备（个人 inventory）不进货舱。这与我们的城仓热键 (Ctrl+Alt+U/Y) 完全是**两条互不相关的路径**：NavalDLC = 商队货运，我们 = fief 装备仓库。装备想存到城里就用 Ctrl+Alt+U
+
+### 15. OpenSourceArmouryRBMBalance v1.1 - weight 归一化（2026-09-20）
+
+**背景**：用户实机测后报告"OSA 装备大多比 RBM 调整后重 1-2 倍"。数据核实后确认——**非全线**，但 HeadArmor Chainmail 特别严重（OSA 3.61 vs RBM 1.62，**2.2× 重**），其他类别多在 +15-25% 或已 OK 甚至更轻（Plate BodyArmor OSA 15.6 vs RBM 19.3 反而 -19%）。
+
+**扩展 `generate.ps1` weight pass**：
+- 复用现有的 (Type, mat, tier) → material fallback ladder，加 `weight` 作为第 5 维查询键
+- 规则：`factor = rbm_weight_avg / osa_weight_avg`，**只在 `factor < 0.95` 时应用**（`min(1.0, factor)` 语义，只减不增，避免把已经比 RBM 轻的 Plate 身甲反向加重）
+- 下限 clamp：`newWeight >= 0.1` kg（避免出现零重量装备）
+- 写入位置：修改克隆节点的 `<Item weight="X">` 属性（不动 `<Armor>` 子元素——weight 是 Item 顶层属性）
+
+**产出统计（v1.1 首跑）**：
+- 1588 件 armor 被 override（前版 1507，+81 件因 weight 修改也触发；不重不下调触发的仍占多数）
+- **1115 件 weight 被下调**（68% 全 OSA armor 池，大量集中在 HeadArmor Plate/Chainmail、Cape Plate、BodyArmor Chainmail、HandArmor/LegArmor Cloth+Leather）
+- 640 头盔延伸不变、59 shoes 跳过不变、18 武器 piece 不变
+
+**抽样验证**：
+- `ao_subuwari_noblemans_helmet`（Plate helmet）：weight 1.8 → 1.54 kg（减 14%，符合 Plate helmet trim 期望值）
+- `AR_aserai_lamellar_a`（Plate BodyArmor）：weight 15.1 → 15.1 kg **不变**（OSA 15.1 vs RBM avg 19.3 → factor 1.28 > 0.95 → 跳过）✓
+
+**技术注意**：weight 不影响 armor tier 计算（tier 从 armor 值算，不含 weight），所以 weight 修改独立于此前的 (Type, mat, tier) 分层结构。armor 值不变、tier 不变、buff 系数不变——weight 修改是纯附加 pass。
+
+**LauncherData 升到 v1.1.0.0**，SubModule.xml + override XML 已重部署。**下次重启游戏即生效**。
+
+### 16. RetinuesCultureFilter v1.0 - Retinues Troop Editor 装备选择文化过滤（2026-09-20）
+
+**背景**：用户实机测过 v1.5 EquipmentSpawner + v1.1 Balance Patch 后要"在 Retinues Troop Editor 里按文化过滤装备"——用于借用 Retinues 内置的属性对比 chevron 功能按文化系统性审视 OSA 装备平衡。Retinues 的搜索框虽然名义支持文化匹配（`if (!obj2.Contains(search) && !text3.Contains(search) && !text4.Contains(search)) return text5.Contains(search);` 处 text5 就是 culture 名称的 fallback），但**装备名不含文化关键词的物品会漏**且**其他字段命中会遮蔽 culture 分支**——需要显性文化过滤器。
+
+**反编译核实的技术边界**：
+- `Retinues.GUI.Editor.VM.Equipment.List.EquipmentListVM` 是 **`sealed`**——不能继承，只能用 UIExtenderEx `[ViewModelMixin]` 或 Harmony patch
+- `EquipmentRowVM.RowItem` 是 public `WItem` 引用；`WItem.Culture` 是 public `WCulture`，`WCulture.StringId` 是 public string——精确文化匹配可行
+- Retinues 的 `ClanScreen_TroopsPanel.xml` 是完整 368 KB 自定义 prefab（不是 vanilla widget 的 patch），跨 mod 再向其注入 UI 元素易随 Retinues 更新失效
+
+**架构（v1.0 保守方案）**：
+- **Harmony postfix on `EquipmentListVM.RefreshFilter`**：Retinues 自然过滤跑完后，我们在 postfix 里遍历 `EquipmentRows` 剔除 `row.RowItem.Culture.StringId != wanted` 的项；空 row（unequip 占位）保留
+- **静态 `CultureFilterState`**：holds 7-slot cycle 表 + `CurrentIndex`，被 hotkey 更新 + Harmony patch 读取。避免 mixin 与 Harmony 之间的实例引用复杂度
+- **热键 Ctrl+Shift+C 循环** All → Empire → Vlandia → Aserai → Battania → Sturgia → Khuzait → All；Ctrl+Shift+X 清空到 All
+- **no XAML injection**：跨 Retinues 版本鲁棒；如需 dropdown UI 是 v1.1 潜在改进
+
+**触发时机**：postfix 只在 `RefreshFilter` 自然触发时运行（切换装备槽、翻页、改搜索文本）。切换文化后需自然触发一次才能看到新过滤结果——实用上点一下别的装备槽再回来即可。
+
+**csproj 引用**：TaleWorlds.Core/CampaignSystem/Library/MountAndBlade/ObjectSystem/Localization/InputSystem + 0Harmony + Bannerlord.UIExtenderEx（保留但 v1.0 未用其属性） + Retinues。首次 build 报 TaleWorlds.InputSystem + Game 类缺 assembly（漏了 TaleWorlds.InputSystem.dll + `using TaleWorlds.Core;`），修完 0 warn / 0 err。DLL ~10 KB。
+
+**LauncherData 加 `<Id>RetinuesCultureFilter</Id> v1.0.0.0 IsSelected=true`**（v1.0 首次），加载在 Retinues 之后。
+
+**Claude 不能驱动的实机验证**：
+- launcher 确认加载在 Retinues 之后
+- 战役里进 Clan Screen → Retinues Troop Editor → 编辑某兵种装备 → 打开装备列表
+- 按 Ctrl+Shift+C：消息栏显示 "[Aserai]"；点一下装备槽切换刷新；列表应只剩 Aserai 装备
+- 若过滤不生效：检查 RefreshFilter 是否有被 postfix 拦截（可能 Retinues 使用 override 关键字导致 Harmony 定位到错方法）——回退方案：改为 patch 私有 `Build()` 方法
+
+### 16b. RetinuesCultureFilter v1.0 实测失效诊断（2026-09-20 用户实测反馈）
+
+**用户报告**：v1.0 部署后按 Ctrl+Shift+C 切文化 → 点装备槽 → 列表毫无变化。
+
+**根因（反编译定位）**：Retinues 的 `EquipmentListVM.OnSlotChange()` **直接调 `Build()`**，从不经过 `RefreshFilter()`。所以我们挂在 RefreshFilter 上的 postfix 只在用户改搜索文本时触发，点装备槽时静默不生效。
+
+**Fix**（下次 session 开工第一件事，约 5 分钟）：把 `[HarmonyPatch(typeof(EquipmentListVM), nameof(RefreshFilter))]` 改到 `[HarmonyPatch(typeof(EquipmentListVM), nameof(Build))]`。`Build()` 是 `public void`，Harmony 可直接 patch；OnSlotChange/OnFactionChange/RefreshFilter 三条路径都会走到 Build，一网打尽。
+
+**详细诊断笔记**：见 `RetinuesCultureFilter/DIAGNOSTIC_NOTES.md`——包含：
+- 完整调用链反编译痕迹（OnSlotChange → Build，未经 RefreshFilter）
+- Culture.StringId 值格式核实（`"aserai"` 小写无前缀，v1.0 CycleOrder 格式正确不需改）
+- `[SafeClass]` attribute 深入分析（marker only，无实际 IL 重写，对 Harmony 无影响）
+- v1.1 可视 dropdown UI 的完整技术路径（用 `SortButtonWidget × 7` 而非真 Dropdown；XAML 注入点 `ClanScreen_TroopsPanel.xml` 第 3027-3081 行 filter row 之后；`PrefabExtensionInsertAsSiblingPatch` XPath 精确定位；UIExtenderEx VM mixin 骨架）
+- 完整 API 边界表（下次快速上手）
+
+**用户 2026-09-20 决议**：为防 chat context 断链丢信息，本轮不实施 fix，只挖信息 + 写文档。下次 session 开工按 DIAGNOSTIC_NOTES.md 顺序推进：① fix filter（1 行改动）→ ② 实机验证 → ③ 若确要 dropdown UI，实施 v1.1
+
+**追加设计文档 `DESIGN_v1.1_UI.md`（2026-09-20，用户明确要 v1.1）**：用户 2026-09-20 明确表态"Dropdown UI 是必要的开发步骤"——完整设计文档已入 `RetinuesCultureFilter/DESIGN_v1.1_UI.md`（约 500 行），self-contained，包含：
+
+- **§1 设计决策**：不用真 dropdown popup 而用 **7-button segmented row**（vanilla 无独立 Dropdown widget，且视觉与 Retinues 现有 SortButtonWidget 一致）
+- **§2 目录结构** 变更清单
+- **§3 完整代码骨架**（可复制粘贴即用）：Mixin 类 / XAML 片段 / PrefabExtension 装饰器 / SubModule 集成 / Harmony patch v1.1 target 修正（`RefreshFilter` → `Build`）
+- **§4 XAML 注入路径深挖**：`descendant::ListPanel[@Id='SortButtons' and .//EditableTextWidget[@Text='@FilterText']]` 精确 XPath 消除与 Sort Row 同 Id 撞名的问题；Plan B/C 备选路径
+- **§5 逐步 checklist**：11 步顺序完整落地
+- **§6 排错清单**：6 类症状 × 排查步骤
+- **§7 v1.2 备忘**：动态 culture 列表 / 5th sort mode / 持久化 filter 选择 / 图标化
+- **§8-9 API 快查表 + 版本快照**：跨-session 兼容性对齐
+
+**下次 session 开工顺序**（从 DIAGNOSTIC_NOTES + DESIGN_v1.1_UI 合并出）：
+1. fix v1.0 filter（DIAGNOSTIC_NOTES §fix，1 行改动，~5 min）
+2. 实机验证 hotkey filter 现在能正常工作
+3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
+4. journal 加 modification #17 记录 v1.1 落地
 
 ---
 
@@ -869,7 +1072,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ## 待办 / 开放问题
 
-- [ ] 手动在 Steam 里关闭 Bannerlord 的 Steam Cloud sync（Properties → General）
+- [x] ~~手动在 Steam 里关闭 Bannerlord 的 Steam Cloud sync（Properties → General）~~ ← 2026-09-20 用户确认已关
 - [x] ~~进游戏在 town/castle 菜单里找 IG ribbon，打开 Food Gathering~~ ← 已通过直接改 XML 完成（修改 #5）
 - [ ] 观察新战役里 RBM Campaign 是否正确工作（看 `RBM\logs\garrison\`、消息栏 spoils/ledger）
 - [ ] 验证 Garrison Drills 训练效果翻倍（进城 → Train troops → 看 UI +20/+60/+100 XP）
@@ -884,34 +1087,183 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [ ] **Retinues · Clan Traditions 跳过**：Clan Traditions 系统（族群传统）是否有内置开关能整个禁用/跳过？如果没有，找它绑定的 CampaignBehavior 名称，评估直接不加载该 behavior 的可行性
 - [x] ~~**RBM · Bot 武器优先度**~~ ← **2026-09-18 结案**：RBM AI **不重写** vanilla 武器选择评分，只做辅助（posture 掉武器、盾墙方向、骑射队分配）；skill 通过 handling/speed 间接影响 AI 评分。完整 combo 表、"废装备"警告、骑马武器长度限制、Cataphract Lance 副武器陷阱见 `TroopDesignReference.md`
 - [ ] **PlayerSettlement · 村庄绑定机制**：扒 `PlayerSettlement.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 时能否指定绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）来打造食物爆棚 fief。附带查：绑定村庄数量是否有硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
-- [ ] **Tier6Injector · 自研模组（2026-09-19 立项 → v1.3 已发）**：热键 Ctrl+Alt+I 一键给主队 **Tier 3-6** 装备 ×20 + 对应战马/战马鞍 ×20，每件挂 `ItemModifierGroup` 里 `ItemQuality` 最高的 modifier（Legendary > Masterwork > Fine > Common > Inferior > Poor）。位置：本 repo `Tier6Injector/` 子目录，详见该子目录 `README.md`
-- [ ] **OSA×RBM 数值平衡（2026-09-19 立项，探讨完成待实施）· 需双向**：建个人纯 XML 覆盖 mod。**护甲**拉高到 RBM 尺度（材质相关 ×~1.5–1.8，跳过 leather）；**武器**部件是原版尺度而 RBM 已砍武器至 ~30% → 需**降** damage_factor ×~0.3（方向与护甲相反）。详见"OSA 三件套 × RBM 兼容核对"节的护甲/武器两小节。方案 A 脚本打底 + C 精修。**尚未生成 / 未部署**
+- [x] ~~**Tier6Injector · 自研模组（2026-09-19 立项 → v1.3 已发）**~~ ← **2026-09-20 改名 `EquipmentSpawnerMod` v1.4，加入个人库**（详见下方 v1.4 条 + 2026-09-20 日志）。位置：本 repo `EquipmentSpawnerMod/` 子目录（旧 `Tier6Injector/` 已删）、详见该子目录 `README.md`。热键：Ctrl+Alt+I 注入 Tier 3-6 装备 ×20 + 战马 ×20；Ctrl+Alt+O 主队→个人库；Ctrl+Alt+P 个人库→主队。个人库通过 `PersonalStashBehavior : CampaignBehaviorBase` + `dataStore.SyncData<ItemRoster>()` 持久化到存档
+- [x] ~~**OSA×RBM 数值平衡（2026-09-19 立项）**~~ ← **2026-09-20 结案**：作为 `OpenSourceArmouryRBMBalance` mod 落地（v1.0.0，纯 XML override，1507 件 armor + 18 件 Blade piece override + 640 件头盔颈/肩延伸）。详见修改 #12。武器系数 + 护甲跨槽结构同时处理完毕。**待用户实机验证 + 若手感失控则微调**
+
+- [x] ~~**OSA 护甲 vs RBM 跨槽覆盖分析（2026-09-20 实测 + 二次修订）**~~ ← **2026-09-20 已落地为 `OpenSourceArmouryRBMBalance` mod**（见修改 #12）：用户观察到 RBM 装备常给多个 body slot 加护甲。**全量扫描**（RBM 664 件 + OSA 1648 件，全部 OSA_*.xml 都覆盖，非仅 ar_reforms 系列）：
+
+  **RBM 跨槽覆盖模式（RBM 沉浸感与真实感的关键结构）**：
+
+  | RBM ItemType | n | head槽 | body槽 | arm槽 | leg槽 | 结构说明 |
+  |---|---:|---:|---:|---:|---:|---|
+  | HeadArmor（头盔） | 256 | **100%** avg 63.9 | **54%** avg 27.3 | **50%** avg 23.4 | 0% | 头盔延伸颈甲+肩甲（"aventail 模型"） |
+  | BodyArmor（身甲） | 246 | 1% | **99%** avg 29.6 | **93%** avg 18.4 | **100%** avg 21.4 | 身甲覆盖上臂+大腿 |
+  | Cape（披风/斗篷） | 91 | 0% | **100%** avg 23.1 | **0%** | 0% | **纯 body_armor，绝无 arm** |
+  | HandArmor（手甲） | 32 | 0% | 0% | **100%** avg 35.2 | 0% | 单槽 |
+  | LegArmor（腿甲） | 39 | 0% | 0% | 0% | **100%** avg 31.4 | 单槽 |
+
+  **OSA 现状全量（14 个 XML 文件、1648 件）**：
+
+  | OSA ItemType | n | head槽 | body槽 | arm槽 | leg槽 | vs RBM |
+  |---|---:|---:|---:|---:|---:|---|
+  | HeadArmor  | 843 | **100%** avg 36.4 | **0%** | **0%** | 0% | head 57%；无颈/肩延伸 |
+  | BodyArmor  | 388 | 0% | **100%** avg **31.9** | **96%** avg 9.1 | **99%** avg 11.3 | **body 已 107%（不 buff）**、arm 49%、leg 53% |
+  | **Cape**   | 310 | 3% | **97%** avg 12.5 | **69%** avg 6.9 | 0% | body 54%；**arm 69% 覆盖是 OSA 特有设计**（RBM 侧 0%） |
+  | HandArmor  | 46  | 0% | 0% | **100%** avg 17.6 | 0% | arm 50% |
+  | LegArmor   | 61  | 0% | 0% | 0% | **100%** avg 14.6 | leg 47% |
+
+  **关键设计差异（用户 2026-09-20 观察 + 决议）**：
+  - OSA 有 213 件 Cape 带 arm_armor（69% 覆盖率）——命名清一色 `AR_*_lamellar_cape`/`_scale_cape`/`_shoulder_a-z`。**这是 OSA 系统性肩甲（pauldron/spaulder/mantle）设计约定**，RBM 侧完全没有对应实例。
+  - **RBM 把"shoulder arm 覆盖"归到头盔的 arm_armor 字段（aventail 模型）**；**OSA 把它归到 Cape 的 arm_armor 字段（pauldron 模型）**。两种设计等价、只是槽位分工不同。
+  - 用户偏好 RBM 环境下 arm 保护充实——决议：**尊重 OSA Cape 肩甲约定 + 有节制地并入 RBM 头盔 aventail 模型**（两条路径都启用，Cape 侧 buff 到中档而非全档，避免暴堆）。
+
+  **落地系数（2026-09-20 用户决议）**：
+
+  | slot 修改 | 现况 avg | 目标 avg | ×倍率 | 备注 |
+  |---|---:|---:|---:|---|
+  | HeadArmor.head_armor         | 34.7 | 63.9 | **×1.84** | vs RBM 全量 |
+  | HeadArmor.body_armor（新增） | 0    | 27.3 | 补一个 | 仅 Chainmail/Plate 头盔；Cloth/Leather 跳过 |
+  | HeadArmor.arm_armor（新增）  | 0    | 23.4 | 补一个 | 同上 |
+  | BodyArmor.body_armor         | 31.9 | 29.6 | **不动**（OSA 已略强） | 保持 |
+  | BodyArmor.arm_armor          | 9.1  | 18.4 | **×2.02** | |
+  | BodyArmor.leg_armor          | 11.3 | 21.4 | **×1.89** | |
+  | Cape.body_armor              | 12.5 | 23.1 | **×1.85** | |
+  | Cape.arm_armor（保留 OSA 约定） | 6.9 | 18.4 | **×2.66**（不 ×3.4） | 中档：向 RBM.BodyArmor.arm avg 看齐、非 HeadArmor.arm，避免与头盔 arm 延伸堆叠爆炸 |
+  | HandArmor.arm_armor          | 17.6 | 35.2 | **×2.00** | |
+  | LegArmor.leg_armor           | 14.6 | 31.4 | **×2.15** | |
+
+  **OSA 头盔 material_type 分布**（Chainmail/Plate 白名单实际会命中多少）：Plate 772 + Chainmail 20 = **792 件（94%）**；Leather 27 + Cloth 24 = 51 件（6%）跳过。OSA 对轻头饰标 Plate 也很常见（stylized 分类偏宽），实际接近"除布/皮 hood 外的所有头盔"都 buff——这是可接受的默认。
+
+  **落地建议 · 三次修订（2026-09-20 tier 分层分析后）**：flat × 与 material-only 都被验证不够精细，采用**分层 + fallback + 排除**三条规则。
+
+  **前置事实（ilspycmd 反编译 `TaleWorlds.Core.DefaultItemValueModel.CalculateArmorTier`）**：
+  - Armor tier = `clamp(round(raw × 0.1 - 0.4), 0, 6) - 1`，其中 `raw = 1.2·head + body + leg + arm`，再按 ItemType 乘 (LegArmor 1.6 / HandArmor 1.7 / HeadArmor 1.2 / Cape 1.8 / BodyArmor 1.0)
+  - **无 XML 覆盖字段可用**：RBM 只在 ranged 15 处用 `tier_override`；OSA 全线不用；vanilla armor 全线不用。所以 tier 100% 由公式算
+  - 有个坑：**tier 是从 armor 值反推的**——所以 "OSA T6 vs RBM T6" 的比较里，两侧 T6 都是"高值 → 高 tier"，但同 tier 的绝对值仍可差很多（RBM T6 Plate head_armor avg **84.8** vs OSA T6 Plate head_armor avg **48**，×1.77 buff 是真实结构差距）
+
+  **(Type, mat, tier) 分层扫描的关键发现**：
+
+  | 已确认要 buff（cell 密度足够）| RBM avg | OSA avg | × |
+  |---|---:|---:|---:|
+  | HeadArmor Plate T6 head | 84.8 | 48.0 | ×1.77 |
+  | BodyArmor Plate T6 body | 75.4 | 46.8 | ×1.61 |
+  | BodyArmor Chainmail T6 body | 51.7 | 38.0 | ×1.36 |
+  | BodyArmor Plate T6 arm | 36.0 | 13.3 | ×2.71 |
+  | BodyArmor Chainmail T6 arm | 34.0 | 14.0 | ×2.43 |
+  | BodyArmor Plate T6 leg | 45.2 | 17.3 | ×2.61 |
+  | BodyArmor Chainmail T6 leg | 32.6 | 16.5 | ×1.98 |
+
+  | 已确认**不要** buff（OSA 已 ≥ RBM）| RBM avg | OSA avg | × |
+  |---|---:|---:|---:|
+  | **HeadArmor Chainmail T6 head** | 39.5 (n=2) | 48.4 (n=15) | ×0.82 — flat 会毁掉 |
+  | **HeadArmor Plate T2 head** | 15.0 | 19.0 | ×0.79 — OSA 已略强 |
+  | **BodyArmor Cloth T2 body** | 8.1 | 14.7 | ×0.55 |
+  | **BodyArmor Leather T2 body** | 8.5 | 16.5 | ×0.52 — OSA leather 反而超 RBM |
+  | **BodyArmor Leather T3 body** | 12.4 | 23.0 | ×0.54 |
+  | **BodyArmor Cloth T3 arm** | 5.7 | 6.4 | ×0.89 |
+
+  | 排除类（语义不匹配、绝不 buff）|
+  |---|
+  | **OSA Cloth LegArmor 全 15 件** = `simple_shoes / TV_battania_boots_* / TV_moccasins_* / DZ_empire_boots_a / ao_leather_shoes / leather_shoes` — **全是鞋/靴**（Tier 1，leg_armor 1-5），语义等同 vanilla 民用鞋子。RBM Cloth LegArmor 那 7 件是布料腿甲/裹腿。**不 buff、不当同类比较**。落地脚本要按 id keyword 排除 `shoes|boots|moccasins` |
+
+  | Cape.arm slot（RBM 完全无对应数据）| 只 OSA 有 |
+  |---|---|
+  | Chainmail T2-T4: OSA 4-8 range | 保持 OSA 原值，或**统一目标 arm avg ≈ 10-12**（比 RBM.BodyArmor.arm 略低，避免叠加过强）|
+  | Plate T4 106 件 avg 8 | 同上 |
+
+  **落地脚本规则 · 用户 2026-09-20 拍板版**：
+  ```
+  for each OSA item:
+    if Type == LegArmor and id matches /shoes|boots|moccasins/: skip
+    compute current tier via formula (raw × 0.1 - 0.4 → clamp+round → -1)
+    for each of item's non-zero slot values (head/body/arm/leg):
+      key = (Type, mat, tier, slot)
+      target = lookup_avg(key, fallback ladder below)
+      current = item.slot_value
+      if target is null: no buff
+      else:
+        factor = target / (avg of OSA at same key)
+        if factor <= 1.05: SKIP (no downscale, no near-equal churn) ← "max(1.0, factor)" rule
+        else: item.slot_value = round(current × factor)
+
+  fallback ladder for target:
+    1. RBM avg at (Type, mat, tier)     if n_rbm >= 3
+    2. RBM avg at (Type, mat, any tier) if n_rbm >= 3
+    3. null → no buff
+
+  Cape.arm slot special case: target = 12.0 flat  ← 用户定 (×1.74 系数、"pauldron 辅助"定位)
+                              only for OSA items where arm_armor > 0
+
+  for each OSA HeadArmor with mat in {Chainmail, Plate}:
+    if computed_tier < 4: skip (light headwear, no aventail)
+    add body_armor = round(head_armor × 0.43)
+    add arm_armor  = round(head_armor × 0.37)
+  ```
+
+  **三处审慎点已定案（2026-09-20 用户拍板）**：
+  1. **Chainmail T6 头盔（OSA 48.4 > RBM 39.5）** → **不动** — `factor ≤ 1.05` 规则自然跳过
+  2. **Leather T2/T3 身甲（OSA 已 1.8-1.9× 强于 RBM）** → **不动** — 同上规则跳过；OSA "精工皮甲"定位保留
+  3. **Cape.arm slot（RBM 无基线）** → **buff × 1.74**（目标 avg ≈ 12）— 保持"肩甲辅助 arm"定位，不与头盔 aventail 全量叠加
+
+  **等效保护 vs RBM**（buff 后预估）：
+  - 全副装备（mail 头盔 + pauldron cape + Plate 身甲 + gauntlet + greaves）：head cover ≈ RBM；shoulder cover 略 > RBM（cape 提供 12 + 头盔延伸 20 ≈ 32；RBM 只有头盔 23）；body / leg / hand cover ≈ RBM
+  - 单穿 mail 头盔（无 cape）→ head + neck + shoulder cover 完全等同 RBM
+  - 单穿 pauldron cape（无 mail 头盔）→ body + arm 12（OSA 特色，RBM 没有）
+  - **Arm slot 总量**：轻装 ≈ 6-10，中装 ≈ 20-30，重装 ≈ 45-55（RBM 相似档位是 ≈ 5、20-25、40-50），OSA 略高但 RBM armor damage 衰减模型自然容纳
+
+  **脚本**：`_scratch_tier_strat.ps1` + `_scratch_final_matrix.ps1` + `_scratch_material_strat.ps1`（repo 根，可复算完整矩阵），落地为 XML override mod 后可删
 - [ ] **精英志愿兵修复（2026-09-19 探讨，未做）**：RBM `DefaultVolunteerModelPatch` 把精英志愿兵砍成全局 15%、废掉 vanilla"城堡村→精英"。可选自研 Harmony mod **恢复 vanilla 城堡村→精英线**（`[HarmonyBefore(RBM)]` + `Priority.First`，全局生效）。"只影响玩家阵营"版因 notable 池共享 + Retinues 自有据点 100% swap → 判定为**空转不划算**（详见"新兵/志愿兵生成机制"节）。自家 fief 要精英优先走 Retinues 设计
 - [x] ~~**CalradianPatrolsV2 v4.0.2 安装（2026-09-19）**~~ ← **2026-09-19 结案：不可用，launcher 自动禁用**。反编译核实是 v1.2.8 → v1.4.7 API 断裂：3 个 Custom model 类跟 v1.4.7 abstract 签名对不上——`CustomWageModel` 用 `MaxWage`/`GetTotalWage(MobileParty, bool)`/`int GetTroopRecruitmentCost(...)`，v1.4.7 要 `MaxWagePaymentLimit`/`GetTotalWage(MobileParty, TroopRoster, bool)`/`ExplainedNumber GetTroopRecruitmentCost(...)`；`CustomBanditDensityModel` 缺 6 个新 abstract（`NumberOfMinimumBanditPartiesInAHideoutToInfestIt` 等），有个多余 `NumberOfMaximumLooterParties`；`CustomSettlementSecurityModel` 缺 6 个新 abstract（`ThresholdForTaxCorruption` 等）。**结果**：launcher 静态检查发现 abstract 不匹配→标 `IsDangerous=true`+auto-disable，butterlib 日志无 CP2 记录（因为根本没跑起来）。**已弃用**（LauncherData.xml `IsSelected=false`）。IG `NPCSpawnGuards` + BetterPatrols 已覆盖需求
 - [ ] **RBM Poise/Stamina 系统调查结论（2026-09-19，未改）**：`Configs\RBM\config.xml` 里两个总开关 `<PostureEnabled>` + `<StaminaEnabled>`（默认均 1）。玩家侧调节靠 `<PlayerPostureMultiplier>`——**注意 RBMConfig.cs line 213-229 的解析是三档预设选择器，不是浮点乘数**：`"0"` → 1.0x（跟 AI 一样，**当前状态**）、`"1"` → 1.5x、`"2"` → 2.0x。反编译 `RBMAI\Stance.cs` 确认这个 multiplier **同时**乘 `maxPosture/postureRegenPerTick/maxStamina/staminaRegenPerTick`（池 + 回复绑定）。**要动的话**：`PostureEnabled=0` + `StaminaEnabled=0` 完全关整套（所有 agent 回归 vanilla）；或 `PlayerPostureMultiplier=1/2` 让玩家 1.5x/2x。**要独立控制回复速度**或**给玩家 0x 完全豁免**都需 DLL byte-patch（类似 GarrisonDrills 修改 #3）
-- [ ] **MapBlockadePSBridge · 自研桥接 mod（2026-09-19 立项，Phase 2A v0.1 已编译）**：让 PlayerSettlement 自建 settlement 被 MapBlockade 识别为可封锁目标。位置：本 repo `MapBlockadePSBridge/` 子目录，详见该子目录 `README.md`
-  - **原理**：订阅 `PlayerSettlementBehaviour.SettlementBuildCompleteEvent` → 反射注入 `MapBlockade.BlockadeReachabilityCache._cities` 等私有字段 → 调 `RebuildAll(string)` 重算
-  - **关键侦查发现**：MapBlockade v1.2.8 的 obfuscation **只碰方法体（局部变量 + 字符串常量），不碰 API 表面**——所有类名/字段名/方法名全明文可反射
-  - **v1.4.7 API 修正**：`settlement.Position2D` 不存在，改用 `settlement.Position.ToVec2()`（`Position` 是 `CampaignVec2`）
-  - **Phase 2A 已做**：骨架 + 反射注入 + `RebuildAll` 触发。v0.1 只走消息栏易漏，v0.2 加了文件日志（`Configs\ModLogs\PSBridge_YYYYMMDD.log`）
-  - **Phase 2A 侦查假设全部验证（2026-09-19 07:55）**：`GameType=CampaignStoryMode`（`is Campaign` 命中）；`MapBlockade.BlockadeReachabilityCache` 类反射成功；`BannerlordPlayerSettlement.Behaviours.PlayerSettlementBehaviour.SettlementBuildCompleteEvent` 是 `MbEvent<Settlement>`，订阅无异常。日志证据：`subscribe result: subscribed to SettlementBuildCompleteEvent (radius=5)`
-  - **Phase 2A 剩余测试**：实际建一座 PlayerSettlement 城，看日志追加 `injected ...` 还是 `no faces within radius 5` 还是异常。若"no faces"就 Phase 2B 加 MCM 调半径；若反射写字段异常就针对性调
-  - **Phase 2B 待做**：MCM 面板（半径可调）+ grace period 事件转发（`UpdateCityOwnership`）+ `ReachabilityGraph.Build` 直接调用（若 `RebuildAll` 只刷 top-level cache 使 AI 看不到）+ gate face 选择算法优化
-  - **设计**：`MBSubModuleBase.OnApplicationTick` 轮询 hotkey；触发时遍历 `MBObjectManager.Instance.GetObjectTypeList<ItemObject>()`，按 `Tier == Tier6` + `ItemType` 白名单（14 种装备类）调 `MobileParty.MainParty.ItemRoster.AddToCounts`；Horse/HorseHarness ×3 单独处理
-  - **零侵入**：无 Harmony patch，无 CampaignBehavior，无 SaveableField（不改存档结构）；关模组即完全撤除
-  - **构建**：`Tier6Injector/deploy.ps1`（`dotnet build -c Release` + 拷 `SubModule.xml`/DLL 到 `Modules\Tier6Injector\`）
-  - **首次 build TODO**：
-    - [x] ~~dnSpy 核对 v1.4.7 API 签名~~ ← 2026-09-19 完成，核对结果记 `Tier6Injector/README.md` 的 API 核对表；`HandArmor` 不是 `HandsArmor`，`InformationManager` 在 `TaleWorlds.Library`（不是 `TaleWorlds.Core`），已在源码里修
-    - [x] ~~装 .NET SDK 6+~~ ← 2026-09-19 装 SDK 8.0.425（winget）
-    - [x] ~~首次 build~~ ← 2026-09-19 编译一次 (`error CS0507: cannot change access modifiers`) → 把 `OnGameInitializationFinished` 从 `protected` 改 `public`（基类是 `public`）→ build 通过；`deploy.ps1` 成功拷贝到 `Modules\Tier6Injector\`
-    - [ ] launcher 勾选 Tier6 Injector → 战役内 Ctrl+Alt+I 试跑（**待用户操作，Claude 不能驱动 GUI/游戏输入**）
-    - [ ] 观察多次触发是否有性能/存档大小问题（单堆无上限，但物品对象引用会重复计入）
-- [ ] **Village Defense (Xiangyong) v1.1.11 + BetterPatrols v1.0.0 安装（2026-09-20）**：两个都适配 v1.4.7（无 `DependentVersion` 版本锁，用现代 API/AccessTools 运行时探测）。**跟 IG 互补不替代**：IG=城堡驻军派 Guard（40% 抽兵、清匪、卖俘虏），VD=村庄被 raid 时按 hearth 阈值刷民兵（60/80/100/150），BP=buff vanilla castle/town patrol（Guard House 分级 25/50/100/150）+ 自建 village defender + NavalDLC 双巡逻。**加载排 IG 之后、Tier6Injector 之前**。**已知重叠**：BP `EnableVillageDefenders=true` + VD 都做村庄防御——若嫌拥挤在 BP MCM 里关这个开关，让 VD 独占村庄侧
+- [x] ~~**MapBlockadePSBridge · 自研桥接 mod（2026-09-19 立项，Phase 2A v0.2 已编译）**~~ ← **2026-09-20 用户决定放弃**：本 repo `MapBlockadePSBridge/` 子目录、部署 `Modules\MapBlockadePSBridge\`、`Configs\ModLogs\PSBridge_*.log`、LauncherData `UserModData`+`DLLCheckData` 全部清理；同时 **MapBlockade 本体也已卸载**（`Modules\MapBlockade\` 删除、LauncherData 条目移除）。历史归档：订阅 `PlayerSettlementBehaviour.SettlementBuildCompleteEvent` → 反射注入 `MapBlockade.BlockadeReachabilityCache._cities` → 调 `RebuildAll(string)` 重算，Phase 2A 骨架 + 反射注入 + `RebuildAll` 触发已跑通；Phase 2A 侦查（is Campaign 命中 / 反射类找到 / 订阅无异常）2026-09-19 全过。放弃原因＝ IG NPCSpawnGuards + BetterPatrols 已覆盖对城堡防御需求，PSBridge 收益不足以支撑维护成本
+- [ ] **Village Defense (Xiangyong) v1.1.11 + BetterPatrols v1.0.0 安装（2026-09-20）**：两个都适配 v1.4.7（无 `DependentVersion` 版本锁，用现代 API/AccessTools 运行时探测）。**跟 IG 互补不替代**：IG=城堡驻军派 Guard（40% 抽兵、清匪、卖俘虏），VD=村庄被 raid 时按 hearth 阈值刷民兵（60/80/100/150），BP=buff vanilla castle/town patrol（Guard House 分级 25/50/100/150）+ 自建 village defender + NavalDLC 双巡逻。**加载排 IG 之后、EquipmentSpawnerMod 之前**。**已知重叠**：BP `EnableVillageDefenders=true` + VD 都做村庄防御——若嫌拥挤在 BP MCM 里关这个开关，让 VD 独占村庄侧
 - [ ] **OSA 三件套装备 UI 不显示 + 退出崩溃调查（2026-09-20）**：装完 OSA/OSW/Saddlery 首跑，两症状：Retinues Troop Editor 里看不到 `AR_*` 物品；游戏退出时崩溃。诊断：Retinues `debug.log` 显示 `SaveBehaviorData: 96 unlocked` 全是 vanilla ID（无 `AR_*`），OSA XML 语法自查 46 个文件全 parse OK 但物品未进 `MBObjectManager`。**发现每个 OSA mod 都自带 3 个 Shaders 文件**（本次 E: 机器实测 OSA=15.19 MB + Saddlery=2.54 MB + OSW=1.45 MB，与之前 D: 机器 journal 记录的"0 文件"矛盾）。**已删所有三个 Shaders 目录**（共释放 19.18 MB）——Bannerlord 下次启动会重编译（首次约 10-15 min）。**待用户实测**：Shader 清完是否两症状都好；若仍有问题走 bisect（禁 OSA/OSW/Saddlery 逐个隔离）
 - [ ] **CYT × FM 兼容性核实（2026-09-20）**：反编译坐实两者**流水线协作无竞争**——CYT patch `MapEventSide.AllocateTroops` **Prefix**（注入 `customAllocationConditions` 白名单，按 StringId 过滤 troopsList）；FM patch `Mission.SpawnTroop` **Postfix**（查 `FormationAssignmentResolver.ResolveFormationIndex` 表设 `agent.Formation`）。**不同方法 + 不同 patch 类型**。fallback 干净：FM 若无该兵映射 → `GetDefaultFormationIndex` → `GetVanillaFormationIndex(character.DefaultFormationClass)`；FM 若从未配任何映射 → `HasCustomDefaults=false` → patch early-return，vanilla 全权分配。**CYT 未选的兵不进战场**，FM 对应 Formation 空着不产生 bug
-- [ ] **OSA 武器 damage_factor 完整对照表（2026-09-20 实测）**：数据源 `OSA_crafting_pieces.xml`（18 件 Blade piece）+ RBM `sword_blades`(157)/`axe_pieces`(41)/`mace_pieces`(37)/`couched_lances`(21+46)/RBM_WS(43+36+spear 2/16)。**Sword swing** OSA 2.90 vs RBM 0.96 = ×3.02 过强；**Sword thrust** OSA 0.60 vs RBM 0.85 = ×0.71 **反而偏弱**（journal 之前"OSW 武器全面偏强"结论**不精确**）；**Axe swing** OSA 3.60 vs RBM 0.91 = ×3.96；**Mace swing** OSA 2.56 vs RBM 0.75 = ×3.41；**Mace thrust** OSA 1.00 vs RBM 0.88 = ×1.14 ≈OK；**Spear thrust** OSA 2.32 vs RBM ~1.00 = ×2.32。**建议 override 系数**：axe/polearm swing×0.25，mace swing×0.29，sword swing×0.33，**sword thrust×1.42（回 buff）**，spear thrust×0.43。**OSA 三件套装备总量清点**：OSA 1648 件（843 头盔 + 388 身甲 + 310 披风 + 61 腿甲 + 46 手甲，全 6 文化）+ OSW 264（114 盾 + 140 CraftedItem 剑/矛/枪 + 7 投掷 + Bolt/Crossbow 各 1）+ Saddlery 110 马具。**Guard/Handle/Pommel piece 是否有 damage_factor 待补测**（journal 之前只测 Blade）
-- [ ] **Companion 量产 mod 设计（2026-09-20 探讨，未做）· `CompanionFoundry`**：核心 API `HeroCreator.CreateSpecialHero(template, homeSettlement, faction, culture, age)` —— 运行时无中生有创建 Hero。热键（如 Ctrl+Alt+C）从 vanilla `spnpccharacters` wanderer 池挑模板 → 随机生成 → 放到最近 town 酒馆；玩家走 vanilla 招募流程雇佣（或加"直接入 clan"选项）。**Captain 是战场职位不是角色类型**——任何 Hero 站在编队里都是那编队 Captain，量产 Captain = 量产 Companion。工作量 ~1 天，跟 Tier6Injector 一个量级
-- [ ] **Tier6Injector v1.4 设计（2026-09-20 探讨，未做）**：两个扩展。**a) Banner 物品加入白名单**：ItemType `Banner` 是主队库存里的 morale-buff 旗帜（`battle_banner_small` 等），5 分钟改动加进 IsGear() 即可；`Book` 也建议加。**b) 解决重量问题（个人库）**：加 `SyncData`-持久化的 `ItemRoster` 作"个人库"，三热键——Ctrl+Alt+I 注入到主队（现状）、Ctrl+Alt+O 主队→个人库（打仗前回仓）、Ctrl+Alt+P 个人库→主队（要装备时取回）。**根源**：Tier6Injector ×20 生成 1-2 万 kg 装备，主队上限 4000-6000 kg 必爆；vanilla town stash 只在 castle 场景里那个箱子、容量 <50 slot 装不下。工作量 3-4 h
+- [x] ~~**OSA 武器 damage_factor 完整对照表（2026-09-20 实测）**~~ ← **2026-09-20 已落地为 `OpenSourceArmouryRBMBalance` mod**（见修改 #12）。以下为原始数据版（此前的日志条被 2026-09-20 二轮重算覆盖）。
+
+  **✅ Guard/Handle/Pommel 已核实无 damage_factor**（用 PowerShell `[xml]` 遍历全 50 个 `<CraftingPiece>`）：Guard 只带 `armor_bonus + length + weight`；Handle 只带 `length + weight (+ excluded_item_usage_features)`；Pommel 只带 `length + weight (+ appearance)`。**全部武器伤害走 Blade `<BladeData><Swing/Thrust damage_factor=…/>` 一条路径。** 因此 OSA×RBM 平衡 mod **只需 override Blade piece damage_factor**，Guard/Handle/Pommel 不必碰。
+
+  **Blade piece 真实计数（之前 grep 39 的错觉修正）**：`OSA_crafting_pieces.xml` 里第 342–569 行是一整块 XML 注释（`<!--CraftingPiece … </CraftingPiece-->`）包住 20 件 `_blunt` 训练件（tournament 用、`is_hidden="true"`），实际参战 Blade piece **仅 18 件**（journal 早前数字正确）。
+
+  **OSA 侧数据（2026-09-20 重扫，18 件 Blade）**：
+
+  | wclass | n | swing_avg | swing 范围 | thrust_avg | thrust 范围 |
+  |---|---:|---:|---:|---:|---:|
+  | axe        | 2 | 3.60 | 3.4–3.8   | —    | —          |
+  | mace       | 8 | 2.56 | 1.86–3.30 | 1.00 | 1.0（3 件） |
+  | spear      | 6 | 1.60 | 1.6（1 件·billhook） | 2.32 | 1.5–2.8 |
+  | sword_1h   | 2 | 3.55 | 3.2–3.9   | 0.60 | 0.4–0.8    |
+
+  **RBM 侧基线（RBM + RBM_WS 合并、按 wclass 聚合）**：
+
+  | wclass | swing_avg (pooled) | thrust_avg (pooled) | 数据源计数 |
+  |---|---:|---:|---|
+  | axe        | 0.98 | 0.80 (couched 1 件)   | RBM.axe 41 + RBM_WS.axe 20 + RBM.couched.axe 1 |
+  | mace       | 0.74 | 0.88                  | RBM.mace 37 + RBM_WS.mace 2 + RBM.couched.mace 1 |
+  | spear      | 0.75 (couched+WS)   | 0.93                  | RBM.couched.spear 51+ + RBM_WS.spear 16 |
+  | sword_1h   | 0.99 | 0.85                  | RBM.sword.sword_1h 134 + RBM_WS.sword_1h 17 + RBM.couched.sword_1h 2 |
+
+  **最终 override 系数（`RBM_pooled ÷ OSA_avg`，2026-09-20 精算）**：
+
+  | 项目 | 方向 | ×倍率 | 备注 |
+  |---|---|---:|---|
+  | **axe swing**          | ↓ | **0.27** | OSA 太重 |
+  | **mace swing**         | ↓ | **0.29** | OSA 太重 |
+  | **sword_1h swing**     | ↓ | **0.28** | OSA 太重 |
+  | **spear/polearm swing**| ↓ | **0.47** | 仅 billhook 1 件有 swing |
+  | **sword_1h thrust**    | ↑ | **1.42** | OSA 弱、需 buff |
+  | **mace thrust**        | ↓ | **0.88** | 微降；journal 之前的 "≈OK" 结论精确到 12% 偏强 |
+  | **spear thrust**       | ↓ | **0.40** | OSA 太强 |
+
+  **相对 journal 首版（axe/polearm swing×0.25、mace×0.29、sword swing×0.33、sword thrust×1.42、spear thrust×0.43）差异**：sword swing 0.33 → 0.28（更低）；spear thrust 0.43 → 0.40（略更低）；其余相同；新加 mace thrust×0.88（此前记为 "≈OK 不动"）。
+
+  **落地建议**：
+  - 建 XML override mod（个人 modmod）：不改 OSA 源文件，用 `<CraftingPiece>` 覆盖同名 id 或走 `[Overrides="MyMod"]` 机制。7 个 override 系数 × 18 件 Blade = ~18 行改动可搞定 swing/thrust 两个数字重写
+  - **未处理的类别**：OSA 无 sword_2h、无 dagger、无 pure spear-swing（除 billhook）—— 这些类别若之后 OSA 补 piece，需重跑本脚本再校
+  - **护甲侧仍待做**：本轮只处理武器 damage_factor。OSA 头盔/身甲/披风/腿甲/手甲 4 大类共 1648 件的 `head_armor/body_armor/leg_armor/arm_armor` 数值 vs RBM 尺度比对，是 OSA×RBM 平衡的另一半，未展开
+  - 脚本：`_scratch_extract_pieces.ps1`（可复算，见 repo 根；本 mod 落地后可删）
+- [ ] **Companion 量产 mod 设计（2026-09-20 探讨，未做）· `CompanionFoundry`**：核心 API `HeroCreator.CreateSpecialHero(template, homeSettlement, faction, culture, age)` —— 运行时无中生有创建 Hero。热键（如 Ctrl+Alt+C）从 vanilla `spnpccharacters` wanderer 池挑模板 → 随机生成 → 放到最近 town 酒馆；玩家走 vanilla 招募流程雇佣（或加"直接入 clan"选项）。**Captain 是战场职位不是角色类型**——任何 Hero 站在编队里都是那编队 Captain，量产 Captain = 量产 Companion。工作量 ~1 天，跟 EquipmentSpawnerMod 一个量级
+- [~] **EquipmentSpawnerMod v1.4 扩展（前身 Tier6Injector v1.4 设计，2026-09-20 部分落地）**：**a) Banner/Book 加入白名单**——未做（用户 2026-09-20 只选 b 落地）；**b) 个人库 + 三热键**——✅ **2026-09-20 落地**，`PersonalStashBehavior : CampaignBehaviorBase` 挂 `ItemRoster _stash` + `dataStore.SyncData<ItemRoster>("EquipmentSpawnerMod_PersonalStash", ref _stash)`，三热键 Ctrl+Alt+I/O/P 已实现（O/P 用 `IsGear + Horse/HorseHarness` 白名单，不搬食物贸易品；反向 for + `GetElementCopyAtIndex` 避免 `RemoveZeroCountsFromRoster` 重排漏）。编译 0 warn / 0 err，已 deploy 到 `Modules\EquipmentSpawnerMod\`；LauncherData 已更新 `<Id>EquipmentSpawnerMod</Id> v1.4.0.0 IsSelected=true`。**待用户操作**：① launcher UI 里确认 Equipment Spawner Mod 勾选；② 战役内首次 save+reload 让 SyncData 落盘、再按 Ctrl+Alt+O/P 试用；③ 观察 stash 大到几百 stack 时存档大小/加载时间是否明显变化
 
 ### 食物经济 · 已解决（2026-09-18）
 

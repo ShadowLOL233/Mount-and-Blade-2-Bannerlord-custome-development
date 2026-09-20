@@ -3,13 +3,14 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>9</LangVersion>
-    <AssemblyName>MapBlockadePSBridge</AssemblyName>
-    <RootNamespace>MapBlockadePSBridge</RootNamespace>
+    <AssemblyName>RetinuesCultureFilter</AssemblyName>
+    <RootNamespace>RetinuesCultureFilter</RootNamespace>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
     <BannerlordBin Condition=" '$(BannerlordBin)' == '' ">E:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client</BannerlordBin>
+    <WorkshopRoot Condition=" '$(WorkshopRoot)' == '' ">E:\SteamLibrary\steamapps\workshop\content\261550</WorkshopRoot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,10 +26,6 @@
       <HintPath>$(BannerlordBin)\TaleWorlds.Library.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="TaleWorlds.Engine">
-      <HintPath>$(BannerlordBin)\TaleWorlds.Engine.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
     <Reference Include="TaleWorlds.MountAndBlade">
       <HintPath>$(BannerlordBin)\TaleWorlds.MountAndBlade.dll</HintPath>
       <Private>false</Private>
@@ -39,6 +36,22 @@
     </Reference>
     <Reference Include="TaleWorlds.Localization">
       <HintPath>$(BannerlordBin)\TaleWorlds.Localization.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="TaleWorlds.InputSystem">
+      <HintPath>$(BannerlordBin)\TaleWorlds.InputSystem.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(WorkshopRoot)\2859188632\bin\Win64_Shipping_Client\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Bannerlord.UIExtenderEx">
+      <HintPath>$(WorkshopRoot)\2859222409\bin\Win64_Shipping_Client\Bannerlord.UIExtenderEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Retinues">
+      <HintPath>$(WorkshopRoot)\3599557394\bin\Win64_Shipping_Client\Retinues.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

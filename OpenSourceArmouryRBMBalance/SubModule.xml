@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Module>
+  <Name value="Open Source Armoury RBM Balance Patch" />
+  <Id value="OpenSourceArmouryRBMBalance" />
+  <Version value="v1.1.0" />
+  <DefaultModule value="false" />
+  <ModuleCategory value="Singleplayer" />
+  <ModuleType value="Community" />
+  <DependedModules>
+    <DependedModule Id="Native" />
+    <DependedModule Id="SandBoxCore" />
+    <DependedModule Id="Sandbox" />
+    <DependedModule Id="CustomBattle" />
+    <DependedModule Id="StoryMode" />
+    <DependedModule Id="OpenSourceArmory" />
+    <DependedModule Id="OpenSourceWeaponry" />
+    <DependedModule Id="RBM" />
+  </DependedModules>
+  <DependedModuleMetadatas>
+    <DependedModuleMetadata id="Native" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="StoryMode" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="CustomBattle" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="RBM" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="OpenSourceArmory" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="OpenSourceWeaponry" order="LoadBeforeThis" />
+  </DependedModuleMetadatas>
+  <SubModules />
+  <Xmls>
+    <XmlNode>
+      <XmlName id="Items" path="OSABalance_armor_override" />
+      <IncludedGameTypes>
+        <GameType value="Campaign" />
+        <GameType value="CampaignStoryMode" />
+        <GameType value="CustomGame" />
+        <GameType value="EditorGame" />
+      </IncludedGameTypes>
+    </XmlNode>
+    <XmlNode>
+      <XmlName id="CraftingPieces" path="OSABalance_pieces_override" />
+      <IncludedGameTypes>
+        <GameType value="Campaign" />
+        <GameType value="CampaignStoryMode" />
+        <GameType value="CustomGame" />
+        <GameType value="EditorGame" />
+      </IncludedGameTypes>
+    </XmlNode>
+  </Xmls>
+</Module>

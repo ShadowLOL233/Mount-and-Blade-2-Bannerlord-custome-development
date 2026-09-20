@@ -620,6 +620,50 @@ OSA 护甲仍是原版低值 → RBM 下偏弱。**离散度大 = RBM 逐件手�
 
 ---
 
+## IG 城堡防御 / 守卫（Guards）配置深挖（2026-09-19 本机反编译）
+
+> 目标：让城堡"派多支带减耗 buff 的驻军去猎杀半径内敌军 + 护村"。结论：**IG 本身几乎全实现，无需 MapBlockade / 新 mod**，主要是开关+调参。反编译 `ImprovedGarrisons.SaveSystem.Configuration.Config`（默认值）+ `Behaviours.GarrisonPartyBehavior` + `AI.Orders.PartyOrder.{OrderPatrol,OrderDefense}` + `AI.AITypes.MobileGarrison`。
+
+### 关键区分：你的据点 vs AI 据点
+- **你自己的 fief**：守卫在**游戏内 IG Guards 子菜单**逐据点下令（Patrol/Defense/Escort/MergeGarrison，来自 `AI.Orders.PartyOrder.*`）——**不是 XML 开关**。
+- **`NPCSpawnGuards`（默认 false）**：只决定 **AI 据点**是否也自动派守卫。只想强化自己城堡 → **保持 false**，用游戏内 Guards UI 给自家 fief 下令即可（开它 = 全图 AI 派队，性能/存档/钱粮代价大）。
+
+### 守卫/巡逻配置键（反编译默认值）
+| 键 | 默认 | 作用 |
+|---|---|---|
+| `NPCSpawnGuards` | false | AI 据点也自动派守卫（全世界）|
+| `NPCGuardSpawnThreshold` | 120 | AI 据点驻军 ≥ 此值才派（仅 NPC）|
+| `NPCGuardCreationMultiplier` | 0.4 | AI 抽驻军比例（仅 NPC）|
+| `AmountOfUnitsToSpawn` | 5 | 每批派出单位数 |
+| `GuardAvailableTroopsPercentage` | 0.25 | 守卫最多抽走驻军 25%（**护城底线，勿拉到 1.0**）|
+| `DefaultGuardsEnableReplenish` / `GuardReplenishPercentage` | true / 0.5 | 守卫从驻军补员至 50% |
+| `PatrolPartyHealPercentage` | 0.5 | 掉到 50% 撤回治疗 |
+| `CustomTransferAndGuardPartySize` | 200 | 守卫/转运队规模上限 |
+| `CustomGuardAndTransferPartySpeed` | 4.8 | 守卫队速度（⚠ 需 `LoadCustomPartySpeedModel=true`，默认 false）|
+| `SpawnOnlyNobleTroops` | false | 只用贵族线兵组队 |
+| `DefaultEnableGuardHideoutClear` / `...Upgrade` / `...PrisonerSell` | true/true/true | 守卫清匪窝/自动升级/卖俘 |
+| `DefaultEnableGuardBuyHorses` / `...PrisonerRecruitment` | false/false | 守卫买马/抓俘 |
+
+### 减食 / 减耗 buff（你要的）
+| 键 | 默认 | 作用 |
+|---|---|---|
+| `DisableGarrisonNeedsFood` | false | **true → 驻军（含出击队）不吃食物** |
+| `GarrisonGuardsWageMultiplier` | 1.0 | **<1 → 守卫队更省工资** |
+| `GarrisonWageMultiplier` | 1.0 | 整体驻军工资 |
+
+### 需求覆盖与硬缺口
+- 多支出击 ✅（`AmountOfUnitsToSpawn`/`GuardAvailableTroopsPercentage`/`CustomTransferAndGuardPartySize`）
+- 护村 ✅（`OrderDefense` + `DefendVillageIfNeeded`，raid 触发，无独立开关）
+- 减耗 ✅（`DisableGarrisonNeedsFood` + `GarrisonGuardsWageMultiplier<1`）
+- **自定义兵种** ⚠ 无"守卫选兵器"，守卫从**驻军花名册**抽兵（受 `SpawnOnlyNobleTroops`）→ 只能**把 Retinues 自定义兵编进驻军**
+- **radius 内攻击** ⚠ 半径由 `CalculatePatrolRadius` **代码算，无配置键** → 想扩大需 **DLL patch**（类似 GarrisonDrills 修改 #3）
+- **增强村庄驻军** ⚠ IG 是**派守卫队护村**，非静态村庄驻军；无"村庄驻军规模"键
+
+### 配置位置
+游戏内 IG ribbon → Configuration；或关游戏改 `Configs\ImprovedGarrisons\Saves\IGConfiguration_<save>_<hash>.xml`（键名同上）。
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

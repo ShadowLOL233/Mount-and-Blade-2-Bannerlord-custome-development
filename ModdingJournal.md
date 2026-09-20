@@ -35,6 +35,50 @@
 
 ---
 
+## 第二设备：反编译 / 构建工具链（2026-09-19 搭建）
+
+> 本节针对**第二台设备**（游戏装在 **D:**，非主力机的 E:）。记录在此机复刻反编译 + 自研 mod 构建所需的环境。游戏版本与主力机一致（v1.4.7），故 DLL/构建产物通用。
+
+### 环境差异 vs 主力机
+
+| 项 | 主力机 | 第二设备（本机） |
+|---|---|---|
+| 游戏本体 | `E:\SteamLibrary\...\` | `D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\` |
+| 游戏 DLL | `E:\SteamLibrary\...\bin\Win64_Shipping_Client\` | `D:\SteamLibrary\...\bin\Win64_Shipping_Client\` |
+| 游戏版本 | v1.4.7 | v1.4.7（一致） |
+| 反编译器 | dnSpyEx（Desktop GUI） | **ilspycmd 8.2.0.7535**（CLI，dotnet global tool） |
+
+### 已装工具（winget / dotnet）
+
+- **.NET SDK 8.0.425** — `winget install Microsoft.DotNet.SDK.8`；`C:\Program Files\dotnet\dotnet.exe`
+- **.NET Framework 4.8.1 Developer Pack** — `winget install Microsoft.DotNet.Framework.DeveloperPack_4`（编译 net472 目标必需）
+- **ilspycmd 8.2.0.7535** — `dotnet tool install -g ilspycmd --version 8.2.0.7535`（最新版需 .NET 9，故 pin 8.x）；`C:\Users\situj\.dotnet\tools\ilspycmd.exe`
+
+### 反编译用法（ilspycmd）
+
+- 列举类型：`ilspycmd <asm.dll> -l e -r <binDir>`（`e`=enum，另有 c/i/s/d）
+- 反编译单类型：`ilspycmd <asm.dll> -t <Full.Type.Name> -r <binDir>`
+- 整包出可编译工程：`ilspycmd <asm.dll> -p -o <outdir> -r <binDir>`
+- `-r` 指向 `D:\SteamLibrary\...\bin\Win64_Shipping_Client` 以解析依赖
+
+### 构建自研 mod（本机路径覆盖，勿改仓库）
+
+两个 csproj 的 `$(BannerlordBin)` 默认写死 E:，但设计成可覆盖 → 用环境变量指向 D:，**不改仓库文件**保持跨机通用：
+
+```powershell
+$env:BannerlordBin = "D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\bin\Win64_Shipping_Client"
+dotnet build <mod>\src\<mod>.csproj -c Release
+# 部署（本次未做）：deploy.ps1 -GameRoot "D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord"
+```
+
+- **2026-09-19 实测**：`Tier6Injector` + `MapBlockadePSBridge` 均**编译通过（0 warn / 0 err）**。本次**只验证编译，未部署进游戏**。
+
+### 反编译已验证的结论
+
+- `TaleWorlds.Core.FormationClass`：`Infantry=0 Ranged=1 Cavalry=2 HorseArcher=3` → `NumberOfDefaultFormations=4`；`Skirmisher=4 HeavyInfantry=5 LightCavalry=6 HeavyCavalry=7` → `NumberOfRegularFormations=8`；另 `General=8 / Bodyguard=9`。**印证"默认自动分组 4 类、玩家可用编队上限 8"**（见"战斗编队 / 部署机制"节）。
+
+---
+
 ## 模组清单（最终状态）
 
 ### 已启用（20 个）

@@ -805,6 +805,32 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
   3. 反编译 `TownFoodStocksChangePatch` 发现 RBM 用 `_measuredFoodChange` 整包账单，单调不可控
 - **修复**：见"已做的定制修改 #5 食物经济堆叠"
 
+### Bug #6 · CalradianPatrolsV2 v4.0.2 加载失败（2026-09-19）
+
+- **症状**：LauncherData 里 CP2 `IsSelected` 自动变 `false`，DLLCheckData 里 `IsDangerous=true`；butterlib/default/trace 日志无 CP2 记录（根本没跑到）
+- **根因**：v1.2.8 → v1.4.7 base class 演化，CP2 有 3 个 Custom Model 的 abstract override 签名对不上，launcher 静态检查直接拦下
+- **具体不兼容**：
+  - `CustomWageModel : PartyWageModel`：`MaxWage`（应 `MaxWagePaymentLimit`）、`GetTotalWage(MobileParty, bool)`（应带 `TroopRoster`）、`int GetTroopRecruitmentCost(...)`（应返回 `ExplainedNumber`）
+  - `CustomBanditDensityModel : BanditDensityModel`：缺 6 个新 abstract（`NumberOfMinimumBanditPartiesInAHideoutToInfestIt` / `NumberOfMinimumBanditTroopsInHideoutMission` / `NumberOfMaximumTroopCountForFirstFightInHideout` / `NumberOfMaximumTroopCountForBossFightInHideout` / `SpawnPercentageForFirstFightInHideoutMission` / `GetMinimumTroopCountForHideoutMission`），多余 `NumberOfMaximumLooterParties`
+  - `CustomSettlementSecurityModel : SettlementSecurityModel`：缺 6 个新 abstract（`ThresholdForTaxCorruption` 等）
+- **教训**：`DependentVersion` 只是 built-against 标记不代表兼容——**跨主版本（v1.2→v1.4）base class 演化时**，abstract override 匹配失败会被 launcher 静态拒收，比 Bug #3 那种"存档不兼容"更早且更彻底
+- **处理**：弃用，走 IG `NPCSpawnGuards` + BetterPatrols 替代
+
+### Bug #7 · OSA 三件套 Shader 缓存导致装备不显示 + 退出崩溃（2026-09-20）
+
+- **症状**：装完 OSA v2.0.0 + OSW v2.0.1 + Saddlery v2.0.0 首跑：
+  1. Retinues Troop Editor 里看不到 `AR_*` 前缀的 OSA 物品
+  2. 退出游戏时崩溃
+- **诊断过程**：
+  1. Retinues `debug.log` 03:25:46 `SaveBehaviorData: 96 unlocked` 全是 vanilla ID（无 `AR_*`）→ OSA 物品未进 `MBObjectManager`
+  2. PSBridge log 显示 `MapBlockade already tracks 0 settlements` + 134 candidates 全部 "no faces within radius 5" → MapBlockade 侧数据 pipeline 也异常
+  3. 46 个 OSA XML 语法自查全 parse OK（不是语法错）
+  4. 检查 workshop 目录：**每个 OSA mod 都有 3 个 Shaders/D3D11 缓存文件**（OSA 15.19 MB + Saddlery 2.54 + OSW 1.45 = 共 19.18 MB）——**与 journal 之前 D: 机器"shaders 文件夹 0 文件"结论矛盾**（那时 D: 机器上还没编译过 shader）
+  5. `shader_compile_report.log` head 无错误提示；具体版本兼容性无法通过日志判断
+- **假设**：Shader 缓存来自旧 game engine 版本或跨机器复制，v1.4.7 加载时与运行时冲突；退出时 D3D11 资源清理路径遇到 dangling 引用 → 崩
+- **修复（尝试中）**：删除三个 mod 的 `Shaders/D3D11/` 目录，Bannerlord 下次启动会重编译（预计 10-15 min 首启等待）
+- **待验证**：Shader 重编后 OSA 物品是否进 UI + 退出是否不再崩。若仍有问题走 bisect（禁 OSA/OSW/Saddlery 逐个隔离）
+
 ---
 
 ## 模组间交互与已知风险
@@ -861,7 +887,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [ ] **Tier6Injector · 自研模组（2026-09-19 立项 → v1.3 已发）**：热键 Ctrl+Alt+I 一键给主队 **Tier 3-6** 装备 ×20 + 对应战马/战马鞍 ×20，每件挂 `ItemModifierGroup` 里 `ItemQuality` 最高的 modifier（Legendary > Masterwork > Fine > Common > Inferior > Poor）。位置：本 repo `Tier6Injector/` 子目录，详见该子目录 `README.md`
 - [ ] **OSA×RBM 数值平衡（2026-09-19 立项，探讨完成待实施）· 需双向**：建个人纯 XML 覆盖 mod。**护甲**拉高到 RBM 尺度（材质相关 ×~1.5–1.8，跳过 leather）；**武器**部件是原版尺度而 RBM 已砍武器至 ~30% → 需**降** damage_factor ×~0.3（方向与护甲相反）。详见"OSA 三件套 × RBM 兼容核对"节的护甲/武器两小节。方案 A 脚本打底 + C 精修。**尚未生成 / 未部署**
 - [ ] **精英志愿兵修复（2026-09-19 探讨，未做）**：RBM `DefaultVolunteerModelPatch` 把精英志愿兵砍成全局 15%、废掉 vanilla"城堡村→精英"。可选自研 Harmony mod **恢复 vanilla 城堡村→精英线**（`[HarmonyBefore(RBM)]` + `Priority.First`，全局生效）。"只影响玩家阵营"版因 notable 池共享 + Retinues 自有据点 100% swap → 判定为**空转不划算**（详见"新兵/志愿兵生成机制"节）。自家 fief 要精英优先走 Retinues 设计
-- [ ] **CalradianPatrolsV2 v4.0.2 安装（2026-09-19）**：作为 IG `NPCSpawnGuards` 之外的补充"城堡派兵防御 raid"方案；下载来源 Nexus 3536-v4.0.2；位置 `Modules\Calradian-Patrols-V2\`。**注意版本差**：SubModule.xml 声明 target Native v1.2.8，实际游戏 v1.4.7——按 Bug #3 结论 `DependentVersion` 只是 built-against 标记，launcher 黄字警告可加载但运行时兼容需实测。**bundled MCMv5.dll 是死代码**（系统 MCM v5.12.3 先加载）。**建议先只开 IG NPCSpawnGuards 实测，若够用可不勾选 CP2**
+- [x] ~~**CalradianPatrolsV2 v4.0.2 安装（2026-09-19）**~~ ← **2026-09-19 结案：不可用，launcher 自动禁用**。反编译核实是 v1.2.8 → v1.4.7 API 断裂：3 个 Custom model 类跟 v1.4.7 abstract 签名对不上——`CustomWageModel` 用 `MaxWage`/`GetTotalWage(MobileParty, bool)`/`int GetTroopRecruitmentCost(...)`，v1.4.7 要 `MaxWagePaymentLimit`/`GetTotalWage(MobileParty, TroopRoster, bool)`/`ExplainedNumber GetTroopRecruitmentCost(...)`；`CustomBanditDensityModel` 缺 6 个新 abstract（`NumberOfMinimumBanditPartiesInAHideoutToInfestIt` 等），有个多余 `NumberOfMaximumLooterParties`；`CustomSettlementSecurityModel` 缺 6 个新 abstract（`ThresholdForTaxCorruption` 等）。**结果**：launcher 静态检查发现 abstract 不匹配→标 `IsDangerous=true`+auto-disable，butterlib 日志无 CP2 记录（因为根本没跑起来）。**已弃用**（LauncherData.xml `IsSelected=false`）。IG `NPCSpawnGuards` + BetterPatrols 已覆盖需求
 - [ ] **RBM Poise/Stamina 系统调查结论（2026-09-19，未改）**：`Configs\RBM\config.xml` 里两个总开关 `<PostureEnabled>` + `<StaminaEnabled>`（默认均 1）。玩家侧调节靠 `<PlayerPostureMultiplier>`——**注意 RBMConfig.cs line 213-229 的解析是三档预设选择器，不是浮点乘数**：`"0"` → 1.0x（跟 AI 一样，**当前状态**）、`"1"` → 1.5x、`"2"` → 2.0x。反编译 `RBMAI\Stance.cs` 确认这个 multiplier **同时**乘 `maxPosture/postureRegenPerTick/maxStamina/staminaRegenPerTick`（池 + 回复绑定）。**要动的话**：`PostureEnabled=0` + `StaminaEnabled=0` 完全关整套（所有 agent 回归 vanilla）；或 `PlayerPostureMultiplier=1/2` 让玩家 1.5x/2x。**要独立控制回复速度**或**给玩家 0x 完全豁免**都需 DLL byte-patch（类似 GarrisonDrills 修改 #3）
 - [ ] **MapBlockadePSBridge · 自研桥接 mod（2026-09-19 立项，Phase 2A v0.1 已编译）**：让 PlayerSettlement 自建 settlement 被 MapBlockade 识别为可封锁目标。位置：本 repo `MapBlockadePSBridge/` 子目录，详见该子目录 `README.md`
   - **原理**：订阅 `PlayerSettlementBehaviour.SettlementBuildCompleteEvent` → 反射注入 `MapBlockade.BlockadeReachabilityCache._cities` 等私有字段 → 调 `RebuildAll(string)` 重算
@@ -880,6 +906,12 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
     - [x] ~~首次 build~~ ← 2026-09-19 编译一次 (`error CS0507: cannot change access modifiers`) → 把 `OnGameInitializationFinished` 从 `protected` 改 `public`（基类是 `public`）→ build 通过；`deploy.ps1` 成功拷贝到 `Modules\Tier6Injector\`
     - [ ] launcher 勾选 Tier6 Injector → 战役内 Ctrl+Alt+I 试跑（**待用户操作，Claude 不能驱动 GUI/游戏输入**）
     - [ ] 观察多次触发是否有性能/存档大小问题（单堆无上限，但物品对象引用会重复计入）
+- [ ] **Village Defense (Xiangyong) v1.1.11 + BetterPatrols v1.0.0 安装（2026-09-20）**：两个都适配 v1.4.7（无 `DependentVersion` 版本锁，用现代 API/AccessTools 运行时探测）。**跟 IG 互补不替代**：IG=城堡驻军派 Guard（40% 抽兵、清匪、卖俘虏），VD=村庄被 raid 时按 hearth 阈值刷民兵（60/80/100/150），BP=buff vanilla castle/town patrol（Guard House 分级 25/50/100/150）+ 自建 village defender + NavalDLC 双巡逻。**加载排 IG 之后、Tier6Injector 之前**。**已知重叠**：BP `EnableVillageDefenders=true` + VD 都做村庄防御——若嫌拥挤在 BP MCM 里关这个开关，让 VD 独占村庄侧
+- [ ] **OSA 三件套装备 UI 不显示 + 退出崩溃调查（2026-09-20）**：装完 OSA/OSW/Saddlery 首跑，两症状：Retinues Troop Editor 里看不到 `AR_*` 物品；游戏退出时崩溃。诊断：Retinues `debug.log` 显示 `SaveBehaviorData: 96 unlocked` 全是 vanilla ID（无 `AR_*`），OSA XML 语法自查 46 个文件全 parse OK 但物品未进 `MBObjectManager`。**发现每个 OSA mod 都自带 3 个 Shaders 文件**（本次 E: 机器实测 OSA=15.19 MB + Saddlery=2.54 MB + OSW=1.45 MB，与之前 D: 机器 journal 记录的"0 文件"矛盾）。**已删所有三个 Shaders 目录**（共释放 19.18 MB）——Bannerlord 下次启动会重编译（首次约 10-15 min）。**待用户实测**：Shader 清完是否两症状都好；若仍有问题走 bisect（禁 OSA/OSW/Saddlery 逐个隔离）
+- [ ] **CYT × FM 兼容性核实（2026-09-20）**：反编译坐实两者**流水线协作无竞争**——CYT patch `MapEventSide.AllocateTroops` **Prefix**（注入 `customAllocationConditions` 白名单，按 StringId 过滤 troopsList）；FM patch `Mission.SpawnTroop` **Postfix**（查 `FormationAssignmentResolver.ResolveFormationIndex` 表设 `agent.Formation`）。**不同方法 + 不同 patch 类型**。fallback 干净：FM 若无该兵映射 → `GetDefaultFormationIndex` → `GetVanillaFormationIndex(character.DefaultFormationClass)`；FM 若从未配任何映射 → `HasCustomDefaults=false` → patch early-return，vanilla 全权分配。**CYT 未选的兵不进战场**，FM 对应 Formation 空着不产生 bug
+- [ ] **OSA 武器 damage_factor 完整对照表（2026-09-20 实测）**：数据源 `OSA_crafting_pieces.xml`（18 件 Blade piece）+ RBM `sword_blades`(157)/`axe_pieces`(41)/`mace_pieces`(37)/`couched_lances`(21+46)/RBM_WS(43+36+spear 2/16)。**Sword swing** OSA 2.90 vs RBM 0.96 = ×3.02 过强；**Sword thrust** OSA 0.60 vs RBM 0.85 = ×0.71 **反而偏弱**（journal 之前"OSW 武器全面偏强"结论**不精确**）；**Axe swing** OSA 3.60 vs RBM 0.91 = ×3.96；**Mace swing** OSA 2.56 vs RBM 0.75 = ×3.41；**Mace thrust** OSA 1.00 vs RBM 0.88 = ×1.14 ≈OK；**Spear thrust** OSA 2.32 vs RBM ~1.00 = ×2.32。**建议 override 系数**：axe/polearm swing×0.25，mace swing×0.29，sword swing×0.33，**sword thrust×1.42（回 buff）**，spear thrust×0.43。**OSA 三件套装备总量清点**：OSA 1648 件（843 头盔 + 388 身甲 + 310 披风 + 61 腿甲 + 46 手甲，全 6 文化）+ OSW 264（114 盾 + 140 CraftedItem 剑/矛/枪 + 7 投掷 + Bolt/Crossbow 各 1）+ Saddlery 110 马具。**Guard/Handle/Pommel piece 是否有 damage_factor 待补测**（journal 之前只测 Blade）
+- [ ] **Companion 量产 mod 设计（2026-09-20 探讨，未做）· `CompanionFoundry`**：核心 API `HeroCreator.CreateSpecialHero(template, homeSettlement, faction, culture, age)` —— 运行时无中生有创建 Hero。热键（如 Ctrl+Alt+C）从 vanilla `spnpccharacters` wanderer 池挑模板 → 随机生成 → 放到最近 town 酒馆；玩家走 vanilla 招募流程雇佣（或加"直接入 clan"选项）。**Captain 是战场职位不是角色类型**——任何 Hero 站在编队里都是那编队 Captain，量产 Captain = 量产 Companion。工作量 ~1 天，跟 Tier6Injector 一个量级
+- [ ] **Tier6Injector v1.4 设计（2026-09-20 探讨，未做）**：两个扩展。**a) Banner 物品加入白名单**：ItemType `Banner` 是主队库存里的 morale-buff 旗帜（`battle_banner_small` 等），5 分钟改动加进 IsGear() 即可；`Book` 也建议加。**b) 解决重量问题（个人库）**：加 `SyncData`-持久化的 `ItemRoster` 作"个人库"，三热键——Ctrl+Alt+I 注入到主队（现状）、Ctrl+Alt+O 主队→个人库（打仗前回仓）、Ctrl+Alt+P 个人库→主队（要装备时取回）。**根源**：Tier6Injector ×20 生成 1-2 万 kg 装备，主队上限 4000-6000 kg 必爆；vanilla town stash 只在 castle 场景里那个箱子、容量 <50 slot 装不下。工作量 3-4 h
 
 ### 食物经济 · 已解决（2026-09-18）
 

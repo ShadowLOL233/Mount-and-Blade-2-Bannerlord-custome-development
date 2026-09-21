@@ -151,7 +151,7 @@
         <ButtonWidget DoNotPassEventsToChildren="true"
                       WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
                       SuggestedWidth="270" SuggestedHeight="38"
-                      Brush="Popup.Button.Text"
+                      Brush="Clan.Members.Sort.1"
                       Command.Click="ExecuteEqsmInjectToStash"
                       UpdateChildrenStates="true">
           <Children>

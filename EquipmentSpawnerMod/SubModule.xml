@@ -2,7 +2,7 @@
 <Module>
   <Name value="Equipment Stash" />
   <Id value="EquipmentSpawnerMod" />
-  <Version value="v1.8.0" />
+  <Version value="v1.8.1" />
   <DefaultModule value="false" />
   <ModuleCategory value="Singleplayer" />
   <ModuleType value="Community" />

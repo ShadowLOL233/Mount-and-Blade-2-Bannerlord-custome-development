@@ -557,6 +557,41 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 28. 崩溃诊断中 — Equipment Stash v1.8.1 brush 修 + 三步测试（2026-09-21）
+
+**当前状态**：Equipment Stash **v1.8.1** + RBM buff **v1.0.1** 已 deploy，但 **两个 mod 都 IsSelected=false**（LauncherData 里手动禁用）等用户跑诊断。
+
+**症状**：用户升到 v1.8.0 + RBM buff v1.0.0 后游戏崩溃。**主菜单显示前**就 die，无 crash dump 无 managed exception。
+
+**误判修正（v1.0.1 时的假信号）**：
+- `<IsDangerous>true</IsDangerous>` **不是原因**。反查发现 **Retinues.dll / RetinuesCultureFilter.dll**（一直 working 的）**同样是 IsDangerous=true** —— Bannerlord launcher 对所有非官方 mod 默认标警告，不阻止加载
+- v1.0.1 的 string-based Harmony patch 改造（`[HarmonyPatch("RBMAI.Stance","tickStaminaRegen")]` 替代 `typeof(Stance)`）是**技术改进但非崩溃 root cause**
+- Retinues 的 debug.log 06:25:18 + FormationManager 的 log 06:25:18.951 `Harmony.PatchAll() succeeded` 证明**所有 mod 都成功加载完成，Harmony 全部生效**。崩溃在 mod init 完成后、主菜单显示前的空窗期
+
+**真正的疑因（v1.8.1 修的）**：`InventoryCultureButtonRow.xml` 里 v1.8.0 新加的 Inject 按钮用 `Brush="Popup.Button.Text"` —— 反查 `Modules/Native/GUI/Brushes/Popup.xml` 里这个 brush 定义是 `Font="Galahad" TextHorizontalAlignment="Center" TextVerticalAlignment="Center"` —— **是 TEXT brush**，用在 `ButtonWidget.Brush=` 上是**语义错误**（ButtonWidget 需要图形 brush 带 Sprite/nine-slice）。Bannerlord 启动可能预加载所有 UI prefab，我们的 Inventory prefab extension 在 parse 时遇到无效 brush → native crash。
+
+**v1.8.1 修**：`Brush="Popup.Button.Text"` → `Brush="Clan.Members.Sort.1"`（与 culture 按钮同款，v1.7.2 验证过工作）。SubModule.xml v1.8.0 → v1.8.1，build 0/0，deploy 完成。**未 git push**（等诊断确认再 commit）。
+
+**待用户跑的三步诊断**（当前 LauncherData 停在 Test A 起点）：
+
+| 测试 | 配置 | 预期 | 结论 |
+|---|---|---|---|
+| **A** | Equipment Stash + RBM buff **都禁用** | 应能进主菜单 | ✅ = 确认是我们 mod 引起；❌ = 跟我们无关，问题在别处 |
+| **B**（若 A ✅）| 只勾 Equipment Stash **v1.8.1** | 应能进 | ✅ = brush 就是原因，v1.8.1 修好；❌ = v1.8 还有别的 bug 待查 |
+| **C**（若 B ✅）| 两个都勾 | 应能进 | ✅ = 全部搞定；❌ = RBM buff 有独立问题 |
+
+**下次 session 开工须知**：
+- 若用户报 Test A ✅ + Test B ✅ + Test C ✅：所有问题解决，git commit + push v1.8.1（LauncherData 版本已升到 v1.8.1.0）+ 收尾
+- 若 Test B ❌：需继续排查 v1.8.0 其他新加内容 —— 优先怀疑 `CaptureOpenScreenAsStashPatch` Harmony Prefix on `Helpers.InventoryScreenHelper.OpenScreenAsStash`（虽然 typeof(InventoryScreenHelper) 在核心 dll 应该安全），其次 mixin 的 `EqsmShowInjectButton` 反射 getter
+- 若 Test C ❌ 但 B ✅：RBM buff v1.0.1 独立问题 —— 可能 `Stance.tickStaminaRegen(int, float)` 签名 Harmony ref float 匹配问题
+- 若 Test A ❌：跟我们无关，需查其他 mod（可能是 Xiangyong / BetterPatrols 新启用 —— LauncherData 显示这两个之前 IsSelected=false 现在=true）
+
+**关键路径记忆**：
+- 玩家 stash mod 源：`C:\Users\situj\git\Mount-and-Blade-2-Bannerlord-custome-development\EquipmentSpawnerMod\`
+- RBM buff mod 源：`C:\Users\situj\git\Mount-and-Blade-2-Bannerlord-custome-development\RBMPlayerStaminaPoiseBuff\`
+- LauncherData：`E:\Bannerlord-UserData\Mount and Blade II Bannerlord\Configs\LauncherData.xml`
+- 反编译工具：`C:\Users\situj\Desktop\dnSpy-net-win64\dnSpy.Console.exe -t <TypeName> <dll>`
+
 ### 27. RBM buff v1.0.1 crash fix — string-based Harmony patches（2026-09-21）
 
 **背景**：v1.0.0 部署后用户报告游戏崩溃。诊断 `Configs\ModLogs\` 里 butterlib/default 日志在 "Wrapping DebugManager"（ButterLib 早期 init）之后 silent 结束，无 managed exception —— 特征 = native access violation。查 `LauncherData.xml` 发现 **两个我们的 mod DLL 都被标 `<IsDangerous>true</IsDangerous>`**，跟 Bug #6 CalradianPatrolsV2 症状完全一致。

@@ -557,6 +557,53 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 21. EquipmentSpawnerMod v1.6.0 - Stash UI（vanilla Inventory + culture filter）（2026-09-21）
+
+**背景**：用户请求为 personal / town stash 加 UI —— 蓝本参考 NavalDLC dropoff 界面，需要数量拉条 + 文化 sort。
+
+**关键调研发现**（大幅省工）：`Helpers.InventoryScreenHelper.OpenScreenAsStash(ItemRoster stash)` — vanilla 现成 API，直接开出**完整装备管理界面**：左列玩家背包、右列传入的 roster、Ctrl+click 转移已含数量弹窗、原生排序、搜索、拖拽全套。这意味着**装备转移 / 数量拉条 / 排序无需自研**，只做文化 sort 即可。
+
+**架构变更**（vs 用户初选 "one UI + tab" 方案）：改为**两个 game menu 选项**（town + castle 各挂两条），因为 `OpenScreenAsStash` 每次只吃一个 roster，tab 切换要重写整个 vanilla UI（4-6h 工作量）。用户 confirm 后接受新方案：
+- **"Manage personal equipment stash"** — 常显（personal stash 携带式）
+- **"Manage this settlement's equipment stash"** — 仅 `Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan` 时显示
+
+**新加代码**（`EquipmentSpawnerMod/src/Inventory/*`）：
+- `InventoryCultureFilterState.cs` — 静态状态，6 culture + `CurrentIndex=-1`（无过滤）+ toggle
+- `SPInventoryVMCultureMixin.cs` — `[ViewModelMixin]` on `TaleWorlds.CampaignSystem.ViewModelCollection.Inventory.SPInventoryVM`，6 `[DataSourceMethod]` + 6 `[DataSourceProperty]`。click 时反射 invoke 私有 `UpdateFilteredStatusOfItem` 逐个 item 重跑过滤（触发我们的 postfix）
+- `InventoryCultureFilterPatch.cs` — `[HarmonyPatch(typeof(SPInventoryVM), "UpdateFilteredStatusOfItem")]` postfix：若 CurrentCultureId 非空且 item 文化不匹配则 `item.IsFiltered = true`。与 vanilla category filter 是 AND 语义
+- `InventoryCultureButtonRowInsert.cs` — `[PrefabExtension("Inventory", "descendant::NavigatableListPanel[@Id='CenterItems']")]` + `InsertType.Append`
+- `GUI/PrefabExtensions/InventoryCultureButtonRow.xml` — 6 SortButtonWidget 70×36 一行，MarginTop=245 位于 vanilla 6 类别 filter 按钮正下方
+
+**SubModule.cs 改动**：
+- 新增 `OnSubModuleLoad`：Harmony patch + UIExtender.Create/Register/Enable
+- `OnGameStart` 里 `AddStashMenuOptions(cgs)`：town 和 castle 各挂 2 个菜单选项，通过 `condition` lambda 控制 town stash 仅在自家 fief 显示
+- 保留旧的 Ctrl+Alt+O/P/U/Y hotkey（用户依然可能用于批量转移）
+
+**csproj 新增依赖**：`TaleWorlds.CampaignSystem.ViewModelCollection.dll` + `TaleWorlds.Core.ViewModelCollection.dll`（含 `SPItemVM` / `ItemVM.IsFiltered`）+ `0Harmony.dll` + `Bannerlord.UIExtenderEx.dll`
+
+**SubModule.xml**：加 UIExtenderEx + Harmony 依赖 + `LoadBeforeThis` 元数据
+
+**deploy.ps1**：加 GUI/ 目录整包 copy
+
+**版本 & 部署**：SubModule.xml v1.5.1 → **v1.6.0**；LauncherData v1.5.1.0 → **v1.6.0.0**；build 0 warn / 0 err；deploy 全套完成
+
+**Claude 不能驱动的实机验证**：
+1. launcher 确认 v1.6.0.0 勾选 + 加载在 UIExtenderEx/Harmony 之后
+2. 进任意 town/castle → 主 menu 应有 "Manage personal equipment stash" 选项；若在自家 fief 还多一条 "Manage this settlement's equipment stash"
+3. 点选项 → 打开 vanilla 装备管理界面：左列玩家背包，右列我们的 stash
+4. Ctrl+click 一件装备 → vanilla 数量拉条弹出，可分配数量转移
+5. **顶部中央 vanilla 6 个类别 filter 按钮下方应出现 6 个文化按钮**（Empire/Vlandia/Aserai/Battania/Sturgia/Khuzait）
+6. 点 Aserai → 只显示 Aserai 装备（两侧都过滤）；再点 Aserai → 取消过滤
+7. 类别 filter + culture filter 是 AND：例如 category=Armor + culture=Aserai → 只显示 Aserai 护甲
+8. 存 + 读档 → stash 内容保留（无变更，PersonalStashBehavior + TownStashBehavior 依然通过 SyncData 持久化）
+
+**若失败诊断**：
+- 菜单选项不出现 → 反编译核对 `CampaignGameStarter.AddGameMenuOption` 签名；查 `Configs\ModLogs\` 有无 warning
+- UI 打开失败 → InventoryScreenHelper API 版本漂移。确认游戏 v1.4.7 API 稳定
+- 文化按钮不出现 → XPath 未匹配 vanilla Inventory.xml 的 CenterItems。查 UIExtenderEx warn log
+- 按钮点无反应 → `[DataSourceMethod]` 缺失（v1.1 RetinuesCultureFilter 同样问题）
+- Filter 生效但类别切换后失效 → vanilla `ProcessFilter` 已在类别切换时对每 item 调 UpdateFilteredStatusOfItem，我们的 postfix 应跟着跑；若不跑说明 patch 未生效，查 butterlib log
+
 ### 20. RetinuesCultureFilter v1.4.0 - 去 hotkey + 清理（2026-09-21）
 
 **背景**：v1.3 实测所有功能正常（过滤/排序/翻页/toggle 都对）。用户反馈 UI 按钮已完全覆盖使用场景，`Ctrl+Alt+F/G` hotkey 冗余无价值，请求移除。

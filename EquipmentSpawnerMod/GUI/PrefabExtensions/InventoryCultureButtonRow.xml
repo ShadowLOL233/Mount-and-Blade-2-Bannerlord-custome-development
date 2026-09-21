@@ -1,0 +1,93 @@
+<!-- 6-button culture filter row injected below vanilla Inventory.xml's CenterItems row.
+     Positioned at TOP CENTER; vanilla CenterItems starts at MarginTop=100 with ~140px height,
+     so we place ours at MarginTop=245 to sit right below. Buttons 70x36 (6 x 70 = 420 px). -->
+<ListPanel Id="EqsmCultureFilterRow"
+           WidthSizePolicy="Fixed"
+           HeightSizePolicy="Fixed"
+           SuggestedWidth="440"
+           SuggestedHeight="40"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Top"
+           MarginTop="245"
+           StackLayout.LayoutMethod="HorizontalLeftToRight">
+  <Children>
+    <SortButtonWidget DoNotPassEventsToChildren="true"
+                      WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                      SuggestedWidth="70" SuggestedHeight="36"
+                      Brush="Clan.Members.Sort.1"
+                      Command.Click="ExecuteEqsmSelectCultureEmpire"
+                      IsSelected="@EqsmCultureEmpireSelected"
+                      UpdateChildrenStates="true">
+      <Children>
+        <TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Brush="Clan.LeftPanel.Header.Text" Text="Empire"/>
+      </Children>
+    </SortButtonWidget>
+    <SortButtonWidget DoNotPassEventsToChildren="true"
+                      WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                      SuggestedWidth="70" SuggestedHeight="36"
+                      Brush="Clan.Members.Sort.1"
+                      Command.Click="ExecuteEqsmSelectCultureVlandia"
+                      IsSelected="@EqsmCultureVlandiaSelected"
+                      UpdateChildrenStates="true">
+      <Children>
+        <TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Brush="Clan.LeftPanel.Header.Text" Text="Vlandia"/>
+      </Children>
+    </SortButtonWidget>
+    <SortButtonWidget DoNotPassEventsToChildren="true"
+                      WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                      SuggestedWidth="70" SuggestedHeight="36"
+                      Brush="Clan.Members.Sort.1"
+                      Command.Click="ExecuteEqsmSelectCultureAserai"
+                      IsSelected="@EqsmCultureAseraiSelected"
+                      UpdateChildrenStates="true">
+      <Children>
+        <TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Brush="Clan.LeftPanel.Header.Text" Text="Aserai"/>
+      </Children>
+    </SortButtonWidget>
+    <SortButtonWidget DoNotPassEventsToChildren="true"
+                      WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                      SuggestedWidth="70" SuggestedHeight="36"
+                      Brush="Clan.Members.Sort.1"
+                      Command.Click="ExecuteEqsmSelectCultureBattania"
+                      IsSelected="@EqsmCultureBattaniaSelected"
+                      UpdateChildrenStates="true">
+      <Children>
+        <TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Brush="Clan.LeftPanel.Header.Text" Text="Battania"/>
+      </Children>
+    </SortButtonWidget>
+    <SortButtonWidget DoNotPassEventsToChildren="true"
+                      WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                      SuggestedWidth="70" SuggestedHeight="36"
+                      Brush="Clan.Members.Sort.1"
+                      Command.Click="ExecuteEqsmSelectCultureSturgia"
+                      IsSelected="@EqsmCultureSturgiaSelected"
+                      UpdateChildrenStates="true">
+      <Children>
+        <TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Brush="Clan.LeftPanel.Header.Text" Text="Sturgia"/>
+      </Children>
+    </SortButtonWidget>
+    <SortButtonWidget DoNotPassEventsToChildren="true"
+                      WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                      SuggestedWidth="70" SuggestedHeight="36"
+                      Brush="Clan.Members.Sort.1"
+                      Command.Click="ExecuteEqsmSelectCultureKhuzait"
+                      IsSelected="@EqsmCultureKhuzaitSelected"
+                      UpdateChildrenStates="true">
+      <Children>
+        <TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Brush="Clan.LeftPanel.Header.Text" Text="Khuzait"/>
+      </Children>
+    </SortButtonWidget>
+  </Children>
+</ListPanel>

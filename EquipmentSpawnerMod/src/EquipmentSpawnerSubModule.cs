@@ -1,5 +1,10 @@
 using System.Collections.Generic;
+using System.Reflection;
+using Bannerlord.UIExtenderEx;
+using HarmonyLib;
+using Helpers;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.Settlements;
@@ -14,6 +19,7 @@ namespace EquipmentSpawnerMod
 {
     public class EquipmentSpawnerSubModule : MBSubModuleBase
     {
+        private const string ExtenderId = "EquipmentSpawnerMod";
         private const int GearQuantity = 20;
         private const int HorseQuantity = 20;
         private const ItemObject.ItemTiers MinTier = ItemObject.ItemTiers.Tier3;
@@ -31,6 +37,16 @@ namespace EquipmentSpawnerMod
         private bool _townOutLatched;
         private bool _townInLatched;
 
+        protected override void OnSubModuleLoad()
+        {
+            base.OnSubModuleLoad();
+            var harmony = new Harmony(ExtenderId);
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            var extender = UIExtender.Create(ExtenderId);
+            extender.Register(Assembly.GetExecutingAssembly());
+            extender.Enable();
+        }
+
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
             base.OnGameStart(game, gameStarterObject);
@@ -38,6 +54,65 @@ namespace EquipmentSpawnerMod
             {
                 cgs.AddBehavior(new PersonalStashBehavior());
                 cgs.AddBehavior(new TownStashBehavior());
+                AddStashMenuOptions(cgs);
+            }
+        }
+
+        // Two menu options each in town/castle menus:
+        //   1) "Manage personal equipment stash" — always visible (personal stash is portable)
+        //   2) "Manage [Settlement]'s equipment stash" — only shown when the settlement is
+        //      player-clan-owned (town stash is location-locked)
+        // Both open the vanilla inventory screen (via InventoryScreenHelper.OpenScreenAsStash),
+        // which gives us free-standing item transfer + quantity slider (Ctrl+click) + sort +
+        // search — no custom UI needed for those. Culture filter is added on top via
+        // SPInventoryVMCultureMixin + Inventory prefab extension.
+        private static void AddStashMenuOptions(CampaignGameStarter cgs)
+        {
+            foreach (string menuId in new[] { "town", "castle" })
+            {
+                cgs.AddGameMenuOption(
+                    menuId,
+                    "eqsm_manage_personal_stash",
+                    "{=eqsm_pers}Manage personal equipment stash",
+                    args =>
+                    {
+                        args.optionLeaveType = GameMenuOption.LeaveType.Manage;
+                        return true;
+                    },
+                    args =>
+                    {
+                        var behavior = GetStashBehavior();
+                        if (behavior == null)
+                        {
+                            InformationManager.DisplayMessage(new InformationMessage(
+                                "Equipment Spawner: personal stash behavior missing. Save + reload once."));
+                            return;
+                        }
+                        InventoryScreenHelper.OpenScreenAsStash(behavior.Stash);
+                    });
+
+                cgs.AddGameMenuOption(
+                    menuId,
+                    "eqsm_manage_town_stash",
+                    "{=eqsm_town}Manage this settlement's equipment stash",
+                    args =>
+                    {
+                        args.optionLeaveType = GameMenuOption.LeaveType.Manage;
+                        var s = Settlement.CurrentSettlement;
+                        return s != null && s.OwnerClan == Clan.PlayerClan;
+                    },
+                    args =>
+                    {
+                        var s = Settlement.CurrentSettlement;
+                        var behavior = GetTownStashBehavior();
+                        if (behavior == null || s == null)
+                        {
+                            InformationManager.DisplayMessage(new InformationMessage(
+                                "Equipment Spawner: town stash behavior missing or not in a settlement."));
+                            return;
+                        }
+                        InventoryScreenHelper.OpenScreenAsStash(behavior.GetOrCreateStashFor(s));
+                    });
             }
         }
 
@@ -47,7 +122,7 @@ namespace EquipmentSpawnerMod
             if (game.GameType is Campaign)
             {
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner loaded. Ctrl+Alt+ I inject | O party->stash | P stash->party | U party->town stash | Y town stash->party."));
+                    "Equipment Spawner v1.6 loaded. Town/castle menus: 'Manage ... equipment stash'. Hotkeys: Ctrl+Alt+I/O/P/U/Y still available."));
             }
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Reflection;
 using HarmonyLib;
@@ -10,57 +11,104 @@ namespace RBMPlayerStaminaPoiseBuff
     // Boosts RBM stamina/posture regen for the player only. Multipliers hardcoded per user
     // preference (2026-09-21): stamina x6, posture x2. AI stays on RBM defaults.
     //
-    // Why string-based Harmony patches instead of typeof(RBMAI.Stance): RBM's SubModule.xml only
-    // registers RBM.dll as its SubModule DLL — RBMAI.dll is loaded dynamically by RBM.dll at
-    // runtime and is NOT in the launcher's static-scan search path. If we use `typeof(Stance)`
-    // in a [HarmonyPatch] attribute, the launcher's DLL verifier tries to resolve that type
-    // during its static scan (before any game code runs), fails, and flags our DLL as
-    // IsDangerous=true — which then either auto-disables the mod or causes a native crash when
-    // the launcher force-loads a "dangerous" DLL alongside a partly-initialised managed context.
+    // v1.0.2 architecture — deferred manual patching:
+    //   RBM's SubModule.OnSubModuleLoad does NOT load RBMAI.dll (verified via dnSpy decompile
+    //   2026-09-21: RBM.SubModule.OnSubModuleLoad only touches RBMConfig / prefab patches /
+    //   AddInitialStateOption — no RBMAI.* type reference). RBMAI is loaded later via
+    //   RBM.SubModule.ApplyHarmonyPatches → RBMAiPatcher.FirstPatch.
     //
-    // String-based [HarmonyPatch("Namespace.Type", "method")] defers type resolution to runtime
-    // via AccessTools.TypeByName, when RBM.dll has already caused RBMAI.dll to load. Passes the
-    // launcher's static scan cleanly.
+    //   Consequence for us: if we do harmony.PatchAll in OnSubModuleLoad with a string-based
+    //   [HarmonyPatch("RBMAI.Stance", ...)] attribute, Harmony resolves the type via
+    //   AccessTools.TypeByName during PatchAll → returns null (RBMAI not loaded yet) → Harmony
+    //   throws → uncaught → native crash before main menu. This is what killed v1.0.1.
     //
-    // Same story for our AgentStances.values lookup — we do that via reflection instead of a
-    // direct `AgentStances.values` reference, keeping our assembly's static type table free of
-    // RBMAI references altogether.
+    //   Fix: OnSubModuleLoad only constructs the Harmony instance. First Mission start
+    //   (OnMissionBehaviorInitialize) triggers TryPatch, which does the reflection + manual
+    //   patch. By first mission RBM.ApplyHarmonyPatches has run and RBMAI is loaded.
+    //
+    //   Failure modes are all soft: TypeByName returns null → set _patchFailed, buff silently
+    //   disables, no crash.
     public class SubModule : MBSubModuleBase
     {
         private const string HarmonyId = "RBMPlayerStaminaPoiseBuff";
         private const float StaminaMultiplier = 6f;
         private const float PostureMultiplier = 2f;
 
-        // Cached at first successful lookup, then reused. Null when RBMAI.dll not yet loaded
-        // OR when reflection paths fail — in either case the buff silently no-ops that tick.
+        private static Harmony _harmony;
+        private static bool _patched;
+        private static bool _patchFailed;
         private static FieldInfo _agentStancesValuesField;
 
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
-            var harmony = new Harmony(HarmonyId);
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            _harmony = new Harmony(HarmonyId);
         }
 
-        public override void OnGameInitializationFinished(Game game)
+        public override void OnMissionBehaviorInitialize(Mission mission)
         {
-            base.OnGameInitializationFinished(game);
-            var gtName = game.GameType?.GetType().Name ?? "";
-            if (gtName == "Campaign")
+            base.OnMissionBehaviorInitialize(mission);
+            TryPatch();
+        }
+
+        private static void TryPatch()
+        {
+            if (_patched || _patchFailed) return;
+
+            var stanceType = AccessTools.TypeByName("RBMAI.Stance");
+            if (stanceType == null)
             {
+                _patchFailed = true;
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "RBM Player Stamina & Poise Buff v1.0.1 loaded. Player-only regen: stamina x"
-                    + StaminaMultiplier + ", posture x" + PostureMultiplier
-                    + ". AI unchanged."));
+                    "RBM Player Stamina & Poise Buff: RBMAI.Stance not resolvable, buff disabled."));
+                return;
+            }
+
+            var staminaMethod = AccessTools.Method(stanceType, "tickStaminaRegen");
+            var postureMethod = AccessTools.Method(stanceType, "tickPostureRegen");
+            if (staminaMethod == null || postureMethod == null)
+            {
+                _patchFailed = true;
+                InformationManager.DisplayMessage(new InformationMessage(
+                    "RBM Player Stamina & Poise Buff: tick regen methods not found, buff disabled."));
+                return;
+            }
+
+            var staminaPrefix = new HarmonyMethod(
+                AccessTools.Method(typeof(SubModule), nameof(StaminaPrefix)));
+            var posturePrefix = new HarmonyMethod(
+                AccessTools.Method(typeof(SubModule), nameof(PosturePrefix)));
+
+            try
+            {
+                _harmony.Patch(staminaMethod, prefix: staminaPrefix);
+                _harmony.Patch(postureMethod, prefix: posturePrefix);
+                _patched = true;
+                InformationManager.DisplayMessage(new InformationMessage(
+                    "RBM Player Stamina & Poise Buff v1.0.2 loaded. Player-only regen: stamina x"
+                    + StaminaMultiplier + ", posture x" + PostureMultiplier + ". AI unchanged."));
+            }
+            catch (Exception ex)
+            {
+                _patchFailed = true;
+                InformationManager.DisplayMessage(new InformationMessage(
+                    "RBM Player Stamina & Poise Buff: patch failed: " + ex.Message));
             }
         }
 
-        internal static float GetStaminaMultiplier() => StaminaMultiplier;
-        internal static float GetPostureMultiplier() => PostureMultiplier;
+        public static void StaminaPrefix(object __instance, ref float multiplier)
+        {
+            if (IsPlayerStance(__instance)) multiplier *= StaminaMultiplier;
+        }
 
-        // Whether this Stance instance belongs to Agent.Main. Everything is reflected so the
-        // assembly never statically references RBMAI types — required to keep the launcher's
-        // DLL scan happy (see class-level comment).
+        public static void PosturePrefix(object __instance, ref float multiplier)
+        {
+            if (IsPlayerStance(__instance)) multiplier *= PostureMultiplier;
+        }
+
+        // Whether this Stance instance belongs to Agent.Main. Reflected access to
+        // RBMAI.AgentStances.values (verified via dnSpy: public static
+        // ConcurrentDictionary<Agent, Stance>) keeps our assembly free of RBMAI references.
         internal static bool IsPlayerStance(object stanceInstance)
         {
             if (stanceInstance == null) return false;
@@ -78,36 +126,7 @@ namespace RBMPlayerStaminaPoiseBuff
             var dict = _agentStancesValuesField.GetValue(null) as IDictionary;
             if (dict == null) return false;
             if (!dict.Contains(main)) return false;
-            var playerStance = dict[main];
-            return ReferenceEquals(playerStance, stanceInstance);
-        }
-    }
-
-    // String-based patch target — no typeof(RBMAI.Stance) → launcher static scan passes.
-    // AccessTools.TypeByName runs at PatchAll time when RBMAI.dll is loaded.
-    [HarmonyPatch("RBMAI.Stance", "tickStaminaRegen")]
-    public static class StaminaRegenPatch
-    {
-        // __instance is boxed as object because we deliberately avoid `Stance` type in the
-        // signature. Harmony still resolves it correctly by name matching.
-        public static void Prefix(object __instance, ref float multiplier)
-        {
-            if (SubModule.IsPlayerStance(__instance))
-            {
-                multiplier *= SubModule.GetStaminaMultiplier();
-            }
-        }
-    }
-
-    [HarmonyPatch("RBMAI.Stance", "tickPostureRegen")]
-    public static class PostureRegenPatch
-    {
-        public static void Prefix(object __instance, ref float multiplier)
-        {
-            if (SubModule.IsPlayerStance(__instance))
-            {
-                multiplier *= SubModule.GetPostureMultiplier();
-            }
+            return ReferenceEquals(dict[main], stanceInstance);
         }
     }
 }

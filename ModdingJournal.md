@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-09-20
+**最后更新**：2026-09-21
 
 ## 目录
 - [环境与路径](#环境与路径)
@@ -556,6 +556,48 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 2. 实机验证 hotkey filter 现在能正常工作
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
+
+### 29. RBM buff v1.0.2 — deferred manual patching（2026-09-21）
+
+**背景**：§28 三步测试用户实机结果 Test A ❌（两个 mod 全禁仍进不去主菜单），后来独立诊断出主菜单前崩溃与 MarriageFertility 新装 mod 有关（**MarriageFertility 已由用户 workaround，不阻碍模组包运行**）。回到我们自研 mod 侧继续排 RBM buff v1.0.1 的独立崩溃风险 —— §28 已预测该风险，本次坐实并 fix。
+
+**根因（反编译坐实）**：dnSpy 反编译 `RBM.SubModule.OnSubModuleLoad`（RBM v4.5.0.1）确认它**完全不 reference 任何 RBMAI.* 类型**——只做 `RBMConfig.LoadConfig` + `CustomBattlePreset.LoadPreset` + rbmCampaign 的 prefab patches + `AddInitialStateOption`。RBMAI.dll 的加载被推迟到 `RBM.SubModule.ApplyHarmonyPatches` 里的 `RBMAiPatcher.FirstPatch(...)`，而 ApplyHarmonyPatches **不是** OnSubModuleLoad 调用的。
+
+**崩溃时序**：
+1. RBM.OnSubModuleLoad 完成，**RBMAI.dll 未加载**
+2. 我们 v1.0.1 的 OnSubModuleLoad 后跑（LoadBeforeThis 保证 RBM 先），调 `harmony.PatchAll(assembly)`
+3. Harmony 处理 `[HarmonyPatch("RBMAI.Stance", "tickStaminaRegen")]` attribute → `AccessTools.TypeByName("RBMAI.Stance")` 返回 **null**
+4. Harmony 抛 `HarmonyException` 未 catch → native access violation → **主菜单前崩溃**
+
+§27 v1.0.0 → v1.0.1 修的是 **launcher 静态扫描（IsDangerous flag）**，通过去掉编译期 typeof(RBMAI.Stance) 依赖 pass launcher 的 DLL 扫描；但 runtime PatchAll 仍要 resolve 字符串 attribute 里的类型 → 仍崩。**§27 只解决一半，v1.0.2 解决另一半**。
+
+**v1.0.2 架构（方案 A · deferred manual patching）**：
+- `OnSubModuleLoad` 只 `new Harmony(HarmonyId)`，**不 PatchAll**
+- 删掉 `[HarmonyPatch(...)]` 两个 attribute（因 attribute 处理会在 PatchAll 时触发 type resolve）
+- 加 `OnMissionBehaviorInitialize(Mission)` override → 每次 mission start 触发 `TryPatch()`；`_patched` static bool 守门保证只 patch 一次
+- `TryPatch()` 显式反射：`AccessTools.TypeByName("RBMAI.Stance")` + `AccessTools.Method(stanceType, "tickStaminaRegen"/"tickPostureRegen")` → null 时设 `_patchFailed=true`、log noop 消息、**不崩**
+- `_harmony.Patch(method, prefix: new HarmonyMethod(...))` 手动 patch；try/catch 兜底 Harmony 内部异常
+- Prefix 方法（`StaminaPrefix` / `PosturePrefix`）从原本的 nested static class 提到 SubModule 静态方法，简化引用
+- `IsPlayerStance` 逻辑保留 v1.0.1 一致的反射链（`AgentStances.values` 反编译确认是 `public static ConcurrentDictionary<Agent, Stance>`，`GetValue(null)` 用法正确）
+
+**方法签名核实**（dnSpy `RBMAI.Stance`）：
+```csharp
+public void tickStaminaRegen(int tickCount = 30, float multiplier = 1f)
+public void tickPostureRegen(int tickCount = 30, float multiplier = 1f)
+```
+只一个 overload、参数名 `multiplier`（Prefix 精确匹配用于 Harmony ref 传递）✓
+
+**版本 & 部署**：
+- SubModule.xml v1.0.1 → **v1.0.2**
+- LauncherData v1.0.1.0 → **v1.0.2.0**（LauncherData 里 IsSelected 仍 false，等用户实机验证时手动勾）
+- build 0 warn / 0 err (1.44s)；deploy 完成
+
+**Claude 不能驱动的实机验证**（用户操作项）：
+1. launcher 里勾选 RBM Player Stamina & Poise buff Mod v1.0.2.0（加载在 RBM 之后）
+2. 启动游戏 → 主菜单应正常显示（不再崩，因为 OnSubModuleLoad 只 `new Harmony` 无 crash 面）
+3. 进任意 mission（tournament / battle / custom battle 皆可）→ **消息栏应出现** "RBM Player Stamina & Poise Buff v1.0.2 loaded. Player-only regen: stamina x6, posture x2. AI unchanged."（若出现 "RBMAI.Stance not resolvable" / "tick regen methods not found" → RBMAI 加载时机比预期更晚，需改到 OnAfterGameInitializationFinished 或类似钩子重试）
+4. 战斗中观察玩家 stamina / posture 回复速度明显快（~6× stamina、~2× posture），AI 保持 RBM 原速
+5. 若 Test C 场景（两个 mod 都启用）主菜单仍崩 → RBM buff 本身已修，剩余崩溃点应查其他 mod（可能 Xiangyong / MarriageFertility / 双 MCM）
 
 ### 28. 崩溃诊断中 — Equipment Stash v1.8.1 brush 修 + 三步测试（2026-09-21）
 

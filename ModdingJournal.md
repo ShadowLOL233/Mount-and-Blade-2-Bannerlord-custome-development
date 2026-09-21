@@ -557,6 +557,28 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 25. EquipmentSpawnerMod v1.7.2 - culture 按钮全名 + 高亮外框（2026-09-21）
+
+**背景**：v1.7.1 修好按钮渲染后，用户满意运作但要求 UI 调整：① 使用全名（Empire/Vlandia/Aserai/Battania/Sturgia/Khuzait）而非 3 字缩写；② 选中态加**高亮外框 + 背景色**（比 SortButtonWidget 自带的 subtle 变化更醒目）。
+
+**布局改动**：
+- 全名要更宽 → 单行 6 按钮 (6×90=540px) 会溢出 ~SidePanel.Width (~320px)
+- 改为 **2 行 × 3 按钮**：Row 1 = Empire/Vlandia/Aserai，Row 2 = Battania/Sturgia/Khuzait
+- 每按钮 **90×36**，行间距 2px，总块 270×80
+
+**高亮实现**：每按钮内叠两个条件可见 widget，`IsVisible="@EqsmCultureXxxSelected"` 绑定同 mixin 属性：
+1. **背景色 tint**：`<Widget Sprite="StdAssets\rounded_rectangle_9" Color="#c7ac8577">` — Bannerlord vanilla 圆角矩形 sprite + 半透明金色（`#c7ac85` 是 Bannerlord UI 常用棕金色）
+2. **外框**：`<BrushWidget Brush="Frame1Brush">` — vanilla 装饰性框边 brush
+
+层次：background sprite → frame outline → text。全部不选中时两个 overlay `IsVisible=false` 不渲染，纯 SortButtonWidget 默认外观。
+
+**版本 & 部署**：
+- SubModule.xml v1.7.1 → **v1.7.2**
+- LauncherData v1.7.2.0
+- build 0 warn / 0 err (0.60s)；deploy 完成（launcher 曾锁 DLL，用户关闭后 retry）
+
+**用户操作项**：完全关游戏 + launcher，重启，进任意 stash 界面（personal / vanilla settlement / Character Inventory）→ 左列顶部应看到 2 行 6 个全名按钮；点某个 → 应看到**金色半透明背景 + Frame1 外框**同时出现
+
 ### 24. EquipmentSpawnerMod v1.7.1 - PrefabExtension XPath 修（culture 按钮渲染 bug）（2026-09-21）
 
 **背景**：v1.7.0 部署后用户反馈"personal stash 中没看到文化 sort 系统"。前几个版本都没看到按钮 —— 这个 bug 从 v1.6.1 就存在，只是没抓到根因。

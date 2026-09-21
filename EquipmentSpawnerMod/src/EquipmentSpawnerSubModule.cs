@@ -34,8 +34,6 @@ namespace EquipmentSpawnerMod
         private bool _injectLatched;
         private bool _stashOutLatched;
         private bool _stashInLatched;
-        private bool _townOutLatched;
-        private bool _townInLatched;
 
         protected override void OnSubModuleLoad()
         {
@@ -58,14 +56,15 @@ namespace EquipmentSpawnerMod
             }
         }
 
-        // Two menu options each in town/castle menus:
-        //   1) "Manage personal equipment stash" — always visible (personal stash is portable)
-        //   2) "Manage [Settlement]'s equipment stash" — only shown when the settlement is
-        //      player-clan-owned (town stash is location-locked)
-        // Both open the vanilla inventory screen (via InventoryScreenHelper.OpenScreenAsStash),
-        // which gives us free-standing item transfer + quantity slider (Ctrl+click) + sort +
-        // search — no custom UI needed for those. Culture filter is added on top via
-        // SPInventoryVMCultureMixin + Inventory prefab extension.
+        // One menu option in town/castle menus — "Manage personal equipment stash", always visible
+        // (portable per-clan stash, no vanilla equivalent). Opens the vanilla inventory screen via
+        // InventoryScreenHelper.OpenScreenAsStash so item transfer + quantity slider (Ctrl+click) +
+        // sort + search are all vanilla; culture filter is added on top via SPInventoryVMCultureMixin.
+        //
+        // Per-settlement ("town") stash removed in v1.7.0 — vanilla Settlement.Stash already
+        // covers the same use case, accessed via the "Open stash" option under the town_keep or
+        // castle menus. Our culture filter mixin applies there automatically because vanilla
+        // opens the same SPInventoryVM class. See journal §23.
         private static void AddStashMenuOptions(CampaignGameStarter cgs)
         {
             foreach (string menuId in new[] { "town", "castle" })
@@ -90,29 +89,6 @@ namespace EquipmentSpawnerMod
                         }
                         InventoryScreenHelper.OpenScreenAsStash(behavior.Stash);
                     });
-
-                cgs.AddGameMenuOption(
-                    menuId,
-                    "eqsm_manage_town_stash",
-                    "Manage this settlement's equipment stash",
-                    args =>
-                    {
-                        args.optionLeaveType = GameMenuOption.LeaveType.Manage;
-                        var s = Settlement.CurrentSettlement;
-                        return s != null && s.OwnerClan == Clan.PlayerClan;
-                    },
-                    args =>
-                    {
-                        var s = Settlement.CurrentSettlement;
-                        var behavior = GetTownStashBehavior();
-                        if (behavior == null || s == null)
-                        {
-                            InformationManager.DisplayMessage(new InformationMessage(
-                                "Equipment Spawner: town stash behavior missing or not in a settlement."));
-                            return;
-                        }
-                        InventoryScreenHelper.OpenScreenAsStash(behavior.GetOrCreateStashFor(s));
-                    });
             }
         }
 
@@ -122,7 +98,7 @@ namespace EquipmentSpawnerMod
             if (game.GameType is Campaign)
             {
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner v1.6.1 loaded. Town/castle menus: 'Manage ... equipment stash'. Hotkeys: Ctrl+Alt+I/O/P/U/Y still available."));
+                    "Equipment Spawner v1.7.0 loaded. Town/castle menu: 'Manage personal equipment stash'. Hotkeys: Ctrl+Alt+I inject / O party->stash / P stash->party. For per-settlement storage use vanilla 'Open stash' (town_keep or castle menu)."));
             }
         }
 
@@ -137,16 +113,12 @@ namespace EquipmentSpawnerMod
                 _injectLatched = false;
                 _stashOutLatched = false;
                 _stashInLatched = false;
-                _townOutLatched = false;
-                _townInLatched = false;
                 return;
             }
 
             EdgeTrigger(InputKey.I, ref _injectLatched, TryInject);
             EdgeTrigger(InputKey.O, ref _stashOutLatched, TryPartyToStash);
             EdgeTrigger(InputKey.P, ref _stashInLatched, TryStashToParty);
-            EdgeTrigger(InputKey.U, ref _townOutLatched, TryPartyToTownStash);
-            EdgeTrigger(InputKey.Y, ref _townInLatched, TryTownStashToParty);
         }
 
         private static void EdgeTrigger(InputKey key, ref bool latched, System.Action action)
@@ -177,20 +149,6 @@ namespace EquipmentSpawnerMod
         private static PersonalStashBehavior GetStashBehavior()
         {
             return Campaign.Current?.GetCampaignBehavior<PersonalStashBehavior>();
-        }
-
-        private static TownStashBehavior GetTownStashBehavior()
-        {
-            return Campaign.Current?.GetCampaignBehavior<TownStashBehavior>();
-        }
-
-        private static Settlement GetCurrentOwnedSettlement()
-        {
-            Settlement s = Settlement.CurrentSettlement;
-            if (s == null) s = MobileParty.MainParty?.CurrentSettlement;
-            if (s == null) return null;
-            if (s.OwnerClan != Clan.PlayerClan) return null;
-            return s;
         }
 
         private static void TryInject()
@@ -274,56 +232,6 @@ namespace EquipmentSpawnerMod
                 return;
             }
             TransferAll(behavior.Stash, MobileParty.MainParty.ItemRoster, "personal stash -> party", -1);
-        }
-
-        private static void TryPartyToTownStash()
-        {
-            if (!RequireCampaign()) return;
-            var behavior = GetTownStashBehavior();
-            if (behavior == null)
-            {
-                InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner: town stash behavior missing. Save + reload once with the mod enabled."));
-                return;
-            }
-            Settlement s = GetCurrentOwnedSettlement();
-            if (s == null)
-            {
-                InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner: town stash requires being inside a settlement your clan owns."));
-                return;
-            }
-
-            var stash = behavior.GetOrCreateStashFor(s);
-            TransferAll(MobileParty.MainParty.ItemRoster, stash, "party -> " + s.Name.ToString() + " stash", stash.Count);
-        }
-
-        private static void TryTownStashToParty()
-        {
-            if (!RequireCampaign()) return;
-            var behavior = GetTownStashBehavior();
-            if (behavior == null)
-            {
-                InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner: town stash behavior missing. Save + reload once with the mod enabled."));
-                return;
-            }
-            Settlement s = GetCurrentOwnedSettlement();
-            if (s == null)
-            {
-                InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner: town stash requires being inside a settlement your clan owns."));
-                return;
-            }
-
-            var stash = behavior.GetOrCreateStashFor(s);
-            if (stash.Count == 0)
-            {
-                InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner: " + s.Name.ToString() + " stash is empty."));
-                return;
-            }
-            TransferAll(stash, MobileParty.MainParty.ItemRoster, s.Name.ToString() + " stash -> party", -1);
         }
 
         // Bulk-transfer all gear+mount stacks from src to dst; both rosters use ItemRoster ops.

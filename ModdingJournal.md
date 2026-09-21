@@ -557,6 +557,34 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 23. EquipmentSpawnerMod v1.7.0 - 移除 town stash（vanilla Settlement.Stash 已覆盖）（2026-09-21）
+
+**背景**：用户发现 vanilla 有内置的 town stash 系统 —— 反编译确认 `Settlement.Stash`（`public readonly ItemRoster` 每 settlement 一个），通过 `town_keep`/`castle` menu → "Open stash"（localization key `{=xl4K9ecB}`）打开，走 `InventoryScreenHelper.OpenScreenAsStash(Settlement.CurrentSettlement.Stash)` —— **和我们同一 API + 同一 SPInventoryVM UI**。
+
+**核心发现**：我们 v1.6 的 `SPInventoryVMCultureMixin` **已经自动作用在 vanilla stash 上** —— 因为 mixin 是 attach 到 `SPInventoryVM` 类的，不管 who 打开这个 VM。用户开 vanilla "Open stash" 会看到同一排 6 个 Emp/Vla/Ase/Bat/Stu/Khu 按钮。**无需新开发**。
+
+**用户决策**（AskUserQuestion）：**移除我们的 town stash，保留 personal stash**。理由：vanilla 已完全覆盖 town-locked storage；personal stash 是 clan 级别的**可携带**仓库（无论在哪都可访问），vanilla 无同类功能，保留价值高。
+
+**v1.7.0 改动**：
+- `EquipmentSpawnerSubModule.cs`：
+  - 删 town stash menu option `eqsm_manage_town_stash`（保留 `eqsm_manage_personal_stash`）
+  - 删 hotkey `Ctrl+Alt+U` (`TryPartyToTownStash`) + `Ctrl+Alt+Y` (`TryTownStashToParty`) + 对应 latch 字段
+  - 删辅助方法 `TryPartyToTownStash` / `TryTownStashToParty` / `GetTownStashBehavior` / `GetCurrentOwnedSettlement`（仅 town stash 用）
+  - 更新 announcement 消息说明新的 hotkey 集 (`I/O/P`) + 指引用户用 vanilla "Open stash" 做 per-settlement 存储
+- **保留**：`TownStashBehavior` 类 + `EquipmentSpawnerTypeDefiner` **不删**。理由：save-compat —— 用户有已 sync 到存档的 `EquipmentSpawnerMod_TownStashes` 数据，删类会让 SyncData 抛异常/丢数据。类保持"数据存在但无 UI 入口"状态，代码里只写不读
+
+**版本 & 部署**：
+- `SubModule.xml` v1.6.1 → **v1.7.0**（minor bump = 移除公开特性）
+- `LauncherData.xml` v1.6.1.0 → **v1.7.0.0**
+- build 0 warn / 0 err (1.16s)；deploy 完成
+
+**用户操作项**：
+1. 完全关游戏 + launcher，重启，确认 v1.7.0.0 勾选
+2. 进 town/castle → 主菜单**只应看到** "Manage personal equipment stash"（town stash 选项已消失）
+3. 进 town/castle Keep（有 Keep 的话） → 看 vanilla "Open stash" 选项（自家 fief 才显示）
+4. 打开 vanilla stash → **应看到左列顶部 6 个短名文化按钮**（Emp/Vla/Ase/Bat/Stu/Khu），点击过滤生效 —— 证明我们的 mixin 确实覆盖 vanilla stash
+5. 若你之前用 Ctrl+Alt+U 存过 town stash 内容 —— 数据仍在存档里，但**无 UI 入口取回**。可自行写个临时 hotkey 迁移，或忽略（很可能之前的 v1.5/v1.6 town stash 从未成功用过）
+
 ### 22. EquipmentSpawnerMod v1.6.1 - menu 显示修 + culture 按钮左列改位（2026-09-21）
 
 **背景**：用户实测 v1.6.0 反馈两问题：① 进城镇后看不到 "Manage Personal Equipment Stash" 选项；② 顶部中央的文化按钮位置错（应放在左列 stash 的 Type/Name/Wt/#/Value 列头下方），且无法点击。

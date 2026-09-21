@@ -73,7 +73,7 @@ namespace EquipmentSpawnerMod
                 cgs.AddGameMenuOption(
                     menuId,
                     "eqsm_manage_personal_stash",
-                    "{=eqsm_pers}Manage personal equipment stash",
+                    "Manage personal equipment stash",
                     args =>
                     {
                         args.optionLeaveType = GameMenuOption.LeaveType.Manage;
@@ -94,7 +94,7 @@ namespace EquipmentSpawnerMod
                 cgs.AddGameMenuOption(
                     menuId,
                     "eqsm_manage_town_stash",
-                    "{=eqsm_town}Manage this settlement's equipment stash",
+                    "Manage this settlement's equipment stash",
                     args =>
                     {
                         args.optionLeaveType = GameMenuOption.LeaveType.Manage;
@@ -122,7 +122,7 @@ namespace EquipmentSpawnerMod
             if (game.GameType is Campaign)
             {
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner v1.6 loaded. Town/castle menus: 'Manage ... equipment stash'. Hotkeys: Ctrl+Alt+I/O/P/U/Y still available."));
+                    "Equipment Spawner v1.6.1 loaded. Town/castle menus: 'Manage ... equipment stash'. Hotkeys: Ctrl+Alt+I/O/P/U/Y still available."));
             }
         }
 

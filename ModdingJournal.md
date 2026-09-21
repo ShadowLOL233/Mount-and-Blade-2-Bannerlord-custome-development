@@ -557,6 +557,39 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 22. EquipmentSpawnerMod v1.6.1 - menu 显示修 + culture 按钮左列改位（2026-09-21）
+
+**背景**：用户实测 v1.6.0 反馈两问题：① 进城镇后看不到 "Manage Personal Equipment Stash" 选项；② 顶部中央的文化按钮位置错（应放在左列 stash 的 Type/Name/Wt/#/Value 列头下方），且无法点击。
+
+**问题 1 - 菜单不显示 · 疑因分析**：
+- **{=eqsm_pers} localization tag**：Bannerlord 有时会因未在 Languages/*.xml 里注册的 localization key 隐藏或截断 option text。移除 `{=eqsm_pers}` / `{=eqsm_town}` 前缀，用纯 English 文本
+- **另一可能（本次未改，供用户排查）**：修改了 SubModule.xml 加了新 dependency（Harmony + UIExtenderEx），需要**完全关掉游戏进程 + 重启 launcher** 让 module load order 重新解析；仅从 in-game 存档 reload 不足以让新依赖生效
+
+**问题 2 - culture 按钮位置 + click 失效 · 反编译定位**：
+- vanilla `Inventory.xml` 结构：`MainLayout > LeftPanel(BrushWidget) > OtherInventoryListWidgetParent(ListPanel) > InventoryList(prefab)` → InventoryList prefab 内含 Headers row（Type/Name/Wt/#/Value SortButtonWidgets）+ ScrollablePanel（item list）
+- 顶部中央的 `NavigatableListPanel Id="CenterItems"` 是 vanilla 6 类别 filter（Weapons/Armor/etc.），完全无关。v1.6.0 injecting 到那里是错位
+- **click 失效**：CenterItems 的 DataSource 是 category filter 而非 SPInventoryVM，Command.Click 解析找不到我们 mixin 的 ExecuteEqsm* 方法
+- **无法 injecting into InventoryList prefab 中间**（Headers 和 ScrollablePanel 之间）因为它 shared 给 left + right 两侧，且 InventoryList 内 DataSource 是 SPInventorySortControllerVM 非 SPInventoryVM
+- **可行解**：injecting 到 `OtherInventoryListWidgetParent`（左列 wrapper）作为 first child。DataSource 隐式继承自 InventoryScreenWidget = SPInventoryVM → Command.Click 正确解析到 mixin。视觉位置：[Owner name + Gold header] → **[6 culture buttons]** → [Type/Name/Wt/#/Value headers] → [Item list]。虽然是"在列头上方"而非用户请求的"下方"，但 layout 约束下这是最接近的位置——严格"headers 下方 + list 上方"需要 fork InventoryList.xml 加左右侧可见性判断，复杂度不划算
+
+**v1.6.1 改动**：
+- `EquipmentSpawnerSubModule.cs`：去 `{=eqsm_pers}` / `{=eqsm_town}` 前缀
+- `InventoryCultureButtonRowInsert.cs`：XPath `descendant::ListPanel[@Id='OtherInventoryListWidgetParent']`，`InsertType.Child` + `Index=0`（prepend as first child）
+- `InventoryCultureButtonRow.xml`：短文化名 **Emp/Vla/Ase/Bat/Stu/Khu** 适配窄 SidePanel 宽度；按钮 45×36，6×45=270px 总宽
+
+**版本 & 部署**：
+- `SubModule.xml` v1.6.0 → **v1.6.1**
+- `LauncherData.xml` v1.6.0.0 → **v1.6.1.0**
+- build 0 warn / 0 err (1.24s)；deploy 完成
+
+**用户操作项 · 关键**：
+1. **完全关掉游戏进程 + launcher**，重新启动 launcher → 确认 EquipmentSpawnerMod v1.6.1.0 在 mods 列表勾选
+2. 进 town/castle → 主菜单**应看到** "Manage personal equipment stash"（永远显示）；若在自家 fief，还多一条 "Manage this settlement's equipment stash"
+3. 若菜单依然不显示：查 `Configs\ModLogs\butterlib*.txt` 是否有 EquipmentSpawnerMod 相关 exception；或尝试 `starter is CampaignGameStarter` 分支是否真的走到
+4. 点选项 → 打开 vanilla 装备管理界面，左列 stash 顶部（在 Type/Name/Wt/#/Value 列头**上方**）应有 6 个短名按钮 Emp/Vla/Ase/Bat/Stu/Khu
+5. **点 Ase 按钮 → 消息栏 [Aserai] + 列表只剩 Aserai 装备**；再点 Ase → 取消过滤
+6. Character Inventory (Ctrl+I) 同样有这排按钮（因为共用 Inventory.xml prefab）——这不是 bug，是 vanilla 单 prefab 双用场景的副产品
+
 ### 21. EquipmentSpawnerMod v1.6.0 - Stash UI（vanilla Inventory + culture filter）（2026-09-21）
 
 **背景**：用户请求为 personal / town stash 加 UI —— 蓝本参考 NavalDLC dropoff 界面，需要数量拉条 + 文化 sort。

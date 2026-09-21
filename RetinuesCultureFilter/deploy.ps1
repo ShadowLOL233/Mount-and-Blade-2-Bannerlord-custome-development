@@ -36,6 +36,15 @@ New-Item -ItemType Directory -Force -Path $binDir | Out-Null
 Copy-Item -Path $subXml -Destination $targetDir -Force
 Write-Host "Copied SubModule.xml -> $targetDir" -ForegroundColor Green
 
+# GUI/PrefabExtensions/*.xml — required by UIExtenderEx PrefabExtensionFileName loader
+$guiSrc = Join-Path $here 'GUI'
+if (Test-Path $guiSrc) {
+    $guiDst = Join-Path $targetDir 'GUI'
+    if (Test-Path $guiDst) { Remove-Item -Recurse -Force $guiDst }
+    Copy-Item -Path $guiSrc -Destination $targetDir -Recurse -Force
+    Write-Host "Copied GUI/ -> $targetDir" -ForegroundColor Green
+}
+
 $dllOut = Join-Path $srcDir "bin\$Config\$modName.dll"
 if (-not (Test-Path $dllOut)) { throw "Built DLL not found at $dllOut" }
 Copy-Item -Path $dllOut -Destination $binDir -Force

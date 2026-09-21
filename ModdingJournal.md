@@ -557,6 +557,188 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 20. RetinuesCultureFilter v1.4.0 - 去 hotkey + 清理（2026-09-21）
+
+**背景**：v1.3 实测所有功能正常（过滤/排序/翻页/toggle 都对）。用户反馈 UI 按钮已完全覆盖使用场景，`Ctrl+Alt+F/G` hotkey 冗余无价值，请求移除。
+
+**改动**：
+- `SubModule.cs` 删掉 `OnApplicationTick` + `EdgeTrigger` + `_cycleLatched/_clearLatched` 字段
+- 删 `CultureFilterState.CycleNext()` + `CultureFilterState.Clear()`（唯一调用方是 hotkey path）
+- 保留 `SetIndexToggle()` — UI click 依然要走它
+- `Announce()` 逻辑内联进 `SetIndexToggle`（不再作为独立静态方法）
+- `EquipmentListVMMixin` 删掉静态 `_liveInstances` `List<WeakReference<>>` + `RefreshAllLiveInstances()` — 这两者本来就是为 hotkey 从外部找 mixin instance 服务的。UI click 时 mixin 自己就有 `base.ViewModel` 引用，不需要 instance registry
+- `using TaleWorlds.InputSystem` 也不再需要，删
+
+**结果**：代码行数从 v1.3 的 ~260 减到 v1.4 的 ~155，逻辑集中在 3 处（filter state / mixin binding / harmony patch），无冗余状态。
+
+**版本 & 部署**：
+- `SubModule.xml` v1.3.0 → **v1.4.0**
+- `LauncherData.xml` v1.3.0.0 → **v1.4.0.0**
+- build 0 warn / 0 err (1.12s)；全套 deploy 完成
+
+**Claude 不能驱动的实机验证**（v1.4 回归测试）：
+1. launcher 确认 v1.4.0.0 勾选
+2. 装备编辑器里点 6 个文化按钮 → toggle + 过滤依然正常
+3. 翻页/排序/搜索 → 过滤依然保持
+4. 尝试 Ctrl+Alt+F/G → **无反应**（预期：功能已删除）
+5. 消息栏文化切换提示保留（`[Empire]` / `[None]` 等）
+
+**Git 状态**：本条改动 + §17-§19 三条历史 journal 条目一起 commit + push 到 GitHub `ShadowLOL233/Mount-and-Blade-2-Bannerlord-custome-development`
+
+### 19. RetinuesCultureFilter v1.3.0 - patch RebuildVisibleFromSnapshot + 按钮×1.35（2026-09-21）
+
+**背景**：用户实测 v1.2.0 反馈 3 个新问题：① Empire 头盔只显示 7 个（应更多），翻页后过滤彻底失效；② 反复切文化会导致显示错乱，Retinues 的 4 个 sort tag 反而"抢走"显示控制权；③ 按钮太小。
+
+**根因反编译定位**（读 `Retinues.GUI.Editor.VM.Equipment.List.EquipmentListVM` 完整源）：
+
+Retinues 内部有清晰的调用链：
+- `Build()`：完整重建（收集 items → 填 `_fullTuples[snapshotKey]` 快照）→ 调 `RebuildVisibleFromSnapshot()`。**只在 `_needsRebuild=true` 时跑**，slot/faction/troop change 才 set true
+- `RebuildVisibleFromSnapshot()`（private）：**所有可见 refresh 的唯一入口**。流程 = sort `_fullTuples[snapshotKey]` → 按 FilterText 搜索 → **分页**（`MaxRows` items per page）→ 填 `EquipmentRows`
+- `ExecuteSortByName/Category/Tier/Value`、`ExecutePrevPage/NextPage` = 直接调 `RebuildVisibleFromSnapshot()`，**不调 Build**
+- `OnFilterTextChanged` = 直接调 `RebuildVisibleFromSnapshot()`
+- `RefreshFilter()`（public override）= 若 `_needsRebuild=false` 直接调 `RebuildVisibleFromSnapshot()`
+
+问题 ① + ②的根源都在 v1.2 patch 打错位置：patch 在 `Build()` postfix 上只抓 slot/faction change，翻页和排序完全绕过。而且 v1.2 是**分页后**才移除非匹配 row → user 看到"本页 20 items 里筛剩 7 个 Aserai"而非"所有 30 个 Aserai 归到 1-2 页"。
+
+**v1.3 修复架构**：
+
+1. **弃 Build postfix，改 patch `RebuildVisibleFromSnapshot` Prefix + Postfix**（`RebuildVisibleFilterPatch`）
+   - Prefix：若过滤启用，反射拿 `_fullTuples[snapshotKey]`（`AccessTools.Field` + `GetSnapshotKey` static method），构造一个 culture-filtered 的 `List<ItemTuple>` 副本，替换原字典条目
+   - Postfix：还原原字典条目
+   - 结果：sort/搜索/分页**全部在筛过的子集上正确工作** → 页数正确 → 无空页 → 所有匹配 item 可见（跨多页时正确分页显示）
+
+2. **反射访问私有类型**：`EquipmentListVM+ItemTuple` 是 private nested class，用 `AccessTools.Inner(typeof(EquipmentListVM), "ItemTuple")` 拿类型 → `AccessTools.Field(itemTupleType, "Item")` 拿 `Item` 字段 → 强转 `WItem` 取 `Culture.StringId`。构造同类型 `List<ItemTuple>` 用 `typeof(List<>).MakeGenericType(itemTupleType)` + `Activator.CreateInstance`
+
+3. **mixin click / hotkey 改调 `vm.RefreshFilter()`**（不再 `vm.Build()`）— Build 在 `_needsRebuild=false` 时 early-return，RefreshFilter 保证走 RebuildVisibleFromSnapshot 分支。同时 SetIndex 前反射设 `_currentPageIndex = 0` 避免 user 停在筛后不存在的空页
+
+4. **按钮尺寸 × 1.35**（用户要求）— 60×36 → **81×49**；行高 40 → **54**。6 × 81 = 486 px 仍在 ~618 px Filter Row 宽度余量内（132 px 富余）
+
+5. **保留 v1.2 已修的**：`[DataSourceMethod]` on Execute*（问题 1 的核心修）；toggle click 语义；Ctrl+Alt+F/G hotkey；去 All 按钮
+
+**版本 & 部署**：
+- `SubModule.xml` v1.2.0 → **v1.3.0**
+- `LauncherData.xml` v1.2.0.0 → **v1.3.0.0**
+- build 0 warn / 0 err (1.26s)；全套 deploy 完成
+
+**Claude 不能驱动的实机验证**（v1.3 核心场景）：
+1. launcher 确认 v1.3.0.0 勾选
+2. 打开装备编辑器 → 无过滤应显示全部（默认）
+3. 点 Empire → **应显示所有 Empire 头盔**（数量应远超 v1.2 的 7 个）；page count 也应正确反映总数
+4. **翻页**（Prev/Next）→ 过滤保持生效，切页后仍只见 Empire
+5. **点 sort 按钮**（Name/Category/Tier/Value）→ 过滤保持生效，仅在 Empire 子集内排序
+6. 反复切文化 → 每次都正确 refresh，Retinues sort tag 不再"抢走"控制权
+7. Ctrl+Alt+F 循环 / Ctrl+Alt+G 清空 → 与 UI 同步
+
+**若仍有异常**（诊断路径）：
+- filter 无效果 → 反射 fail。启动看 `Configs\ModLogs\butterlib*.txt` 有无 `TargetInvocationException`；确认 Retinues 版本 v1.4.14.31 没改 `_fullTuples` / `ItemTuple` / `GetSnapshotKey` 名字
+- 页数依然错 → RebuildVisibleFromSnapshot 有 fallback 分支没走 patch（不太可能，它就一条实现）
+- 按钮尺寸问题 → 直接改 XAML 里 `SuggestedHeight` / `SuggestedWidth` 值
+
+### 18. RetinuesCultureFilter v1.2.0 - Click 修 + 6 button + 布局压缩 + hotkey 换（2026-09-21）
+
+**背景**：用户实测 v1.1.0 反馈 3 个问题（journal 归档见下方 §17）：① 点新按钮无高亮/click 无反应；② Ctrl+Shift+C 与 vanilla Character Development 快捷键冲突；③ 按钮行宽 735 px 覆盖左侧 customization panel（gender/height/body/build 按钮）。
+
+**根因反编译定位**：
+- 问题 ①：`Bannerlord.UIExtenderEx.Components.ViewModelComponent.InitializeMixinsForVMInstance` 只把带 `[DataSourceMethod]`（`Bannerlord.UIExtenderEx.Attributes.DataSourceMethodAttribute`）的 mixin 方法通过 `instance.AddMethod()` 注入到 target VM。v1.1 的 `ExecuteSelect*` 只有 public 修饰、缺属性 → GauntletUI 的 `Command.Click="ExecuteSelectCultureAll"` 找不到方法 → 完全静默 no-op。因为 click 从未跑，`SetIndex` 从未被调，所以 IsSelected 视觉高亮也无从验证
+- 问题 ②：与 vanilla Character Development（默认 N/其它 hotkey 组，`Shift+C` 也占）冲突
+- 问题 ③：Filter Row 实测宽度（pagination 120 + label 100 + search input 368 + cap ~30 = **~618 px**）；v1.1 的按钮行 105 × 7 = **735 px**，溢出 117 px，视觉覆盖左侧 customization panel 的右缘
+
+**v1.2 落地改动**：
+
+1. **[DataSourceMethod] 加到所有 Execute***（关键修复）— `Mixins\EquipmentListVMMixin.cs`：`[DataSourceMethod] public void ExecuteSelectCultureEmpire() {...}` × 6。TaleWorlds 也有 `[DataSourceMethod]`，但 UIExtenderEx 只识别自己 namespace 下的 attribute，必须用 `Bannerlord.UIExtenderEx.Attributes` 那个（using 已在 v1.1 引入，只是没打 attribute）
+
+2. **去掉 All 按钮**（用户请求）— Retinues 编辑器无过滤时天然显示全部文化。改为 6 按钮 `Empire/Vlandia/Aserai/Battania/Sturgia/Khuzait`；`CultureFilterState.CurrentIndex` 从 `0 = All` 语义改为 `-1 = 无过滤`（默认）+ `0..5 = 6 culture`。`CurrentCultureId` 在 `-1` 时返回 `""` → `BuildFilterPatch` 的 `IsNullOrEmpty` early-return → 无过滤链路
+
+3. **Toggle click 语义**（无 All 按钮的取消路径）— `SetIndexToggle(i)`：`newIndex = (i == CurrentIndex) ? -1 : i`。**点当前选中的文化 = 取消过滤**（回默认全显示）；点其他文化 = 切换。这样 6 个按钮 UI 也能达成"清空过滤"，不必依赖 hotkey
+
+4. **Hotkey 换 Ctrl+Alt+F cycle / Ctrl+Alt+G clear**（避开 Shift+C 冲突）— 与 EquipmentSpawnerMod 的 Ctrl+Alt+I/O/P/U/Y 命名空间对齐。Cycle 语义：`None → Empire → Vlandia → Aserai → Battania → Sturgia → Khuzait → None → ...`（7 状态循环）。Clear 直接回 `-1`
+
+5. **按钮尺寸压缩** — 105 × 57 → **60 × 36**；行高 57 → **40**；`MarginLeft=15` 与 Filter Row pagination 对齐。6 × 60 = **360 px total**，Filter Row 有 ~618 px → 余量 258 px，绝无溢出
+
+6. **构建 & 部署**：
+   - `SubModule.xml` v1.1.0 → **v1.2.0**
+   - `LauncherData.xml` v1.1.0.0 → **v1.2.0.0**
+   - build 0 warn / 0 err (0.61s)
+   - deploy 首次失败（launcher 锁 DLL），用户关 launcher 后重跑成功。SubModule.xml + GUI/PrefabExtensions/CultureButtonRow.xml + DLL/PDB 全部到位
+
+**Claude 不能驱动的实机验证**（v1.2 关键测试）：
+1. launcher 确认 Retinues Culture Filter v1.2.0.0 勾选 + 加载在 Retinues 之后
+2. Clan Screen → Retinues Troop Editor → 编辑装备 → 打开装备槽
+3. Filter Row（搜索框行）下方应出现 **6 个更小的按钮**（Empire/Vlandia/Aserai/Battania/Sturgia/Khuzait），不再覆盖左侧 customization panel
+4. **点 Aserai 按钮 → 按钮高亮 + 列表立刻只剩 Aserai 装备**（v1.1 完全无反应，v1.2 修好）
+5. **再点 Aserai 按钮 → 按钮取消高亮 + 列表恢复全部**（toggle 取消过滤）
+6. 点 Empire 时切走 → Empire 高亮、Aserai 熄灭、列表切到 Empire
+7. `Ctrl+Alt+F` → 消息栏依次 `[Empire] → [Vlandia] → [Aserai] → ... → [Khuzait] → [None] → [Empire]` 7 循环；对应按钮高亮跟着变
+8. `Ctrl+Alt+G` → 消息栏 `[None]` + 所有按钮熄灭 + 列表全显示
+
+若仍有问题：
+- Click 依然无反应 → `[DataSourceMethod]` 没生效。查 `Configs\ModLogs\butterlib*.txt` 是否有 UIExtenderEx warn/error；确认 build 后 DLL 里 attribute 真的写进去了（`ilspycmd` 反编译 `EquipmentListVMMixin.ExecuteSelectCultureAserai` 应看到 `[DataSourceMethod]`）
+- IsSelected 高亮不刷但 filter 生效 → `OnPropertyChangedWithValue` 参数错误或 UIExtenderEx property 注入失败。查 `WrappedPropertyInfo` 日志
+- 布局仍溢出 → 进一步降到 50 wide × 6 = 300 px；或改 3 缩略字母（Emp/Vla/Ase/Bat/Stu/Khu）
+
+### 17. RetinuesCultureFilter v1.1.0 - Dropdown UI + Build patch（2026-09-21）
+
+**背景**：用户实测 v1.0.1 fix（Build patch 替代 RefreshFilter）后反馈 hotkey filter 仍不生效——推断为 Retinues 的 sealed VM + [SafeClass] 环境下"依赖自然触发"路径不够可靠。按 `DESIGN_v1.1_UI.md` §5 checklist 完整落地可视 dropdown UI + 强制刷新路径。
+
+**新增文件**：
+- `src/Mixins/EquipmentListVMMixin.cs` - `[ViewModelMixin]` on sealed `EquipmentListVM`（BaseViewModelMixin<T> 支持 sealed target）。7 个 `[DataSourceProperty]` `Culture{Name}Selected` + 7 个 `ExecuteSelectCulture{Name}` 方法。**关键**：`SetIndex(i)` 里 `base.ViewModel.Build()` 显式触发列表重建（不再靠自然触发），Build postfix 再走过滤 → click 到 filter 一条闭环
+- `GUI/PrefabExtensions/CultureButtonRow.xml` - 7 个 `SortButtonWidget` 一行；`Brush="Clan.Members.Sort.1"` + `SuggestedHeight="!Clan.Members.Sort.1.Height"` 复用 Retinues Sort Row 的 vanilla brush；`SuggestedWidth=105` × 7 = 735 px；`Command.Click="ExecuteSelect..."` + `IsSelected="@Culture{Name}Selected"` 双向绑到 mixin
+- `src/PrefabExtensions/CultureButtonRowInsert.cs` - `[PrefabExtension("ClanScreen", <xpath>)]` + `PrefabExtensionInsertPatch (Prefabs2)` + `InsertType.Append` + `[PrefabExtensionFileName] string FileName => "CultureButtonRow"`
+
+**XPath 精确定位**：`descendant::ListPanel[@Id='SortButtons' and @DataSource='{EquipmentList}' and .//EditableTextWidget[@Text='@FilterText']]`
+- Retinues 的 `ClanScreen_TroopsPanel_BL14.xml` 里有 3 个 `Id="SortButtons"` ListPanel（第 2402 行 TroopList Filter Row、第 2984 行 EquipmentList Sort Row、第 3027 行 EquipmentList Filter Row）
+- 三条 predicate 联合精准挑到第 3027 行——EquipmentList DataSource + 含 FilterText EditableTextWidget
+
+**加载 & 顺序机制**（反编译核实）：
+- `WidgetPrefabPatch.ProcessMovie(path, doc)` 在 vanilla `WidgetPrefab.LoadFrom` 后跑，`Path.GetFileNameWithoutExtension(path)` 得 movie 名
+- `foreach runtime in GetAllRuntimes()` → 按 mod 加载顺序应用各 runtime 的 `MoviePatches[movie]`
+- 我们 SubModule.xml `<DependedModule Id="Retinues" LoadBeforeThis />` → 我们的 runtime 排 Retinues 之后 → Retinues 先把 `ClanScreen_TroopsPanel_BL14` 子树插进 ClanScreen document → 我们的 XPath `descendant::` 从 ClanScreen root 就能扫到 Retinues 插入的子树 → 命中并 `InsertType.Append` 添 sibling
+
+**SubModule.cs 重写**：
+- `OnSubModuleLoad`：`UIExtender.Create(id).Register(Assembly).Enable()`（比旧 `new UIExtender()` 无 obsolete）
+- `CultureFilterState.SetIndex(i)`：**唯一状态入口**，hotkey/UI click 都走它；写 CurrentIndex → Announce → `Mixins.EquipmentListVMMixin.RefreshAllLiveInstances()`
+- `RefreshAllLiveInstances`：mixin 静态 `List<WeakReference>` 追踪活 instance，`RemoveAll` 清死引用 → 逐个 `RefreshCultureButtonStates` + `vm.Build()`（**这是 hotkey 触发过滤的关键路径**）
+- Build patch 保持 v1.0.1 的 `[HarmonyPatch(EquipmentListVM, nameof(Build))]` postfix
+
+**双路径闭环**：
+1. **UI click**：`ExecuteSelectCultureAserai` → `SetIndex(3)` → `RefreshAllLiveInstances` 及 mixin 内部 `base.ViewModel.Build()` → BuildFilterPatch 跑 → 过滤生效
+2. **Hotkey Ctrl+Shift+C**：SubModule.OnApplicationTick → `CultureFilterState.CycleNext` → `SetIndex((idx+1)%7)` → 同上路径
+
+**版本 & 部署**：
+- `SubModule.xml` v1.0.1 → **v1.1.0**
+- `LauncherData.xml` `<Id>RetinuesCultureFilter</Id>` LastKnownVersion v1.0.1.0 → **v1.1.0.0**
+- `deploy.ps1` 加 GUI/ 目录整包 copy（UIExtenderEx 通过 `Modules\<mod>\GUI\**\*.xml` 递归匹配 `PrefabExtensionFileName` 返回值）
+- 构建：0 warn / 0 err，1.41s；DLL/PDB/SubModule.xml/GUI/PrefabExtensions/CultureButtonRow.xml 全部部署到 `Modules\RetinuesCultureFilter\`
+
+**已知潜在风险 & 排错**（若 v1.1 依然不生效）：
+- 按钮完全不出现 → XPath 未匹配。检查 `Configs\ModLogs\` 里 UIExtenderEx warn；备选 XPath 见 DESIGN_v1.1_UI §4.3 Plan B（直接 target `EditableTextWidget[@Text='@FilterText']` sibling insert）
+- 按钮出现但点击无反应 → mixin 没注册。检查 SubModule.cs 里 `extender.Enable()` 已调，mixin 类是 `public sealed` + `[ViewModelMixin]`
+- click 生效但 IsSelected 视觉不刷 → `OnPropertyChangedWithValue` 参数错误（typo）
+- click filter 生效但 hotkey 依然不动 → WeakReference `_liveInstances` 被 GC 清空。改成 strong reference `List<EquipmentListVMMixin>` 加显式 unregister（或直接省 WeakReference，只 append 不清理，接受轻微泄漏因编辑器关-开次数少）
+- 编译成功但游戏首启 warn "Failed to apply extension to ClanScreen" → XPath predicate `@DataSource='{EquipmentList}'` 语法可能需要转义，改用 `contains(@DataSource,'EquipmentList')`
+
+**Claude 不能驱动的实机验证**（用户操作项）：
+1. launcher 确认 Retinues Culture Filter v1.1.0.0 勾选，加载**在 Retinues 之后**
+2. 进战役 → Clan Screen → Retinues Troop Editor → 编辑某兵种装备 → 打开装备槽（如 Weapon Slot 1）
+3. Filter Row（搜索框那行）下方应出现 7 个按钮：`All | Empire | Vlandia | Aserai | Battania | Sturgia | Khuzait`
+4. 点 Aserai 按钮 → Aserai 按钮 IsSelected 视觉高亮 + 列表立刻只剩 Aserai 装备（不需要再切槽）
+5. 点 All → 列表恢复全部
+6. Ctrl+Shift+C 循环 → 消息栏 `[Aserai]` + 对应按钮高亮变化 + 列表跟着切
+7. Ctrl+Shift+X 清空 → All 按钮高亮 + 列表恢复
+8. 若某步失败 → 记具体现象（按钮不出现 / click 无反应 / IsSelected 不刷 / hotkey 不响应），对照上方"已知潜在风险 & 排错"逐项排查
+
+### 16c. v1.0.1 fix 已应用（2026-09-21）
+
+**改动**：`SubModule.cs` 里 `[HarmonyPatch(typeof(EquipmentListVM), nameof(RefreshFilter))]` → `nameof(Build)`；`RefreshFilterPatch` 类改名为 `BuildFilterPatch`，patch 主体不变。
+
+**版本**：`SubModule.xml` v1.0.0 → **v1.0.1**；LauncherData 里 `<Id>RetinuesCultureFilter</Id>` 的 `LastKnownVersion` 同步升 v1.0.1.0。
+
+**构建**：`deploy.ps1` → 0 warn / 0 err（1.29s），部署到 `Modules\RetinuesCultureFilter\bin\Win64_Shipping_Client\`。
+
+**Claude 不能驱动的实机验证**（用户操作项）：launcher 确认 Retinues Culture Filter 勾选 → Clan Screen → Retinues Troop Editor → 编辑某兵种装备 → 打开装备列表 → 按 Ctrl+Shift+C 消息栏出现 "[Aserai]" → **点一下装备槽**触发 Build → 列表应只剩 Aserai 装备。DIAGNOSTIC_NOTES.md §fix 里"OnSlotChange/OnFactionChange 直接调 Build"的推论若正确，则不再需要"改搜索文本"作为触发条件。
+
+**下一步**：待用户实测反馈；若 filter 正常工作，按 DESIGN_v1.1_UI.md §5 checklist 推进 v1.1 dropdown UI。
+
 ---
 
 ## Retinues 机制备忘（2026-09-18 反编译结论）

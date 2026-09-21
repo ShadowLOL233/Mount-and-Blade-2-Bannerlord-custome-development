@@ -1,11 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using Bannerlord.UIExtenderEx;
 using HarmonyLib;
+using Retinues.Game.Wrappers;
+using Retinues.GUI.Editor;
 using Retinues.GUI.Editor.VM.Equipment.List;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
-using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
@@ -13,16 +16,18 @@ namespace RetinuesCultureFilter
 {
     public class SubModule : MBSubModuleBase
     {
-        private const string HarmonyId = "RetinuesCultureFilter";
-
-        private bool _cycleLatched;
-        private bool _clearLatched;
+        private const string ExtenderId = "RetinuesCultureFilter";
 
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
-            var harmony = new Harmony(HarmonyId);
+
+            var harmony = new Harmony(ExtenderId);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+            var extender = UIExtender.Create(ExtenderId);
+            extender.Register(Assembly.GetExecutingAssembly());
+            extender.Enable();
         }
 
         public override void OnGameInitializationFinished(Game game)
@@ -31,62 +36,28 @@ namespace RetinuesCultureFilter
             if (game.GameType is Campaign)
             {
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "Retinues Culture Filter loaded. Ctrl+Shift+C to cycle cultures | Ctrl+Shift+X to clear."));
-            }
-        }
-
-        protected override void OnApplicationTick(float dt)
-        {
-            base.OnApplicationTick(dt);
-
-            bool ctrl = Input.IsKeyDown(InputKey.LeftControl) || Input.IsKeyDown(InputKey.RightControl);
-            bool shift = Input.IsKeyDown(InputKey.LeftShift) || Input.IsKeyDown(InputKey.RightShift);
-            if (!ctrl || !shift)
-            {
-                _cycleLatched = false;
-                _clearLatched = false;
-                return;
-            }
-
-            EdgeTrigger(InputKey.C, ref _cycleLatched, CultureFilterState.CycleNext);
-            EdgeTrigger(InputKey.X, ref _clearLatched, CultureFilterState.Clear);
-        }
-
-        private static void EdgeTrigger(InputKey key, ref bool latched, Action action)
-        {
-            bool down = Input.IsKeyDown(key);
-            if (down && !latched)
-            {
-                latched = true;
-                action();
-            }
-            else if (!down)
-            {
-                latched = false;
+                    "Retinues Culture Filter v1.4 loaded. Culture buttons available in the Retinues equipment editor."));
             }
         }
     }
 
-    // Shared state between the hotkey handler (SubModule) and the Harmony filter patch.
-    // Kept as static because there's only ever one editor open at a time.
+    // Shared state driving the mixin's IsSelected bindings and the Harmony filter patch.
+    // CurrentIndex == -1 means "no filter, show all cultures" (default on editor open).
+    // CurrentIndex 0..5 selects one of the six main vanilla cultures.
     public static class CultureFilterState
     {
-        // Ordered cycle: empty string = "All cultures", followed by the six main vanilla cultures.
-        // stringId values must match Culture.StringId in the game data (case-sensitive).
         public static readonly string[] CycleOrder = new[]
         {
-            "",         // 0 = all
-            "empire",
-            "vlandia",
-            "aserai",
-            "battania",
-            "sturgia",
-            "khuzait"
+            "empire",   // 0
+            "vlandia",  // 1
+            "aserai",   // 2
+            "battania", // 3
+            "sturgia",  // 4
+            "khuzait"   // 5
         };
 
         public static readonly string[] DisplayNames = new[]
         {
-            "All Cultures",
             "Empire",
             "Vlandia",
             "Aserai",
@@ -95,73 +66,93 @@ namespace RetinuesCultureFilter
             "Khuzait"
         };
 
-        // Currently selected slot in the cycle; readable by the Harmony patch.
-        public static int CurrentIndex = 0;
+        public static int CurrentIndex = -1;
 
-        public static string CurrentCultureId => CycleOrder[CurrentIndex];
-        public static string CurrentDisplayName => DisplayNames[CurrentIndex];
+        public static string CurrentCultureId =>
+            (CurrentIndex >= 0 && CurrentIndex < CycleOrder.Length) ? CycleOrder[CurrentIndex] : "";
 
-        public static void CycleNext()
+        public static string CurrentDisplayName =>
+            (CurrentIndex >= 0 && CurrentIndex < DisplayNames.Length) ? DisplayNames[CurrentIndex] : "None";
+
+        // Toggle: clicking the currently-selected culture clears the filter (returns to default).
+        public static void SetIndexToggle(int i)
         {
-            CurrentIndex = (CurrentIndex + 1) % CycleOrder.Length;
-            Announce();
-            TriggerRefresh();
-        }
-
-        public static void Clear()
-        {
-            if (CurrentIndex == 0) { Announce(); return; }
-            CurrentIndex = 0;
-            Announce();
-            TriggerRefresh();
-        }
-
-        private static void Announce()
-        {
+            int newIndex = (i == CurrentIndex) ? -1 : i;
+            if (newIndex < -1 || newIndex >= CycleOrder.Length) return;
+            CurrentIndex = newIndex;
             InformationManager.DisplayMessage(new InformationMessage(
                 "Retinues Culture Filter: [" + CurrentDisplayName + "]"));
         }
-
-        // Best-effort refresh: reflection-invoke the currently-live EquipmentListVM's Build/RefreshFilter.
-        // The mixin/state pattern avoids holding a reference to the VM; instead we ask Retinues to rebuild
-        // via its public RefreshFilter, which our postfix intercepts.
-        private static void TriggerRefresh()
-        {
-            // Retinues' State singleton holds the active editor; poke it to redraw if we can find it.
-            // Since accessing it via reflection is fragile, we rely on the natural re-render loop:
-            // when RefreshFilter is next called (e.g., typing, category tab change), our postfix runs.
-            //
-            // For a manual redraw, users can click a slot tab to trigger RefreshFilter. In practice this
-            // is fine because a culture change happens rarely and the visible list can re-populate on the
-            // next natural UI event.
-        }
     }
 
-    // Postfix on Retinues' public RefreshFilter — after Retinues has built the visible EquipmentRows,
-    // strip out rows whose item.Culture.StringId doesn't match CultureFilterState.CurrentCultureId
-    // (unless CurrentCultureId is empty = All).
-    [HarmonyPatch(typeof(EquipmentListVM), nameof(EquipmentListVM.RefreshFilter))]
-    public static class RefreshFilterPatch
+    // Prefix + Postfix on Retinues' RebuildVisibleFromSnapshot — the single choke point every
+    // list refresh path funnels through (Build, ExecuteNext/PrevPage, ExecuteSortByXxx,
+    // OnFilterTextChanged, RefreshFilter). Temporarily replaces _fullTuples[snapshotKey] with a
+    // culture-filtered copy before the method runs; restores the original in Postfix. Sort,
+    // search, and pagination all operate on the filtered subset — page counts stay accurate,
+    // no empty pages, all matches visible across pages.
+    [HarmonyPatch(typeof(EquipmentListVM), "RebuildVisibleFromSnapshot")]
+    public static class RebuildVisibleFilterPatch
     {
-        public static void Postfix(EquipmentListVM __instance)
+        private sealed class SavedState
         {
+            public IDictionary FullTuples;
+            public object SnapshotKey;
+            public object OriginalList;
+        }
+
+        private static readonly FieldInfo FullTuplesField =
+            AccessTools.Field(typeof(EquipmentListVM), "_fullTuples");
+        private static readonly MethodInfo GetSnapshotKeyMethod =
+            AccessTools.Method(typeof(EquipmentListVM), "GetSnapshotKey");
+        private static readonly Type ItemTupleType =
+            AccessTools.Inner(typeof(EquipmentListVM), "ItemTuple");
+        private static readonly FieldInfo ItemTupleItemField =
+            (ItemTupleType != null) ? AccessTools.Field(ItemTupleType, "Item") : null;
+
+        public static void Prefix(EquipmentListVM __instance, out object __state)
+        {
+            __state = null;
             string wanted = CultureFilterState.CurrentCultureId;
             if (string.IsNullOrEmpty(wanted)) return;
+            if (FullTuplesField == null || GetSnapshotKeyMethod == null
+                || ItemTupleType == null || ItemTupleItemField == null) return;
 
-            var rows = __instance.EquipmentRows;
-            if (rows == null) return;
+            var slot = State.Slot;
+            var snapshotKey = GetSnapshotKeyMethod.Invoke(null, new object[] { slot });
 
-            for (int i = rows.Count - 1; i >= 0; i--)
+            var fullTuples = FullTuplesField.GetValue(__instance) as IDictionary;
+            if (fullTuples == null || !fullTuples.Contains(snapshotKey)) return;
+            var original = fullTuples[snapshotKey] as IList;
+            if (original == null) return;
+
+            var listType = typeof(List<>).MakeGenericType(ItemTupleType);
+            var filtered = Activator.CreateInstance(listType) as IList;
+            if (filtered == null) return;
+
+            foreach (var tuple in original)
             {
-                var row = rows[i];
-                if (row == null) continue;
-                if (row.RowItem == null) continue;         // "unequip" placeholder row - keep visible
-                var culture = row.RowItem.Culture;
-                string cultureId = culture?.StringId?.ToLowerInvariant() ?? "";
-                if (cultureId != wanted)
-                {
-                    rows.RemoveAt(i);
-                }
+                var item = ItemTupleItemField.GetValue(tuple) as WItem;
+                if (item == null) continue;
+                var culture = item.Culture;
+                var cid = culture?.StringId?.ToLowerInvariant() ?? "";
+                if (cid == wanted) filtered.Add(tuple);
+            }
+
+            fullTuples[snapshotKey] = filtered;
+            __state = new SavedState
+            {
+                FullTuples = fullTuples,
+                SnapshotKey = snapshotKey,
+                OriginalList = original
+            };
+        }
+
+        public static void Postfix(object __state)
+        {
+            if (__state is SavedState s)
+            {
+                s.FullTuples[s.SnapshotKey] = s.OriginalList;
             }
         }
     }

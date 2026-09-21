@@ -557,6 +557,47 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 30. OSA_Reference + RBM_Reference 数据包（2026-09-21）
+
+**做了什么**：把 OSA / OSW / Saddlery 三 mod + RBM / RBM_WS 两 mod 的全量物品数据扫成扁平 CSV，作为 OSA×RBM 平衡工作的**可查询数据基础**。以前平衡系数是靠临时 `_scratch_*.ps1` 脚本一次性扫再抛弃；现在是持久化的 repo 资产，workshop 更新后跑一遍脚本即刷新。
+
+**产出**：
+- `OSA_Reference/`
+  - `data/osa_items.csv` (1881 rows × 101 cols) — armour + weapon + shield + thrown + horse harness + bolt
+  - `data/osa_crafted_items.csv` (140) + `osa_crafted_items_pieces.csv` (512) — CraftedItem meta + Piece 引用
+  - `data/osa_crafting_pieces.csv` (50) — 18 Blade + 13 Pommel + 11 Handle + 8 Guard
+  - `scripts/extract_osa.ps1` — 幂等扫描
+  - `README.md` — 完整字段释义 + 统计快照 + 使用示例
+- `RBM_Reference/`
+  - `data/rbm_items.csv` (1213 rows × 135 cols) — armour + weapon + horse + horse harness + shield + bow/arrow/bolt/thrown/sling + goods + animals
+  - `data/rbm_crafted_items.csv` (108) + `rbm_crafted_items_pieces.csv` (309)
+  - `data/rbm_crafting_pieces.csv` (400) — 347 Blade + 53 Handle（Guard/Pommel 走 vanilla）
+  - `scripts/extract_rbm.ps1`
+  - `README.md`
+
+**顺带修的**：journal 之前若干条目的 workshop id → mod 名对应有错（把 OSA 和 OSW 弄反了）。实测正确映射：
+- `3011479883` = OSA (armour)
+- `3010984416` = OSW (weapons + crafting pieces)
+- `3010990914` = Saddlery (horse harness)
+
+**核心 side-by-side 数据（RBM avg vs OSA avg，即"RBM 尺度 vs OSA 现状"）**：
+
+| 类别 | RBM | OSA | 倍率 | 已落地系数 |
+|---|---:|---:|---:|---|
+| HeadArmor Plate | 82.0 | 38.1 | 2.15× | `OpenSourceArmouryRBMBalance` v1.0/v1.1 |
+| BodyArmor Plate | 71.8 | 40.9 | 1.75× | 同上 |
+| Blade Swing Cut damage | 0.95 | 3.18 | 0.30× | 同上（下调 ×0.28~0.33）|
+| HorseHarness Chainmail | 28.9 | 58.5 | **0.49×**（反向）| **未处理**——Saddlery 尺度反而高于 RBM |
+
+**新洞察**：`HorseHarness` 是**反方向失衡**。Saddlery 新加马铠数值 avg 58.5 vs RBM 覆盖 vanilla 马铠 avg 28.9。`OpenSourceArmouryRBMBalance` 当前只处理 armor + blade 未处理 horse harness —— 这是下一轮平衡工作的一个明确可展开点。
+
+**用法**：
+- Excel 打开 CSV，数据透视 / 筛选找 outlier
+- PowerShell 一行命令做 join 对比（README 里有示例）
+- 未来 balance mod 直接消费 CSV 作数据源，替代临时 `_scratch_*.ps1`
+
+**未来重跑**：workshop mod 更新后 `& OSA_Reference/scripts/extract_osa.ps1` + `& RBM_Reference/scripts/extract_rbm.ps1`，用 `git diff data/*.csv` 一眼看到哪些物品被官方 mod 改了数值。
+
 ### 29. RBM buff v1.0.2 — deferred manual patching（2026-09-21）
 
 **背景**：§28 三步测试用户实机结果 Test A ❌（两个 mod 全禁仍进不去主菜单），后来独立诊断出主菜单前崩溃与 MarriageFertility 新装 mod 有关（**MarriageFertility 已由用户 workaround，不阻碍模组包运行**）。回到我们自研 mod 侧继续排 RBM buff v1.0.1 的独立崩溃风险 —— §28 已预测该风险，本次坐实并 fix。
@@ -1574,6 +1615,25 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ## 待办 / 开放问题
 
+### 🔴 P0 · OSA 物品平衡 v2（最优先，2026-09-21 立项）
+
+**目标**：利用 `OSA_Reference/` + `RBM_Reference/` 数据包，对 `OpenSourceArmouryRBMBalance` mod 做**精细化二轮调整**。v1.0/v1.1 是基于 avg 分层 buff/下调，v2 要针对具体物品做微调。
+
+**具体可展开点**（按优先级）：
+
+1. **HorseHarness 平衡**（v1/v1.1 完全未处理）—— 数据显示 Saddlery avg 58.5 vs RBM vanilla-cover avg 28.9，Saddlery 需**反向下调**约 ×0.5。走脚本 `_scratch` 算完加到 `generate.ps1` 的第三 pass
+2. **Cape.arm slot 校准**：v1.0 定 flat=12 是猜的。用 `RBM_Reference` 里 Cape 的 arm_armor 分布（如果 RBM 有）算 target avg 重新精算
+3. **outlier 物品逐个审**：Excel 打开 `osa_items.csv`，按 `Armor.head_armor` 降序看 top-30，交叉 `Armor.material_type` 找异常
+4. **Blade damage_factor 二次校准**：数据显示 OSA blade avg 3.18 vs RBM 0.95 = 3.35×，但 v1.0 用的是 wclass 聚合系数（axe 0.27 / mace 0.29 / sword 0.28）。数据支撑更精细的按 tier + wclass 分层
+5. **加入 CraftedItem 覆盖分析**：目前 `OpenSourceArmouryRBMBalance` 只 override 直接 Item + CraftingPiece，但 OSA 有 140 CraftedItem 引用 vanilla piece。走 `osa_crafted_items_pieces.csv` join `rbm_crafting_pieces.csv` 看是否有需调
+6. **`OpenSourceArmouryRBMBalance/src/generate.ps1` 改用 Reference CSV 作输入源**：现在还是每次扫 XML，重构为 `Import-Csv OSA_Reference/data/osa_items.csv`——更快、更透明、可 diff。
+
+**产出目标**：`OpenSourceArmouryRBMBalance` v1.2（可能拆 v1.2/v1.3 分批落地）。
+
+**依赖**：需要 in-game 实机验证每一批系数（用户操作）；建议每次调一小批（20-30 件）就实测一场战斗。
+
+---
+
 - [x] ~~手动在 Steam 里关闭 Bannerlord 的 Steam Cloud sync（Properties → General）~~ ← 2026-09-20 用户确认已关
 - [x] ~~进游戏在 town/castle 菜单里找 IG ribbon，打开 Food Gathering~~ ← 已通过直接改 XML 完成（修改 #5）
 - [ ] 观察新战役里 RBM Campaign 是否正确工作（看 `RBM\logs\garrison\`、消息栏 spoils/ledger）
@@ -1774,6 +1834,8 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 ---
 
 ## 在另一台设备上复刻本套配置
+
+> **⚠ 复刻优先看 [`REPLICATE.md`](./REPLICATE.md)**（2026-09-21 新增）——它是**机器友好的 phase → step 完整执行档案**，涵盖 Steam 环境、workshop 精确订阅、junction、config、DLL patch、**全部自研 mod 的 clone+build+deploy**、Reference 数据包、verify、rollback。本节保留为**历史 human-readable 概览**（仅覆盖到 2026-09-18 的改动，不含 v1.5+ 自研 mod、IG NPCSpawnGuards、Retinues XP 经济后期改动、EquipmentSpawnerMod 全套、RBMPlayerStaminaPoiseBuff、RetinuesCultureFilter、OpenSourceArmouryRBMBalance 等 15+ 项后续改动）。
 
 **目标**：在一台全新安装 Bannerlord + 相同 mod 的设备上复现本 repo 记录的所有配置改动。
 

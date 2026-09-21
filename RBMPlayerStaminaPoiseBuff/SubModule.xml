@@ -2,7 +2,7 @@
 <Module>
   <Name value="RBM Player Stamina &amp; Poise buff Mod" />
   <Id value="RBMPlayerStaminaPoiseBuff" />
-  <Version value="v1.0.0" />
+  <Version value="v1.0.1" />
   <DefaultModule value="false" />
   <ModuleCategory value="Singleplayer" />
   <ModuleType value="Community" />

@@ -38,10 +38,10 @@
       <HintPath>$(WorkshopRoot)\2859188632\bin\Win64_Shipping_Client\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="RBMAI">
-      <HintPath>$(WorkshopRoot)\2859251492\bin\Win64_Shipping_Client\RBMAI.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <!-- No RBMAI.dll reference: all RBMAI type access is via AccessTools.TypeByName /
+         Harmony string-based patches. Keeps our compiled DLL free of RBMAI type metadata
+         so the launcher's static DLL scan doesn't fail resolving RBMAI (which isn't in
+         the scan search path — RBM.dll loads RBMAI at runtime dynamically). -->
   </ItemGroup>
 
 </Project>

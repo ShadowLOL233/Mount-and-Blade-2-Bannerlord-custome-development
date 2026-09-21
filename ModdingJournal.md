@@ -557,6 +557,34 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 27. RBM buff v1.0.1 crash fix — string-based Harmony patches（2026-09-21）
+
+**背景**：v1.0.0 部署后用户报告游戏崩溃。诊断 `Configs\ModLogs\` 里 butterlib/default 日志在 "Wrapping DebugManager"（ButterLib 早期 init）之后 silent 结束，无 managed exception —— 特征 = native access violation。查 `LauncherData.xml` 发现 **两个我们的 mod DLL 都被标 `<IsDangerous>true</IsDangerous>`**，跟 Bug #6 CalradianPatrolsV2 症状完全一致。
+
+**根因反编译定位**：查 RBM 的 SubModule.xml —— 它 SubModule 列表**只注册 RBM.dll**，`RBMAI.dll` 是 RBM.dll 运行时**动态加载**的辅助 DLL，不在 launcher 的静态 DLL 扫描搜索路径。
+
+我们 v1.0.0 的 `[HarmonyPatch(typeof(RBMAI.Stance), nameof(Stance.tickStaminaRegen))]` 属性里 `typeof(Stance)` 编译期硬引用 `RBMAI.dll`：launcher 静态扫描器解析 attribute 时找不到 RBMAI 类型 → 标 IsDangerous → auto-disable / native crash on load。
+
+**v1.0.1 修**：
+- 改用 `[HarmonyPatch("RBMAI.Stance", "tickStaminaRegen")]` string 重载 —— attribute 里只留字符串，type resolution 推迟到 runtime `AccessTools.TypeByName("RBMAI.Stance")` 在 harmony.PatchAll 时执行（此时 RBM 已加载 RBMAI）
+- `IsPlayerStance` 方法体也去 static `AgentStances.values` 引用，改反射：`AccessTools.TypeByName("RBMAI.AgentStances")` + `AccessTools.Field(t, "values")` cached first-hit
+- `Prefix(object __instance, ref float multiplier)` — 参数类型改成 `object`（不再是 `Stance`），Harmony 按参数名匹配即可
+- csproj 移除 `RBMAI.dll` `<Reference>`（我们代码里已无 RBMAI 静态引用）
+- **关键**：编译后我们的 DLL metadata 里**完全不含 RBMAI 类型引用**，launcher 静态扫描无需 RBMAI.dll 就能通过 → IsDangerous 不再触发
+
+**LauncherData 手动清理**：
+- 两个 `<DLLCheckData>` 里的 `<IsDangerous>true</IsDangerous>` 行删除（launcher 下次启动会重新扫描并根据新 DLL 决定）
+- `<Id>RBMPlayerStaminaPoiseBuff>` LastKnownVersion v1.0.0.0 → **v1.0.1.0**
+
+**Equipment Stash v1.8.0 不需要改**：v1.8 的所有 typeof() 都是 vanilla game 核心类型（`Helpers.InventoryScreenHelper` in TaleWorlds.CampaignSystem.dll，永远可解析）+ workshop mod 里已 load 的类型。它被同批标 dangerous 大概是 launcher 的 sticky flag（一次扫描失败后未主动 unflag）。清 IsDangerous 后应自动 pass。
+
+**用户操作**：
+1. **完全关游戏 + launcher**
+2. 重启 launcher → 自动重新 DLL 扫描 → 若我们代码正确，IsDangerous 不会被重新标
+3. 确认 launcher UI 里两个 mod 没有 danger warning 图标、勾选状态保留
+4. 进游戏 → 应正常运行
+5. 若某个仍被标 dangerous，butterlib log 应有类似 "Failed to load..." 报错，告诉我
+
 ### 26. Equipment Stash v1.8.0 + RBM Player Stamina & Poise buff Mod v1.0.0（2026-09-21）
 
 **Phase A · EquipmentSpawnerMod → Equipment Stash v1.8.0**：

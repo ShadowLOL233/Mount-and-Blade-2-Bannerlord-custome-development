@@ -31,7 +31,6 @@ namespace EquipmentSpawnerMod
             "ao_", "ap_", "bl_", "hmj_", "tv_"
         };
 
-        private bool _injectLatched;
         private bool _stashOutLatched;
         private bool _stashInLatched;
 
@@ -98,7 +97,7 @@ namespace EquipmentSpawnerMod
             if (game.GameType is Campaign)
             {
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner v1.7.2 loaded. Town/castle menu: 'Manage personal equipment stash'. Hotkeys: Ctrl+Alt+I inject / O party->stash / P stash->party. For per-settlement storage use vanilla 'Open stash' (town_keep or castle menu)."));
+                    "Equipment Stash v1.8.0 loaded. Town/castle menu: 'Manage personal equipment stash'. Hotkeys: Ctrl+Alt+O party->stash / P stash->party. 'Inject to Stash' button available inside any stash screen (our menu or vanilla 'Open stash')."));
             }
         }
 
@@ -110,13 +109,11 @@ namespace EquipmentSpawnerMod
             bool alt = Input.IsKeyDown(InputKey.LeftAlt) || Input.IsKeyDown(InputKey.RightAlt);
             if (!ctrl || !alt)
             {
-                _injectLatched = false;
                 _stashOutLatched = false;
                 _stashInLatched = false;
                 return;
             }
 
-            EdgeTrigger(InputKey.I, ref _injectLatched, TryInject);
             EdgeTrigger(InputKey.O, ref _stashOutLatched, TryPartyToStash);
             EdgeTrigger(InputKey.P, ref _stashInLatched, TryStashToParty);
         }
@@ -151,11 +148,19 @@ namespace EquipmentSpawnerMod
             return Campaign.Current?.GetCampaignBehavior<PersonalStashBehavior>();
         }
 
-        private static void TryInject()
+        // Inject T3+ vanilla + all-OSA gear + mounts into the target ItemRoster. Called from the
+        // stash-UI mixin's inject button — target is the ItemRoster of the stash the player just
+        // opened (captured via StashSessionState from InventoryScreenHelper.OpenScreenAsStash).
+        public static void InjectInto(ItemRoster target)
         {
             if (!RequireCampaign()) return;
+            if (target == null)
+            {
+                InformationManager.DisplayMessage(new InformationMessage(
+                    "Equipment Stash: no target stash captured. Reopen the stash screen."));
+                return;
+            }
 
-            var roster = MobileParty.MainParty.ItemRoster;
             var items = MBObjectManager.Instance.GetObjectTypeList<ItemObject>();
 
             int gearStacks = 0, horseStacks = 0, modified = 0, osaBypass = 0;
@@ -174,7 +179,7 @@ namespace EquipmentSpawnerMod
                 var modifier = BestModifier(item);
                 var element = new EquipmentElement(item, modifier);
                 int qty = isMount ? HorseQuantity : GearQuantity;
-                roster.AddToCounts(element, qty);
+                target.AddToCounts(element, qty);
 
                 if (isGear) gearStacks++; else horseStacks++;
                 if (modifier != null) modified++;
@@ -182,10 +187,10 @@ namespace EquipmentSpawnerMod
             }
 
             InformationManager.DisplayMessage(new InformationMessage(
-                "Equipment Spawner: injected " + gearStacks + " gear x" + GearQuantity
+                "Equipment Stash: injected into stash — " + gearStacks + " gear x" + GearQuantity
                 + ", " + horseStacks + " mount x" + HorseQuantity
                 + " (Tier " + ((int)MinTier + 1) + "-6 vanilla + all OSA; " + osaBypass + " OSA below T" + ((int)MinTier + 1)
-                + " included; " + modified + " with best modifier)."));
+                + " included; " + modified + " with best modifier). Close and reopen the stash to refresh the item list."));
         }
 
         private static bool IsOsaItem(ItemObject item)

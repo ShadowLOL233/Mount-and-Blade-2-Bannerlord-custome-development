@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Module>
-  <Name value="Equipment Stash" />
-  <Id value="EquipmentSpawnerMod" />
-  <Version value="v1.8.0" />
+  <Name value="RBM Player Stamina &amp; Poise buff Mod" />
+  <Id value="RBMPlayerStaminaPoiseBuff" />
+  <Version value="v1.0.0" />
   <DefaultModule value="false" />
   <ModuleCategory value="Singleplayer" />
   <ModuleType value="Community" />
@@ -11,20 +11,20 @@
     <DependedModule Id="SandBoxCore" />
     <DependedModule Id="Sandbox" />
     <DependedModule Id="Bannerlord.Harmony" />
-    <DependedModule Id="Bannerlord.UIExtenderEx" />
+    <DependedModule Id="RBM" />
   </DependedModules>
   <DependedModuleMetadatas>
     <DependedModuleMetadata id="Native" order="LoadBeforeThis" />
     <DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" />
     <DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" />
     <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" />
-    <DependedModuleMetadata id="Bannerlord.UIExtenderEx" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="RBM" order="LoadBeforeThis" />
   </DependedModuleMetadatas>
   <SubModules>
     <SubModule>
-      <Name value="Equipment Spawner SubModule" />
-      <DLLName value="EquipmentSpawnerMod.dll" />
-      <SubModuleClassType value="EquipmentSpawnerMod.EquipmentSpawnerSubModule" />
+      <Name value="RBM Player Stamina &amp; Poise buff SubModule" />
+      <DLLName value="RBMPlayerStaminaPoiseBuff.dll" />
+      <SubModuleClassType value="RBMPlayerStaminaPoiseBuff.SubModule" />
       <Tags>
         <Tag key="DedicatedServerType" value="none" />
         <Tag key="IsNoRenderModeElement" value="false" />

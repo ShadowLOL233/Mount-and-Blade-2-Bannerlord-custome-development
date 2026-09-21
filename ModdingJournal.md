@@ -557,6 +557,46 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 26. Equipment Stash v1.8.0 + RBM Player Stamina & Poise buff Mod v1.0.0（2026-09-21）
+
+**Phase A · EquipmentSpawnerMod → Equipment Stash v1.8.0**：
+- SubModule.xml `<Name>` 改 "Equipment Stash"，Id/文件夹/SyncData key 保持 `EquipmentSpawnerMod` 不变（改 Id 会 launcher 视作新 mod、SyncData key 改会让存档里 personal stash 数据无法读回）
+- **移除 Ctrl+Alt+I hotkey**（`_injectLatched` 字段 + `EdgeTrigger(InputKey.I, ...)` 删）
+- **添加 "Inject to Stash" 按钮到 stash UI**：
+  - 新增 `StashSessionState.cs` + Harmony Prefix on `InventoryScreenHelper.OpenScreenAsStash(ItemRoster)` — 捕获 stash roster 引用（同时抓我们 personal stash + vanilla Settlement.Stash，两者都走此 API）
+  - `SPInventoryVMCultureMixin` 加 `[DataSourceMethod] ExecuteEqsmInjectToStash()` + `[DataSourceProperty] EqsmShowInjectButton`
+  - `EqsmShowInjectButton` 通过反射读 `SPInventoryVM._usageType`（`InventoryScreenHelper.InventoryMode` 枚举，Stash mode 时返回 true）→ 按钮只在 stash 场景显示（我们的 menu OR vanilla town_keep/castle "Open stash"），不污染 trader/loot/character inventory
+  - 按钮布局：culture 2 行下方第 3 行，270×38 居中，`IsVisible="@EqsmShowInjectButton"`
+- `TryInject` 重构为 `public static InjectInto(ItemRoster target)` — target 参数化，click handler 传 `StashSessionState.CurrentStash`
+- **UX 注意**：注入完消息栏提示 "Close and reopen the stash to refresh the item list" —— SPInventoryVM 快照式加载，注入后需重开才见新物品
+
+**Phase B · 新独立 mod `RBM Player Stamina & Poise buff Mod` v1.0.0**：
+- 目录 `RBMPlayerStaminaPoiseBuff/`（Id `RBMPlayerStaminaPoiseBuff`，Name 保留用户指定的带空格版）
+- SubModule.xml 依赖 Native/SandBoxCore/Sandbox/Bannerlord.Harmony/RBM
+- csproj 引用 TaleWorlds.MountAndBlade + DotNet + Engine + 0Harmony + RBMAI.dll（workshop 2859251492）
+- **Harmony Prefix on `RBMAI.Stance.tickStaminaRegen(int tickCount, float multiplier)`**：若 `AgentStances.values[Agent.Main] == __instance` → `multiplier *= 6f`
+- **Harmony Prefix on `RBMAI.Stance.tickPostureRegen(int tickCount, float multiplier)`**：同上 `multiplier *= 2f`
+- Harmony 支持 `ref float` 修改值类型参数 → 原方法用新 multiplier 走完整 rubber-band + tickCount 公式
+- 玩家判定 = `AgentStances.values.TryGetValue(Agent.Main, out var s) && ReferenceEquals(s, __instance)` — O(1) hash lookup 每 tick
+- **不改**：max 池、伤害/减少、AI 数值 — 完全同 vanilla RBM，仅玩家 regen 加速
+
+**版本 & 部署**：
+- Equipment Stash: SubModule.xml v1.7.2 → **v1.8.0**；LauncherData v1.8.0.0；build 0/0 (1.28s)
+- RBM Player Buff: 新增 v1.0.0；build 0/0 (0.67s)；LauncherData 新条目 v1.0.0.0 IsSelected=true
+- 编译踩坑：RBM buff mod 初次编译 CS0234 (`TaleWorlds.CampaignSystem` 未引 —— 移除 `Campaign` 类型依赖改用字符串名字判断) + CS0012 (`TaleWorlds.DotNet` 缺 —— `Agent.Main` 走 native base class，需 DotNet+Engine 引用)
+
+**用户操作项 · 关键**：
+1. 完全关游戏 + launcher，重启，确认 **两个 mod** 勾选：
+   - Equipment Stash v1.8.0.0
+   - RBM Player Stamina & Poise buff Mod v1.0.0.0（load 在 RBM 之后）
+2. 进任意 stash（我们的 personal OR vanilla settlement）→ 左列顶部应看到：
+   - 2 行 6 个全名文化按钮（Empire/Vlandia/Aserai/Battania/Sturgia/Khuzait）
+   - 下方第 3 行一个宽按钮 "Inject to Stash"
+3. 点 "Inject to Stash" → 消息栏 "injected into stash — N gear × 20, M mount × 20..."；关闭重开 stash → 看到 N+M 堆装备已在库里
+4. Character Inventory (Ctrl+I) → 应看到 6 文化按钮但**不**看到 Inject 按钮（因为 mode ≠ Stash）
+5. 进战斗 → 消息栏 "RBM Player Stamina & Poise Buff v1.0 loaded. Player-only regen: stamina x6, posture x2. AI unchanged."；实测玩家 stamina 恢复明显快约 6×，AI 保持 RBM 原速
+6. Ctrl+Alt+I 应**无反应**（已移除）；Ctrl+Alt+O/P 依然工作（批量 party↔stash 转移）
+
 ### 25. EquipmentSpawnerMod v1.7.2 - culture 按钮全名 + 高亮外框（2026-09-21）
 
 **背景**：v1.7.1 修好按钮渲染后，用户满意运作但要求 UI 调整：① 使用全名（Empire/Vlandia/Aserai/Battania/Sturgia/Khuzait）而非 3 字缩写；② 选中态加**高亮外框 + 背景色**（比 SortButtonWidget 自带的 subtle 变化更醒目）。

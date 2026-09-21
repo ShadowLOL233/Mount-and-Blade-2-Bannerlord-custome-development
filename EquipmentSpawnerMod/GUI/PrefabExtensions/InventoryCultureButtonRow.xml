@@ -5,8 +5,7 @@
      culture is immediately visible. -->
 <ListPanel Id="EqsmCultureFilterRow"
            WidthSizePolicy="CoverChildren"
-           HeightSizePolicy="Fixed"
-           SuggestedHeight="80"
+           HeightSizePolicy="CoverChildren"
            HorizontalAlignment="Center"
            MarginTop="2"
            MarginBottom="2"
@@ -138,6 +137,29 @@
                         Brush="Clan.LeftPanel.Header.Text" Text="Khuzait"/>
           </Children>
         </SortButtonWidget>
+      </Children>
+    </ListPanel>
+    <!-- Row 3: Inject to Stash button. Visible only when inventory screen is in Stash mode
+         (our menu option OR vanilla town_keep/castle "Open stash"). Hidden on trader / loot /
+         character inventory to avoid confusing spawn-into-trader UX. -->
+    <ListPanel IsVisible="@EqsmShowInjectButton"
+               WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed" SuggestedHeight="42"
+               HorizontalAlignment="Center"
+               MarginTop="4"
+               StackLayout.LayoutMethod="HorizontalLeftToRight">
+      <Children>
+        <ButtonWidget DoNotPassEventsToChildren="true"
+                      WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                      SuggestedWidth="270" SuggestedHeight="38"
+                      Brush="Popup.Button.Text"
+                      Command.Click="ExecuteEqsmInjectToStash"
+                      UpdateChildrenStates="true">
+          <Children>
+            <TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Brush="Clan.LeftPanel.Header.Text" Text="Inject to Stash"/>
+          </Children>
+        </ButtonWidget>
       </Children>
     </ListPanel>
   </Children>

@@ -3,14 +3,16 @@ using System.Reflection;
 using Bannerlord.UIExtenderEx.Attributes;
 using Bannerlord.UIExtenderEx.ViewModels;
 using HarmonyLib;
+using Helpers;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.Library;
 
 namespace EquipmentSpawnerMod.Inventory
 {
-    // Mixin on vanilla SPInventoryVM. Adds 6 [DataSourceMethod] Execute methods + 6
-    // [DataSourceProperty] IsSelected bindings, driving the culture button row injected via
-    // InventoryCultureButtonRowInsert.
+    // Mixin on vanilla SPInventoryVM. Adds 6 culture-filter bindings + 1 inject-to-stash button
+    // (visible only when the inventory screen is in Stash mode — our menu option OR vanilla
+    // Settlement.Stash from town_keep/castle "Open stash"). Inject button clicks target the
+    // ItemRoster captured by CaptureOpenScreenAsStashPatch.
     //
     // On click: update shared state, notify property bindings, and re-run vanilla per-item
     // filtering (which our Harmony postfix on UpdateFilteredStatusOfItem hooks into to add
@@ -22,11 +24,40 @@ namespace EquipmentSpawnerMod.Inventory
         private static readonly MethodInfo UpdateFilteredStatusMethod =
             AccessTools.Method(typeof(SPInventoryVM), "UpdateFilteredStatusOfItem");
 
+        // SPInventoryVM._usageType is set at construction to the active InventoryState.InventoryMode
+        // (Default / Loot / Stash / Warehouse / Trade / ...). Read it via reflection to gate the
+        // inject button — we only want it on Stash-mode screens, not on trader / loot / character
+        // inventory where injecting would be confusing or wrong.
+        private static readonly FieldInfo UsageTypeField =
+            AccessTools.Field(typeof(SPInventoryVM), "_usageType");
+
         public SPInventoryVMCultureMixin(SPInventoryVM vm) : base(vm)
         {
             // Fresh state each time the inventory screen opens (a new mixin instance is
             // created per VM instantiation). Keeps behavior predictable across sessions.
             InventoryCultureFilterState.Reset();
+        }
+
+        [DataSourceProperty]
+        public bool EqsmShowInjectButton
+        {
+            get
+            {
+                var vm = base.ViewModel;
+                if (vm == null || UsageTypeField == null) return false;
+                var mode = UsageTypeField.GetValue(vm);
+                if (mode == null) return false;
+                // InventoryMode.Stash == 4 in the enum (Default=0, Trade=1, Loot=2, Charity=3, Stash=4, Warehouse=5).
+                // Compare by name to survive minor enum-value shuffles across game versions.
+                return mode.ToString() == "Stash";
+            }
+        }
+
+        [DataSourceMethod]
+        public void ExecuteEqsmInjectToStash()
+        {
+            var target = StashSessionState.CurrentStash;
+            EquipmentSpawnerSubModule.InjectInto(target);
         }
 
         [DataSourceProperty] public bool EqsmCultureEmpireSelected   => InventoryCultureFilterState.CurrentIndex == 0;

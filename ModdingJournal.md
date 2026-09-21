@@ -557,6 +557,51 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 24. EquipmentSpawnerMod v1.7.1 - PrefabExtension XPath 修（culture 按钮渲染 bug）（2026-09-21）
+
+**背景**：v1.7.0 部署后用户反馈"personal stash 中没看到文化 sort 系统"。前几个版本都没看到按钮 —— 这个 bug 从 v1.6.1 就存在，只是没抓到根因。
+
+**根因反编译定位**：Bannerlord 的 XAML 结构里，每个 widget 的直接 XML 子节点是**一个** `<Children>` 元素，实际的子 widgets 装在这个 `<Children>` 里。UIExtenderEx `InsertType.Child` 的 `PrefabComponent.InsertAsChild(targetNode, ...)` 会把 imported node 直接 append 到 `targetNode.ChildNodes` —— 若 targetNode 是 ListPanel，插入会与 `<Children>` 平级（作为 ListPanel 的直接 XML 子节点），**不是 Bannerlord widget 的合法位置**，Gauntlet 完全不渲染。
+
+我们 v1.6.1/v1.7.0 的 XPath 是 `descendant::ListPanel[@Id='OtherInventoryListWidgetParent']`（target 是 ListPanel 本身），配 `InsertType.Child, Index=0`。所以我们的 culture 按钮 XML 被塞成：
+
+```xml
+<ListPanel Id="OtherInventoryListWidgetParent">
+    <Children>
+        <InventoryList ... />
+        <BrushWidget ... />  <!-- search box -->
+    </Children>
+    <ListPanel Id="EqsmCultureFilterRow"> <!-- 就是这里！平级于 Children，不渲染 -->
+        ...
+    </ListPanel>
+</ListPanel>
+```
+
+对照 Retinues 里 working 的注入（`ClanScreen_TroopsPanel.cs`）：XPath = `descendant::Widget[./Children/... ]/Children` —— 显式以 `/Children` 结尾，target 是 `<Children>` 元素本身。然后 `InsertType.Child` 就正确插到实际子 widget 列表里。
+
+**v1.7.1 修**：`InventoryCultureButtonRowInsert.cs` 的 XPath 加 `/Children` 后缀：
+```csharp
+[PrefabExtension("Inventory",
+    "descendant::ListPanel[@Id='OtherInventoryListWidgetParent']/Children")]
+```
+其余不变（InsertType.Child + Index=0）。
+
+**为什么之前不觉察**：Character Inventory (Ctrl+I) 用户报告"看到按钮"实际可能是幻觉/记错 —— 或 v1.6.0 顶部 CenterItems 位置由于其 XML 结构不同（NavigatableListPanel 有 explicit Children wrapper 但 UIExtenderEx 对某些容器 tolerant），恰好渲染了但 click 不通。之后 v1.6.1/1.7.0 换到 OtherInventoryListWidgetParent 就完全隐形。
+
+**版本 & 部署**：
+- SubModule.xml v1.7.0 → **v1.7.1**
+- LauncherData v1.7.1.0
+- build 0 warn / 0 err (0.70s)；deploy 完成
+
+**关键实测**（用户 must fully restart game/launcher）：
+1. 完全关游戏进程 + launcher，重启，确认 v1.7.1.0 勾选
+2. 进 town/castle → 主菜单 "Manage personal equipment stash" → 打开我们的 personal stash UI → **左列顶部应看到 6 个 Emp/Vla/Ase/Bat/Stu/Khu 按钮**
+3. 进 Keep → vanilla "Open stash" → 打开 vanilla Settlement.Stash → **同样应看到 6 个按钮**（同一 SPInventoryVM prefab，同一 mixin 覆盖）
+4. Character Inventory (Ctrl+I) → 也应看到 6 按钮
+5. 点 Ase → 只显示 Aserai 装备；再点取消
+
+若仍看不到 → butterlib log 应有 UIExtenderEx warning，告诉我 log 内容
+
 ### 23. EquipmentSpawnerMod v1.7.0 - 移除 town stash（vanilla Settlement.Stash 已覆盖）（2026-09-21）
 
 **背景**：用户发现 vanilla 有内置的 town stash 系统 —— 反编译确认 `Settlement.Stash`（`public readonly ItemRoster` 每 settlement 一个），通过 `town_keep`/`castle` menu → "Open stash"（localization key `{=xl4K9ecB}`）打开，走 `InventoryScreenHelper.OpenScreenAsStash(Settlement.CurrentSettlement.Stash)` —— **和我们同一 API + 同一 SPInventoryVM UI**。

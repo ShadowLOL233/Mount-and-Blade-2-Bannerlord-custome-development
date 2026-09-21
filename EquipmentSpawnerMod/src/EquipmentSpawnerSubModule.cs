@@ -98,7 +98,7 @@ namespace EquipmentSpawnerMod
             if (game.GameType is Campaign)
             {
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "Equipment Spawner v1.7.0 loaded. Town/castle menu: 'Manage personal equipment stash'. Hotkeys: Ctrl+Alt+I inject / O party->stash / P stash->party. For per-settlement storage use vanilla 'Open stash' (town_keep or castle menu)."));
+                    "Equipment Spawner v1.7.1 loaded. Town/castle menu: 'Manage personal equipment stash'. Hotkeys: Ctrl+Alt+I inject / O party->stash / P stash->party. For per-settlement storage use vanilla 'Open stash' (town_keep or castle menu)."));
             }
         }
 

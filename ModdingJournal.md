@@ -1700,6 +1700,90 @@ Retinues 在**自有据点**把志愿兵 100% 换成自定义兵（`VolunteerSwa
 
 ---
 
+## Burning Empires 战象抠取 · 独立 mod 计划（2026-09-22 D:第二设备 归档检视）
+
+> **目标**：把 Burning Empires（BE，374 AD 罗马末期历史 TC）里的战象抠出来做成**独立 mod `RideableElephant`**，塞进本机 Native v1.4.7 + RBM 环境。**仅自用**（不发布 → ADOD/BE 素材授权不用管）。用户明确要"BE 那头象"（模型/手感），不接受用 Nexus 1666 或 TAOM 的现成方案替代。
+
+### 归档位置 / 版本
+- 本机压缩包：`C:\Users\situj\Downloads\BurningEmpires 2.0 (For Bannerlord v1.4.8) 7750 2.0.1 2026-09-01T21-56Z Q6divpbZd.7z`（5.27 GB，.7z 用 `tar -xf` 即可解，bsdtar 3.8.8 已验证）
+- **BE 目标版本 v1.4.8**，本机 Native **v1.4.7** → 差 1 个小版本
+- BE 归档顶层两模块：`BurningEmpires/`（主，带 `BurningEmpires.dll` 1.5MB + `BurningEmpires.DistanceCacheProbe.dll`）+ `BurningEmpires_Elephants/`（子，**无 bin/、纯数据**）
+- 检视产物已抽到 `C:\Users\situj\Downloads\BE_inspect\`（只含小 XML/prefab，未提 tpac）
+
+### 战象素材来源（非 BE 原创）
+- 模型 + 动画来自 **ADOD mod team**（BE dev blog 2026-04 明说是外部借用）
+- 音效自带（`elephant_attack_1-5.wav` + `elephant_hit_1-5.wav`；模组里还混着 8 个 `wolf*.wav` 未用，可丢）
+
+### `BurningEmpires_Elephants` 依赖检视（决定能否脱主 BE）
+`SubModule.xml` 硬写 `<DependedModule Id="BurningEmpires" DependentVersion="v1.4.8" Optional="false" />` + `CustomBattle`——**不是设计上的独立包，是"扩展包"**。逐组件拆：
+
+| 组件 | 脱主 BE 后 | 备注 |
+|---|---|---|
+| `AssetPackages/pack0.tpac` (194 MB) | ✅ 自带 | 骨骼/网格/动画/贴图全在里面 |
+| `be_elephant_monsters.xml` | ✅ 自洽 | `family_type=10`（BE 自定，与自家象甲配对）、`sound_and_collision_info_class=bovine`（借原生牛）、`action_set=as_elephant`、`monster_usage=elephant` |
+| `action_sets.xml` | ✅ 自洽 | 定义 `as_elephant / as_elephant_map / as_elephant_town_and_village`，还**扩展 vanilla `as_human_map_with_banner` + `as_human_warrior`** 加骑象动作。所有动画 id 在 tpac |
+| `action_types.xml` | ✅ 自洽 | 全新 `act_elephant_*` + `act_howdah_stand_bow` |
+| `monster_usage_sets.xml` | ✅ 自洽 | 完整 elephant 行为集 |
+| `monster_usage_sets.xslt` | ✅ 补丁**原生 human** set | 加 `mount_id=elephant` 的 fall/mounting/strike 条目——让人类能骑象，标准 vanilla 目标 |
+| `module_sounds.xml` + WAVs | ✅ 自洽 | `elephantAttacking` / `elephantHit` |
+| 坐骑 item `elephant` | ✅ 自洽 | `mesh=elephant_mesh` 在 tpac、`Monster.elephant` 在本模组；**注意 `is_merchandise=false`** 需翻为 true 才能刷市场 |
+| **象甲 5 件** | ⚠ `culture=Culture.kushan/sassanid` 悬空 | 两个 culture 只在主 BE 存在 |
+| **`Prefabs/be_elephant_howdah_4.xml`** | ❌ **硬耦合 BE.dll** | 用 `<script name="BEElephantHowdah">` + `BEElephantHowdahStandingPoint`（C# 在 `BurningEmpires.dll`）；prefab 注释明写 "BE script contract must remain stable" |
+| **4 个 NPCCharacter 象骑手** (`be_kushan_armored_elephant_rider` 等) | ❌ 引用 `Item.be_sas_*` / `be_eastern_*` / `be_kushan_*` 装备 + `BodyProperty.fighter_kushan/sassanid` + `Culture.kushan/sassanid` | 全在主 BE，脱掉必崩 |
+| `party_templates.xslt` + `sp_cultures.xslt` | ❌ 目标 `kushan/sassanid` 与 `kingdom_hero_party_kushan_template` | 主 BE 不在则无匹配、silent no-op、无害 |
+| `be_armor_crafting.json` | ❌ BE 锻造 pipeline 特有 | 独立版不需要 |
+
+**结论**：BE 象**不是标称独立模组，是主 BE 的紧耦合扩展**。想要 howdah 多座位 → 必须带 BE.dll（但 dll 对 1.4.8 编译，1.4.7 有符号风险，且 dll 里 SubModule 类可能拉主 BE 其他资源做初始化 → 缺资源直接崩）。
+
+### 路径决策：**Path B'（最小切片、无 howdah、无 BE.dll、干净）**
+
+三选一里选了 B'，理由：不接受 BE.dll 1.4.7 版本风险，也不接受把半个 BE（cultures/factions/map/items）当依赖常驻。代价 = 丢多座位象背轿；补偿 = 独立干净、零版本风险、单人骑乘 + 完整动画/音效/象甲全在。
+
+### Path B' 施工清单（RideableElephant 模组，未执行，待用户择日开工）
+
+**目标位置**：`D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\Modules\RideableElephant\`
+
+**从 BE 归档抽这些进新模组**：
+```
+RideableElephant\
+├── SubModule.xml                        全新写；DependedModules 只 Native/SandBoxCore/Sandbox
+├── AssetPackages\pack0.tpac             从 BE 原样搬（可改名 be_elephant_pack.tpac 避冲突）
+├── ModuleData\
+│   ├── be_elephant_monsters.xml         原样
+│   ├── action_sets.xml                  原样（含对 human 的 patch）
+│   ├── action_types.xml                 原样
+│   ├── monster_usage_sets.xml           原样
+│   ├── monster_usage_sets.xslt          原样（vanilla human set 打补丁）
+│   ├── module_sounds.xml                原样
+│   └── items\elephant_items.xml         **修改**：删掉象甲 5 件的 culture 属性（中立）；坐骑 is_merchandise=false→true
+└── ModuleSounds\elephant_*.wav          10 个原样搬；wolf*.wav 8 个丢弃
+```
+
+**SubModule.xml Xmls 节点只挂**：`Items`、`Monsters`、`ActionSets`、`ActionTypes`、`MonsterUsageSets`、`ModuleSounds`（不挂 NPCCharacters/partyTemplates/SPCultures）。
+
+**不搬**：`Prefabs/be_elephant_howdah_4.xml`（BE.dll 脚本）、`be_elephant_npc_characters.xml`（BE 装备/文化悬空）、`be_elephant_party_templates.xslt` / `be_elephant_sp_cultures.xslt`（目标不存在）、`be_armor_crafting.json`。
+
+**产物**：市场能买到 "Elephant" 坐骑（`item_category=war_horse`、`subtype=horse`）+ 5 件中立象甲；Retinues 里给自定义兵种指定象为坐骑；象自己有完整走/慢跑/冲锋/攻击/死亡动画 + 5 段吼叫 + 5 段被击音效；vanilla human `monster_usage_set` 被 xslt 打补丁后可"骑象"（mount/dismount/fall/strike）。
+
+### 已知风险 / 待验证
+- ⚠ `action_sets.xml` 对 vanilla `as_human_warrior` 的动作扩展与 RBM/其他 mod 潜在合并冲突（应无害因为只加不改，但需实测）
+- ⚠ tpac 194 MB 载入内存开销（无关键路径影响，但要看总内存）
+- ⚠ 象冲锋 `charge_damage=400`，RBM 大改冲锋物理 → 实测数值是否失衡
+- ⚠ 象 `weight=999`（坐骑本体）+ 甲 `weight=90-200`：库存重量表现
+- 无 BE.dll = **无 stamina/trample/howdah**；不介意
+- 版本：无 dll = 无 1.4.7 vs 1.4.8 API 风险
+
+### 待办
+- [ ] 主力机（或本机 D:）跑 tar 抽 `BurningEmpires_Elephants/AssetPackages/pack0.tpac` 到新 mod 目录
+- [ ] 起 `RideableElephant/SubModule.xml`（可参考 `RetinuesCultureFilter/SubModule.xml` 或 `Tier6Injector/SubModule.xml`）
+- [ ] 改 `elephant_items.xml`（删 culture / 翻 is_merchandise）
+- [ ] Load order 排在 RBM 之后
+- [ ] Native 启动 → 自定义战斗 → 检查象是否出现在装备栏 → 试骑
+- [ ] Campaign 里 Aserai 市场蹲一段时间看象是否刷出（可临时 `is_merchandise=true` + 高价快测）
+- [ ] Retinues 给玩家 clan 兵种指定 elephant 为坐骑，跑一场战斗看 AI 骑象冲锋
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

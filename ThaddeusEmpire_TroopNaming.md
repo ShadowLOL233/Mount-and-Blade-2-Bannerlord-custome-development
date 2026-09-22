@@ -9,6 +9,7 @@
 
 ### ✅ 已完成
 - **★ 精锐主线（Tagmata / 学院）**：7 分支，root T2 → 顶点 T7，命名完整（含 A 重骑/B 重步/C 步射/D 库扎伊特近卫/E 马穆鲁克/F 法里斯）
+- **★ 皇家卫队（Varangian Guard）**：Retinues House Champion/Guard = 瓦兰吉御林军（Pelekyphoros 御斧卫 / Varangos 卫兵）；诺德文化归宿
 - **★ 基础主线（常备军 / Numeri）· 步兵部分**：枪盾 / 陷阵(步行铁浮屠) / 方阵 / **野战军（Legionarius→Palatinus、Menaulatos→Menaulatos Palatinos，T5→T6）** / 弓 / 弩 / 连弩——命名 + tier + 装备栏完整
 
 ### ⬜ 未完成 / 待办
@@ -118,6 +119,20 @@ Thaddian Ephebos 军事学院新兵 (T2)*
 
 ---
 
+## ★ 皇家卫队（Varangian Guard · Retinues 御林军 · 2026-09-20 用户定稿）
+
+> **萨迪厄斯专属**：把 Retinues 的 **House Champion（RetinueElite）+ House Guard（RetinueBasic）** 命名为**瓦兰吉皇家卫队**——皇帝的私人御林军。**史实呼应完美**：拜占庭的**瓦兰吉卫队（Varangian Guard）本就是皇帝的私人卫队**（北欧/罗斯巨斧卫）。这也是**诺德文化在萨迪厄斯的归宿**——不进主力线，作为最高御林军存在（呼应"精锐已吸收外籍"的判断）。
+
+| Retinues 槽 | In-game | 中文 | 说明 |
+|---|---|---|---|
+| RetinueElite（House Champion）| **Pelekyphoros** | 瓦兰吉御斧卫 | 皇帝私卫的精锐斧卫（πελεκυφόρος 持巨斧者）|
+| RetinueBasic（House Guard）| **Varangos** | 瓦兰吉卫兵 | 皇帝私卫的基础卫兵（Βάραγγοι）|
+
+- **标志装备**：双手巨斧（瓦兰吉招牌）+ 重甲；具体待装备阶段定。
+- ⚠ 玩家称帝后 Retinues 会自动把名字改成 King's/Queen's Champion + Royal Guard（`TroopBuilder.MakeRetinueName`）——想固定"瓦兰吉"名需在 Retinues 里手设并**实测是否被自动改名覆盖**。
+
+---
+
 ## ★ 基础主线定稿（Thaddeus 常备军 / Numeri · v0.3 · 2026-09-20 用户定稿）
 
 > 基础线 = **常备军（职业标准军团，Numeri / Arithmoi）**：希腊-拉丁核心步/弓/弩 + 已吸收的库扎伊特"步行铁浮屠"实验重步。区别于精锐学院线（Tagmata）。后缀规则：**卫队**=`Phylax`（φύλαξ 卫）、**精锐/重**=`Epilektos / Barys`。root **T1**；主线到 **T5**，弩/连弩深支到 **T6**。`*`=分支节点。**骑兵线待用户给出后再补。**
@@ -128,7 +143,7 @@ Neosyllektos 征召兵 (T1)*
 ├─A 枪盾：Kontaratos 枪兵(T2) → Thyreophoros 枪盾步(T3)* → Thyreophoros Phylax 枪盾卫队(T4)*
 │        ├─(枪盾步*T3) E 陷阵：Skirites 陷阵猛士(T4) → Panklibanos Pezos 步行铁浮屠(T5)
 │        ├─(枪盾步*T3) F 方阵：Phalangites 方阵兵队(T4) → Phalangites Barys 重装方阵兵(T5)
-│        └─(枪盾卫队*T4) G 野战军：Legionarius 军团兵(T5)→Palatinus 御营军团(T6) ‖ Menaulatos 反骑(T5)→Menaulatos Palatinos 御营反骑(T6)
+│        └─(枪盾卫队*T4) G 野战军：Legionarius 野战军团步兵(T5)→Palatinus 野战御营军团步兵(T6) ‖ Menaulatos 野战长柄步兵(T5)→Menaulatos Palatinos 野战御营长柄步兵(T6)
 └─B 弓：Toxotes Dokimos 受训弓兵(T2) → Toxotes 弓兵(T3)* → Toxotes Phylax 弓卫(T4) → Toxophylax 长弓卫(T5)
          └─(弓兵*) C 弩：Tzangrator 弩手(T4)* → Tzangrator Barys 重弩手(T5) → Tzangrator Phylax 重弩卫(T6)
                   └─(弩手*) D 连弩：Polybolos 连弩手(T5) → Polybolos Phylax 重连弩卫(T6)
@@ -167,10 +182,10 @@ Neosyllektos 征召兵 (T1)*
 
 | In-game | 中文 | Tier | 装备(定) | 典故 |
 |---|---|---|---|---|
-| Legionarius | 萨迪厄斯军团兵 | T5 | 单手剑 + 大盾(scutum) + pila 重标枪 | 拉丁 legionarius；野战突击破阵主力 |
-| **Palatinus** | 萨迪厄斯御营军团兵 | T6 | 精甲 + 单手剑 + 大盾 + pila | Palatini 御营精锐野战军团；**职业军顶点** |
-| Menaulatos | 萨迪厄斯反骑锚点 | T5 | menaulion 反骑粗矛 + 大盾 | μεναύλατος 反重骑；护住军团突击软肋（从精锐线让来）|
-| **Menaulatos Palatinos** | 萨迪厄斯御营反骑锚点 | T6 | 精甲 + menaulion + 大盾 | 御营版反骑锚点 |
+| Legionarius | 野战军团步兵 | T5 | 单手剑 + 大盾(scutum) + pila 重标枪 | 拉丁 legionarius；野战突击破阵主力 |
+| **Palatinus** | 野战御营军团步兵 | T6 | 精甲 + 单手剑 + 大盾 + pila | Palatini 御营精锐野战军团；**职业军顶点** |
+| Menaulatos | 野战长柄步兵 | T5 | menaulion 反骑粗矛 + 大盾 | μεναύλατος 反重骑；护住军团突击软肋（从精锐线让来）|
+| **Menaulatos Palatinos** | 野战御营长柄步兵 | T6 | 精甲 + menaulion + 大盾 | 御营版反骑锚点 |
 
 > **Hastati / Principes / Triarii 已弃用**：它们是原版**"背弃军团"(Legion of the Betrayed)** 的兵（`legion_of_the_betrayed_tier_1/2/3`，被放逐旧帝国残党用的共和罗马三线古名），**非帝国制式**。萨迪厄斯军改用职业野战军团（Legionarius + Menaulatos）取代旧三线；三线只作为"背弃军团"遗民残存于世界，整编派的萨迪厄斯可招其为传统主义雇佣辅助。
 

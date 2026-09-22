@@ -1485,6 +1485,37 @@ Retinues 在**自有据点**把志愿兵 100% 换成自定义兵（`VolunteerSwa
 
 ---
 
+## ★ 城堡精英招募 · 机制核实 + 自研 mod 设计（2026-09-20 反编译）· **最高优先**
+
+> **目标**：让城堡本身能招募、且**大量产出精英新兵**（1.4.7 兼容、RBM-proof、Retinues 友好）。**现成 mod 均不合用**：Population And Recruitment 仅 1.3.x（用户核实排除）；Elite Recruits In Castles 自述与其他招募 mod 冲突；Dynamic/Relation 系非"城堡=精英源" → **决定自研**。
+
+### vanilla 为何城堡不能招募（三处硬拦截，全本机反编译）
+1. **notable 数量** `DefaultNotableSpawnModel.GetTargetNotableCountForSettlement`：城镇 5（2商+2帮+1匠）、村庄 3（1头人+2乡绅）、**城堡 0**。
+2. **生成 notable** `NotablesCampaignBehavior.SpawnNotablesAtGameStart` + `SettlementHelper.SpawnNotablesIfNeeded`：只 `if IsTown / else if IsVillage`，**城堡无分支 → 不生成**。
+3. **填志愿兵** `RecruitmentCampaignBehavior.UpdateVolunteersOfNotablesInSettlement`：开头 `非Town且非Village → return`，**城堡被提前拦掉**。
+4. **招募 UI**：城堡菜单无招募入口（vanilla 只在城镇/村庄招）。
+- 招募来自 notable 的 `VolunteerTypes[]`；志愿兵从 `GetBasicVolunteer` 的根起、随日 tick 沿 `UpgradeTargets` 升到 `MaxVolunteerTier=4`。
+
+### 自研 mod 设计 `CastleEliteRecruitment`（4 组件，全 v1.4.7 现成签名）
+| 组件 | 做法 | 作用 |
+|---|---|---|
+| **A 城堡生成 notable** | 自定义 `NotableSpawnModel`（城堡返 N 个）+ Harmony postfix `SpawnNotablesAtGameStart` / `SpawnNotablesIfNeeded`（城堡也 `CreateNotable`）| 城堡有可招对象 |
+| **B 填城堡志愿兵** | Harmony prefix/transpiler `UpdateVolunteersOfNotablesInSettlement`，放行 `IsCastle` | 城堡 notable 志愿兵槽被填 |
+| **C 强制精英·RBM-proof** | Harmony **postfix** `VolunteerModel.GetBasicVolunteer`：notable 在城堡 → 返回 `Culture.EliteBasicTroop`。**postfix 在 RBM 的 prefix 之后跑 → 直接盖掉 RBM 的 15%**，完全免疫 | 城堡必出精英线 |
+| **D 城堡招募入口** | 城堡菜单 `AddGameMenuOption` 加"招募志愿兵"接招募界面 | 能在城堡点招募 |
+
+### 契合 stack
+- **RBM**：C 用 postfix 覆盖 → 免疫 15% patch（`DefaultVolunteerModelPatch`）。
+- **Retinues**：**自有**城堡里志愿兵被 Retinues 换成自定义兵 → **城堡直产萨迪厄斯精锐**（瓦兰吉/野战军团）；敌方城堡出 C 的精英。
+- **"大量"**：调 A 的 notable 数 N + 填充概率；可加 MCM 滑条。
+
+### 待验证（本机无法进游戏实测 → 主力机 build+测）
+- D 菜单接线、notable 存档持久化、老存档兼容
+- 城堡 notable 用哪种 `Occupation`（RuralNotable 复用 vs 自定义）对 power/关系系统的影响
+- B 的实现方式（prefix 改 IsCastle 判定 vs transpiler）稳定性
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死
@@ -1645,6 +1676,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ### 调查与开发项目（backlog）
 
+- [ ] 🔴 **【最高优先】自研 `CastleEliteRecruitment` mod**（2026-09-20 立项，机制已核实）：让城堡能招募 + 大量产精英新兵，1.4.7 兼容 / RBM-proof / Retinues 友好。设计详见上方"★ 城堡精英招募"节（A 城堡加 notable + B 放行志愿兵填充 + C postfix GetBasicVolunteer 强制精英免疫 RBM + D 城堡招募菜单）。**下一步：在 repo 搭工程骨架 → 主力机 build+测**
 - [x] ~~**Retinues · House 单位 tier 上限**~~ ← **2026-09-18 结案**：作者早已在 MCM 里预留 `MaxTroopTier` 到 10，改配置即可；改后需玩家手动 rank up 已有兵种。详见"Retinues 机制备忘"小节 + 修改 #6
 - [ ] **Retinues · Clan Traditions 跳过**：Clan Traditions 系统（族群传统）是否有内置开关能整个禁用/跳过？如果没有，找它绑定的 CampaignBehavior 名称，评估直接不加载该 behavior 的可行性
 - [x] ~~**RBM · Bot 武器优先度**~~ ← **2026-09-18 结案**：RBM AI **不重写** vanilla 武器选择评分，只做辅助（posture 掉武器、盾墙方向、骑射队分配）；skill 通过 handling/speed 间接影响 AI 评分。完整 combo 表、"废装备"警告、骑马武器长度限制、Cataphract Lance 副武器陷阱见 `TroopDesignReference.md`

@@ -14,11 +14,11 @@
 ```yaml
 purpose: Full replication of this Bannerlord modpack on a new Windows device
 audience: Claude Code on target machine
-source-device-snapshot: 2026-09-21
+source-device-snapshot: 2026-09-22
 game-version: Bannerlord v1.4.7 (build 117484)
 game-beta-branch: v1.4.7
 workshop-count-required: 20 subscribed + 4 optional (see [P1.3])
-custom-mods-count: 5 (built from this repo)
+custom-mods-count: 7 (built from this repo)
 config-file-edits: 15
 dll-byte-patch: 1 (GarrisonDrills)
 estimated-time: 90-120 min (excluding Steam download time)
@@ -583,6 +583,52 @@ Test-Path "$GAME_ROOT\Modules\RetinuesCultureFilter\bin\Win64_Shipping_Client\Re
 
 ---
 
+## [P6.4b] Build + deploy PSCacheWarmup (v0.1.1)
+
+**GOAL**: Auto-warm vanilla MapDistanceModel cache after PlayerSettlement building complete, to remove Building-complete lag in MNR-style large-map scenarios. See journal §31 (v0.1 architecture) + §32 (v0.1.1 file-log addition).
+
+**PRE**: [P6.0] complete. PlayerSettlement subscribed via [P1.3] (soft dep — mod is harmless if PS missing).
+
+**DO**:
+```powershell
+& "$repoRoot\PSCacheWarmup\deploy.ps1" -GameRoot $GAME_ROOT
+```
+
+**VERIFY**:
+```powershell
+Test-Path "$GAME_ROOT\Modules\PSCacheWarmup\bin\Win64_Shipping_Client\PSCacheWarmup.dll"
+(Select-String -Path "$GAME_ROOT\Modules\PSCacheWarmup\SubModule.xml" -Pattern 'v0\.1\.1').Count -eq 1
+```
+
+**In-game verify** (once launcher restarted — see APX.6): check `$USER_DATA\Configs\ModLogs\PSCacheWarmup.log` for `OnSubModuleLoad called` and `SUBSCRIBE SUCCEEDED` lines.
+
+**ROLLBACK**: `Remove-Item "$GAME_ROOT\Modules\PSCacheWarmup" -Recurse -Force`.
+
+---
+
+## [P6.4c] Build + deploy BetterPatrolsBrake (v0.1)
+
+**GOAL**: Removes 2 BetterPatrols Harmony patches (`PatrolFrequentRethinkPatch` + `PatrolResumeScoringPatch`) that break vanilla AI throttling and cause strategy-map fast-forward lag. Preserves BetterPatrols' other ~24 patches (PatrolSizeTable / QualityTable / WanderRadius / VillageDefender etc.). See journal §33 for decompile analysis + trade-off table.
+
+**PRE**: [P6.0] complete. BetterPatrols subscribed via [P1.3] (soft dep — mod is harmless without BetterPatrols). **⚠ Status per journal §33: v0.1 not yet in-game verified as of 2026-09-22.**
+
+**DO**:
+```powershell
+& "$repoRoot\BetterPatrolsBrake\deploy.ps1" -GameRoot $GAME_ROOT
+```
+
+**VERIFY**:
+```powershell
+Test-Path "$GAME_ROOT\Modules\BetterPatrolsBrake\bin\Win64_Shipping_Client\BetterPatrolsBrake.dll"
+(Select-String -Path "$GAME_ROOT\Modules\BetterPatrolsBrake\SubModule.xml" -Pattern 'v0\.1').Count -eq 1
+```
+
+**In-game verify** (once launcher restarted): check `$USER_DATA\Configs\ModLogs\BetterPatrolsBrake.log` for `Postfix count before=1 after=0 (successfully removed 1)` on both HourlyTickParty and AiHourlyTick — that is the decisive evidence Brake actually removed the hot patches.
+
+**ROLLBACK**: `Remove-Item "$GAME_ROOT\Modules\BetterPatrolsBrake" -Recurse -Force`.
+
+---
+
 ## [P6.4] Build + deploy RBMPlayerStaminaPoiseBuff (v1.0.2)
 
 **GOAL**: Boost player-only RBM stamina/posture regen by 6×/2×. AI unchanged. See journal §29 for the v1.0.2 crash-fix architecture (deferred manual patch — critical, do not revert to v1.0.1).
@@ -661,12 +707,14 @@ Test-Path "$repoRoot\RBM_Reference\data\rbm_items.csv"
    OpenSourceSaddlery
    OpenSourceWeaponry
    MarriageFertility            (optional)
-   BetterPatrols                (optional)
+   BetterPatrols                (optional — currently combined with BetterPatrolsBrake below)
    Xiangyong                    (optional)
    OpenSourceArmouryRBMBalance  ← must load AFTER OSA/OSW/Saddlery/RBM/RBM_WS
    EquipmentSpawnerMod
    RetinuesCultureFilter        ← must load AFTER Retinues
    RBMPlayerStaminaPoiseBuff    ← must load AFTER RBM
+   PSCacheWarmup                ← must load AFTER PlayerSettlement (soft dep, safe if PS absent)
+   BetterPatrolsBrake           ← must load AFTER BetterPatrols (soft dep, safe if BP absent)
    ```
 2. Ensure `BirthAndDeath`, `FastMode`, `CustomClanPartySize`, `XorberaxLegacy`, `Cheats`, `Bannerlord.HorseSummary`, `Test` are UNticked.
 
@@ -829,6 +877,8 @@ EquipmentSpawnerMod/           v1.8.1  (equipment injector + personal stash + in
 OpenSourceArmouryRBMBalance/   v1.1    (OSA<->RBM armour + blade balance via XML overrides)
 RetinuesCultureFilter/         v1.4.0  (culture filter for Retinues equipment editor)
 RBMPlayerStaminaPoiseBuff/     v1.0.2  (RBM stamina/posture regen boost, player only)
+PSCacheWarmup/                 v0.1.1  (auto-warm MapDistanceModel cache after PS building complete)
+BetterPatrolsBrake/            v0.1    (remove 2 BetterPatrols hourly hot patches, keep the other 24)
 ```
 
 ## [APX.3] Cross-device path-variable table
@@ -891,6 +941,8 @@ Get-ChildItem "$USER_DATA\Configs" -Recurse -Filter '*.bak-replicate-*' | ForEac
 5. **Windows Long Path** — some workshop dirs deep-nest. If `deploy.ps1` fails with path-too-long, enable long-path via `HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled = 1`, reboot.
 6. **XML BOM encoding** — when scripting XML edits, use `Set-Content -Encoding UTF8` (adds BOM) — Bannerlord tolerates both BOM/no-BOM, but consistency matters for `git diff`.
 7. **OneDrive Files-on-Demand**: even without Steam Cloud, OneDrive can turn game saves into placeholder files. [P2.1] junction is strongly recommended.
+8. **Launcher only scans Modules/ at startup, not at runtime**: if you deploy a new mod (new directory under `Modules/`) or replace a mod's DLL while `TaleWorlds.MountAndBlade.Launcher` is running, launcher will NOT see the change. **Always fully close launcher first, then deploy, then start launcher fresh.** Symptoms of ignoring this: (a) newly-deployed mod does not appear in launcher mod list; (b) `Copy-Item` in deploy.ps1 fails with `The process cannot access the file because it is being used by another process` — launcher holds a file handle on any DLL of a currently-selected mod even when idle at the mod list screen.
+9. **`File read failed! Please try to verify your installation!` popup at startup**: engine-level error, usually caused by a partial workshop download or a corrupted vanilla file. Fix: Steam → right-click Bannerlord → Properties → Installed Files → Verify Integrity of Game Files. **Not a mod bug**, though can appear coincidentally after mod list changes if a Steam background update happens to coincide (encountered 2026-09-22).
 
 ---
 

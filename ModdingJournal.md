@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-09-21
+**最后更新**：2026-09-22
 
 ## 目录
 - [环境与路径](#环境与路径)
@@ -556,6 +556,190 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 2. 实机验证 hotkey filter 现在能正常工作
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
+
+### 33. BetterPatrolsBrake v0.1 — 拆 BetterPatrols 两个 hourly hot patch 的自研 mod（2026-09-22）· ⚠ 未测试
+
+**背景**：2026-09-22 用户报告战略地图快进时严重卡顿。经诊断 + 反编译:
+- 用户禁 BetterPatrols + Xiangyong + MarriageFertility 三个 → 快进极大改善
+- **首要元凶 MarriageFertility**（813 KB DLL + 附 e_sqlite3.dll 2 MB SQLite → hourly tick SQLite I/O 阻塞主线程,决议**长期禁用**）
+- **次要元凶 BetterPatrols**（26 个 Harmony patch 中 2 个是 hourly tick 上的热路径,反编译已定位）
+- Xiangyong 基本无害(稀疏事件驱动),建议重新启用
+
+**目标**:让用户享受 BetterPatrols **绝大部分 gameplay 增强**(patrol size / quality / wander radius / village defender / castle patrol 等 24 个 patch),同时**精准拆掉 2 个快进卡顿源**。
+
+**BetterPatrols 里被识别为热路径的 2 个 Postfix**(反编译定位 2026-09-22):
+
+1. **`PatrolFrequentRethinkPatch`** (Postfix on `PatrolPartiesCampaignBehavior.HourlyTickParty`)
+   - 作者意图:让 patrol 在附近有 raid 时立刻 rethink → 反应更及时
+   - 实现:每 patrol × 每 hour 检查 `home == null || isNaval || IsNearbyRaidHappening(home)`,命中就 `mobileParty.Ai.RethinkAtNextHourlyTick = true`
+   - 性能代价:break vanilla AI 节流。40 patrol × 24 h × 30 day/s 快进 = ~28k 次条件 check + 命中时 cascade rethink
+
+2. **`PatrolResumeScoringPatch`** (Postfix on `PatrolPartiesCampaignBehavior.AiHourlyTick`)
+   - 作者意图:让 patrol 巡逻分散到多个 sibling village(避免死抱一个 village)
+   - 实现:每 patrol × 每 hour × forEach BoundVillage → **反射调**私有 `CalculatePatrollingScoreForSettlement` 重算得分 + 加 recency bonus
+   - 性能代价:每 patrol/hour/village 反射 dispatch + AI scoring,快进时 hourly tick 密度爆炸时成灾
+
+**架构**(与 PSCacheWarmup 同风格 soft-dep 反射):
+- `MBSubModuleBase.OnSubModuleLoad`: 用 `AccessTools.TypeByName("BetterPatrols.PatrolFrequentRethinkPatch")` 检查 BetterPatrols 是否 loaded → 未 loaded silent noop
+- 创建自家 Harmony instance `PSCacheWarmup.BetterPatrolsBrake`
+- 调 `harmony.Unpatch(method, HarmonyPatchType.Postfix, "better_patrols")` — Harmony API 允许 mod A 撤销 mod B 的 patch,只要知道 mod B 的 harmony id
+- Harmony id `"better_patrols"` 从反编译 `BetterPatrols.BetterPatrolsSubModule.OnSubModuleLoad` 拿到(`new Harmony("better_patrols")`)
+- Target methods 是 vanilla type `PatrolPartiesCampaignBehavior`(在 TaleWorlds.CampaignSystem.dll 内),直接 typeof() + `AccessTools.Method` 即可拿 MethodInfo
+- **SubModule.xml 声明 `BetterPatrols` 为 `LoadBeforeThis optional="true"`**,launcher 自动排序保证 BetterPatrols 先 PatchAll 我们后 Unpatch
+- 独立 file log 到 `Configs\ModLogs\BetterPatrolsBrake.log`,并用 `Harmony.GetPatchInfo(method).Postfixes.Count` 记录 unpatch 前后 postfix 数量,决定性证据判定 unpatch 是否真生效
+
+**Trade-off 明确列出**(不是"零代价优化"):
+
+| 状态 | 快进流畅度 | Patrol AI 反应速度 | Patrol 巡逻分布 | 其他 BetterPatrols 功能 |
+|---|---|---|---|---|
+| BetterPatrols 全开 | ❌ 卡 | ✅ 快 | ✅ 分散 | ✅ 全部 |
+| BetterPatrols 全禁 | ✅ 流畅 | ⚠ vanilla | ⚠ vanilla | ❌ 全无 |
+| **BetterPatrols + Brake** | ✅ 流畅 | ⚠ vanilla | ⚠ vanilla | ✅ **保留 24 项** |
+
+**版本 & 部署**:
+- 位置:本 repo `BetterPatrolsBrake/` 子目录
+- SubModule.xml v0.1.0;build 0 warn / 0 err (1.85s)
+- 部署到 `$GAME_ROOT\Modules\BetterPatrolsBrake\`
+- **LauncherData 未预先添加条目** —— launcher 重启后自动扫
+
+**⚠ 尚未测试**(本轮对话 approaching limit,留待下轮):
+1. Launcher 显示 "BetterPatrols Brake" 条目 — 未验证
+2. 用户勾选 + 加载顺序 — 未验证
+3. 消息栏 `[BetterPatrolsBrake] v0.1 loaded...` — 未验证
+4. `Configs\ModLogs\BetterPatrolsBrake.log` 里 `Postfix count before=1 after=0 (successfully removed 1)` 决定性证据 — 未验证
+5. 战略地图快进恢复流畅度 — 未验证
+
+**下轮开工须做**:
+1. 用户必须**先完全关闭 launcher**,当前 launcher (PID 34068) 锁住 PSCacheWarmup.dll,导致 v0.1.1 file logging DLL 未同步(见 §32),重启后 launcher 才能扫到 BetterPatrolsBrake
+2. 勾选 BetterPatrols + BetterPatrolsBrake → 实机验证 5 条上面清单
+3. 如 log 显示 `after=0` + 快进流畅 → v0.1 fix 成立,可 commit push 作为 stable v0.1
+4. 如 log 显示 `after=1`(unpatch 未生效) → 可能 BetterPatrols 更新过 Harmony id 或 patch attribute,需要 v0.2 调整
+5. 如快进仍卡 → 说明 MarriageFertility 是唯一元凶,BetterPatrols 影响可忽略,Brake 无价值(可保留 mod 但价值降低)
+
+### 32. PSCacheWarmup v0.1.1 — 加 file logging(2026-09-22)· ⚠ DLL 未部署
+
+**背景**:上一轮 §31 落地 v0.1 后用户实测**没在消息栏看到任何 [PS Cache Warmup] 消息**,无法判断 mod 是否生效。原因是 v0.1 只用 `InformationManager.DisplayMessage` 显示到游戏消息栏 — 消息栏被大量其他 mod 通知淹没不好抓,而 butterlib/default log 不会捕获这类消息(它们只捕获未处理 exception + MCM/Retinues 等使用 log framework 的 mod)。
+
+**改动**:
+- 加独立 file log `Configs\ModLogs\PSCacheWarmup.log`
+- 4 类关键节点:
+  1. `OnSubModuleLoad called` — 证明 mod DLL 加载成功
+  2. `OnGameInitializationFinished called, gtName='Campaign'` — 证明进入 Campaign 时 hook 触发
+  3. `TrySubscribeToPS` 各分支明确 log:`psBehType NULL` / `eventProp NULL` / `evt NULL` / `SUBSCRIBE SUCCEEDED` / exception with stack trace
+  4. `OnPSSettlementComplete: PS event FIRED for '<name>'` — 证明 PS 的 event 真的 fire + 我们订阅拿到
+  5. `BeginNextTarget` + `progress N / total` + `done for '<name>'` — 证明 warmup drain 执行
+
+**保留 in-game 消息栏消息** — 玩家友好性不减,只是**同步写到 log**,任何情况可事后 grep 判断哪一层出问题。
+
+**关联另一个 2026-09-21 报告的 bug**:新档创建完角色样貌后卡死。经与用户对话确认 Steam 完整性问题触发(验证完整性后消失,与 PSCacheWarmup 无关),故本 v0.1.1 **未** 改 subscribe 时序(原计划 §37 的 `OnGameInitializationFinished` → `OnSessionLaunchedEvent` 推迟改动**取消**,不必要)。
+
+**版本 & 部署状态**:
+- SubModule.xml v0.1.0 → **v0.1.1** ✓
+- src/SubModule.cs 已改为 v0.1.1 版本 ✓
+- LauncherData v0.1.0.0 → **v0.1.1.0** ✓
+- **⚠ DLL 未同步部署**: 用户重启过 launcher 后 launcher (PID 34068) 锁住了 `Modules/PSCacheWarmup/bin/.../PSCacheWarmup.dll`,build 完 Copy-Item 失败。**当前部署的 DLL 仍是 v0.1.0 code**(无 file logging)
+
+**下轮开工须做**:
+1. 用户**完全关闭 launcher + 游戏**
+2. 重跑 `PSCacheWarmup\deploy.ps1` → DLL 会更新到 v0.1.1
+3. 重启 launcher → 进游戏 → 应见 `Configs\ModLogs\PSCacheWarmup.log` 有 `OnSubModuleLoad called` 起头的记录
+4. 若之后 PS 建 Village/Castle 完成时看到 `OnPSSettlementComplete: PS event FIRED for '<name>'` → v0.1 subscribe 逻辑决定性证据 = 生效
+
+**⚠ 尚未测试** — 本轮对话 approaching limit,同 §33 一起留待下轮
+
+### 31. PSCacheWarmup v0.1 — 修 MNR×PS lag 的自研 mod（2026-09-21）
+
+**背景**：§Todo 里 MNR × PS 兼容性调查完成后，用户 policy 是"调查项目也可以走到落地"，立项 PSCacheWarmup 修 lag 问题。
+
+**根因深挖过程**（反编译 4 层）：
+
+**Layer 1 · PS 的 `PlayerSettlementBehaviour.NotifyComplete`**（发现：便宜）：
+```csharp
+public void NotifyComplete(ISettlementItem item)
+{
+    item.SetBuildComplete(true);         // bool flip
+    // display quick information message
+    LogManager.Log.NotifyGood(...);
+    this._settlementBuildComplete.Invoke(item.GetSettlement());  // event
+    Campaign.Current.TimeControlMode = 0;
+}
+```
+全 4 行 O(1)。**lag 不在这**。
+
+**Layer 2 · PS 的 `MapScenePatch.AddNewEntityToMapScene`**（发现：便宜）：
+只 `GameEntity.Instantiate(prefab)` + `SetLocalPosition`。**也不是 lag 源**。
+
+**Layer 3 · vanilla `DefaultMapDistanceModel.GetDistance`**（发现：委托给 cache）：
+所有 `GetDistance` 都走 `_navigationCache.GetSettlementToSettlementDistanceWithLandRatio(...)`。cache implementer 是 `SandBoxNavigationCache`（`TaleWorlds.CampaignSystem.Map.DistanceCache`）。
+
+**Layer 4 · `NavigationCache<T>` base class**（发现：**lag 的真正原因**）：
+
+内部数据结构：
+```csharp
+private Dictionary<NavigationCacheElement<T>,
+                   Dictionary<NavigationCacheElement<T>, ValueTuple<float, float>>>
+    _settlementToSettlementDistanceWithLandRatio;
+```
+
+Lookup 逻辑（**lazy on miss**）：
+```csharp
+if (!dictionary.TryGetValue(settlement2, out valueTuple))
+{
+    float realDist = this.GetRealDistanceAndLandRatioBetweenSettlements(...);  // 触发 3 次 native A*
+    this.SetSettlementToSettlementDistanceWithLandRatio(...);
+    valueTuple = (realDist, landRatio);
+}
+```
+
+`GetRealDistanceAndLandRatioBetweenSettlements` （在 `SandBoxNavigationCache` override 里）**每对跑 3 次 native A***：
+- 1 次 `MapSceneWrapper.GetPathBetweenAIFaces`
+- 2 次 `MapSceneWrapper.GetPathDistanceBetweenAIFaces`（正+反）
+
+MNR 的 navmesh.bin 989 KB → 数十万 face，每次 A* 约 100-500ms。
+
+**关键三大发现**：
+1. **Cache 是 lazy** — miss 才算，算完存
+2. **`Dictionary` 不是 `ConcurrentDictionary`** — 后台线程 populate 会跟主线程 read 竞争 → **必须主线程分片 warmup**
+3. **base class 内无 `Remove` / `Clear` / `Invalidate` 方法** — cache 只增不减，PS 新 settlement warmup 一次终身有效，不用重复触发
+
+**Bonus 发现**：**MNR `ModuleData\DistanceCaches`** 是**预序列化的 597² pair cache** —— vanilla 有 cache save/load 机制。这就是"为什么 MNR 自己的 vanilla settlement 之间不 lag"（预填 cache）。PS 新加 settlement 不在预填集里 → miss lag。（此发现开启方案 B：cache 持久化，待方案 A 落地后视需要再上）
+
+**架构决定**（方案 A 修正版 · 主线程分片 warmup）：
+- `MBSubModuleBase.OnApplicationTick(float dt)` 每帧 drain 3 pair（`PairsPerTick=3` 硬编码，可后续 MCM 化）
+- 用 `AccessTools.TypeByName("BannerlordPlayerSettlement.Behaviours.PlayerSettlementBehaviour")` **soft-dep 反射订阅** PS 的 `SettlementBuildCompleteEvent`（`static IMbEvent<Settlement>`）—— PS 未装时 silent noop，不崩、不阻塞加载
+- 每完成一 target 显示消息栏 progress ping（每 25 pair 一次 + 完成时一次）
+- try/catch 单 pair A* fail 不影响 queue drain
+
+**性能估算**：3 pair/tick × 30fps → ~90 pair/s → MNR 后 777 pair → **~9 秒可控 loading per settlement**
+
+**实现细节**：
+- 依赖 stack: Native + SandBoxCore + Sandbox + Bannerlord.Harmony；PlayerSettlement 声明为 `optional="true"` 的 `LoadBeforeThis`（launcher 允许缺 optional dep）
+- **不 hard-reference `PlayerSettlement.dll`**（csproj 里无 reference）—— 全反射，跨 PS 版本鲁棒
+- `GetDistance(s1, s2, false, false, MobileParty.NavigationType.Default)` 走 5 参数明式调用（base `MapDistanceModel.GetDistance` abstract 无 default value）
+- 遇到无效 nav face 的 settlement A* 会抛 —— 全 try/catch 兜底
+
+**版本 & 部署**：
+- 位置：本 repo `PSCacheWarmup/` 子目录
+- SubModule.xml v0.1.0；build 0 err (1 无害 warning `_subscribeSucceeded` 保留字段)
+- 部署到 `$GAME_ROOT\Modules\PSCacheWarmup\`
+- **LauncherData 未预先添加条目** —— launcher 首次启动会自动扫到；用户手动勾选前保持 IsSelected=false
+
+**Claude 不能驱动的实机验证**（**待用户在装 MNR 时才实测**——用户当前未装 MNR）：
+1. launcher 里勾 PSCacheWarmup v0.1.0，加载顺序在 PlayerSettlement 之后（launcher 会按 LoadBeforeThis 自动排）
+2. 进任意 game（PS 未装也不崩，此时消息栏无 "subscribed" 提示，符合 soft-dep 设计）
+3. 装 MNR 后新开档 → 装 PS + PSCacheWarmup → build 一个 Village → completion 时消息栏应见：
+   - `[PS Cache Warmup] queued 'Village X' for warmup (queue size 1).`
+   - `[PS Cache Warmup] warming distance cache for 'Village X' (776 pairs). Expect brief loading...`
+   - 若干 `[PS Cache Warmup] 25 / 776 pairs...` progress ping
+   - `[PS Cache Warmup] done for 'Village X' (776 pairs).` （约 9 秒后）
+4. 观察玩家日常操作是否 lag 消除（应该：daily tick 不再随机 spike，AI 决策 smooth，村庄 trade bind 无卡顿）
+5. 若 3 pair/tick 明显掉帧 → 改 `PairsPerTick = 1` 或 `2` 重编
+6. 若 3 pair/tick 太慢 → 改到 5 或 10
+
+**当前局限（方案 A v0.1）**：
+- 每次进游戏 warmup 都要重跑（save 里没序列化 cache），若玩家反馈"进档等太烦" → 上方案 B（hook cache save/load）
+- 只 warmup 新 settlement 与其他所有 settlement 的距离，**未 warmup 已有 settlement 之间的 miss**（这些理论上 vanilla 早已 populate，问题不大）
+- 硬编码 `PairsPerTick=3`，未 MCM 化 —— v0.2 可加
 
 ### 30. OSA_Reference + RBM_Reference 数据包（2026-09-21）
 
@@ -1646,22 +1830,54 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ## 待办 / 开放问题
 
-### 🔴 P0 · OSA 物品平衡 v2（最优先，2026-09-21 立项）
+### 🔴 P0 · 待调查项目（policy: 调查 > 落地实施）
 
-**目标**：利用 `OSA_Reference/` + `RBM_Reference/` 数据包，对 `OpenSourceArmouryRBMBalance` mod 做**精细化二轮调整**。v1.0/v1.1 是基于 avg 分层 buff/下调，v2 要针对具体物品做微调。
+**用户 policy（2026-09-21）**：需要"花大量实施时间但技术路径清楚"的项目从 P0 降下去（比如 OSA v2 / CastleEliteRecruitment，已有渠道落实），P0 位置让给**需要研究**的项目。
 
-**具体可展开点**（按优先级）：
+- [ ] **Retinues · Clan Traditions 跳过**：反编译找到 Clan Traditions 系统绑定的 `CampaignBehavior` 名称，评估是否有 config 开关能整个禁用/跳过。若无 config，评估直接不加载该 behavior 的可行性（Retinues 侧 `TroopXpBehavior` 类似结构，参考它的写法）
+- [ ] **PlayerSettlement · 村庄绑定机制**：反编译 `PlayerSettlement.dll` + `PlayerSettlementFixes.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 能否绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）打造食物爆棚 fief。附带查：绑定村庄数量硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
+- [ ] **More Nations Remastered × PlayerSettlement 兼容性**（2026-09-21 静态分析 + 自研 `PSCacheWarmup` v0.1 落地缓解 → 见 §31）— **下一步只剩实机验证**：装 MNR 新开档、观察每日 tick 性能、用 PS 建 Village 试完成时 lag 是否被 PSCacheWarmup 消除。**用户当前未装 MNR，实测顺延到实际装 MNR 时**
+- [ ] **AutoParry 是否要启用**：当前 IsSelected=true 但用户 policy 未定；观察 in-game 手感 + AI 平衡影响，再决定长期启用/禁用
 
-1. **HorseHarness 平衡**（v1/v1.1 完全未处理）—— 数据显示 Saddlery avg 58.5 vs RBM vanilla-cover avg 28.9，Saddlery 需**反向下调**约 ×0.5。走脚本 `_scratch` 算完加到 `generate.ps1` 的第三 pass
-2. **Cape.arm slot 校准**：v1.0 定 flat=12 是猜的。用 `RBM_Reference` 里 Cape 的 arm_armor 分布（如果 RBM 有）算 target avg 重新精算
-3. **outlier 物品逐个审**：Excel 打开 `osa_items.csv`，按 `Armor.head_armor` 降序看 top-30，交叉 `Armor.material_type` 找异常
-4. **Blade damage_factor 二次校准**：数据显示 OSA blade avg 3.18 vs RBM 0.95 = 3.35×，但 v1.0 用的是 wclass 聚合系数（axe 0.27 / mace 0.29 / sword 0.28）。数据支撑更精细的按 tier + wclass 分层
-5. **加入 CraftedItem 覆盖分析**：目前 `OpenSourceArmouryRBMBalance` 只 override 直接 Item + CraftingPiece，但 OSA 有 140 CraftedItem 引用 vanilla piece。走 `osa_crafted_items_pieces.csv` join `rbm_crafting_pieces.csv` 看是否有需调
-6. **`OpenSourceArmouryRBMBalance/src/generate.ps1` 改用 Reference CSV 作输入源**：现在还是每次扫 XML，重构为 `Import-Csv OSA_Reference/data/osa_items.csv`——更快、更透明、可 diff。
+### MNR × PS 兼容性调查（2026-09-21）· 静态分析结果
 
-**产出目标**：`OpenSourceArmouryRBMBalance` v1.2（可能拆 v1.2/v1.3 分批落地）。
+**Mod 画像**（Nexus 12271，v1.0.3，本机未装，从 Downloads 里的 ZIP 反编译）：
+- 8 KB DLL + ~100 MB 完整地图替换（`SceneObj\Main_map`：scene.xscene 30 MB + terrain.bin 65 MB + navmesh.bin 989 KB + flora + flowmap）
+- 5 XML: **597 新 settlement**（87 Town + 94 Castle + 416 Village）+ **7 kingdom** + **52 faction** + heroes + lords
+- 3 Harmony 组件：
+  1. `SceneLinkManager.EnsureSceneLinks()` — `mklink /J` 把 MNR `Main_map/TileSets` junction 到 vanilla `Sandbox/SceneObj/Main_map/TileSets`（复用 tileset 资产）
+  2. `BanditStartDefenderConditionPatch` (Prefix on `BanditInteractionsCampaignBehavior.bandit_start_defender_condition`) — 修偏远荒野 bandit 对话崩
+  3. `InitialMenuOptionPatch` (Prefix on `InitialMenuOptionVM.ExecuteAction`) — 新游戏弹提示"世界生成需 1:30-3:00 min"
+- id 用 `HH*/WW*` 前缀**新增**，不覆盖 vanilla id
+- 依赖仅 Native + Sandbox（无 Harmony/ButterLib/UIExtender/MCM 硬依赖，只靠内嵌 `HarmonyLib`）
 
-**依赖**：需要 in-game 实机验证每一批系数（用户操作）；建议每次调一小批（20-30 件）就实测一场战斗。
+**兼容性判断**（vs `PlayerSettlement` v7.5.0）：
+
+| 层 | 结论 | 依据 |
+|---|---|---|
+| Harmony patch 面 | ✅ 无冲突 | MNR 2 patch 都跟 PS 完全正交 |
+| Id 命名空间 | ✅ 无冲突 | MNR 用 HH/WW 前缀新增；PS 走 runtime id 空间 |
+| 依赖 stack | ✅ 无冲突 | MNR 只依赖 Native+Sandbox，与 PS 无版本硬冲突 |
+| 数据模型 | ✅ 无冲突 | MNR 是 game-start XML 静态、PS 是 runtime 动态克隆——时序完全隔离 |
+| Building 完成时 lag | ⚠ **已知风险** | Nexus 用户反馈：Village 建 OK、Town/Castle 完成时**严重卡**。机制：MNR 地图密布 597 settlement → PS 完成 building 触发 `ReachabilityGraph`/navmesh cache 全图重算，比 vanilla 慢 4× |
+| Daily tick baseline | ⚠ 慢 4× | MNR 后世界 ~180 → ~777 settlement，O(settlements) 循环慢 |
+| 老存档兼容 | ❌ **必须新档** | MNR 是 `DefaultModule=true` XML，加 MNR 后必须新开战役 |
+| PS placement 走 MNR 新地图 face-index | ⚠ 未验证 | 理论上 PS 用通用 `MapSceneWrapper.GetFaceIndex()` API，任何地图能查；实际未在 MNR 地图上被官方测试 |
+
+**结论**：**技术可共存，性能与 UX 曾有已知风险 → 已由自研 `PSCacheWarmup` v0.1 缓解（见 §31）**。推荐使用策略：
+- 主玩 MNR + PS 是可选 → 装两个 + **也装 PSCacheWarmup**，PS 建 Village 应无 lag；Town/Castle 可能仍有部分 lag（`PSCacheWarmup` 只解 distance cache，Town 里的 garrison/building tree/prosperity 初始化未处理）
+- 主玩 PS 大规模自建（多 Town/Castle）→ 装 PSCacheWarmup 缓解、但 vanilla map 仍是 safer choice
+- 想两全其美 → 除了 PSCacheWarmup，还可试 **Player Settlement Unofficial Update ROT** (Nexus 12874) 或 **1.5.1 beta** (Nexus 12529)
+- 有旧存档 → **不能加 MNR**
+
+**实机验证清单**（当用户决定装 MNR 时）：
+1. 备份现有存档（Steam Cloud 已关，见 backup 章节）
+2. 装 MNR → launcher 里勾选、加载在 Sandbox 之后即可（MNR 不需要 LoadAfter 声明）
+3. **装 PSCacheWarmup v0.1**（本 repo `PSCacheWarmup/`，`deploy.ps1` 自动 build+copy；launcher 勾选、加载在 PlayerSettlement 之后）
+4. 新开战役 → 等 1:30-3:00 min 世界生成
+5. 观察前 5 in-game day tick 性能（对照当前 ~180 settlement baseline）
+6. 若可接受，进自家 fief → PS 建 **Village** → 观察消息栏应见 PSCacheWarmup 的 warmup 进度消息，完成后 ~9 秒 loading + 无后续随机 lag spike
+7. **可试** PS 建 Town/Castle（PSCacheWarmup 覆盖 distance 部分；如果 Town 特有的其他 subsystem 仍卡，那部分待方案 B/C）
 
 ---
 
@@ -1676,7 +1892,8 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ### 调查与开发项目（backlog）
 
-- [ ] 🔴 **【最高优先】自研 `CastleEliteRecruitment` mod**（2026-09-20 立项，机制已核实）：让城堡能招募 + 大量产精英新兵，1.4.7 兼容 / RBM-proof / Retinues 友好。设计详见上方"★ 城堡精英招募"节（A 城堡加 notable + B 放行志愿兵填充 + C postfix GetBasicVolunteer 强制精英免疫 RBM + D 城堡招募菜单）。**下一步：在 repo 搭工程骨架 → 主力机 build+测**
+- [ ] **自研 `CastleEliteRecruitment` mod**（2026-09-20 立项，机制已核实 · P2 落地类）：让城堡能招募 + 大量产精英新兵，1.4.7 兼容 / RBM-proof / Retinues 友好。设计详见上方"★ 城堡精英招募"节（A 城堡加 notable + B 放行志愿兵填充 + C postfix GetBasicVolunteer 强制精英免疫 RBM + D 城堡招募菜单）。**下一步：在 repo 搭工程骨架 → 主力机 build+测**（2026-09-21 从"🔴 最高优先"降为常规 backlog——用户 policy：确定性实施项目让位给待调查项目）
+- [ ] **OSA 物品平衡 v2**（2026-09-21 立项 · P2 落地类）：利用 `OSA_Reference/` + `RBM_Reference/` 数据包对 `OpenSourceArmouryRBMBalance` 做精细化二轮调整。可展开点：(1) **HorseHarness 平衡**（v1/v1.1 未处理，Saddlery avg 58.5 vs RBM 28.9，需反向下调 ×0.5）；(2) **Cape.arm slot 校准**（v1.0 flat=12 是猜的）；(3) outlier 物品逐个审（Excel 按 head_armor 降序看 top-30）；(4) **Blade damage_factor 按 tier+wclass 分层校准**；(5) **CraftedItem 覆盖分析**（OSA 140 CraftedItem 引用 vanilla piece，join `osa_crafted_items_pieces.csv` + `rbm_crafting_pieces.csv`）；(6) `OpenSourceArmouryRBMBalance/src/generate.ps1` 重构为 `Import-Csv Reference/*.csv` 消费。产出目标：v1.2（可拆多批落地）。依赖 in-game 实机验证每一批（建议每次调 20-30 件试一场战斗）。2026-09-21 从"🔴 P0"降为 P2——同上 policy
 - [x] ~~**Retinues · House 单位 tier 上限**~~ ← **2026-09-18 结案**：作者早已在 MCM 里预留 `MaxTroopTier` 到 10，改配置即可；改后需玩家手动 rank up 已有兵种。详见"Retinues 机制备忘"小节 + 修改 #6
 - [ ] **Retinues · Clan Traditions 跳过**：Clan Traditions 系统（族群传统）是否有内置开关能整个禁用/跳过？如果没有，找它绑定的 CampaignBehavior 名称，评估直接不加载该 behavior 的可行性
 - [x] ~~**RBM · Bot 武器优先度**~~ ← **2026-09-18 结案**：RBM AI **不重写** vanilla 武器选择评分，只做辅助（posture 掉武器、盾墙方向、骑射队分配）；skill 通过 handling/speed 间接影响 AI 评分。完整 combo 表、"废装备"警告、骑马武器长度限制、Cataphract Lance 副武器陷阱见 `TroopDesignReference.md`

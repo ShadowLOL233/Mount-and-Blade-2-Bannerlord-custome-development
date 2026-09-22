@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Module>
+  <Name value="BetterPatrols Brake" />
+  <Id value="BetterPatrolsBrake" />
+  <Version value="v0.1.0" />
+  <DefaultModule value="false" />
+  <ModuleCategory value="Singleplayer" />
+  <ModuleType value="Community" />
+  <DependedModules>
+    <DependedModule Id="Native" />
+    <DependedModule Id="SandBoxCore" />
+    <DependedModule Id="Sandbox" />
+    <DependedModule Id="Bannerlord.Harmony" />
+  </DependedModules>
+  <!-- BetterPatrols is a SOFT dependency:
+       resolved at runtime via AccessTools.TypeByName so this mod is harmless
+       when BetterPatrols is not loaded. When BetterPatrols is loaded, we
+       Unpatch two hourly-tick Postfix patches by BetterPatrols' harmony id
+       "better_patrols":
+         - PatrolFrequentRethinkPatch (targets HourlyTickParty)
+         - PatrolResumeScoringPatch   (targets AiHourlyTick)
+       Other ~24 BetterPatrols patches (PatrolSizeTable, QualityTable,
+       WanderRadius, ReplenishThreshold, DefendVillage, etc.) are preserved.
+       Must load AFTER BetterPatrols so its PatchAll has already run when we
+       call Unpatch. -->
+  <DependedModuleMetadatas>
+    <DependedModuleMetadata id="Native" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="BetterPatrols" order="LoadBeforeThis" optional="true" />
+  </DependedModuleMetadatas>
+  <SubModules>
+    <SubModule>
+      <Name value="BetterPatrols Brake SubModule" />
+      <DLLName value="BetterPatrolsBrake.dll" />
+      <SubModuleClassType value="BetterPatrolsBrake.SubModule" />
+      <Tags>
+        <Tag key="DedicatedServerType" value="none" />
+        <Tag key="IsNoRenderModeElement" value="false" />
+      </Tags>
+    </SubModule>
+  </SubModules>
+</Module>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Open Source Armoury RBM Balance Patch - auto-generated. Do not hand-edit. -->
 <!-- Regenerate via src/generate.ps1. -->
 <Items>
@@ -734,63 +734,63 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_spangenhelm_with_mail" name="{=osa_ao_imperial_spangenhelm_with_mail}Imperial Spangenhelm With Mail" mesh="AO_empire_helmet_k" culture="Culture.empire" weight="1.8" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_spangenhelm_with_mail" name="{=osa_ao_imperial_spangenhelm_with_mail}Imperial Spangenhelm With Mail" mesh="AO_empire_helmet_k" culture="Culture.empire" weight="3.3" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="95" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_nasal_spangenhelmet_with_mail" name="{=osa_ao_imperial_nasal_spangenhelmet_with_mail}Imperial Nasal Spangenhelm With Mail" mesh="AO_empire_helmet_v" culture="Culture.empire" weight="1.8" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_nasal_spangenhelmet_with_mail" name="{=osa_ao_imperial_nasal_spangenhelmet_with_mail}Imperial Nasal Spangenhelm With Mail" mesh="AO_empire_helmet_v" culture="Culture.empire" weight="3.4" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="95" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="98" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_spangenhelm_with_leather" name="{=osa_ao_imperial_spangenhelm_with_leather}Imperial Spangenhelm With Leather" mesh="AO_empire_helmet_j" culture="Culture.empire" weight="0.46" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_spangenhelm_with_leather" name="{=osa_ao_imperial_spangenhelm_with_leather}Imperial Spangenhelm With Leather" mesh="AO_empire_helmet_j" culture="Culture.empire" weight="1.7" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="19" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="76" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="15" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
   <Item id="ao_imperial_spangenhelm_over_padded_coif" name="{=osa_ao_imperial_spangenhelm_over_padded_coif}Imperial Spangenhelm Over Padded Coif" mesh="AO_empire_helmet_i" culture="Culture.empire" weight="1.8" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="74" has_gender_variations="false" hair_cover_type="all" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="70" has_gender_variations="false" hair_cover_type="all" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_heavy_spangenhelm_with_mail" name="{=osa_ao_imperial_heavy_spangenhelm_with_mail}Imperial Heavy Spangenhelm With Mail" mesh="AO_empire_helmet_o" culture="Culture.empire" weight="1.8" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_heavy_spangenhelm_with_mail" name="{=osa_ao_imperial_heavy_spangenhelm_with_mail}Imperial Heavy Spangenhelm With Mail" mesh="AO_empire_helmet_o" culture="Culture.empire" weight="5.3" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="99" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="28" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_heavy_spangenhelm_with_leather" name="{=osa_ao_imperial_heavy_spangenhelm_with_leather}Imperial Heavy Spangenhelm With Leather" mesh="AO_empire_helmet_n" culture="Culture.empire" weight="1.8" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_heavy_spangenhelm_with_leather" name="{=osa_ao_imperial_heavy_spangenhelm_with_leather}Imperial Heavy Spangenhelm With Leather" mesh="AO_empire_helmet_n" culture="Culture.empire" weight="3.7" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="78" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="80" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="18" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_heavy_spangenhelm_over_mail_coif" name="{=osa_ao_imperial_heavy_spangenhelm_over_mail_coif}Imperial Heavy Spangenhelm Over Mail Coif" mesh="AO_empire_helmet_m" culture="Culture.empire" weight="1.56" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_heavy_spangenhelm_over_mail_coif" name="{=osa_ao_imperial_heavy_spangenhelm_over_mail_coif}Imperial Heavy Spangenhelm Over Mail Coif" mesh="AO_empire_helmet_m" culture="Culture.empire" weight="5.1" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="82" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="35" arm_armor="30" leg_armor="0" />
+    <Armor head_armor="92" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="25" arm_armor="43" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_heavy_nasal_spangenhelm_over_mail_coif" name="{=osa_ao_imperial_heavy_nasal_spangenhelm_over_mail_coif}Imperial Heavy Spangenhelm Over Mail Coif" mesh="AO_empire_helmet_l" culture="Culture.empire" weight="1.56" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_heavy_nasal_spangenhelm_over_mail_coif" name="{=osa_ao_imperial_heavy_nasal_spangenhelm_over_mail_coif}Imperial Heavy Spangenhelm Over Mail Coif" mesh="AO_empire_helmet_l" culture="Culture.empire" weight="5.1" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="90" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="39" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="95" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="25" arm_armor="43" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_redcrest_bronze_spangenhelm_over_mail_coif" name="{=osa_ao_imperial_redcrest_bronze_spangenhelm_over_mail_coif}Imperial Plumed Bronze Spangenhelm Over Mail Coif" mesh="AO_empire_lord_helmet_f" culture="Culture.empire" weight="1.54" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_redcrest_bronze_spangenhelm_over_mail_coif" name="{=osa_ao_imperial_redcrest_bronze_spangenhelm_over_mail_coif}Imperial Plumed Bronze Spangenhelm Over Mail Coif" mesh="AO_empire_lord_helmet_f" culture="Culture.empire" weight="3.1" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="89" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="87" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="22" arm_armor="40" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_guarded_conical_nasal_helmet" name="{=osa_ao_imperial_guarded_conical_nasal_helmet}Imperial Guarded Cataphract's Conical Helmet" mesh="AO_empire_lord_helmet_h" culture="Culture.empire" weight="1.38" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_guarded_conical_nasal_helmet" name="{=osa_ao_imperial_guarded_conical_nasal_helmet}Imperial Guarded Cataphract's Conical Helmet" mesh="AO_empire_lord_helmet_h" culture="Culture.empire" weight="3.7" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="133" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="30" arm_armor="0" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -812,27 +812,27 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_crowned_nasal_helmet" name="{=osa_ao_imperial_crowned_nasal_helmet}Imperial Crowned Bronze Spangenhelm With Cloth" mesh="AO_empire_lord_helmet_a" is_merchandise="false" culture="Culture.empire" weight="1.54" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_crowned_nasal_helmet" name="{=osa_ao_imperial_crowned_nasal_helmet}Imperial Crowned Bronze Spangenhelm With Cloth" mesh="AO_empire_lord_helmet_a" is_merchandise="false" culture="Culture.empire" weight="1.7" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="82" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="35" arm_armor="30" leg_armor="0" />
+    <Armor head_armor="67" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="6" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_cataphracts_closed_mail_helmet" name="{=osa_ao_imperial_cataphracts_closed_mail_helmet}Imperial Cataphract's Closed Mail Helmet" mesh="AO_empire_helmet_a" culture="Culture.empire" weight="1.38" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_cataphracts_closed_mail_helmet" name="{=osa_ao_imperial_cataphracts_closed_mail_helmet}Imperial Cataphract's Closed Mail Helmet" mesh="AO_empire_helmet_a" culture="Culture.empire" weight="4.5" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="85" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="37" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="128" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_cataphracts_plumed_closed_mail_helmet" name="{=osa_ao_imperial_cataphracts_plumed_closed_mail_helmet}Imperial Cataphract's Plumed Spangenhelm Over Closed Mail" mesh="AO_empire_helmet_c" culture="Culture.empire" weight="1.38" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_cataphracts_plumed_closed_mail_helmet" name="{=osa_ao_imperial_cataphracts_plumed_closed_mail_helmet}Imperial Cataphract's Plumed Spangenhelm Over Closed Mail" mesh="AO_empire_helmet_c" culture="Culture.empire" weight="3.7" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="85" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="37" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="133" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="30" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ao_imperial_cataphracts_flamboyant_helmet" name="{=osa_ao_imperial_cataphracts_flamboyant_helmet}Imperial Ornate Cataphract's Helmet" mesh="AO_empire_helmet_b" culture="Culture.empire" weight="1.38" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_cataphracts_flamboyant_helmet" name="{=osa_ao_imperial_cataphracts_flamboyant_helmet}Imperial Ornate Cataphract's Helmet" mesh="AO_empire_helmet_b" culture="Culture.empire" weight="3.5" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="97" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="42" arm_armor="36" leg_armor="0" />
+    <Armor head_armor="123" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="20" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -842,9 +842,9 @@
   </ItemComponent>
   <Flags UseTeamColor="false" />
 </Item>
-  <Item id="ao_imperial_closed_mail_nasal_spangenhelmet" name="{=osa_ao_imperial_closed_mail_nasal_spangenhelmet}Imperial Feathered Spangenhelm With Closed Mail" mesh="AO_empire_helmet_d" culture="Culture.empire" weight="1.38" appearance="1" Type="HeadArmor">
+  <Item id="ao_imperial_closed_mail_nasal_spangenhelmet" name="{=osa_ao_imperial_closed_mail_nasal_spangenhelmet}Imperial Feathered Spangenhelm With Closed Mail" mesh="AO_empire_helmet_d" culture="Culture.empire" weight="4.3" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="87" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="37" arm_armor="32" leg_armor="0" />
+    <Armor head_armor="103" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="17" arm_armor="28" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -868,7 +868,7 @@
 </Item>
   <Item id="ao_imperial_nasal_spangenhelm_with_leather_strips" name="{=osa_ao_imperial_nasal_spangenhelm_with_leather_strips}Imperial Nasal Spangenhelm With Leather Strips" mesh="AO_empire_helmet_t" culture="Culture.empire" weight="1.8" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="all" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="79" has_gender_variations="false" hair_cover_type="all" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="15" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -3129,87 +3129,87 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_archer_helmet_a" name="{=osa_ar_empire_archer_helmet_a}Imperial Sagittarius Helmet Over Leather" subtype="head_armor" mesh="AR_empire_archer_helmet_a" culture="Culture.empire" weight="1.3" difficulty="0" appearance="1" Type="HeadArmor">
+  <Item id="AR_empire_archer_helmet_a" name="{=osa_ar_empire_archer_helmet_a}Imperial Sagittarius Helmet Over Leather" subtype="head_armor" mesh="AR_empire_archer_helmet_a" culture="Culture.empire" weight="1.7" difficulty="0" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" beard_cover_type="none" hair_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="70" has_gender_variations="false" beard_cover_type="none" hair_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="15" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_archer_helmet_a2" name="{=osa_ar_empire_archer_helmet_a2}Imperial Gilded Sagittarius Helmet Over Leather" subtype="head_armor" mesh="AR_empire_archer_helmet_a2" culture="Culture.empire" weight="1.3" difficulty="0" appearance="1" Type="HeadArmor">
+  <Item id="AR_empire_archer_helmet_a2" name="{=osa_ar_empire_archer_helmet_a2}Imperial Gilded Sagittarius Helmet Over Leather" subtype="head_armor" mesh="AR_empire_archer_helmet_a2" culture="Culture.empire" weight="1.7" difficulty="0" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" beard_cover_type="none" hair_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="72" has_gender_variations="false" beard_cover_type="none" hair_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="15" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_archer_helmet_b" name="{=osa_ar_empire_archer_helmet_b}Imperial Sagittarius Helmet Over Cloth" subtype="head_armor" mesh="AR_empire_archer_helmet_b" culture="Culture.empire" weight="0.34" difficulty="0" appearance="1" Type="HeadArmor">
+  <Item id="AR_empire_archer_helmet_b" name="{=osa_ar_empire_archer_helmet_b}Imperial Sagittarius Helmet Over Cloth" subtype="head_armor" mesh="AR_empire_archer_helmet_b" culture="Culture.empire" weight="1.2" difficulty="0" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="20" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="62" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="6" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_archer_helmet_b2" name="{=osa_ar_empire_archer_helmet_b2}Imperial Gilded Sagittarius Helmet Over Cloth" subtype="head_armor" mesh="AR_empire_archer_helmet_b2" culture="Culture.empire" weight="0.34" difficulty="0" appearance="1" Type="HeadArmor">
+  <Item id="AR_empire_archer_helmet_b2" name="{=osa_ar_empire_archer_helmet_b2}Imperial Gilded Sagittarius Helmet Over Cloth" subtype="head_armor" mesh="AR_empire_archer_helmet_b2" culture="Culture.empire" weight="1.2" difficulty="0" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="20" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="64" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="6" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_archer_helmet_c" name="{=osa_ar_empire_archer_helmet_c}Imperial Sagittarius Helmet Over Mail" subtype="head_armor" mesh="AR_empire_archer_helmet_c" culture="Culture.empire" weight="3.11" difficulty="0" appearance="1" Type="HeadArmor">
+  <Item id="AR_empire_archer_helmet_c" name="{=osa_ar_empire_archer_helmet_c}Imperial Sagittarius Helmet Over Mail" subtype="head_armor" mesh="AR_empire_archer_helmet_c" culture="Culture.empire" weight="2.8" difficulty="0" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="79" has_gender_variations="false" beard_cover_type="none" hair_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="34" arm_armor="29" leg_armor="0" />
+    <Armor head_armor="82" has_gender_variations="false" beard_cover_type="none" hair_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_archer_helmet_c2" name="{=osa_ar_empire_archer_helmet_c2}Imperial Gilded Sagittarius Helmet Over Mail" subtype="head_armor" mesh="AR_empire_archer_helmet_c2" culture="Culture.empire" weight="3.11" difficulty="0" appearance="1" Type="HeadArmor">
+  <Item id="AR_empire_archer_helmet_c2" name="{=osa_ar_empire_archer_helmet_c2}Imperial Gilded Sagittarius Helmet Over Mail" subtype="head_armor" mesh="AR_empire_archer_helmet_c2" culture="Culture.empire" weight="2.8" difficulty="0" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="79" has_gender_variations="false" beard_cover_type="none" hair_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="34" arm_armor="29" leg_armor="0" />
+    <Armor head_armor="84" has_gender_variations="false" beard_cover_type="none" hair_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_archer_helmet_d" name="{=osa_ar_empire_archer_helmet_d}Imperial Sagittarius Helmet Over Scale" subtype="head_armor" mesh="AR_empire_archer_helmet_d" culture="Culture.empire" weight="2.77" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_empire_archer_helmet_d" name="{=osa_ar_empire_archer_helmet_d}Imperial Sagittarius Helmet Over Scale" subtype="head_armor" mesh="AR_empire_archer_helmet_d" culture="Culture.empire" weight="3" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="90" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="39" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="87" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="18" arm_armor="28" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_archer_helmet_d2" name="{=osa_ar_empire_archer_helmet_d2}Imperial Gilded Sagittarius Helmet Over Scale" subtype="head_armor" mesh="AR_empire_archer_helmet_d2" culture="Culture.empire" weight="2.77" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_empire_archer_helmet_d2" name="{=osa_ar_empire_archer_helmet_d2}Imperial Gilded Sagittarius Helmet Over Scale" subtype="head_armor" mesh="AR_empire_archer_helmet_d2" culture="Culture.empire" weight="3" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="90" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="39" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="89" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="18" arm_armor="28" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="ar_empire_cataphracts_helmet_a" name="{=osa_ar_empire_cataphracts_helmet_a}Imperial Plumed Cataphract's Helmet" mesh="ar_empire_cataphracts_helmet_a" culture="Culture.empire" weight="2.99" appearance="3" Type="headArmor" difficulty="0" subtype="head_armor">
+  <Item id="ar_empire_cataphracts_helmet_a" name="{=osa_ar_empire_cataphracts_helmet_a}Imperial Plumed Cataphract's Helmet" mesh="ar_empire_cataphracts_helmet_a" culture="Culture.empire" weight="3.5" appearance="3" Type="headArmor" difficulty="0" subtype="head_armor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="all" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="123" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="all" body_armor="15" arm_armor="20" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_crested_helm_a" name="{=osa_ar_empire_crested_helm_a}Imperial Crested Helmet With Faceguard" subtype="head_armor" mesh="AR_empire_crested_helm_a" culture="Culture.empire" weight="3.16" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_empire_crested_helm_a" name="{=osa_ar_empire_crested_helm_a}Imperial Crested Helmet With Faceguard" subtype="head_armor" mesh="AR_empire_crested_helm_a" culture="Culture.empire" weight="3.5" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="80" has_gender_variations="false" hair_cover_type="type2" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="34" arm_armor="30" leg_armor="0" />
+    <Armor head_armor="94" has_gender_variations="false" hair_cover_type="type2" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="12" arm_armor="15" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_desert_helmet_a" name="{=osa_ar_empire_desert_helmet_a}Southern Plumed Nasalhelm Over Imperial Mail" mesh="AR_empire_desert_helmet_a" culture="Culture.empire" weight="2.74" appearance="5" Type="HeadArmor" difficulty="0" subtype="head_armor">
+  <Item id="AR_empire_desert_helmet_a" name="{=osa_ar_empire_desert_helmet_a}Southern Plumed Nasalhelm Over Imperial Mail" mesh="AR_empire_desert_helmet_a" culture="Culture.empire" weight="3.9" appearance="5" Type="HeadArmor" difficulty="0" subtype="head_armor">
   <ItemComponent>
-    <Armor head_armor="86" has_gender_variations="false" hair_cover_type="type3" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="37" arm_armor="32" leg_armor="0" />
+    <Armor head_armor="90" has_gender_variations="false" hair_cover_type="type3" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
   <Item id="AR_empire_desert_helmet_b" name="{=osa_ar_empire_desert_helmet_b}Southern Nasalhelm Over Imperial Cloth" mesh="AR_empire_desert_helmet_b" culture="Culture.empire" weight="3.2" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="92" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type1" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="55" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type1" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="6" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_desert_helmet_c" name="{=osa_ar_empire_desert_helmet_c}Southern Spangenhelm Cap" subtype="head_armor" mesh="AR_empire_desert_helmet_c" culture="Culture.empire" weight="3.4" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_empire_desert_helmet_c" name="{=osa_ar_empire_desert_helmet_c}Southern Spangenhelm Cap" subtype="head_armor" mesh="AR_empire_desert_helmet_c" culture="Culture.empire" weight="3.2" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="78" has_gender_variations="false" hair_cover_type="type1" modifier_group="plate" beard_cover_type="none" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="65" has_gender_variations="false" hair_cover_type="type1" modifier_group="plate" beard_cover_type="none" material_type="Plate" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_desert_helmet_d" name="{=osa_ar_empire_desert_helmet_d}Southern Nasalhelm Over Leather" subtype="head_armor" mesh="AR_empire_desert_helmet_d" culture="Culture.empire" weight="1.64" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_empire_desert_helmet_d" name="{=osa_ar_empire_desert_helmet_d}Southern Nasalhelm Over Leather" subtype="head_armor" mesh="AR_empire_desert_helmet_d" culture="Culture.empire" weight="1.9" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="90" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="39" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="61" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="17" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -3219,15 +3219,15 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_helmet_a" name="{=osa_ar_empire_helmet_a}Imperial Noble Jeweled Heavy Nasalhelm" subtype="head_armor" mesh="AR_empire_helmet_a" culture="Culture.empire" weight="2.76" difficulty="0" appearance="2" Type="HeadArmor">
+  <Item id="AR_empire_helmet_a" name="{=osa_ar_empire_helmet_a}Imperial Noble Jeweled Heavy Nasalhelm" subtype="head_armor" mesh="AR_empire_helmet_a" culture="Culture.empire" weight="3.6" difficulty="0" appearance="2" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="128" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="36" arm_armor="20" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="false" />
 </Item>
-  <Item id="AR_empire_helmet_b" name="{=osa_ar_empire_helmet_b}Imperial Noble Gilded Jeweled Heavy Nasalhelm" subtype="head_armor" mesh="AR_empire_helmet_b" culture="Culture.empire" weight="2.76" difficulty="0" appearance="2" Type="HeadArmor">
+  <Item id="AR_empire_helmet_b" name="{=osa_ar_empire_helmet_b}Imperial Noble Gilded Jeweled Heavy Nasalhelm" subtype="head_armor" mesh="AR_empire_helmet_b" culture="Culture.empire" weight="3.6" difficulty="0" appearance="2" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="85" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="37" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="129" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="36" arm_armor="20" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="false" />
 </Item>
@@ -3287,13 +3287,13 @@
 </Item>
   <Item id="AR_empire_helmet_o" name="{=osa_ar_empire_helmet_o}Imperial Brass Scale Coif" subtype="head_armor" mesh="AR_empire_helmet_o" culture="Culture.empire" weight="1.7" difficulty="0" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="92" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="type2" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="45" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="type2" body_armor="15" arm_armor="35" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
   <Item id="AR_empire_helmet_o2" name="{=osa_ar_empire_helmet_o2}Imperial Alternating Scale Coif" subtype="head_armor" mesh="AR_empire_helmet_o2" culture="Culture.empire" weight="1.7" difficulty="0" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="92" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="type2" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="45" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="type2" body_armor="15" arm_armor="35" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -3309,33 +3309,33 @@
   </ItemComponent>
   <Flags Civilian="true" UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_helmet_q" name="{=osa_ar_empire_helmet_q}Imperial Spangenhelm Over Cloth" mesh="AR_empire_helmet_q" culture="Culture.empire" weight="2.34" appearance="2" Type="HeadArmor">
+  <Item id="AR_empire_helmet_q" name="{=osa_ar_empire_helmet_q}Imperial Spangenhelm Over Cloth" mesh="AR_empire_helmet_q" culture="Culture.empire" weight="1.6" appearance="2" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="79" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="34" arm_armor="29" leg_armor="0" />
+    <Armor head_armor="65" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="6" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_helmet_r" name="{=osa_ar_empire_helmet_r}Imperial Spangenhelm Over Stripped Cloth" mesh="AR_empire_helmet_r" culture="Culture.empire" weight="2.77" appearance="2.3" Type="HeadArmor">
+  <Item id="AR_empire_helmet_r" name="{=osa_ar_empire_helmet_r}Imperial Spangenhelm Over Stripped Cloth" mesh="AR_empire_helmet_r" culture="Culture.empire" weight="1.6" appearance="2.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="84" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="36" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="65" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="6" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_helmet_s" name="{=osa_ar_empire_helmet_s}Eastern Spangenhelm Over Cloth" mesh="AR_empire_helmet_s" culture="Culture.empire" weight="2.77" appearance="2.3" Type="HeadArmor">
+  <Item id="AR_empire_helmet_s" name="{=osa_ar_empire_helmet_s}Eastern Spangenhelm Over Cloth" mesh="AR_empire_helmet_s" culture="Culture.empire" weight="1.6" appearance="2.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="79" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="34" arm_armor="29" leg_armor="0" />
+    <Armor head_armor="65" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="6" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_legatus_helm_a" name="{=osa_ar_empire_legatus_helm_a}Imperial Decorated Crested Lord Helmet" subtype="head_armor" mesh="AR_empire_legatus_helm_a" culture="Culture.empire" weight="3.16" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_empire_legatus_helm_a" name="{=osa_ar_empire_legatus_helm_a}Imperial Decorated Crested Lord Helmet" subtype="head_armor" mesh="AR_empire_legatus_helm_a" culture="Culture.empire" weight="3.8" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="84" has_gender_variations="false" hair_cover_type="type3" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="36" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="122" has_gender_variations="false" hair_cover_type="type3" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="15" arm_armor="21" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_legatus_helm_b" name="{=osa_ar_empire_legatus_helm_b}Imperial Gilded Crested Lord Helmet" subtype="head_armor" mesh="AR_empire_legatus_helm_b" culture="Culture.empire" weight="3.16" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_empire_legatus_helm_b" name="{=osa_ar_empire_legatus_helm_b}Imperial Gilded Crested Lord Helmet" subtype="head_armor" mesh="AR_empire_legatus_helm_b" culture="Culture.empire" weight="3.8" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="84" has_gender_variations="false" hair_cover_type="type3" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="36" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="124" has_gender_variations="false" hair_cover_type="type3" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="15" arm_armor="21" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -3393,9 +3393,9 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_empire_lord_helmet_f" name="{=osa_ar_empire_lord_helmet_f}Imperial Guarded Spangenhelm With Feather Crest" mesh="AR_empire_lord_helmet_f" culture="Culture.empire" subtype="head_armor" weight="2.84" difficulty="0" appearance="3" Type="HeadArmor">
+  <Item id="AR_empire_lord_helmet_f" name="{=osa_ar_empire_lord_helmet_f}Imperial Guarded Spangenhelm With Feather Crest" mesh="AR_empire_lord_helmet_f" culture="Culture.empire" subtype="head_armor" weight="3.8" difficulty="0" appearance="3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="90" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="39" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="122" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type3" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="21" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -3513,9 +3513,9 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_roman_helmet_cap" name="{=osa_ar_roman_helmet_cap}Imperial Cap Helmet" subtype="head_armor" mesh="AR_roman_helmet_cap" culture="Culture.empire" weight="0.83" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_roman_helmet_cap" name="{=osa_ar_roman_helmet_cap}Imperial Cap Helmet" subtype="head_armor" mesh="AR_roman_helmet_cap" culture="Culture.empire" weight="1.2" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="18" has_gender_variations="false" hair_cover_type="type1" modifier_group="plate" beard_cover_type="none" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="40" has_gender_variations="false" hair_cover_type="type1" modifier_group="plate" beard_cover_type="none" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -3531,9 +3531,9 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_roman_helmet_d_plumed_c" name="{=osa_ar_roman_helmet_d_plumed_c}Gilded Crested Helmet with Faceplate" subtype="head_armor" mesh="AR_roman_helmet_d_plumed_c" culture="Culture.empire" weight="2.99" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_roman_helmet_d_plumed_c" name="{=osa_ar_roman_helmet_d_plumed_c}Gilded Crested Helmet with Faceplate" subtype="head_armor" mesh="AR_roman_helmet_d_plumed_c" culture="Culture.empire" weight="3.5" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="true" hair_cover_type="all" modifier_group="plate" beard_cover_type="all" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="96" has_gender_variations="true" hair_cover_type="all" modifier_group="plate" beard_cover_type="all" material_type="Plate" body_armor="12" arm_armor="15" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -5451,21 +5451,21 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="DZ_empire_helmet_b" name="{=osa_dz_empire_helmet_b}Imperial Cataphract's Domed Helmet" mesh="DZ_empire_helmet_b" culture="Culture.empire" weight="3.07" appearance="2.6" Type="HeadArmor">
+  <Item id="DZ_empire_helmet_b" name="{=osa_dz_empire_helmet_b}Imperial Cataphract's Domed Helmet" mesh="DZ_empire_helmet_b" culture="Culture.empire" weight="3.5" appearance="2.6" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="90" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="all" body_armor="39" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="123" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="all" body_armor="15" arm_armor="20" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="DZ_empire_helmet_c" name="{=osa_dz_empire_helmet_c}Imperial Plumed Cataphract's Domed Helmet" mesh="DZ_empire_helmet_c" culture="Culture.empire" weight="3.07" appearance="2.6" Type="HeadArmor">
+  <Item id="DZ_empire_helmet_c" name="{=osa_dz_empire_helmet_c}Imperial Plumed Cataphract's Domed Helmet" mesh="DZ_empire_helmet_c" culture="Culture.empire" weight="3.5" appearance="2.6" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="92" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="all" body_armor="40" arm_armor="34" leg_armor="0" />
+    <Armor head_armor="123" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="all" body_armor="15" arm_armor="20" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="DZ_empire_helmet_d" name="{=osa_dz_empire_helmet_d}Imperial Cataphract's Bent Conical Helmet" mesh="DZ_empire_helmet_d" culture="Culture.empire" weight="2.45" appearance="2.6" Type="HeadArmor">
+  <Item id="DZ_empire_helmet_d" name="{=osa_dz_empire_helmet_d}Imperial Cataphract's Bent Conical Helmet" mesh="DZ_empire_helmet_d" culture="Culture.empire" weight="3.5" appearance="2.6" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="92" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="40" arm_armor="34" leg_armor="0" />
+    <Armor head_armor="123" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="20" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -5493,15 +5493,15 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="DZ_empire_helmet_i" name="{=osa_dz_empire_helmet_i}Imperial Cataphract's Feathered Pointed Kettle" mesh="DZ_empire_helmet_i" culture="Culture.empire" weight="2.45" appearance="2.6" Type="HeadArmor">
+  <Item id="DZ_empire_helmet_i" name="{=osa_dz_empire_helmet_i}Imperial Cataphract's Feathered Pointed Kettle" mesh="DZ_empire_helmet_i" culture="Culture.empire" weight="3.5" appearance="2.6" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="92" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="40" arm_armor="34" leg_armor="0" />
+    <Armor head_armor="110" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="DZ_empire_helmet_j" name="{=osa_dz_empire_helmet_j}Imperial Cataphract's Plumed Pointed Kettle" mesh="DZ_empire_helmet_j" culture="Culture.empire" weight="2.45" appearance="2.6" Type="HeadArmor">
+  <Item id="DZ_empire_helmet_j" name="{=osa_dz_empire_helmet_j}Imperial Cataphract's Plumed Pointed Kettle" mesh="DZ_empire_helmet_j" culture="Culture.empire" weight="3.5" appearance="2.6" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="110" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -5589,63 +5589,63 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_gladiator_helmet_a" name="{=osa_ar_gladiator_helmet_a}Gilded Secutor Helmet" mesh="AR_gladiator_helmet_a" culture="Culture.empire" weight="3.2" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_a" name="{=osa_ar_gladiator_helmet_a}Gilded Secutor Helmet" mesh="AR_gladiator_helmet_a" culture="Culture.empire" weight="3.5" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="92" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type1" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="96" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type1" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="12" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_gladiator_helmet_a2" name="{=osa_ar_gladiator_helmet_a2}Gilded Secutor Helmet With Feathers" mesh="AR_gladiator_helmet_a2" culture="Culture.empire" weight="2.57" appearance="1" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_a2" name="{=osa_ar_gladiator_helmet_a2}Gilded Secutor Helmet With Feathers" mesh="AR_gladiator_helmet_a2" culture="Culture.empire" weight="3.5" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="84" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="36" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="96" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="12" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_gladiator_helmet_b" name="{=osa_ar_gladiator_helmet_b}Gilded Visored Secutor Helmet With Feathers" mesh="AR_gladiator_helmet_b" culture="Culture.empire" weight="2.3" appearance="1" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_b" name="{=osa_ar_gladiator_helmet_b}Gilded Visored Secutor Helmet With Feathers" mesh="AR_gladiator_helmet_b" culture="Culture.empire" weight="4.5" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="101" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="17" arm_armor="15" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_gladiator_helmet_c" name="{=osa_ar_gladiator_helmet_c}Secutor Helmet" mesh="AR_gladiator_helmet_c" culture="Culture.empire" weight="3.2" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_c" name="{=osa_ar_gladiator_helmet_c}Secutor Helmet" mesh="AR_gladiator_helmet_c" culture="Culture.empire" weight="3.5" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="92" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type1" modifier_group="plate" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="94" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type1" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="12" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_gladiator_helmet_c2" name="{=osa_ar_gladiator_helmet_c2}Secutor Helmet With Feathers" mesh="AR_gladiator_helmet_c2" culture="Culture.empire" weight="2.57" appearance="1" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_c2" name="{=osa_ar_gladiator_helmet_c2}Secutor Helmet With Feathers" mesh="AR_gladiator_helmet_c2" culture="Culture.empire" weight="3.5" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="84" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="36" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="94" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="12" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_gladiator_helmet_d" name="{=osa_ar_gladiator_helmet_d}Visored Secutor Helmet With Feathers" mesh="AR_gladiator_helmet_d" culture="Culture.empire" weight="2.3" appearance="1" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_d" name="{=osa_ar_gladiator_helmet_d}Visored Secutor Helmet With Feathers" mesh="AR_gladiator_helmet_d" culture="Culture.empire" weight="4.5" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="99" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="17" arm_armor="15" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_gladiator_helmet_e" name="{=osa_ar_gladiator_helmet_e}Gilded Provocator Helmet" subtype="head_armor" mesh="AR_gladiator_helmet_e" culture="Culture.empire" weight="0.9" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_e" name="{=osa_ar_gladiator_helmet_e}Gilded Provocator Helmet" subtype="head_armor" mesh="AR_gladiator_helmet_e" culture="Culture.empire" weight="4" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="20" has_gender_variations="false" hair_cover_type="type2" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="88" has_gender_variations="false" hair_cover_type="type2" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="45" arm_armor="32" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_gladiator_helmet_f" name="{=osa_ar_gladiator_helmet_f}Decorated Provocator Helmet" subtype="head_armor" mesh="AR_gladiator_helmet_f" culture="Culture.empire" weight="0.9" difficulty="0" appearance="1.3" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_f" name="{=osa_ar_gladiator_helmet_f}Decorated Provocator Helmet" subtype="head_armor" mesh="AR_gladiator_helmet_f" culture="Culture.empire" weight="4" difficulty="0" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="20" has_gender_variations="false" hair_cover_type="type2" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="0" arm_armor="0" leg_armor="0" />
+    <Armor head_armor="90" has_gender_variations="false" hair_cover_type="type2" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="40" arm_armor="35" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="AR_gladiator_helmet_g" name="{=osa_ar_gladiator_helmet_g}Gilded Provocator Helmet With Faceplate" subtype="head_armor" mesh="AR_gladiator_helmet_g" culture="Culture.empire" weight="2.99" difficulty="0" appearance="3" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_g" name="{=osa_ar_gladiator_helmet_g}Gilded Provocator Helmet With Faceplate" subtype="head_armor" mesh="AR_gladiator_helmet_g" culture="Culture.empire" weight="5" difficulty="0" appearance="3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="89" has_gender_variations="true" beard_cover_type="all" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="96" has_gender_variations="true" beard_cover_type="all" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="50" arm_armor="32" leg_armor="0" />
   </ItemComponent>
   <Flags Civilian="false" />
 </Item>
-  <Item id="AR_gladiator_helmet_h" name="{=osa_ar_gladiator_helmet_h}Decorated Provocator Helmet With Faceplate" subtype="head_armor" mesh="AR_gladiator_helmet_h" culture="Culture.empire" weight="2.99" difficulty="0" appearance="3" Type="HeadArmor">
+  <Item id="AR_gladiator_helmet_h" name="{=osa_ar_gladiator_helmet_h}Decorated Provocator Helmet With Faceplate" subtype="head_armor" mesh="AR_gladiator_helmet_h" culture="Culture.empire" weight="5" difficulty="0" appearance="3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="89" has_gender_variations="true" beard_cover_type="all" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="98" has_gender_variations="true" beard_cover_type="all" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="45" arm_armor="35" leg_armor="0" />
   </ItemComponent>
   <Flags Civilian="false" />
 </Item>
@@ -5966,9 +5966,9 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="aserai_feathered_spangenhelm" name="{=osa_aserai_feathered_spangenhelm}Southern Feathered Spangenhelm Over Mail" subtype="head_armor" mesh="aserai_feathered_spangenhelm" culture="Culture.empire" weight="2.91" difficulty="0" appearance="1.8" Type="HeadArmor">
+  <Item id="aserai_feathered_spangenhelm" name="{=osa_aserai_feathered_spangenhelm}Southern Feathered Spangenhelm Over Mail" subtype="head_armor" mesh="aserai_feathered_spangenhelm" culture="Culture.empire" weight="3.3" difficulty="0" appearance="1.8" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="89" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="95" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -6104,9 +6104,9 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="bronze_aserai_helm" name="{=osa_bronze_aserai_helm}Southern Iron Nasalhelm Over Mail" subtype="head_armor" mesh="bronze_aserai_helm" culture="Culture.empire" weight="2.91" difficulty="0" appearance="1.8" Type="HeadArmor">
+  <Item id="bronze_aserai_helm" name="{=osa_bronze_aserai_helm}Southern Iron Nasalhelm Over Mail" subtype="head_armor" mesh="bronze_aserai_helm" culture="Culture.empire" weight="3.9" difficulty="0" appearance="1.8" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="89" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="38" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="91" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -6128,9 +6128,9 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="varangian_guard_helmet_c" name="{=osa_varangian_guard_helmet_c}Imperial Guard's Helmet With Stripped Cataphract Mail" mesh="varangian_guard_helmet_c" culture="Culture.empire" weight="2.22" appearance="1.0" Type="HeadArmor">
+  <Item id="varangian_guard_helmet_c" name="{=osa_varangian_guard_helmet_c}Imperial Guard's Helmet With Stripped Cataphract Mail" mesh="varangian_guard_helmet_c" culture="Culture.empire" weight="3.5" appearance="1.0" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="53" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="chain" material_type="Chainmail" body_armor="23" arm_armor="20" leg_armor="0" />
+    <Armor head_armor="115" has_gender_variations="false" hair_cover_type="all" beard_cover_type="type2" modifier_group="chain" material_type="Chainmail" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -8234,9 +8234,9 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="TV_empire_crested_helm_a" name="{=osa_tv_empire_crested_helm_a}Imperial Gilded Crested Helmet With Faceguard" subtype="head_armor" mesh="TV_empire_crested_helm_a" culture="Culture.empire" weight="3.16" appearance="1.3" Type="HeadArmor">
+  <Item id="TV_empire_crested_helm_a" name="{=osa_tv_empire_crested_helm_a}Imperial Gilded Crested Helmet With Faceguard" subtype="head_armor" mesh="TV_empire_crested_helm_a" culture="Culture.empire" weight="3.5" appearance="1.3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="80" has_gender_variations="false" hair_cover_type="type2" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="34" arm_armor="30" leg_armor="0" />
+    <Armor head_armor="96" has_gender_variations="false" hair_cover_type="type2" modifier_group="plate" beard_cover_type="type2" material_type="Plate" body_armor="12" arm_armor="15" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -8276,15 +8276,15 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="TV_empire_helmet_g" name="{=osa_tv_empire_helmet_g}Imperial Gilded Spangenhelm Over Padded Cloth" mesh="TV_empire_helmet_g" culture="Culture.empire" weight="2.34" appearance="2" Type="HeadArmor">
+  <Item id="TV_empire_helmet_g" name="{=osa_tv_empire_helmet_g}Imperial Gilded Spangenhelm Over Padded Cloth" mesh="TV_empire_helmet_g" culture="Culture.empire" weight="1.8" appearance="2" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="74" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="32" arm_armor="27" leg_armor="0" />
+    <Armor head_armor="72" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="TV_empire_helmet_h" name="{=osa_tv_empire_helmet_h}Imperial Gilded Spangenhelm Over Mail" mesh="TV_empire_helmet_h" culture="Culture.empire" weight="2.34" appearance="2" Type="HeadArmor">
+  <Item id="TV_empire_helmet_h" name="{=osa_tv_empire_helmet_h}Imperial Gilded Spangenhelm Over Mail" mesh="TV_empire_helmet_h" culture="Culture.empire" weight="3.3" appearance="2" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="90" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="39" arm_armor="33" leg_armor="0" />
+    <Armor head_armor="97" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="none" modifier_group="plate" material_type="Plate" body_armor="12" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -8294,15 +8294,15 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="TV_empire_lord_helmet_b" name="{=osa_tv_empire_lord_helmet_b}Imperial Crested Decorated Silvered Ridge Helmet" subtype="head_armor" mesh="TV_empire_lord_helmet_b" culture="Culture.empire" weight="2.38" appearance="3" Type="HeadArmor">
+  <Item id="TV_empire_lord_helmet_b" name="{=osa_tv_empire_lord_helmet_b}Imperial Crested Decorated Silvered Ridge Helmet" subtype="head_armor" mesh="TV_empire_lord_helmet_b" culture="Culture.empire" weight="3.1" appearance="3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="85" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="37" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="109" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="2" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="TV_empire_lord_helmet_c" name="{=osa_tv_empire_lord_helmet_c}Imperial Crested Decorated Gilded Ridge Helmet" subtype="head_armor" mesh="TV_empire_lord_helmet_c" culture="Culture.empire" weight="2.38" appearance="3" Type="HeadArmor">
+  <Item id="TV_empire_lord_helmet_c" name="{=osa_tv_empire_lord_helmet_c}Imperial Crested Decorated Gilded Ridge Helmet" subtype="head_armor" mesh="TV_empire_lord_helmet_c" culture="Culture.empire" weight="3.1" appearance="3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="85" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="37" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="110" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="2" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -8318,9 +8318,9 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="TV_empire_lord_helmet_f" name="{=osa_tv_empire_lord_helmet_f}Imperial Feather Crested Decorated Silvered Ridge Helmet" subtype="head_armor" mesh="TV_empire_lord_helmet_f" culture="Culture.empire" weight="2.38" appearance="3" Type="HeadArmor">
+  <Item id="TV_empire_lord_helmet_f" name="{=osa_tv_empire_lord_helmet_f}Imperial Feather Crested Decorated Silvered Ridge Helmet" subtype="head_armor" mesh="TV_empire_lord_helmet_f" culture="Culture.empire" weight="3.1" appearance="3" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="83" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="36" arm_armor="31" leg_armor="0" />
+    <Armor head_armor="109" has_gender_variations="false" hair_cover_type="type3" beard_cover_type="type2" modifier_group="plate" material_type="Plate" body_armor="15" arm_armor="2" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
@@ -8330,15 +8330,15 @@
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="TV_empire_lord_helmet_h" name="{=osa_tv_empire_lord_helmet_h}Imperial Gilded Plumed Spangenhelm Over Mail" mesh="TV_empire_lord_helmet_h" culture="Culture.empire" weight="3.08" appearance="3" Type="headArmor" subtype="head_armor">
+  <Item id="TV_empire_lord_helmet_h" name="{=osa_tv_empire_lord_helmet_h}Imperial Gilded Plumed Spangenhelm Over Mail" mesh="TV_empire_lord_helmet_h" culture="Culture.empire" weight="3.3" appearance="3" Type="headArmor" subtype="head_armor">
   <ItemComponent>
-    <Armor head_armor="86" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="type2" body_armor="37" arm_armor="32" leg_armor="0" />
+    <Armor head_armor="99" has_gender_variations="false" hair_cover_type="all" modifier_group="plate" material_type="Plate" beard_cover_type="type2" body_armor="13" arm_armor="26" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>
-  <Item id="TV_empire_lord_helmet_j" name="{=osa_tv_empire_lord_helmet_j}Imperial Cataphract's Closed Fluted Helmet" mesh="TV_empire_lord_helmet_j" culture="Culture.empire" weight="1.38" appearance="1" Type="HeadArmor">
+  <Item id="TV_empire_lord_helmet_j" name="{=osa_tv_empire_lord_helmet_j}Imperial Cataphract's Closed Fluted Helmet" mesh="TV_empire_lord_helmet_j" culture="Culture.empire" weight="4.5" appearance="1" Type="HeadArmor">
   <ItemComponent>
-    <Armor head_armor="87" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="37" arm_armor="32" leg_armor="0" />
+    <Armor head_armor="128" has_gender_variations="false" hair_cover_type="all" beard_cover_type="all" modifier_group="plate" material_type="Plate" body_armor="20" arm_armor="25" leg_armor="0" />
   </ItemComponent>
   <Flags UseTeamColor="true" />
 </Item>

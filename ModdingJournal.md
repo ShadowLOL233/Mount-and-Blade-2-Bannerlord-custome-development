@@ -2189,9 +2189,69 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 **用户 policy（2026-09-21）**：需要"花大量实施时间但技术路径清楚"的项目从 P0 降下去（比如 OSA v2 / CastleEliteRecruitment，已有渠道落实），P0 位置让给**需要研究**的项目。
 
 - [x] ~~**Retinues · Clan Traditions 跳过**~~ ← **2026-09-22 用户确认已生效**（实施细节此处未记录，实测通过）
-- [ ] **PlayerSettlement · 村庄绑定机制**：反编译 `PlayerSettlement.dll` + `PlayerSettlementFixes.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 能否绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）打造食物爆棚 fief。附带查：绑定村庄数量硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
-- [ ] **More Nations Remastered × PlayerSettlement 兼容性**（2026-09-21 静态分析 + 自研 `PSCacheWarmup` v0.1 落地缓解 → 见 §31）— **下一步只剩实机验证**：装 MNR 新开档、观察每日 tick 性能、用 PS 建 Village 试完成时 lag 是否被 PSCacheWarmup 消除。**用户当前未装 MNR，实测顺延到实际装 MNR 时**
-- [ ] **AutoParry 是否要启用**：当前 IsSelected=true 但用户 policy 未定；观察 in-game 手感 + AI 平衡影响，再决定长期启用/禁用
+- [x] ~~**PlayerSettlement · 村庄绑定机制**~~ ← **2026-09-22 反编译结案**（详见下方 "PS 村庄绑定机制 · 反编译结论" 小节）。要点：MCM `MaxVillagesPerTown` (默认 5，可拉到 50) / `MaxVillagesPerCastle` (默认 4，可拉到 50) 直接控制上限；VillageType (wheat/cattle/sheep/swine/fisherman 等 vanilla 全套) 建村时可选；总村庄数无上限；一 town 绑多个食物专业村**完全支持**、不需要 mod。**重新绑定 vanilla 村庄** PS 自己不做，但机制 = `AccessTools.Property(typeof(Village), "Bound").SetMethod` 反射直写，可自研小 mod 复用；副作用需实测
+- [x] ~~**More Nations Remastered × PlayerSettlement 兼容性**~~ ← **2026-09-22 归档：放弃**。上一轮定性为**显卡 driver 崩溃**（非 MNR/PS 兼容性问题），移出待办；`PSCacheWarmup` 保留在 repo 供未来复用，不再主动推进
+- [x] ~~**AutoParry 是否要启用**~~ ← **2026-09-22 决议：弃用**（LauncherData.xml 需把 AutoParry `IsSelected` 改为 false）
+
+### PS 村庄绑定机制 · 反编译结论（2026-09-22）
+
+**反编译源**：`E:\SteamLibrary\steamapps\workshop\content\261550\3720376888\bin\Win64_Shipping_Client\PlayerSettlement.dll` (v7.5.0 / 283 KB) + `PlayerSettlementFixes.dll`（工具：ilspycmd 8.2；产物存 `_scratch/ps_decomp/`，可删）。
+
+**核心结论**：**用户的目标（自建 town 绑多个食物专业村打造食物爆棚 fief）完全支持，且不用写任何 mod**——只需 MCM 调设置。
+
+**绑定数量上限**（`PlayerSettlement.decompiled.cs` line 1271-1288）：
+
+| MCM 设置 | 默认 | 允许范围（MCM UI） | 硬编码常量 |
+|---|---:|---:|---:|
+| `MaxTowns` | 10 | 1–150 | — |
+| `MaxCastles` | 15 | 0–150 | — |
+| `MaxVillagesPerTown` | 5 | **0–50** | `HardMaxVillagesPerTown = 50` |
+| `MaxVillagesPerCastle` | 4 | **0–50** | `HardMaxVillagesPerCastle = 50` |
+| 总村庄数 | 无限 | — | `HardMaxVillages = int.MaxValue` |
+
+→ **直接进 MCM 把 `MaxVillagesPerTown` 拉到 5 或以上就能建足够多食物村**，不用碰代码。默认 5 已足够 (wheat+cattle+sheep+swine+fisherman 正好凑齐 vanilla 5 大主食源)。
+
+**建村时的类型选择**（line 12302-12326 `GetVillageTypeInquiry`）：
+- MCM `AutoAllocateVillageType=false`（默认）→ 建村时弹菜单，列 vanilla 全部 `VillageType`（`ObjectManager.GetObjects<VillageType>()`），玩家一村一村手选
+- MCM `AutoAllocateVillageType=true` → 随机分配（fallback `swine_farm`/`lumberjack`/`iron_mine`）
+- 支持的 VillageType 就是 vanilla 那套：wheat/cattle/sheep/swine_farm/fisherman/lumberjack/iron_mine/silver_mine/silk/date_palms/grape/clay/etc.
+
+**建村时的 owner 选择**（line 10927-10957 `BuildVillage`）：
+- MCM `AutoDetermineVillageOwner=true` → 自动挑 clan 第一个"有空位"的 Town/Castle（`CalculateVillageOwner`, line 12396）
+- MCM `AutoDetermineVillageOwner=false` → 弹多选菜单，只列 clan 拥有的、且 `BoundVillages.Count < MaxVillagesPerTown/Castle` 的 fief（`GetPotentialVillageBoundOwners`, line 12363）
+
+**绑定的底层 API**（line 6790-6805）：
+```csharp
+private static MethodInfo BoundSetter = AccessTools.Property(typeof(Village), "Bound").SetMethod;
+public static void SetBound(this Village village, Settlement boundTarget) {
+    BoundSetter.Invoke(village, new object[1] { boundTarget });
+}
+```
+→ PS 通过反射直接写 vanilla `Village.Bound`（protected setter）。Vanilla `Settlement.BoundVillages` 是 getter 遍历所有 Village 找 `Bound == this`，所以 setter 一改，两侧自动一致。**没有任何 PS 独有的 gating**——纯粹是拿到 vanilla setter 就能写。
+
+**能否重新绑定 vanilla 村庄**（"抢邻居 wheat 村并入自己 fief"）：
+
+| 维度 | 结论 |
+|---|---|
+| **PS 自带 UI/menu 支持** | ❌ **不支持**。全 codebase 只在建村流程调 `SetBound`；无 rebind/transfer/reassign 相关代码路径（grep `rebind|reassign|transfer.*village|SwapVillage|Remove.*Bound` = 0 hit） |
+| **技术可行性** | ✅ **可行**。自研 mod 复用 `AccessTools.Property(typeof(Village), "Bound").SetMethod.Invoke(village, new[] { newTown })` 即可，PS 的完整机制一行代码 |
+| **副作用需实测** | ⚠ 多点未验证：① Village.OwnerClan 是否跟着变（vanilla getter 走 `Bound?.OwnerClan`，理论自动跟）；② 已有 notable/village-notable-relation 归属；③ 敌国正在攻打这个 village 时切绑；④ Kingdom.CalculateSettlementIncome 是否 seamless；⑤ 保存/加载后 vanilla 存档序列化能否保留新绑定 |
+
+**给用户的操作建议**：
+
+1. **建食物爆棚 town 的最短路径**（推荐先走这个，零编码）：
+   - 打开 MCM → PlayerSettlement → 确认 `MaxVillagesPerTown` = 5（默认），如需更多提到 6-10
+   - 关闭 `AutoDetermineVillageOwner` + `AutoAllocateVillageType`（默认已关）
+   - 建 town → 逐次建 5 村，每次菜单里选 owner = 自建 town、选类型 = wheat / cattle / sheep_farm / swine_farm / fisherman（fisherman 需 town 在水边）
+   - 结果：一个 town 每季持续大量收 5 类主食，food 自然爆棚
+
+2. **抢 vanilla 村庄**（若上面路径不够、想吸并邻居优质村）：
+   - 立项自研 `VillageRebindHotkey` mod（工作量 <1 天）：一个热键 + 反射调 `Village.Bound`；配 InfoPanel 选源 village 和目标 town
+   - **建议先小范围测**：抢一个战乱区无主 village（原 owner clan 覆灭），观察 5 in-game day 稳定后再抢有主 village
+
+3. **⚠ MaxVillagesPerTown 拉到 50 的风险**：绑定数越多，town daily tick 里 `foreach BoundVillages` 循环越慢；参考 §31 `PSCacheWarmup` 的经验，5-10 是安全档；20+ 建议同装 PSCacheWarmup 缓解 O(N) 相关卡顿
+
+---
 
 ### MNR × PS 兼容性调查（2026-09-21）· 静态分析结果
 
@@ -2246,12 +2306,12 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ### 调查与开发项目（backlog）
 
+- [ ] **🔴 OSA 物品平衡 v2**（2026-09-21 立项 → **2026-09-22 升为最高优先度开发项目**）：利用 `OSA_Reference/` + `RBM_Reference/` 数据包对 `OpenSourceArmouryRBMBalance` 做精细化二轮调整。**工作细节 + 逐件改动记录见 [`OpenSourceArmouryRBMBalance/BALANCE_V2_LOG.md`](./OpenSourceArmouryRBMBalance/BALANCE_V2_LOG.md) + 权威字典 [`MATERIAL_QUALITY_DICT.md`](./OpenSourceArmouryRBMBalance/MATERIAL_QUALITY_DICT.md) + Vanilla 参照 [`VANILLA_REFERENCE.md`](./OpenSourceArmouryRBMBalance/VANILLA_REFERENCE.md)**。**帝国头盔已完成 68 件**（2026-09-22 → 2026-09-23）：Provocator 4 · Spangenhelm 29 · Crested 8 · Secutor 6 · Sagittarius 8 · Cataphract 10 · 杂项 3 · 全部 pending deploy。**字典 v8 就位**（Lord / Face Plate/Closed/Visored / Metal Stripes/Ridge/Face Guard / Cataphracts / Heavy 全档 + 品质词 Gilded/Noble/Jeweled/Silvered/Iron/Bronze）。**下一步**：帝国 BodyArmor / 其他文化头盔 / HorseHarness 三选一。可展开点：(1) **HorseHarness 平衡**（v1/v1.1 未处理，Saddlery avg 58.5 vs RBM 28.9，需反向下调 ×0.5）；(2) **Cape.arm slot 校准**（v1.0 flat=12 是猜的）；(3) outlier 物品逐个审（Excel 按 head_armor 降序看 top-30）；(4) **Blade damage_factor 按 tier+wclass 分层校准**；(5) **CraftedItem 覆盖分析**（OSA 140 CraftedItem 引用 vanilla piece，join `osa_crafted_items_pieces.csv` + `rbm_crafting_pieces.csv`）；(6) `OpenSourceArmouryRBMBalance/src/generate.ps1` 重构为 `Import-Csv Reference/*.csv` 消费
 - [ ] **自研 `CastleEliteRecruitment` mod**（2026-09-20 立项，机制已核实 · P2 落地类）：让城堡能招募 + 大量产精英新兵，1.4.7 兼容 / RBM-proof / Retinues 友好。设计详见上方"★ 城堡精英招募"节（A 城堡加 notable + B 放行志愿兵填充 + C postfix GetBasicVolunteer 强制精英免疫 RBM + D 城堡招募菜单）。**下一步：在 repo 搭工程骨架 → 主力机 build+测**（2026-09-21 从"🔴 最高优先"降为常规 backlog——用户 policy：确定性实施项目让位给待调查项目）
-- [ ] **OSA 物品平衡 v2**（2026-09-21 立项 · P2 落地类）：利用 `OSA_Reference/` + `RBM_Reference/` 数据包对 `OpenSourceArmouryRBMBalance` 做精细化二轮调整。可展开点：(1) **HorseHarness 平衡**（v1/v1.1 未处理，Saddlery avg 58.5 vs RBM 28.9，需反向下调 ×0.5）；(2) **Cape.arm slot 校准**（v1.0 flat=12 是猜的）；(3) outlier 物品逐个审（Excel 按 head_armor 降序看 top-30）；(4) **Blade damage_factor 按 tier+wclass 分层校准**；(5) **CraftedItem 覆盖分析**（OSA 140 CraftedItem 引用 vanilla piece，join `osa_crafted_items_pieces.csv` + `rbm_crafting_pieces.csv`）；(6) `OpenSourceArmouryRBMBalance/src/generate.ps1` 重构为 `Import-Csv Reference/*.csv` 消费。产出目标：v1.2（可拆多批落地）。依赖 in-game 实机验证每一批（建议每次调 20-30 件试一场战斗）。2026-09-21 从"🔴 P0"降为 P2——同上 policy
 - [x] ~~**Retinues · House 单位 tier 上限**~~ ← **2026-09-18 结案**：作者早已在 MCM 里预留 `MaxTroopTier` 到 10，改配置即可；改后需玩家手动 rank up 已有兵种。详见"Retinues 机制备忘"小节 + 修改 #6
 - [x] ~~**Retinues · Clan Traditions 跳过**~~ ← **2026-09-22 结案**：用户确认已生效（见 P0 章节同项）
 - [x] ~~**RBM · Bot 武器优先度**~~ ← **2026-09-18 结案**：RBM AI **不重写** vanilla 武器选择评分，只做辅助（posture 掉武器、盾墙方向、骑射队分配）；skill 通过 handling/speed 间接影响 AI 评分。完整 combo 表、"废装备"警告、骑马武器长度限制、Cataphract Lance 副武器陷阱见 `TroopDesignReference.md`
-- [ ] **PlayerSettlement · 村庄绑定机制**：扒 `PlayerSettlement.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 时能否指定绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）来打造食物爆棚 fief。附带查：绑定村庄数量是否有硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
+- [x] ~~**PlayerSettlement · 村庄绑定机制**~~ ← **2026-09-22 结案**（详见下方 "PS 村庄绑定机制 · 反编译结论"）
 - [x] ~~**Tier6Injector · 自研模组（2026-09-19 立项 → v1.3 已发）**~~ ← **2026-09-20 改名 `EquipmentSpawnerMod` v1.4，加入个人库**（详见下方 v1.4 条 + 2026-09-20 日志）。位置：本 repo `EquipmentSpawnerMod/` 子目录（旧 `Tier6Injector/` 已删）、详见该子目录 `README.md`。热键：Ctrl+Alt+I 注入 Tier 3-6 装备 ×20 + 战马 ×20；Ctrl+Alt+O 主队→个人库；Ctrl+Alt+P 个人库→主队。个人库通过 `PersonalStashBehavior : CampaignBehaviorBase` + `dataStore.SyncData<ItemRoster>()` 持久化到存档
 - [x] ~~**OSA×RBM 数值平衡（2026-09-19 立项）**~~ ← **2026-09-20 结案**：作为 `OpenSourceArmouryRBMBalance` mod 落地（v1.0.0，纯 XML override，1507 件 armor + 18 件 Blade piece override + 640 件头盔颈/肩延伸）。详见修改 #12。武器系数 + 护甲跨槽结构同时处理完毕。**待用户实机验证 + 若手感失控则微调**
 

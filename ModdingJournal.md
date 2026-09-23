@@ -557,6 +557,25 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 45. Shader cache 恢复 · Exit Game 崩溃根因归档 · mod 清单收尾（2026-09-22）
+
+**Exit Game 崩溃复现**：MNR 卸载 (§44) 后用户在主菜单**点 Exit Game** 复现崩溃。误诊为退回 §40 那种 pinned-DLL 元数据崩，但 rgl_log 显示崩在同 `pbr_terrain.rs` shader compile 路径。
+
+**根因锁定**：**§37 的"重命名 ProgramData\\Shaders → Shaders.bak-... 让 MNR 重编"操作反噬** —— 那个 cache 不只服务 MNR，**vanilla map 也在里面**。删了以后：
+- Vanilla 主菜单背景动画（Calradia camera 巡游）也是个 mini map scene → 触发 pbr_terrain shader fresh compile
+- 撞同一个 NVIDIA driver `32.0.15.9636` 的 shader compiler bug（permutation ID 变了：从 `1574912/9961472` → `14155776`，但同一颗 driver bug）
+- 用户点 Exit Game 时 engine graceful shutdown 撞到还在跑的 shader compile → native crash
+
+**修复**：用户管理员 PowerShell `Rename-Item Shaders.bak-pre-mnr-recompile-20260922 -> Shaders -Force` + Steam Launch Options 里删掉 `-d3d11` 回 DX12 → 老 pre-compiled cache 复用 → 主菜单背景不再触发 fresh compile → **Exit Game 稳定**。
+
+**教训**：**不要为单个 mod 的 shader 问题清空全局 shader cache**。全局 cache 是所有 vanilla + mod 共享的。要为特定 mod 强制重编，只清那个 mod 目录下的 `SceneObj\<map>\ShaderCache\`，别动 `C:\ProgramData\Mount and Blade II Bannerlord\Shaders\`。
+
+**mod 清单最终决策**：
+- **XorberaxLegacy 拒绝**：用户 declined。v1.0.8.8 是 2020-2021 老版本，与 v1.4.7 兼容性未知，且与已装 DismembermentPlus 有子模块 Dismemberment 重叠。LauncherData `UserModData` + `DLLCheckData` 条目全部移除
+- **Xiangyong (Village Defense v1.1.11) + BetterPatrols v1.0.0.0 保留 IsSelected=true**：LauncherData 有条目、Modules 目录**尚未装文件**（历史遗留 dead entries）。用户接受当前状态作为"占位符"，将来若装实体 mod 文件到 `Modules\` 就自动生效；引擎当前 silent ignore 无害
+- **保留启用的自研 mod**：PSCW v0.2.1（vanilla + PS 场景仍有小微优化价值）、GD Pinned、GD Enhancer、EquipmentSpawnerMod、RetinuesCultureFilter、OSA Balance、BetterPatrolsBrake、RBMPlayerStaminaPoiseBuff
+- **`Shaders.bak-pre-mnr-recompile-20260922\` 保留占位**：万一将来又要清 cache（不推荐但为未来 debug 保险）可参考老状态
+
 ### 44. MNR 卸载 + PSCW v0.2.1 保留（2026-09-22）
 
 **背景**：§43 三条 shader crash 缓解路径（清 shader cache + Sandbox 模式 + DX11 + Low preset + 甚至只跑 MNR 无其他 mod 的 barebones 组合）全部失败——**每次都在 `pbr_terrain.rs` permutation 编译时崩**，且 permutation ID 完全一致。用户不愿 driver rollback（30-60 min DDU 工作量），拍板放弃 MNR。

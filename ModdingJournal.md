@@ -169,7 +169,7 @@ OneDrive Files-On-Demand 阻塞 IO；把用户目录从 OneDrive 挪到 E: 本�
 效果：只有玩家部队扩容，其他 lord 回到 vanilla；结算不再卡死。
 备份：`PartySizeReunited.json.bak-20260916`
 
-### 3. Garrison Drills DLL 补丁（2026-09-16 晚）
+### 3. Garrison Drills DLL 补丁（2026-09-16 晚）· ⚠ **workshop 已恢复原版 → 见 #34 pinned 框架**
 文件：`workshop\261550\3735834360\bin\Win64_Shipping_Client\GarrisonDrills.dll`
 
 三处字节修改（IL `ldc.i4.s` 操作数，同长度替换）：
@@ -183,7 +183,7 @@ OneDrive Files-On-Demand 阻塞 IO；把用户目录从 OneDrive 挪到 E: 本�
 同步改的语言 XML：`std_GarrisonDrills_strings.xml`（英）+ `CNs\std_GarrisonDrills_strings_cns.xml`（简中），文案 +10/+30/+50 → +20/+60/+100。
 
 备份：`GarrisonDrills.dll.orig-20260916`
-风险：Workshop 若自动更新，补丁被覆盖，需重跑。
+风险：Workshop 若自动更新，补丁被覆盖，需重跑。**2026-09-22 结论**：已被覆盖多次；改走 #34 `PinnedMods\GarrisonDrills\` 方案，workshop 版禁用，本地版 Id=`GarrisonDrillsPinned`。
 
 ### 4. LauncherData.xml 演化
 - 上午：禁用 RBM / RBM_WS / RTSCamera / RTSCamera.CommandSystem（排查战斗崩溃）
@@ -557,6 +557,257 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 44. MNR 卸载 + PSCW v0.2.1 保留（2026-09-22）
+
+**背景**：§43 三条 shader crash 缓解路径（清 shader cache + Sandbox 模式 + DX11 + Low preset + 甚至只跑 MNR 无其他 mod 的 barebones 组合）全部失败——**每次都在 `pbr_terrain.rs` permutation 编译时崩**，且 permutation ID 完全一致。用户不愿 driver rollback（30-60 min DDU 工作量），拍板放弃 MNR。
+
+**元凶最终定性**：NVIDIA driver `32.0.15.9636` 的 shader compiler 处理 MNR terrain 请求的**特定 permutation** 时挂 — 与我们所有自研/装的 mod 无关，与 Bannerlord 本体也无关。要修就得：换 driver / 换 GPU / MNR 作者补 ship 预编译 shader（不在我们控制范围）。
+
+**卸载步骤**：
+- `mnr-toggle.ps1 -Disable` → MNR SubModule.xml `<DefaultModule value="false"/>` + LauncherData `IsSelected=false`
+- `Remove-Item -Recurse` 删 `Modules\MoreNationsRemastered\`（98.4 MB，16 files）
+- LauncherData `<UserModData><Id>MoreNationsRemastered</Id>...` 条目 + `<DLLCheckData><DLLName>MoreNationsRemastered.dll</DLLName>...` 条目全部移除
+- Nexus ZIP 保留在用户 Downloads 里（若日后 driver 更新解决或 MNR 作者补 shader cache，可复装）
+
+**保留项**：
+- **PSCacheWarmup v0.2.1**：日志 §42/§43 落地的 Phase 1 spec (Hook 1 SettlementCreatedEvent + Hook 2 persist Serialize/Deserialize + Hook 3 adaptive PairsPerTick) 全部代码正确、编译 0 warn / 0 err、在 §43 Sandbox 尝试 log 中已见 `SettlementCreatedEvent SUBSCRIBE SUCCEEDED (handler=OnPSSettlementCreated)` —— **代码验证生效**，只是 MNR 侧崩没走到 Village 建成实测。在 vanilla map + PS 建 Village 场景下仍能发挥作用（distance cache warmup 需求本来 vanilla 就有，只是 lag spike 比 MNR 时小得多、v0.1.1 就够用；v0.2 的 `SettlementCreatedEvent` + 持久化 + adaptive rate 仍是净胜）
+- **`PinnedMods\`、`Tools\mnr-toggle.ps1` / `mnr-phase3-checklist.md` / `mnr-phase3-verify.ps1`**：MNR toolkit 保留供未来重开
+- **`Game Saves.pre-mnr-20260922\`** 存档备份保留 (2 存档)
+- **`C:\ProgramData\Mount and Blade II Bannerlord\Shaders.bak-pre-mnr-recompile-20260922\`** 老 shader cache 保留（无 MNR 时也不影响，未来若空间紧张可删）
+
+**§Todo MNR × PS 结案**：从 P0 移除，改为"永久放弃（可复装的备用路径）"归档。P0 剩余：PlayerSettlement 村庄绑定机制、AutoParry。
+
+**教训**：装 map replacement 类 mod（MNR 这种）前应先在 Nexus 页面查该 mod 是否 ship 预编译 shader cache（`SceneObj\<map>\ShaderCache\`），否则首装要求 driver 现编 permutation，遇到 driver bug 就无救。
+
+### 43. MNR Phase 3 首测：native shader crash + PSCW v0.2.1 gtName 修（2026-09-22）
+
+**背景**：`mnr-toggle.ps1 -Enable` armed 后用户新开档尝试进入 MNR 世界，游戏在 world scene 首次渲染时 native 崩溃（TWCrashUploader 弹窗）。
+
+**诊断结论**（`C:\ProgramData\Mount and Blade II Bannerlord\crashes\2026-09-22_23.59.09\` bundle 完整分析）：
+- **PSCW v0.2 加载 + OnSubModuleLoad + File.AppendAllText 全 OK**：log 里 `[16:44:51.350] ========== OnSubModuleLoad called (v0.2 DLL loaded) ==========`
+- **崩溃发生在 native rendering 层**：`rgl_log_12192.txt` + `rgl_log_50692.txt` 两次崩溃**完全同模式** — `Ticking map scene for first initialization` → `compile_shader: pbr_terrain.rs` 若干次 → 进程收到 `EXIT_PROCESS_DEBUG_EVENT`
+- **无 managed exception**：butterlib/default/trace 完全干净
+- **符合 GPU driver TDR 特征**：watchdog 抓到 process 主动退出（不是 crash exception），高度符合 GPU driver Timeout Detection and Recovery 强杀 —— shader compile 太慢导致 driver 认为 GPU hang
+- **元凶**：MNR ship 的 `SceneObj\Main_map\ShaderCache\` 只 1 file / 0.04 MB（vanilla 应几 MB），MNR 未预编译 pbr_terrain 变体 → 首次进 MNR 世界必须从头 compile 所有 permutation → 编译某个复杂变体（`permutation_id=9961472`）时 NVIDIA driver 32.0.15.9636 崩溃
+
+**附带发现（不是崩溃元凶但也修）**：PSCW v0.2 log 显示 `OnGameInitializationFinished, gtName='CampaignStoryMode'` → v0.2 代码 hardcode 只订阅 `gtName == 'Campaign'`（Sandbox 模式），Story Mode（`CampaignStoryMode`）被直接跳过。用户点 "New Campaign" 是 Story 模式，PSCW 因此空转。修复：`gtName != "Campaign" && gtName != "CampaignStoryMode"` 才 skip。
+
+**改动**：
+- `PSCacheWarmup\src\SubModule.cs` `OnGameInitializationFinished` gtName 检查扩展
+- `SubModule.xml` v0.2.0 → v0.2.1
+- `LauncherData` LastKnownVersion 同步
+- Build 0/0 已部署
+
+**用户操作项**（Claude 权限不足自行完成）：
+- 用 admin PowerShell 重命名 `C:\ProgramData\Mount and Blade II Bannerlord\Shaders` → `Shaders.bak-pre-mnr-recompile-20260922`（Bannerlord 下次启动会重编译所有 shader，首次 10-15 min）
+- 主菜单选 Sandbox（`gtName='Campaign'`）不选 Story Mode（`gtName='CampaignStoryMode'`）以简化变量
+- 若 shader 重编后仍崩 → 走 NVIDIA driver rollback 或 MNR 卸载
+
+**PSCW v0.2 hooks 1/2/3 未真实测试**：因为世界从未成功加载。等 shader crash 解决后再实测。
+
+### 42. PSCacheWarmup v0.2.0 · Phase 1 spec 全量落地（2026-09-22）
+
+**背景**：Phase 1 agent 反编译产出关键发现（详细在 §MNR×PS 兼容性调查节末尾）——**v0.1.1 覆盖已经对**（`SettlementBuildCompleteEvent` 对 Village/Castle/Town 三种统一 fire、`NotifyComplete()` 只 5 行 trivial 逻辑），问题在**效率**而不是**覆盖**。所有 heavy per-type init 都在 `ApplyPlaced` 时（day 0，placement）跑完，`SettlementBuildCompleteEvent` fire 时（day 15-30）只是 toast + timer stop。真正的 lag 源是 **placement 后 downstream 消费者**（IssuesCampaignBehavior / RecruitmentCampaignBehavior / WorkshopsCampaignBehavior / MNR BanditStartDefenderConditionPatch）开始 lazy 查询距离 → miss → 3× native A*。
+
+**Phase 1 agent 拍板的 v0.2 三个 hook + 一个跳过**：
+- Hook 1: 额外订阅 `SettlementCreatedEvent`（placement-time，day 0）→ 15-30 天 construction timer 静默 drain 989 对，玩家永远看不到 stall
+- Hook 2: `NavigationCache<T>.Serialize/Deserialize` 持久化 cache 到 `Configs\PSCacheWarmup\nav_cache.bin` + sidecar `nav_cache.meta.json` 存 sha256 of sorted `Settlement.StringId` set → 二次进档零 warmup
+- Hook 3: `PairsPerTick` 自适应 = 3 (`TimeControlMode != Stop`) / 6 (`== Stop`) — PS `NotifyComplete` 强制 Stop 时提速
+- 跳过 NavigationType.All warmup（agent spec 里的可选项）：反编译 `DefaultMapDistanceModel` 确认它只持有**单个** `_navigationCache` 字段，`RegisterDistanceCache(navigationCapability, cacheToRegister)` 忽略 navigationCapability 参数直接覆写字段；`GetDistance` 各 overload 都 pass `NavigationType.Default` 给内部无视 caller 的选择 → warm Default 覆盖 100% 查询路径，warm All 与 Default 走同一 cache 是无害冗余
+
+**架构** (`PSCacheWarmup\src\SubModule.cs` 完整重写)：
+- 新常量 `PairsPerTickNormal=3` / `PairsPerTickPaused=6`；每 `OnApplicationTick` 里根据 `campaign.TimeControlMode == CampaignTimeControlMode.Stop` 选择
+- `_alreadyWarmed HashSet<string>` StringId 去重 — placement 已 queue 就跳过 completion，防同一 settlement 双 drain
+- `TrySubscribeToPS` 拆出 `TrySubscribeOneEvent(psBehType, propertyName, handler)` helper，一并订阅 `SettlementBuildCompleteEvent`（safety net）+ `SettlementCreatedEvent`（主路径）；两个都试，任一成功即算 subscribe 完成
+- `TrySavePersistedCache` — 在 `OnApplicationTick` 里 drain 完当前 target 且 `_warmupQueue.Count == 0` 时触发一次 disk write：反射 `mapDistModel.GetType()._navigationCache` 拿 cache → 反射 `Serialize(string)` → 写 sidecar meta.json（saved_at / settlement_count / settlement_hash / version）
+- `TryLoadPersistedCache` — 在 `OnGameInitializationFinished` 里紧随 `TrySubscribeToPS` 触发：读 meta.json → 比对 `ComputeSettlementHash()`（sha256 of `Settlement.All` StringId sorted） → 匹配则反射 `Deserialize(string)` → cache 覆盖回来（`NavigationCache<T>.Deserialize` 内部 alloc 全新 `_settlementToSettlementDistanceWithLandRatio` 字典，vanilla+MNR 加载的 baseline 会被替换成我们持久化的完整 snapshot）
+- `ComputeSettlementHash` SHA256(joined `|`-delimited sorted StringId) 取前 32 chars 作为 world identity 指纹
+
+**反编译佐证 `NavigationCache<T>` 关键 API**：
+- `public void Serialize(string path)`：写 CRC + 全 pair 字典 + `_fortificationNeighbors` + `_closestSettlementsToFaceIndices`
+- `public void Deserialize(string path)`：读 CRC（丢弃、无验证）+ **重新 alloc** `_settlementToSettlementDistanceWithLandRatio` 装填；不会与 vanilla 已加载的 pairs 撞 duplicate assert
+- `Debug.FailedAssert("Element already exists")` 只在 `SetSettlementToSettlementDistanceWithLandRatio` 中出现（key 已存在时），Deserialize 因先 alloc 空字典避开
+- `GetSettlementsDistanceCacheFileForCapability(moduleId, out filePath)` 揭示 vanilla load-path 找 `ModuleData/DistanceCaches/settlements_distance_cache_<NavType>.bin`（MNR 就是靠这个 ship 预制 cache）
+
+**Build & deploy**：0 warn / 0 err；`Modules\PSCacheWarmup\bin\Win64_Shipping_Client\PSCacheWarmup.dll` 已更新；`LauncherData` `<LastKnownVersion>v0.2.0.0</LastKnownVersion>`。
+
+**待用户验证**（Phase 3 走 checklist 时）：
+- 新 log 字段：`OnPSSettlementCreated: PLACEMENT event for '<name>'`（Hook 1 生效证据）
+- 新 log 字段：`progress N / total (rate=6/tick)`（Hook 3 提速证据 — completion 时因 PS 强制 Stop，rate 应见 6）
+- 新 log 字段：`TrySavePersistedCache: SUCCESS` + `TryLoadPersistedCache: SUCCESS`（Hook 2 生效证据 — 首次建 settlement 后 Save；二次进档见 Load，然后**整场对话不再有 warmup 消息**）
+- Sidecar 文件：`Configs\PSCacheWarmup\nav_cache.bin`（~几 MB）+ `nav_cache.meta.json`（<1 KB）
+
+### 41. Phase 3 MNR-enable validation 工具三件套（2026-09-22）
+
+**背景**：MNR 本地已装 (§35) `DefaultModule=false` 防老档崩 (§38)，PSCacheWarmup v0.1.1 已部署 (§32 结案)。用户 policy 让 MNR × PS 兼容性列为最高优先。Phase 1 反编译 agent 仍后台跑（复杂 subsystem 反编译产出 v0.2 spec）。用户决定并行做 Phase 3 新开档验证的自动化工具，让实际 arm/verify/rollback 无摩擦。
+
+**产出**（`Tools\`）：
+- `mnr-toggle.ps1 -Enable | -Disable | -Status`——一键切换 `Modules\MoreNationsRemastered\SubModule.xml` 里 `<DefaultModule value="true|false"/>` + `LauncherData` 里 `MoreNationsRemastered` `IsSelected` 一起翻。`-Status` 打印当前四模组配置状态（MNR SubModule / MNR LauncherData / PS LauncherData / PSCacheWarmup LauncherData），并判定 ARMED for Phase 3 或 SAFE for vanilla-map saves
+- `mnr-phase3-verify.ps1`——解析 `Configs\ModLogs\PSCacheWarmup.log` 检查 4 层证据：Layer 1 (OnSubModuleLoad called / DLL loaded) → Layer 2 (OnGameInitializationFinished / Campaign entered) → Layer 3 (TrySubscribeToPS SUCCEEDED / PS event subscribed) → Layer 4a (PS event FIRED / settlement build 完成事件抓到) → Layer 4b (BeginNextTarget / progress / done for warmup 执行)。产出 settlements list、warmup pair 数、exception 摘要
+- `mnr-phase3-checklist.md`——人肉可读的 walkthrough：pre-flight 备份存档 → 用 `mnr-toggle.ps1 -Enable` arm → launcher 勾选 verify → 新开档 1:30-3:00 min → 前 5 in-game day 观察 → 建 Village 观察四层消息 → 试建 Castle/Town → 退出 → 跑 `mnr-phase3-verify.ps1`。含 rollback 步骤
+
+**smoke test**：`-Status` 打印正确显示当前状态"SAFE for existing vanilla-map saves"；`verify.ps1` pre-Phase 3 正确 FAIL 报"log not found"
+
+**踩坑**：PowerShell 5.1 UTF-8 无 BOM 读 em-dash (`—` U+2014) 触发 parser error。改成 ASCII `--` 规避（feedback：以后写 .ps1 用纯 ASCII）
+
+**用户何时用**：不是"现在就 armed"，而是"当你决定新开档 MNR 时，一条命令切换 + 一份 checklist 走完 + 一条命令验证"。Rollback 同样一条命令
+
+### 40. GarrisonDrillsPinned 退出崩溃修（net48 + AssemblyInfo，2026-09-22）
+
+**背景**：用户 2026-09-22 bisect 定位退出崩溃元凶 = `GarrisonDrillsPinned`。日志/butterlib/trace 无 exception 记录，符合 native 崩溃。
+
+**根因假设**（未 stack trace 证实但覆盖 3 个最可疑差异 vs 原 workshop DLL）：
+- **TargetFramework 不匹配**：原 workshop DLL 是 net48；#37 的 source-recompile csproj 错设 net472。ABI 兼容性通常无碍但 CLR AppDomain teardown 时的 metadata 处理可能有差
+- **AssemblyInfo 缺失**：#37 设 `GenerateAssemblyInfo=false` 且没 ship 自己的 AssemblyInfo.cs，导致生成的 DLL 里没有 AssemblyVersion / AssemblyTitle / AssemblyCompany 等属性——ButterLib/MCM 处理 mod identity 或 SubModule 生命周期时可能因 null metadata 抛，若抛在 unmanaged callback 里就是 native 崩
+- ~~**`[module: RefSafetyRules(11)]` 缺失**~~：C# 11 编译器 emergent attribute，本地手写引用会 CS0246，但代码不用 ref-safety 特性——**不加也无害**
+
+**改动**（`PinnedMods\GarrisonDrills\src\`）：
+- csproj `TargetFramework`：`net472` → `net48`
+- 新增 `Properties/AssemblyInfo.cs`：ship AssemblyVersion=1.1.0.0 + FileVersion=1.1.0.0 + Title/Company/Product="GarrisonDrills" + Configuration="Release" + InformationalVersion="1.1.0-pinned-recompile"
+
+Build 0/0，已部署。
+
+**结果**：**2026-09-22 用户实测通过**：主菜单退出不再崩溃。用户额外顺手测试 BetterPatrols + Village Defense (Xiangyong) 同时启用，全部正常——三项之前独立可疑的 mod（Enhancer / BetterPatrols / Village Defense）现均**已排除**是嫌疑。
+
+**结论**：net48 + AssemblyInfo 补齐是必要且充分的修复。走 source-recompile 路线的 pinned mod 今后建议：
+- csproj `TargetFramework` 必须与原 workshop DLL 匹配（可 `ilspycmd -p` 输出看它给的默认值）
+- 别设 `GenerateAssemblyInfo=false` 除非自己 ship AssemblyInfo.cs 带完整的 AssemblyVersion/AssemblyTitle/AssemblyCompany 属性——ButterLib/MCM 处理 mod identity 时需要
+
+### 39. GarrisonDrillsPinned XP × 10（2026-09-22）
+
+**背景**：#37 落地 +20/+60/+100 生效后，用户 2026-09-22 报告"需要 × 10 应对 Retinues 高 tier 兵种，快速成型"。
+
+**改动**（`PinnedMods\GarrisonDrills\`）：
+- `src/GarrisonDrills/GarrisonDrillsBehavior.cs` Tiers 数组：`(200,5) (600,20) (1000,40)`
+- 三处 fallback 字符串 in `AddMenus()`: `+200 xp` / `+600 xp` / `+1000 xp`
+- `Languages\std_GarrisonDrills_strings.xml`（根）：三档 +200/+600/+1000
+- `Languages\EN\std_GarrisonDrills_strings_en.xml`：同上
+- `Languages\CNs\std_GarrisonDrills_strings_cns.xml`：+200/+600/+1000 经验
+- Gold cost 不变（5/20/40）
+
+Build 0/0；已部署。用户下次进游戏 Train Troops 三档 UI 应显 `+200/+600/+1000 xp`；每轮 Enhancer 消息也自动跟着放大 10 倍（`XP_PER` = tier.Xp 直接从 Tiers 数组读）。
+
+**取舍**：Enhancer 的 `XP_TOTAL = trainable × XP_PER` 可能爆到几千级别——用户已明说要快速成型，不做上限截断。
+
+### 38. MNR SubModule DefaultModule=true→false 防老档崩溃（2026-09-22）
+
+**背景**：用户装 MNR 后（IsSelected=false 但目录已装到 `Modules\MoreNationsRemastered\`），2026-09-22 报告"从主菜单退出游戏时崩溃、弹送错误报告窗"。诊断：MNR SubModule.xml 里 `<DefaultModule value="true"/>` 使引擎**无视 IsSelected=false 强制加载**——MNR 5 XML（597 新 settlement + 7 kingdom + 52 faction + heroes + lords）与现有 vanilla map 存档 XML 引用冲突，退出时的 GameScope Dispose 阶段触发 native heap 崩溃。butterlib/trace 无 exception 记录，符合 unmanaged 崩溃特征。
+
+**改动**：`Modules\MoreNationsRemastered\SubModule.xml` `<DefaultModule value="true"/>` → `false`。让引擎尊重 launcher 的 IsSelected 状态；MNR 保持"装了但不加载"状态直到用户 Phase 3 新开档时。
+
+**新开档 Phase 3 时须做**：
+1. 改回 `<DefaultModule value="true"/>`
+2. launcher UI 里勾 MoreNationsRemastered=true
+3. 新开档 → 等 1:30-3:00 min 世界生成
+4. 按 MNR 实机验证 7 步清单走完
+
+### 37. GarrisonDrillsPinned 升级到 source-recompile（2026-09-22）
+
+**背景**：#34 落地的 Pinned 框架（byte-patched workshop DLL + XML 复制）在实测中暴露：**Pinned XML 文件从未被引擎 auto-scan 加载**（原作者 SubModule.xml 缺少某个触发 LocalizationManager 扫描的声明；游戏 log grep 无 language 加载记录）。用户 2026-09-22 截图显示三档 UI 仍显 +10/+30/+50（走 DLL 代码 fallback 字符串），尽管实际执行时 XP 常量已是 +20/+60/+100（byte-patch 到 IL 生效）。
+
+摸清 Bannerlord auto-scan 规则不划算——改走"reference recompile"更直接：反编译 pinned DLL 到可编译工程、编辑 C# 源码里的 fallback 字符串 + 常量、重新编译成 DLL。UI 走 code fallback 也能显示 +20/+60/+100，无需依赖 language XML 加载机制。
+
+**架构升级**：
+- `ilspycmd -p` 反编译 pinned GarrisonDrills.dll（already-byte-patched，即常量已 20/60/100）→ 4 file 项目：`GarrisonDrills.csproj` + `GarrisonDrills/SubModule.cs` + `GarrisonDrills/GarrisonDrillsBehavior.cs` + `Properties/AssemblyInfo.cs`
+- 集成到 `PinnedMods\GarrisonDrills\src\`：net472 / LangVersion 11 / 引用 5 个 TaleWorlds DLL（含之前 ilspycmd 生成的 csproj 漏的 `TaleWorlds.ObjectSystem`）
+- **编辑三处 fallback 字符串** in `GarrisonDrillsBehavior.cs::AddMenus()`: `(+10 xp` / `(+30 xp` / `(+50 xp` → `(+20 xp` / `(+60 xp` / `(+100 xp`（与已在源码中的 Tiers 常量 20/60/100 保持一致）
+- `deploy.ps1` 重写：不再复制 workshop bin/*.dll，改用 `dotnet build` 生成 src/bin/Release/GarrisonDrills.dll 部署；byte-patch 校验逻辑删除
+- 删 `PinnedMods\GarrisonDrills\bin\`（旧 workshop DLL 副本）
+- `baseline.json` 新增 `strategy: "source-recompile"` + 完整迁移史（v1/v2/v3 时间线）+ patches_now_in_source 清单 + rebase_notes
+- 保留 XML fallback 三份（根 + EN + CNs）为 +20/+60/+100：如未来 language auto-scan 修复，两条路径达到同结果；如未修复也无害
+
+**优点 vs 修改 #34 byte-patch 方案**：
+- UI 显示与常量执行同源，不需神秘 byte offset
+- workshop 版本升级时 rebase 走 C# diff 而非 IL 逆推，可读性高
+- 未来加功能（如 XP token 直接 pass to msg template）可直接改源码而非 IL edit
+
+**Build & deploy**：0 warn / 0 err；`Modules\GarrisonDrillsPinned\bin\Win64_Shipping_Client\GarrisonDrills.dll` 已 source-built 替换
+
+**Enhancer 兼容性**：Enhancer 通过 `AccessTools.TypeByName("GarrisonDrills.GarrisonDrillsBehavior")` 反射查目标——namespace 与类名保持 `GarrisonDrills.*`（虽然 pinned Id 是 `GarrisonDrillsPinned`）→ Enhancer 反射查找不受影响
+
+**baseline.json.workshop_dll_sha256_at_pin 不变**：`Tools\check-pinned-mods.ps1` 仍能对比 workshop 当前 DLL vs 上次 pin 时的 hash，逻辑与 pinned 侧策略无关
+
+### 36. GarrisonDrillsMessageEnhancer v1.0.0 · 训练消息加 XP 数字（2026-09-22）
+
+**背景**：修改 #3 + #34 把 Garrison Drills 三档 XP 常量 (+20/+60/+100) 都锁定 pinned，但用户 2026-09-22 报告 in-game 每轮训练消息不显示实际获得 XP——反编译 `GarrisonDrills.GarrisonDrillsBehavior.DoPulse` 确认原作者 template `{TIER} training: experience gained by {COUNT} soldiers (-{COST}{GOLD_ICON})` 就只 pass 了三个 token，没 XP 数字，这是作者原本的省略，不是 patch 造成的。用户拍板走方案 C（自研 Harmony 小 mod）。
+
+**架构**（新目录 `GarrisonDrillsMessageEnhancer/`）：
+- `SubModule.xml` — Id=`GarrisonDrillsMessageEnhancer`，依赖 Bannerlord.Harmony + GarrisonDrillsPinned，`DependedModuleMetadata order=LoadBeforeThis` 全部
+- `ModuleData/Languages/{,EN/,CNs/}std_GDMsgEnh_strings*.xml` — 自带 localization key `GDMsgEnh_Pulse`；**不改 Pinned XML**，若 Harmony patch 失效则 Pinned 原 DoPulse 仍运行、只是消息不带 XP（graceful degradation，不会出现 `{XP_PER}` 字面 token）
+- `src/SubModule.cs` — `MBSubModuleBase.OnSubModuleLoad` 里 `harmony.PatchAll(typeof(SubModule).Assembly)`，try/catch 兜底 + 消息栏诊断
+- `src/DoPulsePatch.cs` — `[HarmonyPatch]` + `TargetMethod` 用 `AccessTools.TypeByName("GarrisonDrills.GarrisonDrillsBehavior")` soft-dep 反射查目标；Prefix return false 全量重实现 DoPulse，用 `AccessTools.Method` + `AccessTools.Inner("TrainTier")` + `AccessTools.Field(Xp/Gold/NameKey)` 调 Pinned 私有 helpers（`CountTrainableSoldiers` / `CurrentTier` / `ApplyTraining` / `StopTraining`）以保持游戏逻辑分支 parity 而不复制 helper 逻辑
+- csproj net472 / LangVersion 9 / 引用 Bannerlord 5 个 DLL + 0Harmony（**不引用** GarrisonDrills.dll——全反射，避 net4.8 vs net4.7.2 target framework 警告）
+
+**新 template**（英/中）：`{TIER} training: {COUNT} soldiers each gained +{XP_PER} xp (total +{XP_TOTAL} xp, -{COST}{GOLD_ICON}).`
+
+**构建 & 部署**：`dotnet build -c Release` 0 warn / 0 err；`deploy.ps1` 把 SubModule.xml + ModuleData/ + DLL + PDB 部署到 `Modules\GarrisonDrillsMessageEnhancer\`；LauncherData 加 `<Id>GarrisonDrillsMessageEnhancer</Id> v1.0.0.0 IsSelected=true`
+
+**用 AccessTools.Inner 的意义**：`TrainTier` 是 `GarrisonDrillsBehavior` 里的 nested private sealed class，`Type.GetType("GarrisonDrills.GarrisonDrillsBehavior+TrainTier")` 会因为 assembly 未 hard-reference 拿不到；`AccessTools.Inner(parentType, "TrainTier")` 直接从 parent type 的嵌套类型集里查，soft-dep 友好。
+
+**Pinned baseline 漂移时的失效信号**：
+- `CountTrainableSoldiers` / `CurrentTier` / `ApplyTraining` / `StopTraining` 之一改签名 → 首启抛 `TargetMethod` 抛的 InvalidOperationException（`__instance` 类型找不到或方法找不到）
+- `TrainTier` 嵌套类改名或 `Xp/Gold/NameKey` 字段改名 → 反射查 null → NullReferenceException at TargetMethod
+
+若 workshop 上游哪天真的改 GD.dll 结构（几率极低——mod 已两年没升级），rebase Pinned + 重跑 ilspycmd -t 定位新签名即可。
+
+**待用户操作**：
+- 完全关 launcher + 游戏
+- 重启 launcher → 检查 Mods 选项卡应有 `Garrison Drills Message Enhancer` 勾选、加载在 `Garrison Drills (Pinned)` 之后
+- 进游戏 → Train troops → 首轮 pulse 完成时消息栏应显示新 template（"Basic training: N soldiers each gained +20 xp (total +... xp, -...gold)"）+ 载入时应见蓝色 `[GD Msg Enhancer] patch installed.`
+- 若消息栏未见蓝色 loaded 消息 → Harmony patch 未起，看 butterlib 或 game.log 里 InvalidOperationException 堆栈
+
+### 35. MNR 本地安装（2026-09-22）
+
+**背景**：Backlog "MNR × PlayerSettlement 兼容性" 用户 policy 升为最高优先度。装 MNR 是 Phase 3 前置。
+
+**做了什么**：
+- 从 `C:\Users\situj\Downloads\MoreNationsRemastered(V1.0.3) 12271 1.0.3 2026-09-04T16-18Z ps0mrFgb3.zip` 解压
+- 装到 `E:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\Modules\MoreNationsRemastered\`（本地 module，非 workshop）
+- 尺寸：16 files / 98.4 MB（scene.xscene 30 MB + terrain.bin + navmesh.bin 989 KB + XML/DLL）
+- SubModule Id：`MoreNationsRemastered`，DefaultModule=true（必须新开档）
+- 依赖：仅 Native + Sandbox（无 Harmony/ButterLib/UIExtender/MCM 硬依赖）
+- `LauncherData.xml` 加 `<Id>MoreNationsRemastered</Id> v1.0.3.0 IsSelected=false`（等新开档时手动勾）
+
+**待用户操作**：
+- 关 launcher + 游戏 → 让 §32 阻塞的 PSCacheWarmup v0.1.1 DLL 也顺便部署到位
+- 备份现有存档
+- 新开档前 launcher 里勾 MoreNationsRemastered + PSCacheWarmup，加载在 Sandbox 之后（LoadBeforeThis 自动处理）
+- 新开档 → 等 1:30-3:00 min 世界生成
+- 按 §Todo MNR 实机验证 7 步清单走完
+
+**Phase 1（反编译剩余 heavy subsystems）**：本会话已后台派 general-purpose agent 反编译 PS/MNR/SandBoxNavigationCache 定位 Town/Castle 侧未覆盖的 heavy init 路径，产出 PSCacheWarmup v0.2 spec。结果留待下轮日志更新。
+
+### 34. GarrisonDrills 防 workshop 覆盖 · PinnedMods 框架落地（2026-09-22）
+
+**背景**：修改 #3 的 GarrisonDrills DLL byte-patch 与 XML 文案 (+20/+60/+100 XP) 被 workshop 更新彻底恢复原版——2026-09-22 用户截图 in-game 显示三档仍是 +10/+30/+50，反查 workshop 目录：
+- DLL bytes 2332/2348/2365 = 0x0A/0x1E/0x32（原版）
+- `Languages\std_GarrisonDrills_strings.xml` = +10/+30/+50（原版）
+- `Languages\CNs\std_GarrisonDrills_strings_cns.xml` = +10/+30/+50（原版）
+- 仅 `Languages\EN\std_GarrisonDrills_strings_en.xml` = +20/+60/+100（幸存，但 GarrisonDrills SubModule.xml 未声明加载 EN 子目录，游戏 Language=English 默认加载根目录版本 → EN 子目录形同虚设）
+
+用户 2026-09-22 拍板 PinnedMods 方案 D：把 mod 副本纳入 repo 版本控制、装到本地 Modules 目录（非 workshop），workshop 版保留订阅仅做更新监测。
+
+**Repo 新目录**：
+- `PinnedMods\GarrisonDrills\` — workshop 3735834360 v1.1.0 完整副本 + 三处 patch 已应用（byte-patch + 根/CNs XML）
+- `PinnedMods\GarrisonDrills\SubModule.xml` — `Id="GarrisonDrillsPinned"` + `Name="Garrison Drills (Localize Custom Fix)"`（2026-09-22 用户改名；避免与 workshop 版 SubModuleClassType duplicate load 冲突）
+- `PinnedMods\GarrisonDrills\deploy.ps1` — 部署到 `<GameRoot>\Modules\GarrisonDrillsPinned\` + 部署后 byte-patch 校验（0x14/0x3C/0x64）
+- `PinnedMods\GarrisonDrills\baseline.json` — 记录 workshop 版本、DLL sha256、patch inventory、rebase notes
+- `PinnedMods\GarrisonDrills\README.md`
+- `Tools\check-pinned-mods.ps1` — 通用扫描器：对比 workshop 当前 DLL hash vs pinned baseline，不匹配写 `PinnedMods\UPDATE_ALERTS.md`（exit 2）+ 命中就打 STALE。可挂 Windows 任务计划每周跑
+
+**部署 + LauncherData**：
+- `deploy.ps1` 已跑，`Modules\GarrisonDrillsPinned\` OK，byte-patch 校验通过
+- `LauncherData.xml`：workshop 版 `<Id>GarrisonDrills</Id> IsSelected=true → false`；新增 `<Id>GarrisonDrillsPinned</Id> v1.1.0.0 IsSelected=true`
+- 备份 `LauncherData.xml.bak-pre-pinned-garrisondrills-20260922`
+
+**baseline 值**：
+- workshop_dll_sha256_at_pin = `0A1DEF3CE79128CB690BB5059E2577EA57A413EA41B3E1D143D773F674EEF20D`
+- pinned DLL sha256 = `B270A2D2DA87DF69BC3D6AFD87CD82FADFD38DA74DBE09E2E7C4D8B12AA2378D`
+
+**待用户操作**：launcher 重启后确认「Garrison Drills (Pinned)」勾选、原「Garrison Drills」不勾；进城 Train Troops 应见 +20/+60/+100 XP
+
+**复用**：此后其它 DLL byte-patch 型 mod（有类似 workshop 覆盖风险的）都可走同一框架：复制到 `PinnedMods\<name>\` → SubModule Id 后缀 `Pinned` → deploy.ps1 → baseline.json → LauncherData 切换。`check-pinned-mods.ps1` 自动扫全部 PinnedMods 子目录
+
 ### 33. BetterPatrolsBrake v0.1 — 拆 BetterPatrols 两个 hourly hot patch 的自研 mod（2026-09-22）· ⚠ 未测试
 
 **背景**：2026-09-22 用户报告战略地图快进时严重卡顿。经诊断 + 反编译:
@@ -637,7 +888,7 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 - SubModule.xml v0.1.0 → **v0.1.1** ✓
 - src/SubModule.cs 已改为 v0.1.1 版本 ✓
 - LauncherData v0.1.0.0 → **v0.1.1.0** ✓
-- **⚠ DLL 未同步部署**: 用户重启过 launcher 后 launcher (PID 34068) 锁住了 `Modules/PSCacheWarmup/bin/.../PSCacheWarmup.dll`,build 完 Copy-Item 失败。**当前部署的 DLL 仍是 v0.1.0 code**(无 file logging)
+- ~~**⚠ DLL 未同步部署**: 用户重启过 launcher 后 launcher (PID 34068) 锁住了 `Modules/PSCacheWarmup/bin/.../PSCacheWarmup.dll`,build 完 Copy-Item 失败。**当前部署的 DLL 仍是 v0.1.0 code**(无 file logging)~~ ← **2026-09-22 09:25 结案**：用户关了 launcher，deploy.ps1 跑通，`Modules\PSCacheWarmup\bin\Win64_Shipping_Client\PSCacheWarmup.dll` 12288 bytes 更新为 v0.1.1（sha256 `8325AE20...`）；`LauncherData.xml` `<Id>PSCacheWarmup</Id> v0.1.1.0 IsSelected=true`；`Configs\ModLogs\PSCacheWarmup.log` 首启后会自动创建
 
 **下轮开工须做**:
 1. 用户**完全关闭 launcher + 游戏**
@@ -1918,7 +2169,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 **用户 policy（2026-09-21）**：需要"花大量实施时间但技术路径清楚"的项目从 P0 降下去（比如 OSA v2 / CastleEliteRecruitment，已有渠道落实），P0 位置让给**需要研究**的项目。
 
-- [ ] **Retinues · Clan Traditions 跳过**：反编译找到 Clan Traditions 系统绑定的 `CampaignBehavior` 名称，评估是否有 config 开关能整个禁用/跳过。若无 config，评估直接不加载该 behavior 的可行性（Retinues 侧 `TroopXpBehavior` 类似结构，参考它的写法）
+- [x] ~~**Retinues · Clan Traditions 跳过**~~ ← **2026-09-22 用户确认已生效**（实施细节此处未记录，实测通过）
 - [ ] **PlayerSettlement · 村庄绑定机制**：反编译 `PlayerSettlement.dll` + `PlayerSettlementFixes.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 能否绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）打造食物爆棚 fief。附带查：绑定村庄数量硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
 - [ ] **More Nations Remastered × PlayerSettlement 兼容性**（2026-09-21 静态分析 + 自研 `PSCacheWarmup` v0.1 落地缓解 → 见 §31）— **下一步只剩实机验证**：装 MNR 新开档、观察每日 tick 性能、用 PS 建 Village 试完成时 lag 是否被 PSCacheWarmup 消除。**用户当前未装 MNR，实测顺延到实际装 MNR 时**
 - [ ] **AutoParry 是否要启用**：当前 IsSelected=true 但用户 policy 未定；观察 in-game 手感 + AI 平衡影响，再决定长期启用/禁用
@@ -1968,9 +2219,9 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [x] ~~手动在 Steam 里关闭 Bannerlord 的 Steam Cloud sync（Properties → General）~~ ← 2026-09-20 用户确认已关
 - [x] ~~进游戏在 town/castle 菜单里找 IG ribbon，打开 Food Gathering~~ ← 已通过直接改 XML 完成（修改 #5）
 - [ ] 观察新战役里 RBM Campaign 是否正确工作（看 `RBM\logs\garrison\`、消息栏 spoils/ledger）
-- [ ] 验证 Garrison Drills 训练效果翻倍（进城 → Train troops → 看 UI +20/+60/+100 XP）
+- [x] ~~验证 Garrison Drills 训练效果翻倍~~ ← **2026-09-22 结案**：走 Pinned 框架 (#34) → source-recompile (#37) → 净 net48 修 (#40) → XP × 10 (#39)。用户实测 UI 显 +200/+600/+1000、Enhancer 消息正常、退出不崩
 - [x] ~~验证食物经济堆叠实测效果（进 fief → 食物变化条应有 `[IG-Cheats] Garrison Food Bonus: +1000` 且总变化转正）~~ ← 2026-09-18 确认修复
-- [ ] Workshop 若自动更新 GarrisonDrills，DLL 补丁被覆盖，需重跑
+- [x] ~~Workshop 若自动更新 GarrisonDrills，DLL 补丁被覆盖，需重跑~~ ← **2026-09-22 结案**：走 #34 PinnedMods 框架彻底解耦 workshop，`Tools\check-pinned-mods.ps1` 监测 workshop DLL hash 变化
 - [x] ~~食物调优（若观察后需要）：太富裕/NPC 穷/玩家仍赤字三档旋钮~~ ← 2026-09-18 食物经济已稳定，无需再调
 - [ ] AutoParry 是否要启用（当前 false）
 
@@ -1979,7 +2230,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [ ] **自研 `CastleEliteRecruitment` mod**（2026-09-20 立项，机制已核实 · P2 落地类）：让城堡能招募 + 大量产精英新兵，1.4.7 兼容 / RBM-proof / Retinues 友好。设计详见上方"★ 城堡精英招募"节（A 城堡加 notable + B 放行志愿兵填充 + C postfix GetBasicVolunteer 强制精英免疫 RBM + D 城堡招募菜单）。**下一步：在 repo 搭工程骨架 → 主力机 build+测**（2026-09-21 从"🔴 最高优先"降为常规 backlog——用户 policy：确定性实施项目让位给待调查项目）
 - [ ] **OSA 物品平衡 v2**（2026-09-21 立项 · P2 落地类）：利用 `OSA_Reference/` + `RBM_Reference/` 数据包对 `OpenSourceArmouryRBMBalance` 做精细化二轮调整。可展开点：(1) **HorseHarness 平衡**（v1/v1.1 未处理，Saddlery avg 58.5 vs RBM 28.9，需反向下调 ×0.5）；(2) **Cape.arm slot 校准**（v1.0 flat=12 是猜的）；(3) outlier 物品逐个审（Excel 按 head_armor 降序看 top-30）；(4) **Blade damage_factor 按 tier+wclass 分层校准**；(5) **CraftedItem 覆盖分析**（OSA 140 CraftedItem 引用 vanilla piece，join `osa_crafted_items_pieces.csv` + `rbm_crafting_pieces.csv`）；(6) `OpenSourceArmouryRBMBalance/src/generate.ps1` 重构为 `Import-Csv Reference/*.csv` 消费。产出目标：v1.2（可拆多批落地）。依赖 in-game 实机验证每一批（建议每次调 20-30 件试一场战斗）。2026-09-21 从"🔴 P0"降为 P2——同上 policy
 - [x] ~~**Retinues · House 单位 tier 上限**~~ ← **2026-09-18 结案**：作者早已在 MCM 里预留 `MaxTroopTier` 到 10，改配置即可；改后需玩家手动 rank up 已有兵种。详见"Retinues 机制备忘"小节 + 修改 #6
-- [ ] **Retinues · Clan Traditions 跳过**：Clan Traditions 系统（族群传统）是否有内置开关能整个禁用/跳过？如果没有，找它绑定的 CampaignBehavior 名称，评估直接不加载该 behavior 的可行性
+- [x] ~~**Retinues · Clan Traditions 跳过**~~ ← **2026-09-22 结案**：用户确认已生效（见 P0 章节同项）
 - [x] ~~**RBM · Bot 武器优先度**~~ ← **2026-09-18 结案**：RBM AI **不重写** vanilla 武器选择评分，只做辅助（posture 掉武器、盾墙方向、骑射队分配）；skill 通过 handling/speed 间接影响 AI 评分。完整 combo 表、"废装备"警告、骑马武器长度限制、Cataphract Lance 副武器陷阱见 `TroopDesignReference.md`
 - [ ] **PlayerSettlement · 村庄绑定机制**：扒 `PlayerSettlement.dll` 找 `MaxBoundVillages` / `AttachVillage` / `BindVillage` 类 API。目标：自建 town 时能否指定绑定多个食物特化村（wheat/cattle/sheep/swine/fisherman）来打造食物爆棚 fief。附带查：绑定村庄数量是否有硬上限、能否**重新绑定 vanilla 村庄**（把邻近 wheat 村从别人 fief "转"到自己 fief）
 - [x] ~~**Tier6Injector · 自研模组（2026-09-19 立项 → v1.3 已发）**~~ ← **2026-09-20 改名 `EquipmentSpawnerMod` v1.4，加入个人库**（详见下方 v1.4 条 + 2026-09-20 日志）。位置：本 repo `EquipmentSpawnerMod/` 子目录（旧 `Tier6Injector/` 已删）、详见该子目录 `README.md`。热键：Ctrl+Alt+I 注入 Tier 3-6 装备 ×20 + 战马 ×20；Ctrl+Alt+O 主队→个人库；Ctrl+Alt+P 个人库→主队。个人库通过 `PersonalStashBehavior : CampaignBehaviorBase` + `dataStore.SyncData<ItemRoster>()` 持久化到存档
@@ -2111,7 +2362,7 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 - [x] ~~**CalradianPatrolsV2 v4.0.2 安装（2026-09-19）**~~ ← **2026-09-19 结案：不可用，launcher 自动禁用**。反编译核实是 v1.2.8 → v1.4.7 API 断裂：3 个 Custom model 类跟 v1.4.7 abstract 签名对不上——`CustomWageModel` 用 `MaxWage`/`GetTotalWage(MobileParty, bool)`/`int GetTroopRecruitmentCost(...)`，v1.4.7 要 `MaxWagePaymentLimit`/`GetTotalWage(MobileParty, TroopRoster, bool)`/`ExplainedNumber GetTroopRecruitmentCost(...)`；`CustomBanditDensityModel` 缺 6 个新 abstract（`NumberOfMinimumBanditPartiesInAHideoutToInfestIt` 等），有个多余 `NumberOfMaximumLooterParties`；`CustomSettlementSecurityModel` 缺 6 个新 abstract（`ThresholdForTaxCorruption` 等）。**结果**：launcher 静态检查发现 abstract 不匹配→标 `IsDangerous=true`+auto-disable，butterlib 日志无 CP2 记录（因为根本没跑起来）。**已弃用**（LauncherData.xml `IsSelected=false`）。IG `NPCSpawnGuards` + BetterPatrols 已覆盖需求
 - [ ] **RBM Poise/Stamina 系统调查结论（2026-09-19，未改）**：`Configs\RBM\config.xml` 里两个总开关 `<PostureEnabled>` + `<StaminaEnabled>`（默认均 1）。玩家侧调节靠 `<PlayerPostureMultiplier>`——**注意 RBMConfig.cs line 213-229 的解析是三档预设选择器，不是浮点乘数**：`"0"` → 1.0x（跟 AI 一样，**当前状态**）、`"1"` → 1.5x、`"2"` → 2.0x。反编译 `RBMAI\Stance.cs` 确认这个 multiplier **同时**乘 `maxPosture/postureRegenPerTick/maxStamina/staminaRegenPerTick`（池 + 回复绑定）。**要动的话**：`PostureEnabled=0` + `StaminaEnabled=0` 完全关整套（所有 agent 回归 vanilla）；或 `PlayerPostureMultiplier=1/2` 让玩家 1.5x/2x。**要独立控制回复速度**或**给玩家 0x 完全豁免**都需 DLL byte-patch（类似 GarrisonDrills 修改 #3）
 - [x] ~~**MapBlockadePSBridge · 自研桥接 mod（2026-09-19 立项，Phase 2A v0.2 已编译）**~~ ← **2026-09-20 用户决定放弃**：本 repo `MapBlockadePSBridge/` 子目录、部署 `Modules\MapBlockadePSBridge\`、`Configs\ModLogs\PSBridge_*.log`、LauncherData `UserModData`+`DLLCheckData` 全部清理；同时 **MapBlockade 本体也已卸载**（`Modules\MapBlockade\` 删除、LauncherData 条目移除）。历史归档：订阅 `PlayerSettlementBehaviour.SettlementBuildCompleteEvent` → 反射注入 `MapBlockade.BlockadeReachabilityCache._cities` → 调 `RebuildAll(string)` 重算，Phase 2A 骨架 + 反射注入 + `RebuildAll` 触发已跑通；Phase 2A 侦查（is Campaign 命中 / 反射类找到 / 订阅无异常）2026-09-19 全过。放弃原因＝ IG NPCSpawnGuards + BetterPatrols 已覆盖对城堡防御需求，PSBridge 收益不足以支撑维护成本
-- [ ] **Village Defense (Xiangyong) v1.1.11 + BetterPatrols v1.0.0 安装（2026-09-20）**：两个都适配 v1.4.7（无 `DependentVersion` 版本锁，用现代 API/AccessTools 运行时探测）。**跟 IG 互补不替代**：IG=城堡驻军派 Guard（40% 抽兵、清匪、卖俘虏），VD=村庄被 raid 时按 hearth 阈值刷民兵（60/80/100/150），BP=buff vanilla castle/town patrol（Guard House 分级 25/50/100/150）+ 自建 village defender + NavalDLC 双巡逻。**加载排 IG 之后、EquipmentSpawnerMod 之前**。**已知重叠**：BP `EnableVillageDefenders=true` + VD 都做村庄防御——若嫌拥挤在 BP MCM 里关这个开关，让 VD 独占村庄侧
+- [x] ~~**Village Defense (Xiangyong) v1.1.11 + BetterPatrols v1.0.0 安装（2026-09-20）**~~ ← **2026-09-22 结案**：两 mod 已装并 IsSelected=true，用户主菜单退出压力测试通过、no crash。加载排 IG 之后 / EquipmentSpawnerMod 之前的顺序 launcher 自动依赖排序处理。BP `EnableVillageDefenders=true` + VD 双方村庄防御的重叠若手感不合再进 BP MCM 关
 - [ ] **OSA 三件套装备 UI 不显示 + 退出崩溃调查（2026-09-20）**：装完 OSA/OSW/Saddlery 首跑，两症状：Retinues Troop Editor 里看不到 `AR_*` 物品；游戏退出时崩溃。诊断：Retinues `debug.log` 显示 `SaveBehaviorData: 96 unlocked` 全是 vanilla ID（无 `AR_*`），OSA XML 语法自查 46 个文件全 parse OK 但物品未进 `MBObjectManager`。**发现每个 OSA mod 都自带 3 个 Shaders 文件**（本次 E: 机器实测 OSA=15.19 MB + Saddlery=2.54 MB + OSW=1.45 MB，与之前 D: 机器 journal 记录的"0 文件"矛盾）。**已删所有三个 Shaders 目录**（共释放 19.18 MB）——Bannerlord 下次启动会重编译（首次约 10-15 min）。**待用户实测**：Shader 清完是否两症状都好；若仍有问题走 bisect（禁 OSA/OSW/Saddlery 逐个隔离）
 - [ ] **CYT × FM 兼容性核实（2026-09-20）**：反编译坐实两者**流水线协作无竞争**——CYT patch `MapEventSide.AllocateTroops` **Prefix**（注入 `customAllocationConditions` 白名单，按 StringId 过滤 troopsList）；FM patch `Mission.SpawnTroop` **Postfix**（查 `FormationAssignmentResolver.ResolveFormationIndex` 表设 `agent.Formation`）。**不同方法 + 不同 patch 类型**。fallback 干净：FM 若无该兵映射 → `GetDefaultFormationIndex` → `GetVanillaFormationIndex(character.DefaultFormationClass)`；FM 若从未配任何映射 → `HasCustomDefaults=false` → patch early-return，vanilla 全权分配。**CYT 未选的兵不进战场**，FM 对应 Formation 空着不产生 bug
 - [x] ~~**OSA 武器 damage_factor 完整对照表（2026-09-20 实测）**~~ ← **2026-09-20 已落地为 `OpenSourceArmouryRBMBalance` mod**（见修改 #12）。以下为原始数据版（此前的日志条被 2026-09-20 二轮重算覆盖）。

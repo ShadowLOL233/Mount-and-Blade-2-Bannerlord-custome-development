@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="English" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="Train troops" />
+        <string id="TYT_SelectMenuText" text="Choose how hard to drill your troops. Higher intensity grants more experience over time, but costs more gold." />
+        <string id="TYT_TierBasic" text="Basic training (+200 xp, 5{GOLD_ICON} per soldier every 6h)" />
+        <string id="TYT_TierAdvanced" text="Advanced training (+600 xp, 20{GOLD_ICON} per soldier every 6h)" />
+        <string id="TYT_TierMasterful" text="Masterful training (+1000 xp, 40{GOLD_ICON} per soldier every 6h)" />
+        <string id="TYT_NameBasic" text="Basic" />
+        <string id="TYT_NameAdvanced" text="Advanced" />
+        <string id="TYT_NameMasterful" text="Masterful" />
+        <string id="TYT_Back" text="Back" />
+        <string id="TYT_NeedGold" text="Not enough gold: one training pulse costs {COST}{GOLD_ICON}." />
+        <string id="TYT_TrainingText" text="Your troops are drilling here. Every 6 hours they gain experience, and you pay for their training. Choose 'Stop training' to finish." />
+        <string id="TYT_StopOption" text="Stop training" />
+        <string id="TYT_PulseMsg" text="{TIER} training: experience gained by {COUNT} soldiers (-{COST}{GOLD_ICON})." />
+        <string id="TYT_OutOfGold" text="Training stopped: not enough gold." />
+        <string id="TYT_Stopped" text="Training finished." />
+        <string id="TYT_NoTroops" text="No upgradeable troops to train." />
+    </strings>
+</base>

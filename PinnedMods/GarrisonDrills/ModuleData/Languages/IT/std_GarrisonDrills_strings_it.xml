@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="Italiano" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="Addestra le truppe" />
+        <string id="TYT_SelectMenuText" text="Scegli quanto intensamente addestrare le tue truppe. Un'intensità maggiore conferisce più esperienza nel tempo, ma costa più oro." />
+        <string id="TYT_TierBasic" text="Addestramento base (+10 xp, 5{GOLD_ICON} per soldato ogni 6 h)" />
+        <string id="TYT_TierAdvanced" text="Addestramento avanzato (+30 xp, 20{GOLD_ICON} per soldato ogni 6 h)" />
+        <string id="TYT_TierMasterful" text="Addestramento magistrale (+50 xp, 40{GOLD_ICON} per soldato ogni 6 h)" />
+        <string id="TYT_NameBasic" text="base" />
+        <string id="TYT_NameAdvanced" text="avanzato" />
+        <string id="TYT_NameMasterful" text="magistrale" />
+        <string id="TYT_Back" text="Indietro" />
+        <string id="TYT_NeedGold" text="Oro insufficiente: un ciclo di addestramento costa {COST}{GOLD_ICON}." />
+        <string id="TYT_TrainingText" text="Le tue truppe si addestrano qui. Ogni 6 ore guadagnano esperienza e tu paghi il loro addestramento. Scegli «Interrompi addestramento» per terminare." />
+        <string id="TYT_StopOption" text="Interrompi addestramento" />
+        <string id="TYT_PulseMsg" text="Addestramento ({TIER}): {COUNT} soldati hanno guadagnato esperienza (-{COST}{GOLD_ICON})." />
+        <string id="TYT_OutOfGold" text="Addestramento interrotto: oro insufficiente." />
+        <string id="TYT_Stopped" text="Addestramento completato." />
+        <string id="TYT_NoTroops" text="Nessuna truppa migliorabile da addestrare." />
+    </strings>
+</base>

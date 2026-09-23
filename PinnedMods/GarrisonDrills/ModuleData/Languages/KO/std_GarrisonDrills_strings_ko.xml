@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="한국어" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="병력 훈련" />
+        <string id="TYT_SelectMenuText" text="병력을 얼마나 강도 높게 훈련할지 선택하세요. 강도가 높을수록 시간이 지나며 더 많은 경험치를 얻지만 더 많은 금화가 듭니다." />
+        <string id="TYT_TierBasic" text="기본 훈련 (병사당 6시간마다 경험치 +10, 5{GOLD_ICON})" />
+        <string id="TYT_TierAdvanced" text="고급 훈련 (병사당 6시간마다 경험치 +30, 20{GOLD_ICON})" />
+        <string id="TYT_TierMasterful" text="숙련 훈련 (병사당 6시간마다 경험치 +50, 40{GOLD_ICON})" />
+        <string id="TYT_NameBasic" text="기본" />
+        <string id="TYT_NameAdvanced" text="고급" />
+        <string id="TYT_NameMasterful" text="숙련" />
+        <string id="TYT_Back" text="뒤로" />
+        <string id="TYT_NeedGold" text="금화 부족: 훈련 1회에 {COST}{GOLD_ICON}이(가) 듭니다." />
+        <string id="TYT_TrainingText" text="병력이 이곳에서 훈련하고 있습니다. 6시간마다 경험치를 얻고 그 훈련 비용을 지불합니다. 끝내려면 '훈련 종료'를 선택하세요." />
+        <string id="TYT_StopOption" text="훈련 종료" />
+        <string id="TYT_PulseMsg" text="훈련 ({TIER}): 병사 {COUNT}명이 경험치를 얻었습니다 (-{COST}{GOLD_ICON})." />
+        <string id="TYT_OutOfGold" text="훈련 중단: 금화가 부족합니다." />
+        <string id="TYT_Stopped" text="훈련 완료." />
+        <string id="TYT_NoTroops" text="훈련할 수 있는 승급 가능한 병력이 없습니다." />
+    </strings>
+</base>

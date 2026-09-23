@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Module>
-  <Name value="PS Cache Warmup" />
-  <Id value="PSCacheWarmup" />
-  <Version value="v0.2.1" />
+  <Name value="Garrison Drills Message Enhancer" />
+  <Id value="GarrisonDrillsMessageEnhancer" />
+  <Version value="v1.0.0" />
   <DefaultModule value="false" />
   <ModuleCategory value="Singleplayer" />
   <ModuleType value="Community" />
@@ -11,24 +11,20 @@
     <DependedModule Id="SandBoxCore" />
     <DependedModule Id="Sandbox" />
     <DependedModule Id="Bannerlord.Harmony" />
+    <DependedModule Id="GarrisonDrillsPinned" />
   </DependedModules>
-  <!-- PlayerSettlement is a SOFT dependency:
-       resolved at runtime via AccessTools.TypeByName so this mod is harmless
-       when PS is not loaded (no listener registered, no warmup ever fires).
-       Do NOT list PlayerSettlement in DependedModules or the mod will fail to
-       load on rigs that don't have PS installed. -->
   <DependedModuleMetadatas>
     <DependedModuleMetadata id="Native" order="LoadBeforeThis" />
     <DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" />
     <DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" />
     <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" />
-    <DependedModuleMetadata id="PlayerSettlement" order="LoadBeforeThis" optional="true" />
+    <DependedModuleMetadata id="GarrisonDrillsPinned" order="LoadBeforeThis" />
   </DependedModuleMetadatas>
   <SubModules>
     <SubModule>
-      <Name value="PS Cache Warmup SubModule" />
-      <DLLName value="PSCacheWarmup.dll" />
-      <SubModuleClassType value="PSCacheWarmup.SubModule" />
+      <Name value="Garrison Drills Message Enhancer SubModule" />
+      <DLLName value="GarrisonDrillsMessageEnhancer.dll" />
+      <SubModuleClassType value="GarrisonDrillsMessageEnhancer.SubModule" />
       <Tags>
         <Tag key="DedicatedServerType" value="none" />
         <Tag key="IsNoRenderModeElement" value="false" />

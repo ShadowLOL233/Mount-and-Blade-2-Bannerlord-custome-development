@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="繁體中文" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="訓練部隊" />
+        <string id="TYT_SelectMenuText" text="選擇訓練部隊的強度。強度越高，隨時間獲得的經驗越多，但消耗的金幣也越多。" />
+        <string id="TYT_TierBasic" text="基礎訓練（每名士兵每6小時 +10 經驗，5{GOLD_ICON}）" />
+        <string id="TYT_TierAdvanced" text="進階訓練（每名士兵每6小時 +30 經驗，20{GOLD_ICON}）" />
+        <string id="TYT_TierMasterful" text="大師訓練（每名士兵每6小時 +50 經驗，40{GOLD_ICON}）" />
+        <string id="TYT_NameBasic" text="基礎" />
+        <string id="TYT_NameAdvanced" text="進階" />
+        <string id="TYT_NameMasterful" text="大師" />
+        <string id="TYT_Back" text="返回" />
+        <string id="TYT_NeedGold" text="金幣不足：一輪訓練需要 {COST}{GOLD_ICON}。" />
+        <string id="TYT_TrainingText" text="你的部隊正在此訓練。每6小時獲得一次經驗，你需為訓練付費。選擇「停止訓練」以結束。" />
+        <string id="TYT_StopOption" text="停止訓練" />
+        <string id="TYT_PulseMsg" text="訓練（{TIER}）：{COUNT} 名士兵獲得了經驗（-{COST}{GOLD_ICON}）。" />
+        <string id="TYT_OutOfGold" text="訓練已停止：金幣不足。" />
+        <string id="TYT_Stopped" text="訓練已完成。" />
+        <string id="TYT_NoTroops" text="沒有可升級的部隊可供訓練。" />
+    </strings>
+</base>

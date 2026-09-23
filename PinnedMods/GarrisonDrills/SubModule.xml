@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Module>
+  <Name value="Garrison Drills (Localize Custom Fix)" />
+  <Id value="GarrisonDrillsPinned" />
+  <Version value="v1.1.0" />
+  <DefaultModule value="false" />
+  <Official value="false" />
+  <SingleplayerModule value="true" />
+  <MultiplayerModule value="false" />
+  <ModuleCategory value="Singleplayer" />
+  <DependedModules>
+    <DependedModule Id="Native" DependentVersion="v1.4.5" />
+    <DependedModule Id="SandBoxCore" DependentVersion="v1.4.5" />
+    <DependedModule Id="Sandbox" DependentVersion="v1.4.5" />
+    <DependedModule Id="StoryMode" DependentVersion="v1.4.5" />
+  </DependedModules>
+  <SubModules>
+    <SubModule>
+      <Name value="GarrisonDrills" />
+      <DLLName value="GarrisonDrills.dll" />
+      <SubModuleClassType value="GarrisonDrills.SubModule" />
+      <Tags>
+        <Tag key="DedicatedServerType" value="none" />
+        <Tag key="IsNoRenderModeElement" value="false" />
+      </Tags>
+    </SubModule>
+  </SubModules>
+</Module>

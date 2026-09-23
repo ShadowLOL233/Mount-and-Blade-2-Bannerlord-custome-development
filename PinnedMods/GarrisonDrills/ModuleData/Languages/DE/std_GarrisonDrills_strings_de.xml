@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="Deutsch" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="Truppen ausbilden" />
+        <string id="TYT_SelectMenuText" text="Wählt, wie hart Ihr Eure Truppen drillt. Höhere Intensität bringt mit der Zeit mehr Erfahrung, kostet aber mehr Gold." />
+        <string id="TYT_TierBasic" text="Grundausbildung (+10 EP, 5{GOLD_ICON} pro Soldat alle 6 Std.)" />
+        <string id="TYT_TierAdvanced" text="Fortgeschrittene Ausbildung (+30 EP, 20{GOLD_ICON} pro Soldat alle 6 Std.)" />
+        <string id="TYT_TierMasterful" text="Meisterausbildung (+50 EP, 40{GOLD_ICON} pro Soldat alle 6 Std.)" />
+        <string id="TYT_NameBasic" text="Grund" />
+        <string id="TYT_NameAdvanced" text="Fortgeschritten" />
+        <string id="TYT_NameMasterful" text="Meister" />
+        <string id="TYT_Back" text="Zurück" />
+        <string id="TYT_NeedGold" text="Nicht genug Gold: Ein Ausbildungszyklus kostet {COST}{GOLD_ICON}." />
+        <string id="TYT_TrainingText" text="Eure Truppen drillen hier. Alle 6 Stunden sammeln sie Erfahrung, und Ihr bezahlt für ihre Ausbildung. Wählt „Ausbildung beenden“, um abzuschließen." />
+        <string id="TYT_StopOption" text="Ausbildung beenden" />
+        <string id="TYT_PulseMsg" text="Ausbildung ({TIER}): {COUNT} Soldaten haben Erfahrung gesammelt (-{COST}{GOLD_ICON})." />
+        <string id="TYT_OutOfGold" text="Ausbildung gestoppt: nicht genug Gold." />
+        <string id="TYT_Stopped" text="Ausbildung abgeschlossen." />
+        <string id="TYT_NoTroops" text="Keine aufstiegsfähigen Truppen zum Ausbilden." />
+    </strings>
+</base>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="简体中文" />
+    </tags>
+    <strings>
+        <string id="GDMsgEnh_Pulse" text="训练（{TIER}）：{COUNT} 名士兵每人获得 +{XP_PER} 经验（合计 +{XP_TOTAL} 经验，-{COST}{GOLD_ICON}）。" />
+    </strings>
+</base>

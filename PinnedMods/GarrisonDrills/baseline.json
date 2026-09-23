@@ -1,0 +1,18 @@
+{
+  "workshop_id": "3735834360",
+  "pinned_from_workshop_version": "v1.1.0",
+  "pinned_date": "2026-09-22",
+  "workshop_dll_sha256_at_pin": "0A1DEF3CE79128CB690BB5059E2577EA57A413EA41B3E1D143D773F674EEF20D",
+  "strategy": "source-recompile",
+  "history": [
+    "2026-09-16 v1: workshop DLL byte-patched (offsets 2332/2348/2365 = 0x14/0x3C/0x64) + XML edits — workshop auto-updates kept reverting.",
+    "2026-09-22 v2 (PinnedMods framework): kept byte-patched DLL as a repo copy + separate module Id GarrisonDrillsPinned — DLL constants held but Bannerlord failed to auto-load the language XML (root cause: workshop mod's SubModule.xml is missing whatever language declaration would trigger LocalizationManager scan), so UI still showed +10/+30/+50 code fallback while the constants ran +20/+60/+100.",
+    "2026-09-22 v3 (source-recompile): ilspycmd -p decompiled the byte-patched DLL to a project; src/GarrisonDrillsBehavior.cs now holds the +20/+60/+100 constants AND the +20/+60/+100 fallback strings inline. UI is right whether or not language XML loads."
+  ],
+  "patches_now_in_source": [
+    "Tiers array constants: (Basic 10,5) (Advanced 30,20) (Masterful 50,40) -> (Basic 20,5) (Advanced 60,20) (Masterful 100,40) — same effect as the old byte-patch offsets, but held in C# source now.",
+    "AddMenus() fallback strings for TYT_TierBasic / TYT_TierAdvanced / TYT_TierMasterful: '+10 xp' / '+30 xp' / '+50 xp' -> '+20 xp' / '+60 xp' / '+100 xp'.",
+    "Languages/std_GarrisonDrills_strings.xml (root) + EN/std_GarrisonDrills_strings_en.xml + CNs/std_GarrisonDrills_strings_cns.xml — all updated to +20/+60/+100 (kept for the day language XML does load; harmless when it doesn't since fallback strings now match)."
+  ],
+  "rebase_notes": "When workshop bumps: (1) fetch the new workshop DLL, (2) `ilspycmd -p <new-dll> -o _tmp -r <BannerlordBin>` and diff against src/, (3) merge upstream changes into src/, keeping our 3 fallback-string edits + constants, (4) `deploy.ps1` rebuilds, (5) update workshop_dll_sha256_at_pin + pinned_from_workshop_version + history entry."
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="Français" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="Entraîner les troupes" />
+        <string id="TYT_SelectMenuText" text="Choisissez l'intensité de l'entraînement de vos troupes. Une intensité plus élevée octroie plus d'expérience au fil du temps, mais coûte plus d'or." />
+        <string id="TYT_TierBasic" text="Entraînement de base (+10 xp, 5{GOLD_ICON} par soldat toutes les 6 h)" />
+        <string id="TYT_TierAdvanced" text="Entraînement avancé (+30 xp, 20{GOLD_ICON} par soldat toutes les 6 h)" />
+        <string id="TYT_TierMasterful" text="Entraînement de maître (+50 xp, 40{GOLD_ICON} par soldat toutes les 6 h)" />
+        <string id="TYT_NameBasic" text="de base" />
+        <string id="TYT_NameAdvanced" text="avancé" />
+        <string id="TYT_NameMasterful" text="de maître" />
+        <string id="TYT_Back" text="Retour" />
+        <string id="TYT_NeedGold" text="Or insuffisant : un cycle d'entraînement coûte {COST}{GOLD_ICON}." />
+        <string id="TYT_TrainingText" text="Vos troupes s'entraînent ici. Toutes les 6 heures, elles gagnent de l'expérience et vous payez leur entraînement. Choisissez « Arrêter l'entraînement » pour terminer." />
+        <string id="TYT_StopOption" text="Arrêter l'entraînement" />
+        <string id="TYT_PulseMsg" text="Entraînement ({TIER}) : {COUNT} soldats ont gagné de l'expérience (-{COST}{GOLD_ICON})." />
+        <string id="TYT_OutOfGold" text="Entraînement arrêté : or insuffisant." />
+        <string id="TYT_Stopped" text="Entraînement terminé." />
+        <string id="TYT_NoTroops" text="Aucune troupe susceptible d'être améliorée à entraîner." />
+    </strings>
+</base>

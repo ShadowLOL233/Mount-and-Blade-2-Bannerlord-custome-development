@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="Türkçe" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="Birlikleri eğit" />
+        <string id="TYT_SelectMenuText" text="Birliklerinizi ne kadar yoğun eğiteceğinizi seçin. Daha yüksek yoğunluk zamanla daha fazla tecrübe sağlar ama daha çok altına mal olur." />
+        <string id="TYT_TierBasic" text="Temel eğitim (+10 tecrübe, asker başına 6 saatte bir 5{GOLD_ICON})" />
+        <string id="TYT_TierAdvanced" text="İleri eğitim (+30 tecrübe, asker başına 6 saatte bir 20{GOLD_ICON})" />
+        <string id="TYT_TierMasterful" text="Usta eğitimi (+50 tecrübe, asker başına 6 saatte bir 40{GOLD_ICON})" />
+        <string id="TYT_NameBasic" text="Temel" />
+        <string id="TYT_NameAdvanced" text="İleri" />
+        <string id="TYT_NameMasterful" text="Usta" />
+        <string id="TYT_Back" text="Geri" />
+        <string id="TYT_NeedGold" text="Yeterli altın yok: bir eğitim döngüsü {COST}{GOLD_ICON} tutar." />
+        <string id="TYT_TrainingText" text="Birlikleriniz burada talim yapıyor. Her 6 saatte bir tecrübe kazanırlar ve siz eğitimlerinin bedelini ödersiniz. Bitirmek için 'Eğitimi durdur' seçeneğini seçin." />
+        <string id="TYT_StopOption" text="Eğitimi durdur" />
+        <string id="TYT_PulseMsg" text="Eğitim ({TIER}): {COUNT} asker tecrübe kazandı (-{COST}{GOLD_ICON})." />
+        <string id="TYT_OutOfGold" text="Eğitim durduruldu: yeterli altın yok." />
+        <string id="TYT_Stopped" text="Eğitim tamamlandı." />
+        <string id="TYT_NoTroops" text="Eğitilecek geliştirilebilir birlik yok." />
+    </strings>
+</base>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="日本語" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="兵を訓練する" />
+        <string id="TYT_SelectMenuText" text="兵の訓練の強度を選んでください。強度が高いほど時間あたりの経験値は増えますが、より多くの金がかかります。" />
+        <string id="TYT_TierBasic" text="基本訓練（兵士1人あたり6時間ごとに経験値+10、5{GOLD_ICON}）" />
+        <string id="TYT_TierAdvanced" text="上級訓練（兵士1人あたり6時間ごとに経験値+30、20{GOLD_ICON}）" />
+        <string id="TYT_TierMasterful" text="熟練訓練（兵士1人あたり6時間ごとに経験値+50、40{GOLD_ICON}）" />
+        <string id="TYT_NameBasic" text="基本" />
+        <string id="TYT_NameAdvanced" text="上級" />
+        <string id="TYT_NameMasterful" text="熟練" />
+        <string id="TYT_Back" text="戻る" />
+        <string id="TYT_NeedGold" text="金が足りません：訓練1回につき {COST}{GOLD_ICON} かかります。" />
+        <string id="TYT_TrainingText" text="兵士たちがここで訓練しています。6時間ごとに経験値を得て、その訓練費を支払います。終了するには「訓練を終える」を選んでください。" />
+        <string id="TYT_StopOption" text="訓練を終える" />
+        <string id="TYT_PulseMsg" text="訓練（{TIER}）：{COUNT} 名の兵士が経験値を得ました（-{COST}{GOLD_ICON}）。" />
+        <string id="TYT_OutOfGold" text="訓練を中止しました：金が足りません。" />
+        <string id="TYT_Stopped" text="訓練が完了しました。" />
+        <string id="TYT_NoTroops" text="訓練できる昇格可能な兵がいません。" />
+    </strings>
+</base>

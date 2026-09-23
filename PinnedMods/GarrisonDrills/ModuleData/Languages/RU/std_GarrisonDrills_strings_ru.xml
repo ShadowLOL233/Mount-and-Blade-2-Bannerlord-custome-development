@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="Русский" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="Тренировать войска" />
+        <string id="TYT_SelectMenuText" text="Выберите интенсивность тренировки войск. Чем выше уровень, тем больше опыта со временем, но и дороже." />
+        <string id="TYT_TierBasic" text="Базовое обучение (+10 опыта, 5{GOLD_ICON} с бойца каждые 6 ч)" />
+        <string id="TYT_TierAdvanced" text="Продвинутое обучение (+30 опыта, 20{GOLD_ICON} с бойца каждые 6 ч)" />
+        <string id="TYT_TierMasterful" text="Мастерское обучение (+50 опыта, 40{GOLD_ICON} с бойца каждые 6 ч)" />
+        <string id="TYT_NameBasic" text="Базовое" />
+        <string id="TYT_NameAdvanced" text="Продвинутое" />
+        <string id="TYT_NameMasterful" text="Мастерское" />
+        <string id="TYT_Back" text="Назад" />
+        <string id="TYT_NeedGold" text="Недостаточно золота: один цикл тренировки стоит {COST}{GOLD_ICON}." />
+        <string id="TYT_TrainingText" text="Ваши войска тренируются здесь. Каждые 6 часов они получают опыт, а вы оплачиваете обучение. Выберите «Прекратить тренировку», чтобы закончить." />
+        <string id="TYT_StopOption" text="Прекратить тренировку" />
+        <string id="TYT_PulseMsg" text="Тренировка ({TIER}): опыт получили {COUNT} солдат (-{COST}{GOLD_ICON})." />
+        <string id="TYT_OutOfGold" text="Тренировка остановлена: не хватает золота." />
+        <string id="TYT_Stopped" text="Тренировка завершена." />
+        <string id="TYT_NoTroops" text="Нет войск, которые можно обучить." />
+    </strings>
+</base>

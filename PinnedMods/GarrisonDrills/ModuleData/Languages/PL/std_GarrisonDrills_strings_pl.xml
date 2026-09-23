@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+    <tags>
+        <tag language="Polski" />
+    </tags>
+    <strings>
+        <string id="TYT_TrainOption" text="Szkol wojska" />
+        <string id="TYT_SelectMenuText" text="Wybierz, jak intensywnie szkolić swoje wojska. Wyższa intensywność daje z czasem więcej doświadczenia, ale kosztuje więcej złota." />
+        <string id="TYT_TierBasic" text="Szkolenie podstawowe (+10 dośw., 5{GOLD_ICON} na żołnierza co 6 godz.)" />
+        <string id="TYT_TierAdvanced" text="Szkolenie zaawansowane (+30 dośw., 20{GOLD_ICON} na żołnierza co 6 godz.)" />
+        <string id="TYT_TierMasterful" text="Szkolenie mistrzowskie (+50 dośw., 40{GOLD_ICON} na żołnierza co 6 godz.)" />
+        <string id="TYT_NameBasic" text="podstawowe" />
+        <string id="TYT_NameAdvanced" text="zaawansowane" />
+        <string id="TYT_NameMasterful" text="mistrzowskie" />
+        <string id="TYT_Back" text="Wstecz" />
+        <string id="TYT_NeedGold" text="Za mało złota: jeden cykl szkolenia kosztuje {COST}{GOLD_ICON}." />
+        <string id="TYT_TrainingText" text="Twoje wojska szkolą się tutaj. Co 6 godzin zdobywają doświadczenie, a ty płacisz za ich szkolenie. Wybierz „Zakończ szkolenie”, aby zakończyć." />
+        <string id="TYT_StopOption" text="Zakończ szkolenie" />
+        <string id="TYT_PulseMsg" text="Szkolenie ({TIER}): {COUNT} żołnierzy zdobyło doświadczenie (-{COST}{GOLD_ICON})." />
+        <string id="TYT_OutOfGold" text="Szkolenie przerwane: za mało złota." />
+        <string id="TYT_Stopped" text="Szkolenie zakończone." />
+        <string id="TYT_NoTroops" text="Brak jednostek możliwych do ulepszenia do szkolenia." />
+    </strings>
+</base>

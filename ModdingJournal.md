@@ -2402,6 +2402,67 @@ public static void SetBound(this Village village, Settlement boundTarget) {
     - **Aserai LegArmor 6 件**：顶 `wrapped_shoes` 35（Cloth · 无 Plate 顶档）· Moccasins/Boots With Greaves
     - **Aserai HorseHarness 31 件**：顶 `mail_and_plate_barding` h=90/b=47/l=47/a=57 · Camel Saddle 特色（骆驼鞍独有类别）
   - **累计 帝国 378 + Vlandia 312 + Battania 307 + Sturgia 194 + Aserai 323 = 1514 件决议归档**
+  - **⚠ Aserai K 家族用户特批 override（2026-09-23）**：6 件 Immortal's / Noble Lamellar 系头盔 override Aserai vanilla 顶 100 → **135/50/40**（Faceplate 版 135/70/40）· 跨文化 anchor 借用 Vlandia Full Helm 140/116/40 · 依据：Persian Immortals（阿契美尼德/萨珊）跨文化命名共识（Nordic Warlord 150 · Roman Cataphract 144 · Frankish Knight 140 · Persian Immortal 135）· 用户选方案 B（135）避免跨文化传导；若选方案 C（150）需评估 Empire/Sturgia/Vlandia 顶档同步 override
+
+  ---
+
+  ## 📖 OSA v2 平衡方法论详细步骤（2026-09-23 5 文化实践定案）
+
+  **每文化 × 6 类型 × 每类型完整流程**：
+
+  **步骤 1 · 抽 vanilla+RBM 数据**：
+  - PowerShell 脚本查 `E:\SteamLibrary\steamapps\workshop\content\261550\{RBM_ID}\ModuleData\RBMCombat_*_armors.xml`
+  - **必须查全 4 armor 字段** (head/body/arm/leg)——HorseHarness 特别（vanilla 只用 body 但 RBM 加了 head/arm/leg 装饰字段）
+  - 过滤 `culture=<文化名>` · 提取 id/name/material_type/wt/h/b/l/a
+  - **验证顶点**：找 h/b/l/a 最大值物品作为跨文化对比 anchor
+
+  **步骤 2 · 建 VANILLA_REFERENCE 章节**：
+  - 按材质分组（Cloth/Leather/Chainmail/Plate）
+  - 每组建 markdown 表（id · mat · wt · h/b/a · 游戏名）
+  - 计梯度图（Cloth 民用 → Padded → Leather → Chainmail → Plate 顶）
+  - 提取关键约束（顶点 · 材质硬约束 · 命名子结构分档）
+  - 标记跨文化特色 base_type（如 Vlandia Full Helm / Sturgia Goggled / Aserai Turban / Battania Cheek Guards）
+
+  **步骤 3 · 抽 OSA 数据**：
+  - `E:\SteamLibrary\steamapps\workshop\content\261550\3011479883\ModuleData` （+ 3010990914 for HorseHarness）
+  - 同上过滤 culture · 提取全 4 字段
+  - **v1 系统性观察**：OSA v1 基本只有 body（或 arm/leg 单字段），跨文化平均 v1 顶 sub vanilla 顶 30-50%
+
+  **步骤 4 · 分家族分类**（按命名 base_type + aventail suffix + 材质 + 结构描述）：
+  - 每文化 3-15 家族 A-O · 按命名 pattern + head 值分档
+  - 头盔常见基型：Cap/Skullcap/Nasal/Spangenhelm/Kettle/Faceguard/Cataphract/Lord/Battle Crown
+  - Cape 三部分律：Rule 1 命名二分律 · Rule 2 arm mesh-tiered · Rule 3 视觉判断优先
+  - BodyArmor 三档序 body ≥ leg > arm · 材质硬约束
+  - HandArmor/LegArmor 单字段 + 命名子结构分档
+  - HorseHarness 全 4 字段 + Half vs Full 差异在 leg（但引擎硬 code 只用 body_armor · 见规则 16）
+
+  **步骤 5 · 逐家族定值 · vanilla 直匹配优先**：
+  - **优先级 1**：OSA 命名与 vanilla+RBM 结构完全对应 → **直匹配 vanilla 数值**（如 Empire "Cavalry Leather Armor" → `imperial_mail_over_leather` 47/22/33）
+  - **优先级 2**：无 direct match → 家族均值 fallback（同材质 + 结构描述 + 装饰前缀零影响）
+  - **优先级 3**：跨文化 anchor 借用（如 Aserai Immortal's 借用 Vlandia Full Helm 尺度 · 需用户特批）
+  - **绝不擅自超越 vanilla+RBM 尺度**（铁律 1）· 例外只有用户 override（见规则 17）
+
+  **步骤 6 · 归档 BALANCE_V2_LOG.md**：
+  - 每家族一节 · 用 markdown 表（`# / id / 游戏名 / v1 数值 / v2 决议数值`）
+  - 每决议标注 vanilla anchor 依据（如 "vanilla `xxx` 直匹配" 或 "跨文化 anchor 借用 vanilla `xxx`"）
+  - 全部标 🔵 log-only（决议归档 · XML 未动）
+  - 用户特批 override 标 "⚠ 用户特批" + 记录 quote + anchor 借用依据
+
+  **步骤 7 · 收官统计 + commit + push**：
+  - 每文化全 6 类完成后写"收官统计"表（家族 · n · 顶点参照）
+  - 更新 ModdingJournal 进度快照
+  - `git commit -m "OSA v2: <culture> 全 6 类完成 · N 件决议归档"` + `git push origin main`
+
+  **跨文化命名共识速查**（2026-09-23 5 文化实践归纳）：
+  | 精英兵种类型 | 各文化命名 | 顶点 h |
+  |---|---|---:|
+  | 顶级重装骑兵 | Sturgia Warlord / Empire Cataphract / Vlandia Full Helm Knight / Aserai Immortal's（特批） / Battania Warlord | 150 / 144 / 140 / 135 / 121 |
+  | 中高档步兵 | Empire Legion / Vlandia Coat of Plates / Sturgia Huscarl / Aserai Emir / Battania Highborn | 85-105 |
+  | 民用 | Cloth Tunic/Dress/Robe/Kaftan/Toga | 6-14 |
+
+  **⚠ 未来 Khuzait/Nord 沿用**：抽 vanilla → 分家族 → vanilla 直匹配定值 → 归档 · 每文化 3-5 hours × 6 类 = 一次 session 完成一个文化
+
+  ---
 
   **Cape 三部分律速查**（2026-09-23 用户拍板）：
   1. **命名二分律**：有 shoulder/pauldron 命名 → 允许 body + arm 同 > 0（**body > arm 严格序**）；无此命名（Cape/Cloak/Sash/Focale/Pelt/Collar）→ **arm 必须 = 0**

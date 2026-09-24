@@ -5278,16 +5278,18 @@ Cloak 结构中档 body ~20-28（Plated Lion Head +6 反映甲片补强）· arm
 
 ---
 
-## Aserai · K 家族：Darshi Immortal's / Noble Lamellar 顶点（5 件）
+## Aserai · K 家族：Darshi Immortal's / Noble Lamellar 顶点（5 件 · ⚠ 用户特批跨文化 anchor 借用）
 
-**vanilla 参照**：`southern_lord_helmet` **100/22/0** 顶
+**vanilla 参照**：`southern_lord_helmet` **100/22/0** Aserai 顶
+
+**⚠ 用户特批 override（2026-09-23）**：Immortal's / Noble Lamellar 命名 imply 波斯不朽者 / Sasanid Cataphract 前身（历史上是萨珊/阿契美尼德帝国最重装骑兵，与罗马 Cataphract 同源）· 跨文化 anchor 借用 **Vlandia `full_helm_over_mail_coif` 140/116/40** 参照 · h 达到 135（sub Vlandia 顶 5 · sub Sturgia 顶 15）· 符合"跨文化命名共识"（Nordic Warlord 150 · Roman Cataphract 144 · Frankish Knight 140 · Persian Immortal 135）· 用户 quote："Darshi Immortal's 和 Noble Lamellar 头盔... 头甲需要提升到 120-150，然后身甲与臂甲需要同步提升"
 
 | # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
 |---|---|---|---|---|
-| 1 | `AR_aserai_lord_helmet_e` | Southern Immortal's Helmet | 52/4.2 | **100/22/0/4.0** (vanilla `southern_lord_helmet` 100 顶 直匹配) |
-| 2 | `AR_aserai_lord_helmet_i` | Darshi Crowned Noble Lamellar Helmet | 52/4.2 | **100/22/0/4.0** |
-| 3-5 | `AR_aserai_helmet_r/z/zd` | Darshi Immortal's Plumed Ridge/Lamellar/Spangen | 54/4.2 | **100/22/0/4.0** (Immortal's 顶点) |
-| 6 | `AR_aserai_lord_helmet_h` | Noble Lamellar Helmet With Faceplate | 54/4.2 | **100/50/20/4.0** (Faceplate body 50) |
+| 1 | `AR_aserai_lord_helmet_e` | Southern Immortal's Helmet | 52/4.2 | **135/50/40/4.0** ⚠ 用户特批（+35 head · +28 body · +40 arm） |
+| 2 | `AR_aserai_lord_helmet_i` | Darshi Crowned Noble Lamellar Helmet | 52/4.2 | **135/50/40/4.0** ⚠ 用户特批 |
+| 3-5 | `AR_aserai_helmet_r/z/zd` | Darshi Immortal's Plumed Ridge/Lamellar/Spangen | 54/4.2 | **135/50/40/4.0** ⚠ 用户特批（3 件同档） |
+| 6 | `AR_aserai_lord_helmet_h` | Noble Lamellar Helmet With Faceplate | 54/4.2 | **135/70/40/4.0** ⚠ 用户特批（Faceplate body 70 vs Standard 50 · 用户明确指定 135/70/40 而非方案 B 的 140/70/40） |
 | 7 | `AR_aserai_lord_helmet_j` | Darshi Tall Helmet With Feathers | 47/2.9 | **97/12/25/3.0** |
 | 8 | `AR_aserai_helmet_g/h` | Darshi Tall Helmet Over Mail/Closed Mail | 52/1.8 | **95/12/40/2.5** |
 | 9 | `AR_aserai_helmet_i` | Darshi Open Tall Helmet | 32/1.8 | **73/12/20/2.0** |

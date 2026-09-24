@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-09-23
+**最后更新**：2026-09-24
 
 ## 目录
 - [环境与路径](#环境与路径)
@@ -556,6 +556,69 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 2. 实机验证 hotkey filter 现在能正常工作
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
+
+### 48. OSA v2 · 全 7 文化收官 + Nord/Empire vanilla override + 323 件 manual patch 落地（2026-09-24）
+
+**背景**：本日一次性完成 OSA v2 剩余全部工作 · 从"Khuzait 华夏中原线 + 铁浮屠 148 特批"起 · 到 Aserai 波斯萨珊线追加 · Empire vanilla override 首次打破铁律 · Vlandia L 家族修订 · Nord NavalDLC 65 件完整 v2 平衡（第 7 个文化 · 首次批量 vanilla override）· 最终**手工 override XML 落地 deploy** · 全项目决议归档 1770+ 件 · 手工 XML override 323 件生效。
+
+**新增 3 条铁律**（BALANCE_V2_LOG.md 顶部）：
+
+1. **华夏中原 / 波斯萨珊 精工线**（世界观扩展）：Khuzait/Aserai OSA 命名含 `Lamellar Coat` / `Heavy Lamellar` / `Cataphract` / `Fluted` / `Darshi` / `Mastercrafted` / `Immortal's` 等精工前缀 → 允许突破文化 vanilla 顶 · 对齐或略超 Empire Cataphract 尺度。用户 quote："将它们作为一个和全盛帝国平起平坐甚至有过之而无不及的远东帝国的装备"
+
+2. **Vanilla+RBM Override**（首次打破 · 2026-09-24）：`lamellar_with_scale_skirt` 118/122/45 ↔ `imperial_scale_armor` 135/122/67 互调 · 新分工"高身甲 vs 高臂甲"平替（总防御 302 vs 307 near-equal）。用户 quote："请为我检视帝国 Heavy Lamellar over Mail with Scale Skirt 的数值"。前例意义：此后 override RBM vanilla 需用户明示。
+
+3. **Cape 三部分律 arm=30 新档**（Khuzait Lamellar Pauldrons + Heavy Lamellar Shoulders 特批）：+5 越 Elite Heavy 25 · 反映"甲片大面积覆盖肩+上臂完整"视觉判断优先律。
+
+**各文化决议数**：
+- Empire 378 + **4 vanilla override**（lamellar_with_scale_skirt / imperial_scale_armor 互调 + 联动 Empire H 家族 2 件）
+- Vlandia 312 + **3 修订**（L 家族 Lamellar Over Heavy Mail Hauberk 从中档 75-78 拉到 vanilla 顶 100 · anchor 修正）
+- Battania 307
+- Sturgia 194
+- Aserai 343（含 2026-09-24 波斯萨珊追加 20：BodyArmor 顶 5 + Darshi 略微 10 + HeadArmor Darshi Close Mail/Cavalry 升档 5）
+- **Khuzait 232**（新增 · HeadArmor 129 + BodyArmor 42 + Cape 38 + HandArmor 4 + LegArmor 6 + HorseHarness 13）
+- **Nord 65**（新增 · NavalDLC 首次批量 vanilla override · HeadArmor 15 + BodyArmor 22 + Cape 15 + HandArmor 7 + LegArmor 6）
+- **累计 1835 件决议归档**
+
+**关键顶点全图**（2026-09-24 收官）：
+
+| 文化 | Body 顶 | Head 顶 | 定位 |
+|---|---:|---:|---|
+| Empire | 135 (lamellar_with_scale_skirt override · 高身甲) · 118 (imperial_scale override · 高臂甲) | 144 (imperial_goggled_helmet Cataphract) | 罗马拜占庭 |
+| Vlandia | 100 (sturgian_fortified_armor) | 140 (full_helm_over_mail_coif) | Frankish Knight |
+| Battania | 96 (battania_warlord_armor) | 121 (battanian_crowned_helmet) | Celtic 部落 |
+| Sturgia | 105 (sturgian_lamellar_fortified) | 150 (sturgian_lord_helmet_c) | Nordic Warlord |
+| Aserai | 138 (Mastercrafted Chain Hauberk · 波斯萨珊线) | 135 (Immortal's) | Persian Immortal + 沙漠 |
+| Khuzait | 138 (Heavy Lamellar · 华夏中原线) | 148 (铁浮屠 G 家族 Steel Helmet w/ Closed Lamellar) | 华夏中原精工帝国 |
+| **Nord** | **115** (Heavy Mastercrafted Northern) | **155** (Berserker Reinforced · 跨文化 head 最高) | 精英维京海战 kingdom |
+
+**跨文化 head 排序**：Nord 155 > Sturgia 150 > Khuzait 148 > Empire 144 > Vlandia 140 > Aserai 135 > Battania 121
+**跨文化 body 排序**：Aserai/Khuzait 138 > Empire 135 > Nord 115 > Sturgia 105 > Vlandia 100 > Battania 96
+**跨文化 leg 顶**：Nord `hybrid_armor_boots_b` Majestic Iron Boots 65（+5 vs Sturgia 60）
+
+**Nord NavalDLC 发现过程**：Nord 是 vanilla+NavalDLC 官方文化（不是 mod）· 之前扫描漏了 NavalDLC 目录（v1.2.7 base 但未在 SandBoxCore 里）· 首次扫描误报"Nord 装备 0 件"→ 实际 82 件（65 armor + 9 shield + 8 civilian）· 完全未参与 RBM 平衡（Berserker Helmet vanilla h=45 vs Sturgia RBM 顶 150 · 严重欠强）· 用户批准选项 B（Sturgia+10 精英升级）· 全 65 件 Nordic 命名系（Berserker/Vendel/Huscarl/Mastercrafted/Blackened Assassin/Northman Raider）按精英升级尺度归档。
+
+**手工 override XML 生成器**（本次落地 pipeline）：
+- 新建 `OpenSourceArmouryRBMBalance/src/manual_override.ps1` · 数据驱动生成器 · 内置 323 件手工决议 hashtable · 从各源（RBM / OSA workshop / NavalDLC / SandBoxCore）拉每件原 Item XML 节点 · 只修改 Armor 属性（head/body/leg/arm）保留其他属性完整（Bannerlord XML whole-node replacement 惯例）· 输出 `ModuleData/OSABalance_manual_override.xml` 1944 行
+- SubModule.xml 加载顺序：auto-generated `_armor_override.xml`（1500+ 件 v1 factor-based baseline）→ `_manual_override.xml`（323 件手工审 override）· 后者覆盖前者
+- 索引 2915 件跨源 · 323 件全部匹配无遗漏 · 部署到 `E:\...\Modules\OpenSourceArmouryRBMBalance\`
+- 未来修订：直接编辑 `manual_override.ps1` 里对应 decision → rerun → deploy
+
+**RetinuesCultureFilter v1.5**（本次同步升级）：
+- 加 Nord button 到 filter 循环（7 button：Empire/Vlandia/Aserai/Battania/Sturgia/Khuzait/Nord）
+- UI 宽度 567px（7 × 81px · 在 618px Filter Row 内）
+- 早期版本用了 Nord=Sturgia alias（基于"Nord 无装备"误判）· 修复后 alias 为空 · Nord button 直接匹配 82 件 Culture.nord 装备
+- deploy.ps1 build+deploy · v1.4 → v1.5 · DLL 覆盖成功（第二次尝试 · 首次被 launcher 锁）
+
+**Claude 不能驱动的实机验证**（用户操作项）：
+- 启动 launcher · 确认 `Open Source Armoury RBM Balance Patch v1.2` 勾选 · 加载在 OSA/OSW/RBM 之后
+- 战役内用 EquipmentSpawnerMod（Ctrl+Alt+I）或战场检查代表件：
+  - Khuzait 铁浮屠 `TV_khuzait_helmet_r/q/s/b` 应显示 **148/82/45**
+  - Khuzait 华夏 body `eastern_heavy_lamellar_armor` 应显示 **138/122/67**
+  - Khuzait Full Barding `AR_horse_armor_z` body **50**（引擎生效字段 · +15 vs vanilla 35）
+  - Nord 顶 `berserker_helmet_reinforced` 应 **155/95/50** · `nord_king_armor` 应 **115/80/50**
+  - Empire vanilla override `lamellar_with_scale_skirt` body **135**（升）· `imperial_scale_armor` body **118**（降）
+- Filter Nord button：Retinues 装备编辑器点 Nord 应显示 82 件 Culture.nord 装备
+- 战场实测：观察 Nord 兵种战斗力是否提升 · Khuzait 铁浮屠战力是否符合"跨文化重装骑兵巅峰"期待
 
 ### 47. OSA v2 · Empire HeadArmor 100% 收官 + Cape 铁律 + Cape 家族启动（2026-09-23）
 

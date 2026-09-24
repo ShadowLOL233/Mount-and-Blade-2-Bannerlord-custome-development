@@ -2,7 +2,7 @@
 <Module>
   <Name value="Open Source Armoury RBM Balance Patch" />
   <Id value="OpenSourceArmouryRBMBalance" />
-  <Version value="v1.1.0" />
+  <Version value="v1.2.0" />
   <DefaultModule value="false" />
   <ModuleCategory value="Singleplayer" />
   <ModuleType value="Community" />
@@ -30,6 +30,15 @@
   <Xmls>
     <XmlNode>
       <XmlName id="Items" path="OSABalance_armor_override" />
+      <IncludedGameTypes>
+        <GameType value="Campaign" />
+        <GameType value="CampaignStoryMode" />
+        <GameType value="CustomGame" />
+        <GameType value="EditorGame" />
+      </IncludedGameTypes>
+    </XmlNode>
+    <XmlNode>
+      <XmlName id="Items" path="OSABalance_manual_override" />
       <IncludedGameTypes>
         <GameType value="Campaign" />
         <GameType value="CampaignStoryMode" />

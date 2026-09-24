@@ -36,14 +36,14 @@ namespace RetinuesCultureFilter
             if (game.GameType is Campaign)
             {
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "Retinues Culture Filter v1.4 loaded. Culture buttons available in the Retinues equipment editor."));
+                    "Retinues Culture Filter v1.5 loaded. Culture buttons available in the Retinues equipment editor."));
             }
         }
     }
 
     // Shared state driving the mixin's IsSelected bindings and the Harmony filter patch.
     // CurrentIndex == -1 means "no filter, show all cultures" (default on editor open).
-    // CurrentIndex 0..5 selects one of the six main vanilla cultures.
+    // CurrentIndex 0..6 selects one of the seven cultures (6 main + Nord sub-culture).
     public static class CultureFilterState
     {
         public static readonly string[] CycleOrder = new[]
@@ -53,7 +53,8 @@ namespace RetinuesCultureFilter
             "aserai",   // 2
             "battania", // 3
             "sturgia",  // 4
-            "khuzait"   // 5
+            "khuzait",  // 5
+            "nord"      // 6
         };
 
         public static readonly string[] DisplayNames = new[]
@@ -63,13 +64,38 @@ namespace RetinuesCultureFilter
             "Aserai",
             "Battania",
             "Sturgia",
-            "Khuzait"
+            "Khuzait",
+            "Nord"
         };
+
+        // Culture aliases: reserved for future sub-culture -> parent-culture folding.
+        // Currently empty — earlier design (Nord -> Sturgia) was based on a wrong premise.
+        // NavalDLC/ModuleData/items.xml adds 82 items tagged Culture.nord (Berserker/Vendel/
+        // Nordic/Northman/Norse/Nord King series). spcultures.xml only defines Nord as a
+        // Sturgia-cloned sub-culture, but the Naval DLC promotes it to a full kingdom with
+        // its own equipment. So filtering by Nord returns those 82 items directly — no alias
+        // needed. Kept for future minor cultures (vakken/darshi) that may lack own items.
+        public static readonly System.Collections.Generic.Dictionary<string, string[]> CultureAliases =
+            new System.Collections.Generic.Dictionary<string, string[]>();
 
         public static int CurrentIndex = -1;
 
         public static string CurrentCultureId =>
             (CurrentIndex >= 0 && CurrentIndex < CycleOrder.Length) ? CycleOrder[CurrentIndex] : "";
+
+        // Get the full set of culture ids the current filter matches (usually 1, but aliased
+        // filters like Nord match multiple: nord + sturgia).
+        public static string[] CurrentMatchingCultureIds
+        {
+            get
+            {
+                string cid = CurrentCultureId;
+                if (string.IsNullOrEmpty(cid)) return System.Array.Empty<string>();
+                string[] aliases;
+                if (CultureAliases.TryGetValue(cid, out aliases)) return aliases;
+                return new[] { cid };
+            }
+        }
 
         public static string CurrentDisplayName =>
             (CurrentIndex >= 0 && CurrentIndex < DisplayNames.Length) ? DisplayNames[CurrentIndex] : "None";
@@ -130,13 +156,21 @@ namespace RetinuesCultureFilter
             var filtered = Activator.CreateInstance(listType) as IList;
             if (filtered == null) return;
 
+            // Resolve aliases once outside the loop (Nord -> [nord, sturgia], others -> [self]).
+            var matchIds = CultureFilterState.CurrentMatchingCultureIds;
+
             foreach (var tuple in original)
             {
                 var item = ItemTupleItemField.GetValue(tuple) as WItem;
                 if (item == null) continue;
                 var culture = item.Culture;
                 var cid = culture?.StringId?.ToLowerInvariant() ?? "";
-                if (cid == wanted) filtered.Add(tuple);
+                bool matched = false;
+                for (int i = 0; i < matchIds.Length; i++)
+                {
+                    if (cid == matchIds[i]) { matched = true; break; }
+                }
+                if (matched) filtered.Add(tuple);
             }
 
             fullTuples[snapshotKey] = filtered;

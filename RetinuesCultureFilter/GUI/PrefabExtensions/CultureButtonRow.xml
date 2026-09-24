@@ -1,7 +1,9 @@
-<!-- 6-button segmented culture filter row. Injected as sibling AFTER the Filter Row
-     (line 3027 in Retinues' ClanScreen_TroopsPanel_BL14.xml).
-     Buttons 81x49 (v1.2 was 60x36, enlarged ~35% per user feedback). Total row width
-     6 x 81 = 486px stays well under the ~618px Filter Row width. Row height 54px. -->
+<!-- 7-button segmented culture filter row (v1.5: added Nord). Injected as sibling AFTER
+     the Filter Row (line 3027 in Retinues' ClanScreen_TroopsPanel_BL14.xml).
+     Buttons 81x49. Total row width 7 x 81 = 567px stays under the ~618px Filter Row
+     width. Row height 54px. Nord is a vanilla sub-culture (spcultures.xml line 3556)
+     that reuses Sturgia's troops/equipment — filtering by Nord matches nord+sturgia
+     items (see CultureAliases in SubModule.cs). -->
 <ListPanel Id="CultureFilterRow"
            DataSource="{EquipmentList}"
            WidthSizePolicy="CoverChildren"
@@ -89,6 +91,19 @@
         <TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     Brush="Clan.LeftPanel.Header.Text" Text="Khuzait"/>
+      </Children>
+    </SortButtonWidget>
+    <SortButtonWidget DoNotPassEventsToChildren="true"
+                      WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                      SuggestedHeight="49" SuggestedWidth="81"
+                      Brush="Clan.Members.Sort.1"
+                      Command.Click="ExecuteSelectCultureNord"
+                      IsSelected="@CultureNordSelected"
+                      UpdateChildrenStates="true">
+      <Children>
+        <TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Brush="Clan.LeftPanel.Header.Text" Text="Nord"/>
       </Children>
     </SortButtonWidget>
   </Children>

@@ -1425,3 +1425,74 @@ Warlord Helmet / Highland Crowned 顶 ⭐             h 95-121
 - Cape: Plate Scale Shoulders 主流 12-45 · Chainmail 稀少
 - BodyArmor: Kaftan/Robe 民用 6-11 → Aserai Robe 中档 18-25 → Mail 顶 66-93 → Lamellar over Mail 顶 105
 - HorseHarness: Camel Saddle 特色 (h=0 b=10) · Ring Mail Barding + Plate Barding 顶
+
+---
+
+# Khuzait 文化
+
+## Khuzait · HeadArmor · 21 件（2026-09-24 归档）
+
+**顶点**：`khuzait_noble_helmet_with_fur` **141/26/20/3.9**（Furred Noble Lancer Helmet · 皇家亲卫皮草）
+**次顶（body/arm）**：`spiked_helmet_with_facemask` **119/90/40/4.5**
+**次顶（closed）**：`eastern_vendel_helmet` **106/65/40/4.0**（Heavy Closed Lancer Helmet）
+**lamellar aventail anchor**：`plumed_lamellar_helmet` **77/0/25/3.3**（Plumed Lamellar · RBM 唯一 lamellar-aventail 参照）
+
+### 📖 民用/轻装档（8 件 · h ≤ 20）
+
+| id | mat | wt | h/b/a | 名称 |
+|---|---|---:|---|---|
+| `fur_hat` | Leather | 0.5 | 7/0/0 | Nomad Fur Cap |
+| `fur_hood` | Leather | 0.6 | 12/0/0 | Thick Fur Hood |
+| `eastern_cap` | Cloth | 0.3 | 14/0/0 | Cap with Neck Flap |
+| `nomad_cap` | Cloth | 0.3 | 14/0/0 | Nomad Cap |
+| `peaked_fur_hood` | Leather | 0.7 | 14/0/0 | Peaked Fur Hood |
+| `upturned_fur_cap` | Leather | 0.6 | 14/0/0 | Upturned Fur Cap |
+| `decorated_nomad_cap` | Cloth | 0.4 | 15/0/0 | Decorated Nomad Cap |
+| `nomad_padded_hood` | Cloth | 0.4 | 20/0/0 | Nomad Padded Hood |
+
+### 🪖 步兵/中档 Plate（4 件 · h 45-65）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `khuzait_crown` | 1.4 | 45/0/0 | Ornate Steel Cap |
+| `plumed_fur_lined_helmet` | 1.1 | 45/0/0 | Plumed Fur Lined Helmet |
+| `nomad_helmet` | 1.1 | 56/0/0 | Nomad Helmet |
+| `steppe_helmet` | 1.2 | 65/0/0 | Infantry Steel Helmet（步兵档 base） |
+
+### 🎯 精英中档 Plate（4 件 · h 60-94）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `plumed_nomad_helmet` | 1.1 | 60/12/0 | Plumed Nomad Helmet |
+| `plumed_lamellar_helmet` | 3.3 | **77/0/25** | Plumed Lamellar Helmet（lamellar aventail anchor） |
+| `khuzait_battle_crown` | 2.7 | 90/12/0 | Khuzait Battle Crown |
+| `spiked_helmet` | 4.5 | **94/0/37** | Spiked Helmet（base） |
+
+### 👑 Noble Lancer / 顶级重装（5 件 · h ≥ 100）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `khuzait_noble_helmet_with_neckguard` | 4.0 | 102/30/0 | Plumed Noble Lancer Helmet with Neckguard |
+| `khuzait_noble_helmet_with_feathers` | 3.4 | 105/14/25 | Noble Lancer Helmet |
+| `eastern_vendel_helmet` | 4.0 | 106/65/40 | Heavy Closed Lancer Helmet |
+| `spiked_helmet_with_facemask` | 4.5 | 119/90/40 | Spiked Helmet With Facemask |
+| `khuzait_noble_helmet_with_fur` | 3.9 | **141/26/20** | Furred Noble Lancer Helmet（vanilla+RBM 顶点） |
+
+### Khuzait 特色 base_type
+
+- **Fur Cap / Fur Hood / Peaked Fur Hood / Upturned Fur Cap**（毛皮民用主流 · Leather 或 Cloth）
+- **Nomad Cap / Padded Hood / Decorated Nomad Cap**（草原布甲）
+- **Steppe Helmet**（步兵铁盔）
+- **Nomad Helmet / Plumed Nomad Helmet**（草原铁盔骑兵档）
+- **Plumed Lamellar Helmet**（甲片盔 · lamellar aventail 唯一 anchor）
+- **Spiked Helmet + Facemask**（尖顶重盔 · Facemask 顶）
+- **Battle Crown**（战王冠）
+- **Noble Lancer w/ Feathers/Neckguard/Fur**（贵族骑兵三兄弟 · fur 141 顶）
+- **Vendel Helmet**（借用北欧 Vendel 命名 · Heavy Closed 结构）
+
+### ⚠ Khuzait 结构特点
+
+- **无 Cataphract 命名**——虽有 Cataphract-tier 重装（vendel/noble w/ fur），但命名走 Nordic Vendel + Furred Noble 路线
+- **无 Faceguard / Facemask 完整家族**——只有 `spiked_helmet_with_facemask` 一件顶档 body/arm 齐全
+- **lamellar aventail 稀有**——vanilla+RBM 只有 `plumed_lamellar_helmet` 77/0/25 一件，其他 aventail 都是 mail-based
+- **顶点分工**：Fur Noble Lancer 141 (皮草贵族) · Vendel 106/65/40 (closed 重盔) · Facemask 119/90/40 (Spiked+Facemask body-heavy)

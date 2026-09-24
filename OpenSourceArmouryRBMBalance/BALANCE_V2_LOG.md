@@ -39,14 +39,18 @@
 >
 > | mesh 档次 | arm 值 | 命名特征 |
 > |---|---:|---|
-> | **Elite Heavy Pauldrons/Shoulders**（顶档 · Gilded 品质） | **25** | Gilded / Heavy / 顶级材质 |
+> | **⭐ Khuzait 顶级臂甲档**（2026-09-24 用户特批 · 大面积覆盖肩+上臂完整） | **30** | "Lamellar Pauldrons"（Plate mat） · "Heavy Lamellar Shoulders" · "Heavy Steel Lamellar Shoulders" |
+> | **Elite Heavy Pauldrons/Shoulders**（Empire/Vlandia 顶档 · Gilded 品质） | **25** | Gilded / Decorated Steel Lamellar / 顶级材质 |
 > | **Standard Shoulders** | **20** | Lamellar Shoulders 主流 |
+> | **部分上臂覆盖** | **15** | Harness Over Scale · Heavy Blackened Leather Lamellar |
 > | **Standard Pauldrons**（较小 mesh） | **12** | Pauldrons 命名（比 Shoulders 略小） |
 > | **Studded Strip / lightweight** | **6-8** | 轻档 studded strip 结构 |
 > | Chainmail Shoulders 中档 | 10-12 | 链甲护肩 |
 > | Leather Shoulders 轻档 | 4-8 | 皮革护肩 |
 >
 > **理由**：Heavy Lamellar Pauldrons 视觉上覆盖**整个肩膀+上臂**（甲片全裹肩+ upper arm），Standard Pauldrons 只覆盖肩膀，Studded Strip 仅局部加固——arm 值应**忠实反映 mesh 物理覆盖度**。
+>
+> **arm=30 新档特批**（2026-09-24）：Khuzait Lamellar Pauldrons + Heavy Lamellar Shoulders 6 件 · +5 越 Elite Heavy 25 · 用户 quote："两款 Eastern Lamellar Pauldrons 应该属于顶级臂甲（大面积覆盖肩膀和大臂），Eastern Heavy Steel Lamellar Shoulders 同样，Eastern Heavy Lamellar Shoulder 同样"
 >
 > **arm 堆叠机制说明**：Bannerlord 引擎 `final_arm = HeadArmor.arm + BodyArmor.arm + Cape.arm + HandArmor.arm`（加法），不区分手臂子区间。**OSA 精英兵 arm 总值会比 RBM 基线高 ~25 点（26%）**——这是**故意的设计取舍**：换取 OSA "Cape 特色" 忠实反映 mesh 视觉覆盖度。
 >
@@ -88,6 +92,44 @@
 > - **例外**：无（无论 aventail 类型如何，头盔的 arm 覆盖不应超过 body 覆盖）
 > - **追溯适用**：已归档决议若违反本条铁律需追溯修正——2026-09-23 首批追溯：Roman Helmet #11/#12（Stripped Cloth 系）· Nasalhelm #1（`ao_imperial_nasal_helmet`）
 > - **用户 quote**："所有头盔应当都需要做到头甲 > 身甲 > 臂甲"
+
+---
+
+## 🔒 铁律 · 华夏中原 / 波斯萨珊 精工线（2026-09-24 用户拍板 · 首次 vanilla override）
+
+> **世界观扩展**：OSA 添加的很大一部分 **Khuzait** 和 **Aserai** 护甲，命名与结构上并不符合各文化的核心画像（蒙古游牧 / 沙漠阿拉伯），而是分别对应**华夏中原王朝**（Khuzait 内的 Lamellar Coat / Heavy Lamellar / Cataphract / Fluted）与**波斯萨珊帝国**（Aserai 内的 Darshi / Mastercrafted / Immortal's）。这些装备设计上属于**远东/中东精工帝国**，应对齐或略超越 Empire（罗马拜占庭）Cataphract 尺度，**允许突破文化 vanilla 顶点**。
+>
+> **命名判别规则**：
+> - **Khuzait 华夏中原线**：含 `Lamellar Coat` / `Heavy Lamellar` / `Stitched Lamellar` / `Alternating Lamellar` / `Cataphract` / `Fluted` / `Closed Lamellar Veil` 等精工命名
+> - **Aserai 波斯萨珊线**：含 `Darshi` / `Mastercrafted` / `Immortal's` / `Southern Heavy Lamellar` / `Eastern Alternating Lamellar Over Heavy Mail` 等精工命名
+> - **不含以上关键词的装备维持文化 vanilla 尺度**（Khuzait 游牧线 100 顶 · Aserai 沙漠线 105 顶）
+>
+> **越权额度**：
+> - 顶档 body 允许对齐或略超 Empire vanilla `imperial_scale_armor` 135
+> - 铁浮屠 G 家族头盔 148（+4 vs Empire Cataphract 144 · 已归档）· Heavy Lamellar body 138（+3 vs Empire imperial_scale 135）· 均属"有过之而无不及"特批范围
+>
+> **用户 quote**："OSA 添加的很大一部分 Khuzait 护甲实际上并不符合 Khuzait 的蒙古或游牧风格，而是来自中原的华夏王朝，所以这些护甲需要用一个新的视角来看待。不是以这些装备在原版的数值内进行思考，而是将它们作为一个和全盛帝国平起平坐甚至有过之而无不及的远东帝国的装备"
+
+---
+
+## 🔒 铁律 · Vanilla+RBM Override（首次打破 · 2026-09-24 用户拍板）
+
+> **背景**：`BALANCE_V2_LOG.md` 顶部铁律"RBM 已做的取舍视为设计终稿·不做二次调整"在 2026-09-24 首次被打破——用户 review 后判定 vanilla `lamellar_with_scale_skirt` 118/122/45 vs `imperial_scale_armor` 135/122/67 的分工设计不合理（后者全面高于前者，不构成"平替"）。
+>
+> **override 内容**（首次跨文化 vanilla 修订）：
+>
+> | id | RBM 现值 | v2 override 值 | 分工 |
+> |---|---|---|---|
+> | `lamellar_with_scale_skirt` | 118/122/45 | **135/122/45** | Heavy Lamellar over Mail with Scale Skirt · 高身甲（body 顶 · arm 中） |
+> | `imperial_scale_armor` | 135/122/67 | **118/122/67** | Heavy Scale Armor over Double Mail · 高臂甲（body 中 · arm 顶） |
+>
+> **总防御平衡校验**：135+122+45 = 302 · 118+122+67 = 307 · 差 5 → 近似平替 ✓
+>
+> **实现方式（待落地）**：`OSABalance_armor_override.xml` 里添加 vanilla id 覆盖（RBM 后加载 OSA_Balance mod 使覆盖生效）
+>
+> **⚠ 前例意义**：此后如需 override RBM vanilla 需**用户明示**（不适用默认铁律"设计终稿"）
+>
+> **用户 quote**："请为我检视帝国 Heavy Lamellar over Mail with Scale Skirt 的数值，我认为这应该是 Heavy Scale Armor over Double Mail 的平替（前者高身甲，后者高臂甲）"
 
 ---
 
@@ -3642,6 +3684,24 @@ Cloak 结构中档 body ~20-28（Plated Lion Head +6 反映甲片补强）· arm
 
 **状态**：3 件 🔵 log-only
 
+### 2026-09-24 · L 家族 v2 修订 · 新规律"扎甲+mail 视为顶级防御"应用 · 拉到 Vlandia vanilla 顶
+
+**触发**：2026-09-24 跨文化 Lamellar/Scale over Mail 系审查中发现 · L 家族 anchor 选错档——Lamellar **Over Heavy Mail Hauberk** 命名 = "扎甲+双层链甲复合防御"，语义 = 顶级重装 · 不应参照中档 `plated_leather_coat` 75（Rough Brigandine）· 应对齐 Vlandia vanilla 顶 `sturgian_fortified_armor` 100/95/100（Brigandine over Hauberk · 双层顶级复合）
+
+**用户 quote**（2026-09-24）："扎甲+mail 或鳞甲应该都被视为该时代的顶级防御，请为我回去看一下其他几个文化下的扎甲系列是否符合这个新规律"
+
+**新 anchor**：Vlandia `sturgian_fortified_armor` **100/95/100**（Brigandine over Hauberk · vanilla Vlandia 顶）· 结构等同"顶级甲面 + hauberk 内衬"
+
+**⚠ 无跨文化越权**：100 = Vlandia vanilla 顶 · 不越 · 只是 anchor 从 Rough Brigandine 75 换到 Brigandine over Hauberk 100（正确档次）
+
+| # | id | 游戏名 | v2 旧 → **v2 新 b/l/a/wt** | 依据 |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_lamellar_a` | Steel Lamellar Over Heavy Mail Hauberk | 78/56/60/16 → **100/95/100/22** | vanilla `sturgian_fortified_armor` 100/95/100 direct · Steel 顶级材质 |
+| 2 | `AR_vlandia_lamellar_a2` | Brass Lamellar Over Heavy Mail Hauberk | 76/56/60/16 → **97/92/97/22** | Brass -3 vs Steel |
+| 3 | `AR_vlandia_lamellar_b` | Leather Lamellar Over Heavy Mail Hauberk | 75/56/60/14 → **90/85/85/18** | Leather Lamellar 略降一档（Leather vs Plate 材质差） |
+
+**修订状态**：3 件 🔵 log-only · anchor 从 `plated_leather_coat` 75 修正为 `sturgian_fortified_armor` 100 顶 · 归入"跨文化 Lamellar over Mail 系顶级化"规律
+
 ---
 
 ## Vlandia · BodyArmor · M 家族：Scale Cuirass Over Mail（8 件）
@@ -5301,6 +5361,64 @@ Cloak 结构中档 body ~20-28（Plated Lion Head +6 反映甲片补强）· arm
 
 ---
 
+## Aserai · HeadArmor · Darshi Close Mail/Cavalry 升档 v2 追加（2026-09-24）
+
+### 2026-09-24 · Darshi 谱系 ↔ Empire Late Roman 平行升档 · 5 件
+
+**触发**：用户 2026-09-24 分析 Darshi 头盔命名结构 · 数据上最贴近 Empire **Ridge/Intercisa/Lion 家族**（Late Roman ridge helmet 直接源自萨珊波斯设计）· 整体 Darshi 谱系与 Empire Late Roman 全 5 家族（Spangenhelm + Ridge + Tall + Lamellar + Cataphract）平行对应
+
+**用户界定**（2026-09-24）："非 Immortal/Cataphract 线 + close mail 的 Aserai 头盔没有必要拉高到这个水准，不具备这个描述的哪些 Darshi 系列确实需要增强，但只需要略微"
+
+**分档规则**：
+- **Immortal / Cataphract / Close Mail 命名 → 升档到 Empire Late Roman 顶档尺度**（124-138）
+- **普通 With Mail / Over Mail → K 家族已归档 95 中档 · 不动**
+- **Over Cloth / With Leather / bare → K 家族已归档 60-73 中低档 · 不动**
+
+### 5 件升档决议
+
+**anchor**：
+- Empire `empire_guarded_lord_helmet` 130/30/0（Royal Cataphract Helmet）→ Cavalry Closed 系
+- Empire `heavy_nasalhelm_over_imperial_mail` 124/36/20（Heavy Nasalhelm over Mail）→ Close Mail aventail 系
+- Aserai lamellar 传统加 arm 5 反映甲片颈甲覆盖度
+
+| # | id | 游戏名 | 原 v2（K 家族） | **v2 新（Late Roman 升档）** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `AR_aserai_lord_helmet_f` | Darshi **Closed** Noble Cavalry Helmet | 未在 K 家族 | **130/30/25/3.7** | Empire `empire_guarded_lord_helmet` Royal Cataphract 直匹配 · Cavalry Closed = Cataphract 结构 · +25 arm 反映 Aserai lamellar aventail 传统 |
+| 2 | `AR_aserai_lord_helmet_f2` | Darshi **Open** Noble Cavalry Helmet | 未在 K 家族 | **115/22/20/3.5** | Cavalry sub Closed 一档 · Open 无 Closed 结构 · body 22（Aserai lord tier） · arm 20 |
+| 3 | `AR_aserai_helmet_h` | Darshi Tall Helmet Over **Closed Mail** | K 家族 95/12/40（g/h 同档） | **124/36/25/3.5** ⚠ **覆盖 K 家族 h 单独升档** | Empire `heavy_nasalhelm_over_imperial_mail` 124/36/20 direct · +5 arm 反映 lamellar vs mail aventail · wt 从 2.5 → 3.5 反映 Close Mail 结构重量 |
+| 4 | `TV_aserai_helmet_l` | Darshi Plumed Decorated Spangenhelm With **Closed Mail** | 未在 K 家族 | **124/36/25/3.2** | 同上 anchor · Plumed/Decorated 装饰前缀零影响 |
+| 5 | `TV_aserai_helmet_i` | Darshi Decorated Spangenhelm With **Closed Mail** | 未在 K 家族 | **122/36/25/3.2** | 无 Plumed -2 head vs #4 |
+
+### AR_aserai_helmet_g（Over Mail 保持 K 家族档 · 不升）
+
+**保留**：`AR_aserai_helmet_g` Darshi Tall Helmet **Over Mail**（非 Close Mail）· K 家族已定 **95/12/40/2.5** · 用户界定"非 Close Mail 不拉高"· 维持不动
+
+### Darshi 谱系升档阶梯
+
+```
+138  Aserai BodyArmor 顶（Mastercrafted over Chain Hauberk · 波斯萨珊 body 顶）
+135  Immortal's 头盔 × 5（K 家族 · Persian Immortal 顶）
+——— Empire Late Roman 顶档参照 ———
+130  Closed Noble Cavalry Helmet（Empire Royal Cataphract 平级）
+124  Close Mail aventail 系 × 3（Empire Heavy Nasalhelm over Mail 平级）
+122  Decorated Spangenhelm w/ Closed Mail（Brass 变体 -2）
+115  Open Noble Cavalry（Cavalry sub Closed）
+——— K 家族中档（不动） ———
+ 97  Tall With Feathers / Champion's / Emir 中档
+ 95  普通 Over Mail / With Iron Scale 中档（Darshi 略微增强档）
+ 73  Open Tall Helmet
+ 60  Jeweled Crown 装饰
+```
+
+### Darshi 谱系升档收官统计
+
+- **总件数**：5 件（Cavalry 2 + Close Mail 3）
+- **顶点（本次升档）**：130（Closed Noble Cavalry）· 124（Close Mail aventail × 3）
+- **⚠ 越权级别**：+30 vs Aserai vanilla `southern_lord_helmet` 100 顶 · 均用户特批（华夏中原 / 波斯萨珊 精工线铁律）
+- **状态**：5 件 🔵 log-only（#3 覆盖 K 家族 h 单独 · #1/2/4/5 新归档）
+
+---
+
 ## Aserai HeadArmor 收官统计（2026-09-23）
 
 **总数**：148 件 Aserai HeadArmor · **全部审完 · 全部 🔵 log-only**
@@ -5617,13 +5735,1038 @@ Wait - Zebra Skin/Lion Pelt 命名无 shoulder/pauldron → 归 B 组
 
 ---
 
-## Aserai 全 6 类收官统计（2026-09-23）
+## Aserai · BodyArmor · 波斯萨珊精工线 v2 追加（2026-09-24）
+
+### 2026-09-24 · 波斯萨珊精工顶级 5 件 + Darshi 略微增强 10 件 · 用户新视角推广
+
+**触发**：本次 Khuzait 华夏中原视角推广至 Aserai · 用户界定 Aserai 波斯萨珊精工线仅包含"顶级复合结构"命名（Hauberk / Heavy Mail / Heavy Lamellar / Mastercrafted）· 其余 Darshi 系列**只需略微增强**、不越 Aserai vanilla 顶 105
+
+**用户 quote**：
+- "我认为可以将新视角推广到 Khuzait 和 Aserai 这两个文化内"
+- "非 Immortal/Cataphract 线 + close mail 的 Aserai 头盔没有必要拉高到这个水准，不具备这个描述的哪些 Darshi 系列确实需要增强，但只需要略微"
+
+### 波斯萨珊顶级线（5 件 · 含 Hauberk / Heavy Mail / Heavy Lamellar 命名）
+
+⚠ **越权声明**：+33 body vs Aserai vanilla 顶 105 · 用户特批（华夏中原/波斯萨珊 精工线铁律）
+
+**anchor**：Empire vanilla `imperial_scale_armor` 135（override 前 · 平顶）· 用户特批 +3 body 反映"有过之而无不及"
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `AR_aserai_scale_armor_c` | Mastercrafted Southern Steel Scale over Chain **Hauberk** | 51/25/16/28 | **138/122/67/28** | 波斯顶 · Mastercrafted + Hauberk 双 mail 内衬 · 对齐 Khuzait Heavy Lamellar 138 |
+| 2 | `AR_aserai_scale_armor_b` | Mastercrafted Southern Steel Scale over Chain Mail | 51/16/16/22 | **130/95/60/22** | 单 mail 内衬 · sub 顶（-8 body） |
+| 3 | `AR_aserai_armor_y` | Eastern Alternating Lamellar Over **Heavy Mail** | 50/16/14/18 | **130/110/60/20** | Alternating + Heavy Mail 精工 |
+| 4 | `tv_aserai_lamellar_e` | Southern **Heavy** Steel Lamellar Over Mail | 46/25/14/23 | **125/95/55/22** | Heavy Steel Lamellar 精工 |
+| 5 | `tv_aserai_lamellar_e2` | Southern **Heavy** Brass Lamellar Over Mail | 46/25/14/23 | **122/95/55/22** | Brass -3 vs Steel |
+
+### Darshi 系"略微增强"档（10 件 · 不含 Hauberk / Heavy Mail / Heavy Lamellar 命名）
+
+**"略微"档次定位**：v1 50 附近 → v2 60-70 body · 保持在 Aserai vanilla 中档尺度 · **不越 Aserai vanilla 顶 105**
+
+**anchor**：Aserai vanilla `aserai_scale_armor_on_cloth` 70/20/15（Mastercrafted Southern Scale Mail · Cloth 内衬）· `aserai_archer_armor` 60/44/55（Gambeson over Mail · 中档 mail 精工）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** | 内衬类型 |
+|---|---|---|---|---|---|
+| 6 | `AR_aserai_armor_u` | Darshi Lamellar Over Stripped Mail | 50/20/20/7 | **70/45/35/9** | Mail 内衬 · 略微 +20 body |
+| 7 | `AR_aserai_armor_u2` | Darshi Alternating Lamellar Over Stripped Mail | 50/20/20/7 | **70/45/35/9** | 同上 |
+| 8 | `tv_empire_armor_s` | Darshi Stripped Lamellar With Mail | 50/20/20/7 | **70/45/35/9** | 同上（TV 变体） |
+| 9 | `tv_empire_armor_s2` | Darshi Stripped Alternating Lamellar With Mail | 50/20/20/7 | **70/45/35/9** | 同上 |
+| 10 | `AR_aserai_armor_v` | Darshi Mailed Lamellar Vest Over Kaftan | 50/10/10/8.6 | **62/25/30/9** | 布 Kaftan 内衬 · Vest 减腿 |
+| 11 | `AR_aserai_armor_v2` | Darshi Mailed Alternating Lamellar Vest Over Kaftan | 50/10/10/8.6 | **62/25/30/9** | 同上 |
+| 12 | `AR_aserai_armor_t` | Darshi Lamellar Over Stripped Cloth | 48/8/8/2.1 | **58/32/22/6** | Cloth 内衬 · 无 mail |
+| 13 | `AR_aserai_armor_t2` | Darshi Alternating Lamellar Over Stripped Cloth | 48/8/8/2.1 | **58/32/22/6** | 同上 |
+| 14 | `tv_empire_armor_r` | Darshi Stripped Lamellar With Gambeson | 48/8/8/7 | **58/32/22/6** | Gambeson 布垫 · 无 mail |
+| 15 | `tv_empire_armor_r2` | Darshi Stripped Alternating Lamellar With Gambeson | 48/8/8/7 | **58/32/22/6** | 同上 |
+
+### Aserai 波斯萨珊线阶梯
+
+```
+138  Mastercrafted over Chain Hauberk（波斯顶 · +3 vs Empire vanilla imperial_scale 135）
+130  Mastercrafted over Chain Mail / Alternating Over Heavy Mail
+125  Southern Heavy Steel Lamellar Over Mail
+122  Southern Heavy Brass Lamellar Over Mail（Brass -3）
+——— Aserai vanilla 顶 105（desert_lamellar）不跨 · 中间空白档 ———
+ 70  Darshi (Alternating) Lamellar Over Stripped Mail（4 件）
+ 62  Darshi Mailed Lamellar Vest Over Kaftan（2 件 · Vest 减腿）
+ 58  Darshi Lamellar Over Stripped Cloth/Gambeson（4 件 · 无 mail 内衬）
+```
+
+### Aserai 波斯萨珊线收官统计
+
+- **总件数**：15 件（顶级 5 + Darshi 略微 10）
+- **顶点**：138/122/67（Mastercrafted over Chain Hauberk）
+- **⚠ 越权级别**：+33 vs Aserai vanilla 105 · +3 vs Empire vanilla imperial_scale 135 · 均用户特批
+- **状态**：15 件 🔵 log-only（决议归档 · XML 未动）
+
+---
+
+## Aserai 全 6 类收官统计（2026-09-23 · 2026-09-24 追加）
 
 **总数**：**323 件 Aserai 决议归档**（HeadArmor 148 · Cape 46 · BodyArmor 88 · HandArmor 4 · LegArmor 6 · HorseHarness 31）· 全 🔵 log-only
+
+**2026-09-24 追加**：
+- Aserai BodyArmor 波斯萨珊精工线 15 件（顶级 5 + Darshi 略微 10）
+- Aserai HeadArmor Darshi Close Mail/Cavalry 升档 5 件（K 家族 h 覆盖 1 + 新归档 4）
+- BodyArmor 从 88 → **103 件** · HeadArmor 从 148 → **153 件**（含 K 家族 h 单独覆盖）· Aserai 总数 323 → **343 件**
 
 **累计**：帝国 378 + Vlandia 312 + Battania 307 + Sturgia 194 + Aserai 323 = **1514 件决议归档**
 
 **下一步**：进入 **Khuzait 文化**（东方蒙古画像 · 草原游牧 · 骑射 + 弯弓 + 皮革轻装）
+
+---
+
+# Khuzait 文化
+
+## Khuzait · HeadArmor · G. Steel Helmet with Lamellar 家族（铁浮屠系）
+
+### 2026-09-24 · G 家族 19 件 · 用户特批 override · 铁浮屠 = 跨文化重装骑兵巅峰
+
+**用户 quote**（2026-09-24）："我看中的是 Steel Helmet with Lamellar 系列，这个系列在我目前应该是防御力最高的护甲种类（铁浮屠）" · "铁浮屠应该是与帝国的具装骑兵头盔属于同等级或者更高的存在"
+
+**⚠ 铁律违反声明**：G.2 顶档 head 148 **> Khuzait vanilla+RBM 顶点** `khuzait_noble_helmet_with_fur` **141** · 需用户特批 override（类似 Aserai K 家族 Immortal's 135/50/40 特批先例）
+
+**用户特批依据**：
+- 铁浮屠 = 金朝重装骑兵 · 中国历史重装骑兵巅峰 · 与 Empire Cataphract (imperial_goggled_helmet 144/82/45) 属于同类概念
+- 用户"或者更高"倾向 → 取 148（比 Empire 144 高 4 · 不越 Sturgia Warlord 150 跨文化最高顶）
+- 语义分工：Khuzait Furred Noble Lancer 141 = 皇家亲卫皮草（偏装饰） · 铁浮屠 148 = 精锐重甲（偏实战）· 铁浮屠可以更硬
+
+**跨文化 anchor 借用**：Empire `imperial_goggled_helmet` **144/82/45** → G.2 顶档 **148/82/45**（结构对等：Goggled Closed 完整闭合 ↔ Closed Lamellar 甲片完整包围）
+
+**跨文化平衡副作用**（用户 2026-09-24 明示接受）：
+- Empire Cataphract 从"绝对顶 144" 降为"次顶"（148 - 144 = 4 差距）
+- Khuzait Furred Noble Lancer 从"绝对顶 141" 降为"次顶"（148 - 141 = 7 差距）
+- **是否联动 override Empire/Khuzait vanilla 顶档**：待 v2 全文化收官后统一裁决 · 当前不动 vanilla
+
+**顶点保护清单**（未越）：Sturgia Warlord 150（跨文化最高绝对顶）
+
+### G 家族子结构分档（19 件）
+
+按命名 base_type + aventail suffix 分为 5 子系：G.1 Pointed Steel Helmet / G.2 Closed Lamellar / G.3 With Lamellar / G.4 Plated Steel Cap / G.5 Steel Cap 简版
+
+### G.2 Steel Helmet With Closed Lamellar（铁浮屠核心 · 顶档 3 件）
+
+**语义**：甲片完整包围（Closed Lamellar = 环绕包裹型甲片颈甲/护面 · 视觉上完整闭合）
+
+**anchor**：Empire `imperial_goggled_helmet` 144/82/45（Goggled Closed 完整闭合 · 结构对等） · +4 head 反映铁浮屠"或者更高"
+
+| # | id | 游戏名 | v1 h/b/a/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_khuzait_helmet_r` | Steppe Plumed Steel Helmet With Closed Lamellar | 50/0/0/2.8 | **148/82/45/3.8** |
+| 2 | `TV_khuzait_helmet_q` | Eastern Steel Cap With Closed Lamellar | 50/0/0/2.8 | **148/82/45/3.8** |
+| 3 | `TV_khuzait_helmet_s` | Steppe Feathered Steel Helmet With Closed Lamellar | 50/0/0/2.8 | **148/82/45/3.8** |
+
+**克隆**：三件同档（Plumed/Feathered/无装饰前缀零影响） · wt +1.0 反映完整甲片包围重量
+
+### G.3.u Steel Cap With Lamellar Faceguard（顶档次 · 甲片护面 1 件）
+
+**语义**：Lamellar Faceguard = 甲片护面（覆盖脸而非全包围）· 结构等同"Guarded Lord"（Cataphract 次顶）
+
+**anchor**：Empire `empire_guarded_lord_helmet` **130/30/0/3.7** + 甲片护面加 arm 40 反映 lamellar aventail 覆盖度
+
+| # | id | 游戏名 | v1 h/b/a/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 4 | `TV_khuzait_helmet_u` | Eastern Steel Cap With Lamellar Faceguard | 49/0/0/2.8 | **130/60/40/3.7** |
+
+**依据**：Guarded Lord 130 head + 完整 mesh 覆盖度所以 body 60 (2×vanilla 30) · arm 40 (lamellar aventail vs mail)
+
+### G.3.n Steel Nasalhelm With Lamellar（鼻甲+甲片 aventail · 1 件）
+
+**语义**：Nasalhelm 鼻甲盔 + Lamellar aventail = 鼻梁护 + 甲片颈甲
+
+**anchor**：Empire `heavy_nasalhelm_over_imperial_mail` **124/36/20/3.6** · +5 arm 反映 lamellar vs mail aventail
+
+| # | id | 游戏名 | v1 h/b/a/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 5 | `TV_khuzait_helmet_p` | Steppe Feathered Steel Nasalhelm With Lamellar | 48/0/0/2.8 | **124/36/25/3.6** |
+
+### G.3 Steel Helmet With Lamellar（甲片 aventail 变体 · 4 件）
+
+**语义**：Steel Helmet + Lamellar aventail（甲片颈甲）· 不含 Closed / Faceguard / Nasalhelm 特殊结构
+
+**anchor**：家族均值 fallback · 跨 Empire Cataphract 系（123-125 head）与 Khuzait Noble Lancer 系（102-105 head）均值 → 115 head · body 25 (aventail 中档) · arm 28 (lamellar > mail aventail)
+
+| # | id | 游戏名 | v1 h/b/a/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 6 | `TV_khuzait_helmet_n` | Steppe Plumed Steel Helmet With Lamellar | 48/0/0/2.8 | **115/25/28/3.4** |
+| 7 | `TV_khuzait_helmet_o` | Steppe Furred Steel Helmet With Lamellar | 48/0/0/2.8 | **115/25/28/3.4** |
+| 8 | `TV_khuzait_helmet_m` | Steppe Feathered Steel Helmet With Lamellar | 46/0/0/2.8 | **115/25/28/3.4** |
+| 9 | `TV_khuzait_helmet_l` | Steppe Steel Helmet With Lamellar | 46/0/0/2.8 | **115/25/28/3.4** |
+
+**克隆**：四件同档（Plumed / Furred / Feathered / 无装饰前缀零影响） · wt +0.6 反映甲片 aventail 增重
+
+### G.1 Pointed Steel Helmet 系（尖顶铁盔 5 件）
+
+**语义**：Pointed Steel Helmet = 尖顶铁盔本体 · 变体在 aventail 类型（Plated Mail / Faceplate / Closed Mail / Plates / Leather）
+
+**分档依据**：aventail 类型强度阶梯 · Plated Mail（甲片链甲 combo）> Faceplate（面甲，无颈） > Closed Mail（闭合链甲颈甲） > Plates（铁片颈甲） > Leather（皮革颈甲）
+
+| # | id | 游戏名 | v1 h/b/a/wt | **v2 决议 h/b/a/wt** | anchor / 依据 |
+|---|---|---|---|---|---|
+| 10 | `TV_khuzait_helmet_k` | Eastern Pointed Steel Helmet With Plated Mail | 51/0/0/2.8 | **120/25/40/3.5** | Plated Mail 甲片+链甲组合 · 介于 Closed Lamellar 和 With Lamellar 之间 |
+| 11 | `TV_khuzait_helmet_j` | Eastern Pointed Steel Helmet With Faceplate | 50/0/0/2.8 | **110/40/0/3.3** | Faceplate 遮脸 · 无颈罩（arm=0）· 高 body 反映脸罩重 |
+| 12 | `TV_khuzait_helmet_h` | Eastern Pointed Steel Helmet Over Closed Mail | 48/0/0/2.8 | **100/12/35/3.4** | Closed Mail 闭合链甲颈罩 · aventail 中档 |
+| 13 | `TV_khuzait_helmet_i` | Eastern Pointed Steel Helmet Over Plates | 46/0/0/2.8 | **85/12/22/3.2** | 铁片钉盔颈罩 · aventail 中低 |
+| 14 | `TV_khuzait_helmet_g` | Eastern Pointed Steel Helmet Over Leather | 36/0/0/2.8 | **70/6/12/3.0** | Leather 皮革颈罩 · aventail 低 |
+
+### G.4 Plated Steel Cap 系（无 aventail 装饰变体 4 件）
+
+**语义**：Plated Steel Cap = 铁片钉在 cap 上（本体加固）· 无 aventail 延伸
+
+**anchor**：Khuzait `nomad_helmet` 56/0/0 · 略高（Plated 加固）→ 68-70 head
+
+| # | id | 游戏名 | v1 h/b/a/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 15 | `TV_khuzait_helmet_c` | Eastern Plated Steel Cap | 46/0/0/2.8 | **70/0/0/2.8** |
+| 16 | `TV_khuzait_helmet_f` | Eastern Feathered Plated Steel Cap | 46/0/0/2.8 | **70/0/0/2.8** |
+| 17 | `TV_khuzait_helmet_e` | Eastern Plumed Plated Steel Cap | 44/0/0/2.8 | **68/0/0/2.8** |
+| 18 | `TV_khuzait_helmet_d` | Eastern Crested Plated Steel Cap | 44/0/0/2.8 | **68/0/0/2.8** |
+
+**克隆**：Feathered/Plumed/Crested 装饰前缀零影响 · Plated Cap 主 70 · Plumed/Crested 68（略降反映 -Plated 后再+装饰）
+
+### G.5 Steel Cap 简版（无本体加固 1 件）
+
+**语义**：Steel Cap 纯铁盔简版 · 无延伸
+
+**anchor**：`nomad_helmet` 56 · 略降到 55 head（无 Plated 加固）
+
+| # | id | 游戏名 | v1 h/b/a/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 19 | `TV_khuzait_helmet_c2` | Eastern Steel Cap | 33/0/0/2.8 | **55/0/0/2.6** |
+
+### G 家族完整阶梯（v2 决议）
+
+```
+55  (G.5 Steel Cap 简版)
+68  (G.4 Plated Cap w/ Plumed/Crested)
+70  (G.4 Plated Cap 主 / G.1 Pointed+Leather)
+85  (G.1 Pointed+Plates)
+100 (G.1 Pointed+Closed Mail)
+110 (G.1 Pointed+Faceplate)
+115 (G.3 With Lamellar × 4)
+120 (G.1 Pointed+Plated Mail)
+124 (G.3.n Nasalhelm+Lamellar)
+130 (G.3.u Lamellar Faceguard)
+148 (G.2 Closed Lamellar × 3 — 铁浮屠核心 · 用户特批 override 顶点)
+```
+
+### G 家族收官统计（含反馈 #3 补入 TV_khuzait_helmet_b）
+
+- **总件数**：**20 件**（原 19 + Eastern Helmet Over Closed Lamellar Veil 补入）
+- **顶点**：148/82/45（G.2 四件 Closed Lamellar · 含 TV_khuzait_helmet_b Closed Lamellar Veil wt=4.8）
+- **⚠ 越权级别**：+7 vs Khuzait vanilla 141 · +4 vs Empire vanilla 144 · -2 vs Sturgia vanilla 150 顶
+- **状态**：20 件 🔵 log-only（决议归档 · XML 未动 · 等 Khuzait 全 6 类收官后一次 deploy）
+
+**2026-09-24 追加 · TV_khuzait_helmet_b 补入**：
+
+| # | id | 游戏名 | v1 h/b/a/wt | **v2 决议 h/b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 20 | `TV_khuzait_helmet_b` | Eastern Helmet Over Closed Lamellar Veil | 49/0/0/4.8 | **148/82/45/4.8** | Closed Lamellar Veil = 甲片完整覆颈+面 · 与 G.2 三件平级 · wt 4.8 最重装反映甲片全罩（原分类漏归 F 系 · 反馈 #3 修正） |
+
+---
+
+## Khuzait · BodyArmor · 华夏中原精工线（2026-09-24）
+
+### 2026-09-24 · Heavy Lamellar 顶级重装 + Lamellar Coat 华夏顶下一档 · 用户特批 override
+
+**背景铁律**：本节所有件按新铁律"华夏中原 / 波斯萨珊 精工线"处理 · 允许突破 Khuzait vanilla 顶 100 · 对齐或略超 Empire Cataphract 尺度
+
+**用户 quote**：
+- 反馈 #1（2026-09-24）："Stitched Lamellar Coat 应该属于顶级身甲的水平（几乎全身水平的扎甲覆盖，外加皮甲或链甲内衬）"
+- 反馈 #2（2026-09-24）："Eastern Heavy Lamellar 应该属于顶级身甲中的拔尖水平（同样是全身扎甲覆盖，外加链甲+皮甲内衬，刀枪不入）"
+- 反馈 世界观（2026-09-24）："将它们作为一个和全盛帝国平起平坐甚至有过之而无不及的远东帝国的装备"
+
+### Heavy Lamellar 系（华夏中原顶 · 138 body · 4 件）
+
+**anchor**：`imperial_scale_armor` 135/122/67（override 前 · 平顶）· 用户特批 +3 body 反映"有过之而无不及"
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `eastern_heavy_lamellar_armor` | Eastern Heavy Lamellar Armor | 54/18/16/25.3 | **138/122/67/28** | 华夏顶 · +3 vs `imperial_scale_armor` 135 · 全身扎甲 + Double Mail 内衬 |
+| 2 | `AR_aserai_armor_z` | Eastern Heavy Alternating Lamellar Armor | 54/18/16/25.3 | **138/122/67/28** | Alternating 变体同顶 · 交错扎甲 |
+| 3 | `ao_durkhan_lamellar_with_mail` | Eastern Heavy Lamellar With Mail | 48/24/14/22.1 | **130/110/60/25** | 单 mail 内衬 · sub 半档（-8 body vs Heavy Lamellar 138） |
+| 4 | `ao_durkhan_heavy_lamellar` | Eastern Heavy Lamellar（无内衬） | 45/18/2/12 | **118/85/50/14** | 无 mail 内衬 · 对齐 `lamellar_with_scale_skirt` override 后 135 顶 -17（"稍逊"档 · 反映无双 mail 内衬） |
+
+### Lamellar Coat over Mail 系（华夏次顶 · 120 body · 8 件）
+
+**差距**：Heavy Lamellar 138 - Lamellar Coat 120 = 18（用户反馈 B "略微加大差距"）
+
+**anchor**：介于 `lamellar_with_scale_skirt` override 后 135 与 `imperial_lamellar` 79 之间 · 反映"精工华夏 Coat 装" · Coat vs Vest 分工 · Mail 内衬 vs 无
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 5 | `TV_khuzait_armor_k` | Eastern Stitched Lamellar Coat Over Mail | 52/23/10/20 | **120/95/50/22** | 华夏次顶 Coat + Mail 内衬（-18 vs Heavy Lamellar） |
+| 6 | `TV_khuzait_armor_j` | Eastern Alternating Lamellar Coat Over Mail | 46/20/10/20 | **120/95/50/22** | Alternating 同档 · 交错扎甲 |
+| 7 | `TV_khuzait_armor_o` | Eastern Stitched Lamellar Vest Over Mail | 52/12/10/20 | **110/65/45/20** | Vest 减腿版（Coat -35 leg） |
+| 8 | `TV_khuzait_armor_n` | Eastern Alternating Lamellar Vest Over Mail | 46/12/10/20 | **110/65/45/20** | 同上 |
+| 9 | `TV_khuzait_armor_m` | Eastern Stitched Lamellar Coat（无 mail） | 32/18/6/12.5 | **95/80/38/14** | 无 mail 内衬 · 一档降（-25 body vs Over Mail 版） |
+| 10 | `TV_khuzait_armor_l` | Eastern Alternating Lamellar Coat（无 mail） | 28/14/6/12.5 | **95/80/38/14** | 同上 |
+| 11 | `TV_khuzait_armor_q` | Eastern Stitched Lamellar Vest（无 mail） | 32/6/6/12.5 | **80/50/28/13** | 无 mail Vest 版 |
+| 12 | `TV_khuzait_armor_p` | Eastern Alternating Lamellar Vest（无 mail） | 28/6/6/12.5 | **80/50/28/13** | 同上 |
+
+### 华夏中原线 · 阶梯
+
+```
+138  Heavy Lamellar / Heavy Alternating Lamellar（顶 · +3 vs Empire vanilla imperial_scale 135）
+130  Heavy Lamellar With Mail（单 mail 内衬）
+120  Stitched/Alternating Lamellar Coat Over Mail（华夏次顶）
+118  Heavy Lamellar 无内衬（对齐 lamellar_with_scale_skirt override 后 135 -17）
+110  Lamellar Vest Over Mail
+100  Khan's Coat of Plates（Khuzait 皇家游牧顶 · vanilla · 不动）
+ 95  Lamellar Coat 无内衬
+ 80  Lamellar Vest 无内衬
+ 75  Lancer Lamellar Armor（Khuzait 中档 · vanilla `eastern_lamellar_armor` · 不动）
+```
+
+### 华夏中原线收官统计
+
+- **总件数**：12 件（Heavy Lamellar 4 + Lamellar Coat over Mail 8）
+- **顶点**：138/122/67（Heavy Lamellar 2 件）
+- **⚠ 越权级别**：+38 vs Khuzait vanilla 100 · +3 vs Empire vanilla `imperial_scale_armor` 135 · 均用户特批
+- **状态**：12 件 🔵 log-only
+
+---
+
+## Empire · BodyArmor · H 家族 vanilla override（2026-09-24）
+
+### 2026-09-24 · Vanilla+RBM 首次 override · lamellar_with_scale_skirt ↔ imperial_scale_armor 数值互调
+
+**触发**：用户 2026-09-24 review 时判定 vanilla 数据不平衡——`imperial_scale_armor` 135/122/67 全面高于 `lamellar_with_scale_skirt` 118/122/45（body +17 · arm +22）· 不构成"平替"关系。
+
+**用户建议分工**："前者高身甲，后者高臂甲"
+
+**override 决议**：
+
+| id | RBM 现值 | v2 override 值 | 分工 |
+|---|---|---|---|
+| `lamellar_with_scale_skirt` | 118/122/45 | **135/122/45** | Heavy Lamellar over Mail w/ Scale Skirt · 高身甲（body 顶 · arm 中） |
+| `imperial_scale_armor` | 135/122/67 | **118/122/67** | Heavy Scale Armor over Double Mail · 高臂甲（body 中 · arm 顶） |
+
+**总防御平衡校验**：135+122+45 = 302 · 118+122+67 = 307 · 差 5 → 近似平替 ✓
+
+**联动影响**：
+- Empire H 家族 `ao_imperial_cataphracts_lamellar` 原按 `lamellar_with_scale_skirt` 118 direct → **修订到 135/122/45**（body 与新 override 平顶）
+- `ao_imperial_cataphracts_lamellar_b` 原 115 → **修订到 132/122/45**（Brass -3）
+
+**Empire H 家族修订**：
+
+| # | id | 游戏名 | v2 旧 | **v2 新** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `ao_imperial_cataphracts_lamellar` | Imperial White Brass Lamellar Over Scale | 118/78/45/28 | **135/122/45/28** | override 后 lamellar_with_scale_skirt 135/122/45 direct（leg 从 78 回归 vanilla 122） |
+| 2 | `ao_imperial_cataphracts_lamellar_b` | Imperial Brass Lamellar Over Scale | 115/78/45/28 | **132/122/45/28** | Brass -3 vs White Brass |
+
+**状态**：2 件 vanilla override + 2 件 Empire H 家族修订 · 🔵 log-only
+
+**⚠ 前例意义**：此后 override RBM vanilla 需用户明示 · 不能自动扩展
+
+---
+
+## Khuzait · HeadArmor · 剩余 14 家族全审（2026-09-24 · 109 件）
+
+**触发**：G 家族铁浮屠系 20 件 + Closed Lamellar Veil 补入定案后 · 继续完成 Khuzait HeadArmor 剩余 14 家族（A/B/C/D/E/F/H-O）全审 · 按华夏中原线关键词分档 · 尊重铁律"vanilla+RBM 唯一权威"
+
+**分档原则**：
+- **华夏中原线关键词**（`Cataphract` / `Fluted` / `Closed Lamellar Veil`）：升到 Empire Late Roman 顶档尺度
+- **Vanilla direct match**：其他家族按 vanilla+RBM 参照直匹配
+- **家族均值 fallback**：无 vanilla 对应件按家族均值 + 装饰前缀零影响
+
+### A. Noble/Lord Helmet 系（14 件 · Khuzait 内 vanilla 顶点 141 参照）
+
+**vanilla anchor**：
+- `khuzait_noble_helmet_with_fur` 141/26/20（Furred Noble Lancer · 顶）
+- `khuzait_noble_helmet_with_feathers` 105/14/25（Noble Lancer w/ Feathers）
+- `khuzait_noble_helmet_with_neckguard` 102/30/0（Plumed Noble Lancer w/ Neckguard）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_khuzait_lord_helmet_a` | Plumed Noble Helmet With Faceplate | 50 | **105/25/0/3.7** | Faceplate 面甲遮脸 · 无颈罩 |
+| 2 | `AR_khuzait_lord_helmet_c` | Gilded Helmet With Mail | 50 | **102/14/25/3.5** | 对齐 Noble Lancer w/ Feathers 结构 · Gilded 装饰零影响 |
+| 3 | `AR_khuzait_lord_helmet_c2` | Iron Helmet With Mail | 50 | **100/14/25/3.5** | Iron -2 vs Gilded |
+| 4 | `AR_khuzait_lord_helmet_d` | Plumed Gilded Helmet With Closed Mail | 51 | **110/25/30/3.8** | Closed Mail aventail 顶 + Gilded |
+| 5 | `AR_khuzait_lord_helmet_d2` | Plumed Iron Helmet With Closed Mail | 51 | **108/25/30/3.8** | Iron -2 |
+| 6 | `AR_khuzait_lord_helmet_e` | Heavy Plumed Noble Helmet | 46 | **108/22/15/3.7** | Heavy 加成 |
+| 7 | `AR_khuzait_lord_helmet_h` | Silk Wrapped Decorated Noble Cap | 36 | **65/8/8/2.5** | Cap 结构 · 中低装饰档 |
+| 8 | `TV_khuzait_lord_helmet_a` | Furred Noble Helmet With Plume | 45 | **100/14/22/3.7** | Furred 装饰 · 对齐 Noble Lancer 中档 |
+| 9 | `TV_khuzait_lord_helmet_b` | Furred Noble Helmet With Feathers | 47 | **100/14/22/3.7** | 同上 |
+| 10 | `TV_khuzait_lord_helmet_i` | Silvered Noble Helmet With Lamellar | 42 | **102/22/28/3.5** | Silvered 装饰 + Lamellar aventail |
+| 11 | `TV_khuzait_lord_helmet_j` | Gilded Noble Helmet With Leather Lamellar | 36 | **95/12/22/3.4** | Leather Lamellar 略降 |
+| 12 | `TV_khuzait_lord_helmet_k` | Gilded Noble Helmet With Plates | 46 | **102/25/22/3.6** | Plates aventail |
+| 13 | `TV_khuzait_lord_helmet_m` | Plumed Noble Helmet With Plates | 50 | **105/25/22/3.6** | Plates + Plumed |
+| 14 | **`TV_khuzait_lord_helmet_n`** | **Noble Fluted Helmet With Sideguards** | 52 | **130/30/25/3.7** ⚠ 华夏中原线 | Fluted 命名 + Sideguards 结构 · Empire `empire_guarded_lord_helmet` 130 直匹配 |
+
+### B. Cataphract 系（5 件 · 华夏中原线关键词 · Empire Cataphract 尺度对齐）
+
+**⚠ 华夏中原线特批**：Cataphract 命名 → 对齐 Empire Cataphract 系 124-135 尺度 · 但不越 G 家族铁浮屠 148 顶
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_khuzait_lord_helmet_b` | Eastern **Cataphract** Helmet | 52 | **135/50/40/3.9** | Empire Cataphract 顶尺度 · 对齐 K 家族 Aserai Immortal's 135 |
+| 2 | `ao_durkhan_cataphract_helmet_a` | Eastern Mailed **Cataphract** Helmet | 52 | **130/36/38/3.8** | Empire Royal Cataphract 130 + Mail aventail |
+| 3 | `ao_durkhan_cataphract_helmet_b` | Eastern Lamellar **Cataphract** Helmet | 52 | **130/36/40/3.8** | 同上 + Lamellar aventail +2 arm |
+| 4 | `AR_khuzait_helmet_o` | Eastern Feathered **Cataphract**'s Helmet | 50 | **125/25/35/3.9** | sub 顶 · Feathered 装饰零影响 |
+| 5 | `AR_goth_helmet_f` | Eastern Plumed Lamellar Helmet Over Mail | 52 | **95/22/28/3.2** | 无 Cataphract 命名 · Plumed Lamellar 精工中档 |
+
+### C. Vendel 系（3 件 · vanilla direct）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_vaegir_helmet_d` | Northern Fur Vendel Helmet | 51 | **106/65/40/4.0** | vanilla `eastern_vendel_helmet` 106/65/40 direct |
+| 2 | `AR_khuzait_lord_helmet_g` | Heavy Vendel Helmet With Leather | 50 | **100/45/28/3.9** | Leather aventail vs Full Mail |
+| 3 | *（AR_vaegir_helmet_a/c 归 E Spiked 家族）* | | | | |
+
+### D. Battle Crown 系（3 件 · vanilla direct）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `TV_khuzait_lord_helmet_c` | Decorated Battle Crown | 36 | **90/12/0/2.7** | vanilla `khuzait_battle_crown` direct + Decorated 装饰 |
+| 2 | `TV_khuzait_lord_helmet_h` | Silvered Battle Crown With Lamellar | 45 | **92/12/25/2.9** | + Lamellar aventail |
+| 3 | `TV_khuzait_lord_helmet_h2` | Gilded Battle Crown With Leather Lamellar | 45 | **90/12/22/2.9** | + Leather Lamellar 略降 |
+
+### E. Spiked Helmet 系（8 件 · Facemask 顶档）
+
+**vanilla anchor**：`spiked_helmet_with_facemask` 119/90/40（Facemask 顶）· `spiked_helmet` 94/0/37（base）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_khuzait_helmet_g` | Eastern Spiked Helmet With Leather | 42 | **80/6/20/3.8** | Leather aventail 中档 |
+| 2 | `AR_khuzait_lord_helmet_f` | Eastern Plumed Heavy Helmet With Mask | 52 | **110/85/30/3.9** | Mask body 高档 · sub Facemask 顶 |
+| 3 | `DZ_khuzait_helmet_d` | Plumed Banded Helmet With **Facemask** | 48 | **100/60/25/4.5** | Facemask body 60 |
+| 4 | `DZ_khuzait_helmet_e` | Decorated Noble Helmet With **Facemask** | 48 | **105/70/25/4.5** | Decorated + Facemask |
+| 5 | `TV_khuzait_lord_helmet_e` | Decorated Spiked Helmet With **Facemask** | 51 | **119/90/40/4.5** | vanilla `spiked_helmet_with_facemask` direct 顶 |
+| 6 | `TV_khuzait_lord_helmet_l` | Steppe Spiked Iron Helmet With **Facemask** | 51 | **119/90/40/4.5** | 同上 · direct |
+| 7 | `AR_vaegir_helmet_a` | Northern Spiked Helmet With Mail | 34 | **94/12/35/4.5** | vanilla `spiked_helmet` 94 + Mail aventail |
+| 8 | `AR_vaegir_helmet_c` | Northern Fur Spiked Helmet With Mail | 34 | **94/14/35/4.6** | + Fur 装饰 |
+
+### F. Plumed Lamellar 系（18 件 · Lamellar aventail 主流）
+
+**vanilla anchor**：`plumed_lamellar_helmet` 77/0/25（唯一 Lamellar aventail 参照）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_goth_helmet_e` | Eastern Lamellar Helmet Over Leather | 46 | **70/6/15/3.5** | Leather aventail |
+| 2 | `AR_goth_helmet_g` | Eastern Closed Plumed Lamellar Helmet | 52 | **100/22/28/4.2** | Closed 结构中高 |
+| 3 | `AR_goth_helmet_j` | Steppe Plumed Lamellar Cap Over Leather | 42 | **70/6/18/1.7** | Cap + Leather |
+| 4 | `AR_goth_helmet_k` | Steppe Plumed Lamellar Cap Over Mail | 48 | **80/12/25/1.7** | Cap + Mail aventail |
+| 5 | `AR_goth_helmet_l` | Steppe Decorated Plumed Lamellar Cap Over Mail | 48 | **82/12/25/1.7** | Decorated +2 |
+| 6 | `AR_goth_helmet_d` | Eastern Lamellar Helmet Over Cloth | 36 | **60/6/12/3.2** | Cloth 内衬 |
+| 7 | `AR_khuzait_helmet_c` | Eastern Lamellar Helmet With Fur | 38 | **65/6/12/3.3** | Fur 装饰 |
+| 8 | `AR_khuzait_helmet_c_fur` | Eastern Lamellar Helmet With Upturned Cap | 38 | **65/6/12/3.3** | 同上 |
+| 9 | `ao_durkhan_heavy_lamellar_helmet` | Eastern Heavy Lamellar Helmet | 42 | **95/12/25/3.8** | Heavy 命名 · 华夏中原精工略微增强 |
+| 10 | `ao_durkhan_heavy_fur_trimmed_helmet` | Eastern Heavy Fur Trimmed Lamellar Helmet | 52 | **95/12/25/3.8** | 同上 + Fur Trimmed |
+| 11 | `TV_khuzait_lord_helmet_f` | Steppe Plumed Lamellar Helmet | 42 | **80/12/25/3.4** | Steppe 中档 |
+| 12 | `TV_khuzait_lord_helmet_g` | Eastern Lordly Plumed Lamellar Helmet | 45 | **105/22/28/4.6** | Lordly 精工 sub Cataphract |
+| 13 | `TV_khuzait_helmet_v` | Eastern Lamellar Helmet | 34 | **65/0/15/1.7** | 简版 · 无 aventail |
+| 14 | `TV_khuzait_helmet_w` | Eastern Lamellar Helmet Over Leather | 38 | **70/6/15/1.7** | Leather aventail |
+| 15 | `TV_khuzait_helmet_z` | Steppe Lamellar Helmet Over Cloth | 46 | **60/6/12/3.2** | Cloth 内衬 |
+| 16 | `TV_khuzait_helmet_z2` | Steppe Lamellar Helmet Over Leather | 43 | **70/6/15/3.5** | Leather aventail |
+| 17 | `TV_khuzait_helmet_z3` | Steppe Lamellar Helmet Over Mail | 48 | **77/0/25/3.6** | vanilla `plumed_lamellar_helmet` direct |
+| 18 | `TV_khuzait_helmet_a` | Eastern Helmet Over Open Lamellar | 44 | **75/12/22/3.3** | Open Lamellar aventail |
+
+### H. Nasalhelm 系（5 件 · 跨文化 Empire Nasalhelm 参照）
+
+**vanilla anchor（跨文化）**：Empire `heavy_nasalhelm_over_imperial_mail` 124/36/20 系 · Empire `imperial_nasal_helm` 97/12/25
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_khuzait_helmet_v` | Eastern Nasalhelm With Studded Faceguard | 40 | **80/12/22/1.7** | Studded 中档 |
+| 2 | `AR_khuzait_helmet_w` | Eastern Nasalhelm With Lamellar Faceguard | 49 | **90/22/28/2.8** | Lamellar 顶 |
+| 3 | `AR_khuzait_helmet_u` | Eastern Nasalhelm With Suede Faceguard | 34 | **65/6/15/1.7** | Suede 软档 |
+| 4 | `AR_khuzait_lord_helmet_i` | Eastern Lordly Nasalhelm With Lamellar Faceguard | 49 | **100/22/28/2.8** | Lordly 精工顶 |
+| 5 | `TV_khuzait_helmet_t` | Steppe Mailed Steel Nasalhelm | 44 | **90/22/25/3.15** | Steppe Mail 中高 |
+
+### I. Spangenhelm 系（13 件 · 跨文化 Empire Spangenhelm 参照）
+
+**vanilla anchor**：Empire `feathered_spangenhelm_over_imperial_coif` 88 · `ironlame_feathered_spangenhelm_over_mail` 95 · `leatherlame_feathered_spangenhelm_over_mail` 97
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_khuzait_helmet_k` | Eastern Furred Spangenhelm With Feather | 38 | **60/6/12/1.7** | Furred 装饰 · Feather 无 aventail |
+| 2 | `AR_khuzait_helmet_l` | Eastern Furred Spangenhelm | 34 | **58/6/12/1.7** | 同上 |
+| 3 | `AR_khuzait_helmet_m` | Eastern Plumed Furred Spangenhelm Over Lamellar | 44 | **85/22/28/3.9** | 顶级 Lamellar aventail |
+| 4 | `AR_khuzait_helmet_n` | Eastern Spangenhelm With Fur Cap | 38 | **55/6/12/1.7** | Fur Cap 简版 |
+| 5 | `AR_khuzait_helmet_p` | Eastern Spangenhelm Cap With Fur | 22 | **50/6/12/1.4** | Cap 版 |
+| 6 | `AR_khuzait_helmet_q` | Eastern Lamellar Spangenhelm | 34 | **65/12/22/1.7** | Lamellar 内衬简版 |
+| 7 | `AR_khuzait_helmet_r` | Eastern Lamellar Spangenhelm Over Leather | 38 | **70/12/22/1.7** | + Leather |
+| 8 | `AR_khuzait_helmet_s` | Eastern Lamellar Spangenhelm Over Mail | 45 | **95/22/28/1.7** | vanilla `ironlame_feathered_spangenhelm_over_mail` direct |
+| 9 | `AR_khuzait_helmet_t` | Eastern Lamellar Spangenhelm With Mask | 50 | **97/22/40/1.7** | vanilla `leatherlame_feathered_spangenhelm_over_mail` direct |
+| 10 | `AR_empire_helmet_c` | Steppe Feathered Spangenhelm Over Mail Coif | 44 | **88/22/40/3.1** | vanilla `feathered_spangenhelm_over_imperial_coif` direct |
+| 11 | `AR_empire_helmet_d` | Steppe Feathered Spangenhelm Over Leather | 34 | **76/12/15/1.7** | vanilla `leatherlame_feathered_spangenhelm_over_leather` direct |
+| 12 | `AR_empire_helmet_e` | Steppe Plumed Spangenhelm Over Mail | 46 | **95/12/25/3.3** | vanilla `ironlame_feathered_spangenhelm_over_mail` direct |
+| 13 | `AR_empire_helmet_f` | Steppe Plumed Spangenhelm | 32 | **65/12/25/3.2** | vanilla `ironlame_feathered_spangenhelm` direct |
+
+### J. Banded Helmet 系（5 件 · 家族均值 fallback）
+
+**无 vanilla 直匹配** · 按 aventail 类型分档
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_goth_helmet_m` | Eastern Banded Helmet Over Leather | 36 | **70/6/15/3.2** | Leather aventail |
+| 2 | `AR_goth_helmet_n` | Eastern Banded Helmet Over Mail | 46 | **90/12/25/3.5** | Mail aventail |
+| 3 | `AR_goth_helmet_o` | Eastern Plumed Banded Helmet Over Mail | 52 | **92/14/28/3.2** | + Plumed |
+| 4 | `DZ_khuzait_helmet_b` | Eastern Open Plumed Banded Helmet | 46 | **75/6/12/4.5** | Open 无 aventail |
+| 5 | `DZ_khuzait_helmet_c` | Eastern Closed Plumed Banded Helmet | 51 | **100/22/25/4.0** | Closed 顶 |
+
+### K. Iron/Brass Helmet 简版（11 件 · 中低档实用盔）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_khuzait_helmet_h` | Eastern Iron Helmet Over Rough Fur | 26 | **34/0/0/1.4** | Rough Fur 民用低档 |
+| 2 | `AR_khuzait_helmet_h2` | Eastern Brass Helmet Over Rough Fur | 26 | **32/0/0/1.4** | Brass -2 vs Iron |
+| 3 | `AR_khuzait_helmet_i` | Eastern Iron Helmet Over Leather | 34 | **46/0/0/1.4** | Leather 内衬 |
+| 4 | `AR_khuzait_helmet_i2` | Eastern Brass Helmet Over Leather | 34 | **44/0/0/1.4** | Brass -2 |
+| 5 | `AR_khuzait_helmet_j` | Eastern Closed Plumed Helmet | 46 | **60/12/0/3.9** | Closed 结构 |
+| 6 | `ao_durkhan_iron_helmet_with_leather` | Iltanlar Iron Cap | 28 | **46/0/0/3.8** | 同 iron helmet Over Leather |
+| 7 | `ao_durkhan_brass_helmet_with_leather` | Iltanlar Brass Cap | 28 | **44/0/0/3.8** | Brass -2 |
+| 8 | `ao_durkhan_iron_horsehair_helmet` | Iltanlar Iron Helmet With Leather | 35 | **50/6/0/3.8** | + Horsehair 装饰 |
+| 9 | `ao_durkhan_brass_horsehair_helmet` | Iltanlar Brass Helmet With Leather | 35 | **48/6/0/3.8** | 同上 · Brass -2 |
+| 10 | `ao_durkhan_iron_lamellar_helmet` | Iltanlar Iron Helmet With Mail | 45 | **65/6/22/3.8** | + Mail aventail |
+| 11 | `ao_durkhan_brass_lamellar_helmet` | Iltanlar Brass Helmet With Mail | 45 | **63/6/22/3.8** | Brass -2 |
+
+### L. Ornate/Silvered/Gilded Cap 装饰系（10 件 · vanilla khuzait_crown 45 anchor）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `TV_khuzait_lord_helmet_d` | Eastern Ornate Cap | 22 | **45/0/0/1.4** | vanilla `khuzait_crown` direct |
+| 2 | `TV_khuzait_helmet_y` | Eastern Decorated Cap | 22 | **45/0/0/1.4** | 同上 |
+| 3 | `TV_khuzait_helmet_y2` | Eastern Decorated Helmet | 32 | **55/0/0/2.1** | Helmet 略高 |
+| 4 | `TV_khuzait_helmet_y3` | Eastern Plumed Decorated Helmet | 38 | **58/0/0/2.1** | + Plumed |
+| 5 | `TV_khuzait_helmet_y4` | Eastern Lordly Plumed Decorated Helmet | 44 | **68/0/0/4.6** | Lordly 精工 |
+| 6 | `TV_khuzait_helmet_za` | Eastern Silvered Helmet | 32 | **55/0/0/2.1** | Silvered 装饰 |
+| 7 | `TV_khuzait_helmet_zb` | Eastern Gilded Helmet | 32 | **55/0/0/2.1** | Gilded 装饰 |
+| 8 | `DZ_khuzait_helmet_a` | Eastern Silvered Lamellar Helmet | 36 | **65/12/22/3.3** | + Lamellar aventail |
+| 9 | `AR_khuzait_helmet_c3` | Eastern Helmet With Upturned Cap | 33 | **38/0/0/2.2** | 中低装饰 |
+| 10 | `TV_khuzait_helmet_a2` | Eastern Helmet Over Leather | 33 | **45/0/0/3.3** | Leather 简版 |
+
+### M. Steppe Leather Helmet 系（6 件 · Leather 中低档）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_khuzait_helmet_b` | Steppe Plumed Helmet With Fur | 22 | **22/0/0/1.4** | vanilla `nomad_padded_hood` 20 平级 |
+| 2 | `AR_khuzait_helmet_b2` | Steppe Plumed Leather Helmet With Fur | 20 | **20/0/0/1.4** | Leather mat |
+| 3 | `AR_khuzait_helmet_d` | Steppe Leather Cap | 18 | **14/0/0/1.1** | vanilla `nomad_cap` direct |
+| 4 | `AR_khuzait_helmet_d2` | Steppe Furred Leather Cap | 18 | **14/0/0/1.1** | 同上 · Furred 装饰 |
+| 5 | `AR_khuzait_helmet_e` | Steppe Leather Helmet | 18 | **18/0/0/1.1** | Leather helmet 简 |
+| 6 | `AR_khuzait_helmet_f` | Steppe Leather Helmet With Fur | 18 | **18/0/0/1.1** | 同上 + Fur |
+
+### N. Fur Cap/Hood 民用（4 件 · vanilla direct）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_khuzait_helmet_a` | Eastern Fur Cap | 4 | **7/0/0/0.6** | vanilla `fur_hat` direct |
+| 2 | `AR_khuzait_hood_a` | Eastern Leather Hood | 12 | **12/0/0/0.6** | vanilla `fur_hood` direct |
+| 3 | `AR_khuzait_hood_b` | Eastern Peaked Leather Hood | 13 | **14/0/0/0.7** | vanilla `peaked_fur_hood` direct |
+| 4 | `ON_cone_hat_a` | Eastern Conical Straw Hat | 6 | **6/0/0/1.2** | Cloth Straw · 无 vanilla 对应 · 维持 v1 |
+
+### O. 特殊/独立（4 件）
+
+| # | id | 游戏名 | v1 h | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_goth_helmet_h` | Steppe Lamellar Cap | 22 | **34/0/0/1.4** | 简版 Lamellar cap |
+| 2 | `AR_goth_helmet_i` | Steppe Lamellar Cap With Cheekguards | 34 | **38/6/0/1.7** | + Cheekguards |
+| 3 | `ao_durkhan_guarded_iron_helmet` | Eastern Guarded Iron Helmet | 32 | **50/12/0/3.8** | Guarded 结构中档 |
+| 4 | `ao_durkhan_fur_trimmed_helmet` | Eastern Guarded Fur Trimmed Helmet | 35 | **50/6/0/3.1** | + Fur Trimmed |
+
+### Khuzait HeadArmor 剩余 14 家族收官统计
+
+- **总件数**：109 件（A 14 + B 5 + C 3 + D 3 + E 8 + F 18 + H 5 + I 13 + J 5 + K 11 + L 10 + M 6 + N 4 + O 4）
+- **顶点分布**：
+  - **A.14 · Noble Fluted Helmet With Sideguards 130/30/25**（华夏中原线 · Fluted 命名特批）
+  - **B.1 · Eastern Cataphract Helmet 135/50/40**（华夏中原线 · Cataphract 命名特批）
+  - **B.2/3 · Mailed/Lamellar Cataphract Helmet 130/36/38-40**（华夏中原线）
+  - **E.5/6 · Spiked Helmet With Facemask 119/90/40**（vanilla direct）
+  - **C.1 · Fur Vendel 106/65/40**（vanilla direct）
+- **⚠ 越权**：仅 A.14 + B 家族 4 件（华夏中原线特批 · 均 sub G 家族铁浮屠 148 顶）
+- **无违反顶点保护**（Khuzait vanilla 141 依然是 Fur Noble Lancer 的绝对顶）
+- **状态**：109 件 🔵 log-only
+
+---
+
+## Khuzait · BodyArmor · 剩余 30 件（2026-09-24 · 蒙古游牧线 + 中低档）
+
+**触发**：Heavy Lamellar 华夏中原线 12 件归档后 · 继续完成 Khuzait BodyArmor 剩余 30 件 · 走蒙古游牧线 + 民用中低档 · 无越权
+
+### 顶档 · 蒙古游牧 Lamellar Over Mail（vanilla `brass_lamellar_over_mail` 100 anchor）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `AR_khuzait_armor_b` | Eastern Lamellar Over Mail | 50/25/15/28 | **100/44/44/22** | vanilla `brass_lamellar_over_mail` 100/44/44 direct · 蒙古游牧顶 · Khan's Coat 皇家顶保留 |
+
+### 中高档 · Plate Armor / Nobles Lamellar / Plated Leather（Lancer Lamellar 75 尺度）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 2 | `AR_khuzait_armor_a` | Eastern Plated Armor | 45/17/16/18.6 | **60/40/35/16** | vanilla `eastern_plated_leather` Mirrored Brigandine direct |
+| 3 | `ao_durkhan_nobles_lamellar` | Eastern Noble Lamellar | 49/18/2/14 | **75/50/25/14** | vanilla `eastern_lamellar_armor` Lancer Lamellar direct |
+| 4 | `ao_durkhan_lamellar_thighguard` | Eastern Lamellar With Thighguard | 40/25/2/10 | **60/40/25/12** | Thighguard 加 leg 中档 |
+| 5 | `TV_khuzait_armor_g` | Eastern Light Lamellar Armor | 39/6/6/16 | **50/25/15/14** | Light Lamellar 中低档 |
+| 6 | `TV_khuzait_armor_u` | Eastern Blackened Leather Lamellar Over Mail | 38/16/14/28 | **50/25/25/18** | Blackened Leather + Mail · Chainmail mat |
+
+### 中档 · Leather Coat Over Mail 系（vanilla `studded_leather_over_aketon` 32 / `eastern_stitched_leather_coat` 32 anchor）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 7 | `TV_khuzait_armor_s` | Eastern Studded Leather Coat Over Mail | 30/12/10/3.0 | **32/32/27/8** | vanilla `studded_leather_over_aketon` direct |
+| 8 | `TV_khuzait_armor_e` | Eastern Stitched Leather Coat Over Mail | 30/12/10/13.9 | **32/38/25/14** | vanilla `eastern_stitched_leather_coat` direct |
+| 9 | `TV_khuzait_armor_f` | Eastern Stitched Leather Vest Over Mail | 30/12/10/13.9 | **32/28/22/13** | Vest 减腿 |
+
+### 中低档 · Blackened Leather Lamellar / Studded Leather
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 10 | `TV_khuzait_armor_t` | Eastern Blackened Leather Lamellar Armor | 24/12/6/14 | **28/22/17/12** | vanilla `leather_lamellar_armor` direct |
+| 11 | `TV_khuzait_armor_h` | Eastern Blackened Leather Lamellar Vest | 24/6/6/2.6 | **24/12/12/8** | Vest 版 |
+| 12 | `TV_khuzait_armor_r` | Eastern Studded Leather Coat | 18/10/6/3.0 | **18/19/12/3** | vanilla `studded_steppe_leather` direct |
+| 13 | `TV_khuzait_armor_b` | Eastern Strapped Iron Lamellar Armor | 24/8/2/15 | **35/22/12/13** | Strapped Iron Lamellar 中档 |
+| 14 | `ao_durkhan_lamellar` | Eastern Lamellar | 28/2/2/8 | **32/20/15/10** | 简版 lamellar |
+
+### 中低档 · Vest 与 Strapped Leather 变体
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 15 | `TV_khuzait_armor_i` | Eastern Stitched Leather Vest | 20/6/6/8.4 | **22/15/10/8** | Vest 简版 |
+| 16 | `TV_khuzait_armor_a` | Eastern Strapped Leather Armor | 22/6/2/15 | **24/18/10/12** | Strapped Leather |
+| 17 | `TV_khuzait_armor_d` | Eastern Light Strapped Iron Lamellar Armor | 24/4/2/15 | **28/15/8/12** | Light + Iron |
+| 18 | `TV_khuzait_armor_d2` | Eastern Light Strapped Lamellar Armor | 24/4/2/15 | **28/15/8/12** | Light 简版 |
+| 19 | `ao_durkhan_light_lamellar` | Eastern Light Lamellar | 24/2/2/6.5 | **22/12/8/6** | Light 简 |
+| 20 | `TV_khuzait_armor_c` | Eastern Light Strapped Leather Armor | 22/4/2/15 | **20/10/8/10** | Light Leather |
+
+### 民用低档 · Leather Vest / Chestplate / Poncho
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 21 | `ao_khuzait_leather_vest` | Eastern Leather Vest Over Tunic | 19/4/3/1.9 | **15/12/6/2** | 民用中低 |
+| 22 | `ao_durkhan_leather_lamellar` | Eastern Leather Lamellar | 18/2/2/5.5 | **18/10/8/5** | 简版 |
+| 23 | `ao_durkhan_sleeveless_leather_lamellar` | Eastern Sleeveless Leather Lamellar | 17/2/1/5.3 | **16/8/4/5** | 无袖 |
+| 24 | `ao_durkhan_chestplate` | Eastern Leather Chestplate | 15/2/1/4 | **14/6/3/4** | 简 chestplate |
+| 25 | `ao_durkhan_topless_leather_lamellar` | Eastern Open Leather Lamellar | 16/2/0/5 | **14/6/2/4** | Open 版 |
+| 26 | `ao_durkhan_hide_poncho` | Eastern Hide Vest | 10/5/1/1 | **12/8/4/1** | Hide 简 |
+
+### 民用极档 · Cloth Coat / Silk Robes / Trousers
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 27 | `DZ_khuzait_armor_b` | Eastern Decorated Coat With Belt | 8/3/3/2.4 | **15/12/12/2** | vanilla `khuzait_belt_leather` 15/12/12 direct |
+| 28 | `DZ_khuzait_armor_a` | Eastern Luxury Silk Robes | 6/3/3/2.7 | **12/12/6/1** | vanilla `khuzait_civil_coat` direct · Cloth 民用 |
+| 29 | `ao_durkhan_trousers` | Eastern Cloth Trousers | 0/3/0/0.4 | **0/3/0/0.4** | 维持 · Cloth 民用极档 |
+| 30 | `ao_durkhan_tunic` | Eastern Ragged Tunic | 2/1/0/0.5 | **4/3/2/0.5** | 民用极档 |
+
+### Khuzait BodyArmor 剩余 30 件收官统计
+
+- **总件数**：30 件（顶 1 + 中高 5 + 中档 3 + 中低 8 + 民用 6 + 极档 4 · 也含 3 件维持类）
+- **顶点**：`AR_khuzait_armor_b` 100/44/44（vanilla `brass_lamellar_over_mail` direct · 蒙古游牧顶）
+- **⚠ 越权**：无 · 全部 vanilla direct match / 家族均值 fallback
+- **状态**：30 件 🔵 log-only
+
+---
+
+## Khuzait · Cape · 38 件（2026-09-24 · 全审）
+
+**Cape 三部分律沿用**（含 2026-09-24 用户特批 arm 30 新档 · 见下"顶级臂甲档"）
+
+### 铁律 · Cape 三部分律 arm mesh-tiered 分档律 追加新档（2026-09-24 用户特批）
+
+> **arm 30 顶级臂甲档 新增**（用户 quote："两款 Eastern Lamellar Pauldrons 应该属于顶级臂甲（大面积覆盖肩膀和大臂），Eastern Heavy Steel Lamellar Shoulders 同样，Eastern Heavy Lamellar Shoulder 同样"）
+>
+> | mesh 视觉档 | arm 值 | 命名特征 |
+> |---|---:|---|
+> | **⭐ 新增 · Lamellar Pauldrons + Heavy Lamellar Shoulders**（大面积覆盖肩+上臂完整） | **30** | "Lamellar Pauldrons" · "Heavy Lamellar Shoulders" · "Heavy Steel Lamellar Shoulders" |
+> | Elite Heavy · Gilded Pauldrons/Shoulders | 25 | Gilded / Decorated Steel Lamellar |
+> | Standard Shoulders | 20 | Lamellar Shoulders 主流 |
+> | 部分上臂覆盖 | 15 | Harness Over Scale · Heavy Leather Lamellar |
+> | Standard Pauldrons | 12 | Pauldrons 命名（比 Shoulders 略小） |
+> | Chainmail Shoulders 中档 | 10-12 | 链甲护肩 |
+> | Studded Strip / Leather 轻档 | 6-8 | 轻档 studded strip 结构 |
+>
+> **越权对比**：Empire G 家族 Gilded 顶档 25 arm · Khuzait 新档 30 arm · Empire vs Khuzait 玩家 arm 差 5
+
+### G. 顶级臂甲档 arm=30（6 件 · 用户特批）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `TV_khuzait_shoulder_g` | Eastern Lamellar Pauldrons（Plate） | 17/9 | **35/30/3.5** | Pauldrons + Plate 顶级 |
+| 2 | `DZ_sturgia_shoulder_a` | Eastern Lamellar Pauldrons（Plate） | 8/0 | **30/30/4.1** | 同名同档 · body 略降反映 v1 |
+| 3 | `TV_khuzait_shoulder_f` | Eastern Heavy Steel Lamellar Shoulders | 18/4 | **40/30/5.0** | vanilla `lamellar_shoulders` 40 direct + 新档 arm 30 |
+| 4 | `eastern_heavy_lamellar_shoulders` | Eastern Heavy Lamellar Shoulders | 16/8 | **40/30/4.5** | 同上 |
+| 5 | `AR_aserai_shoulder_w` | Southern Heavy Lamellar Shoulders With Cape | 16/8 | **40/30/4.5** | Heavy Lamellar + Cape 结构 |
+| 6 | `AR_aserai_shoulder_w2` | Eastern Heavy Lamellar Shoulders With Cape | 16/8 | **40/30/4.5** | 同上 |
+
+### F. Elite Heavy 顶档 arm=25（4 件 · Decorated Steel/Steel Lamellar Shoulders）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 7 | `TV_khuzait_shoulder_p` | Eastern Decorated Steel Lamellar Shoulder Pieces With Cape | 18/9 | **35/25/3.8** | Decorated Steel Elite |
+| 8 | `TV_khuzait_shoulder_o` | Eastern Decorated Steel Lamellar Shoulder Pieces Over Leather | 18/9 | **35/25/3.8** | 同上 |
+| 9 | `TV_khuzait_shoulder_n` | Eastern Steel Lamellar Shoulder Pieces With Cape | 17/9 | **33/25/3.8** | Steel Elite |
+| 10 | `TV_khuzait_shoulder_m` | Eastern Steel Lamellar Shoulder Pieces Over Leather | 17/9 | **33/25/3.8** | 同上 |
+
+### E. Standard Shoulders arm=20（2 件 · Lamellar Shoulders 主流）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 11 | `TV_khuzait_shoulder_i` | Eastern Lamellar Shoulders With Cape | 18/9 | **30/20/3.8** | Standard Lamellar |
+| 12 | `TV_khuzait_shoulder_h` | Eastern Lamellar Shoulders Over Leather | 18/9 | **30/20/3.8** | 同上 |
+
+### D. Heavy Leather Lamellar 部分上臂覆盖 arm=15（1 件）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 13 | `TV_khuzait_shoulder_r` | Eastern Heavy Blackened Leather Lamellar Shoulders | 16/4 | **32/15/5.0** | ⚠ Leather 材质降半档（Heavy 命名但材质弱） |
+
+### C. Chainmail/Mail Cape 系（7 件 · arm=6-12）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 14 | `AR_khuzait_cape_a` | Eastern Lamellar With Cape | 16/6 | **26/12/3.9** | Steel Lamellar + Cape · Chainmail 中档 |
+| 15 | `AR_khuzait_cape_b` | Eastern Steel Lamellar With Woolen Cape | 16/6 | **26/12/3.9** | 同上 · Woolen 装饰 |
+| 16 | `AR_khuzait_cape_c` | Eastern Steel Lamellar With Linen Cape | 16/6 | **26/12/3.9** | 同上 · Linen 装饰 |
+| 17 | `AR_khuzait_cape_f` | Eastern Leather Lamellar With Hide Cape | 14/3 | **22/8/3.9** | Leather Lamellar Cape |
+| 18 | `AR_khuzait_cape_g` | Eastern Leather Lamellar With Woolen Cape | 14/3 | **22/8/3.9** | 同上 |
+| 19 | `AR_khuzait_cape_h` | Eastern Leather Lamellar With Linen Cape | 14/3 | **22/8/3.9** | 同上 |
+| 20 | `brass_lamellar_cape` | Brass Lamellar Cape | 16/6 | **26/12/5.0** | Brass Lamellar |
+| 21 | `brass_lamellar_cape_z` | Northern Lamellar Cape | 16/6 | **26/12/5.0** | 同上 · Northern |
+
+### B. Blackened Leather Shoulder Pieces（4 件 · Chainmail Shoulders 中档 arm=10-12）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 22 | `TV_khuzait_shoulder_s` | Eastern Blackened Leather Lamellar Shoulder Pieces Over Leather | 16/5 | **26/12/3.8** | Blackened Leather 中档 |
+| 23 | `TV_khuzait_shoulder_t` | Eastern Blackened Leather Lamellar Shoulder Pieces With Cape | 16/5 | **26/12/3.8** | 同上 + Cape |
+| 24 | `AO_aserai_shoulders_d` | Brass Scale Shoulders With Cloak | 18/8 | **28/12/4.2** | Brass Scale + Cloak |
+| 25 | `AO_aserai_shoulders_d2` | Iron Scale Shoulders With Cloak | 18/8 | **28/12/4.2** | Iron -0 |
+
+### Leather Pauldrons / Shoulders 系（4 件 · Pauldrons arm=8-12）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 26 | `TV_khuzait_shoulder_k` | Eastern Leather Lamellar Shoulders | 15/4 | **22/10/2.3** | Leather Lamellar Shoulders |
+| 27 | `TV_khuzait_shoulder_l` | Eastern Leather Lamellar Shoulders With Cape | 15/4 | **22/10/2.3** | 同上 + Cape |
+| 28 | `TV_khuzait_shoulder_j` | Eastern Leather Lamellar Pauldrons | 10/5 | **18/12/2.5** | Pauldrons 分档 |
+| 29 | `DZ_khuzait_shoulder_a` | Eastern Heavy Leather Pauldrons | 8/0 | **16/8/4.1** | Heavy Leather · Pauldrons 轻档 |
+
+### Shoulder Straps 系（2 件 · arm=0 · 命名不含 shoulder 完整结构）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 30 | `TV_khuzait_shoulder_a` | Eastern Plated Bronze Shoulder Straps | 16/0 | **20/0/3.5** | Straps 无 arm 覆盖 |
+| 31 | `TV_khuzait_shoulder_b` | Eastern Plated Brass Shoulder Straps | 16/0 | **20/0/3.5** | 同上 |
+
+### 单肩甲 · Shoulder Piece（2 件 · body=0 · arm only）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 32 | `TV_khuzait_shoulder_e` | Eastern Steel Lamellar Shoulder Pieces | 0/10 | **0/15/2.8** | 单肩甲 · Steel |
+| 33 | `TV_khuzait_shoulder_q` | Eastern Blackened Leather Lamellar Shoulder Pieces | 0/10 | **0/10/2.8** | 单肩甲 · Leather |
+
+### Small Leather Pauldrons（2 件 · body 8-14 · arm 2-3）
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 34 | `TV_khuzait_shoulder_c` | Eastern Leather Pauldrons | 8/2 | **12/8/1.5** | Leather Pauldrons |
+| 35 | `TV_khuzait_shoulder_d` | Eastern Plated Leather Pauldrons | 8/3 | **14/10/1.5** | + Plated |
+
+### Cape/Cloak 民用（3 件 · 无 shoulder/pauldron 命名 · arm=0）
+
+**⚠ Cape 铁律第一部分**：Cape/Cloak 命名 → arm=0
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 36 | `AR_khuzait_cape_d` | Eastern Woolen Cape | 5/3 | **8/0/1.0** | Cape 命名 → arm=0 |
+| 37 | `AR_khuzait_cape_e` | Eastern Linen Cape | 5/3 | **8/0/1.0** | 同上 |
+| 38 | `ao_durkhan_tassled_necklace` | Eastern Tassled Necklace | 1/0 | **1/0/0.2** | 装饰性 |
+
+### Khuzait Cape 收官统计
+
+- **总件数**：38 件
+- **顶点**：`TV_khuzait_shoulder_f` / `eastern_heavy_lamellar_shoulders` / `AR_aserai_shoulder_w/w2` **40/30**（用户特批 arm=30 顶级臂甲档 · 4 件）
+- **⚠ 越权**：6 件 arm=30 新档（越 Empire Elite Heavy 25 · 用户特批）
+- **无 body 越权**：40 body = vanilla `lamellar_shoulders` 平顶
+- **状态**：38 件 🔵 log-only
+
+---
+
+## Khuzait · HandArmor · 4 件（2026-09-24）
+
+**vanilla anchor**：`eastern_plated_leather_vambraces` 44/1.7（Plated Leather Vambraces · 顶）· `studded_vambraces` 25（Studded 中档）
+
+| # | id | 游戏名 | v1 arm | **v2 arm/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `AR_khuzait_gloves_b` | Eastern Plated Gauntlets | 23 | **50/1.8** | Plated Gauntlets > Vambraces · sub 60 (Empire lamellar_plate_gauntlets 63) |
+| 2 | `AR_khuzait_gloves_a` | Eastern Plated Vambraces | 20 | **44/0.5** | vanilla `eastern_plated_leather_vambraces` direct |
+| 3 | `TV_khuzait_gloves_a` | Eastern Studded Blackened Leather Vambraces | 9 | **25/0.6** | vanilla `studded_vambraces` direct |
+| 4 | `TV_khuzait_gloves_b` | Eastern Blackened Leather Vambraces | 7 | **25/0.5** | 同上 |
+
+**状态**：4 件 🔵 log-only · 顶点 50 arm（Plated Gauntlets）· 无越权（sub Empire 63）
+
+---
+
+## Khuzait · LegArmor · 6 件（2026-09-24）
+
+**vanilla anchor**：`reinforced_suede_boots` 36（顶）· `woven_leather_boots` 30（中档）
+
+⚠ **越权决策**：Splint Boots（Plate 材质板条钢甲）语义比 Suede 重装 · 用户上一轮批准 40（+4 越 vanilla 36）· 保留
+
+| # | id | 游戏名 | v1 leg | **v2 leg/wt** | 依据 |
+|---|---|---|---:|---|---|
+| 1 | `eastern_splint_boots` | Eastern Splint Boots | 22 | **40/2.7** ⚠ | Plate Splint 特批越 vanilla 36 |
+| 2 | `AO_durkhan_boots_c` | Eastern Tassled Splint Boots | 22 | **40/2.7** ⚠ | 同上 |
+| 3 | `hmj_eastern_leather_boots` | Eastern Studded Boots | 14 | **30/0.9** | vanilla `woven_leather_boots` 30 direct |
+| 4 | `AO_durkhan_boots_b` | Eastern Tassled Boots With Studded Leather | 14 | **30/0.9** | 同上 |
+| 5 | `TV_khuzait_boots_b` | Eastern Suede Curved Boots | 5 | **20/0.8** | 中低 · Suede Curved |
+| 6 | `ao_durkhan_tassled_boots` | Eastern Tassled Boots | 5 | **15/0.7** | 民用 |
+
+**状态**：6 件 🔵 log-only · 越权 2 件（Splint Boots × 2 · +4 vs vanilla 36）
+
+---
+
+## Khuzait · HorseHarness · 13 件（2026-09-24 · 全 4 字段填充 · 华夏中原线升档）
+
+**⚠ 引擎硬 code 只用 body_armor 字段** · v2 全 4 字段填充为兼容 RBM XML 风格（body 是唯一实际防御字段）
+
+**⚠ 华夏中原线特批**（2026-09-24 用户拍板）：Khuzait OSA Full/Half Barding 命名含 Lamellar/Plate/Scale + Iron/Mail/Reinforced 结构 · 属于华夏中原具装骑兵传统 · **对齐 Empire Cataphract 具装马甲尺度**（`imperial_scale_barding` 90/50/50/60/30）
+
+**用户 quote**：
+- "马甲方面，Khuzait 文化的 Full Lamellar/Plate/Scale Brading 我认为需要提升到帝国具装马甲的水准"
+- "我认为 half brading，但是不应该提升到 90 的水准"
+
+**跨文化 anchor**：
+- Empire Full `imperial_scale_barding` **90/50/50/60/30**（Cataphract Scale Barding · vanilla 顶）
+- Empire Half `half_scale_barding` **90/50/5/60/17**（Cataphract Half）
+- Khuzait vanilla Full `studded_steppe_barding` 55/35/25/45/23（草原骑射 · 不动）
+- Khuzait vanilla Half `steppe_half_barding` 55/35/10/45/11（不动）
+
+**⚠ 越权评估**：
+- Full 5 件 +35 h · +15 body · +25 leg · +15 arm vs Khuzait vanilla 顶 55/35/25/45 · **平顶 Empire imperial_scale_barding**（无跨文化越权）
+- Half 6 件 +15 h · +15 body · +15 arm vs Khuzait vanilla Half 55/35/10/45 · Half h=70 sub Empire Half 90（用户界定不到 90）· body 50 平 Empire Half · arm 60 平 Empire Half · wt 17 平 Empire Half
+
+**跨文化 Half 副作用**（用户 2026-09-24 明示接受）：
+- Khuzait Half body 50 > Aserai Half `half_mail_and_plate_barding` body 47（超 3 · 华夏 vs 沙漠部落）
+- Khuzait Half arm 60 = Empire Half arm 60（平顶）· body 50 = Empire Half body 50（平顶）
+- **符合华夏中原线叙事**（远东帝国 = 罗马帝国 具装骑兵平起平坐）
+
+### C. Full Lamellar/Plate/Scale Barding（顶档 · 5 件 · Empire Cataphract Scale Barding 平顶）
+
+| # | id | 游戏名 | v1 b/wt | 原 v2 | **新 v2 h/b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|---|
+| 1 | `AR_horse_armor_z` | Eastern Lamellar Barding | 75/135 | 55/35/25/45/23 | **90/50/50/60/30** | Empire `imperial_scale_barding` direct 顶 |
+| 2 | `AR_horse_armor_z3` | Eastern Alternating Lamellar Barding | 75/135 | 55/35/25/45/23 | **90/50/50/60/30** | 同上 · Alternating 变体 |
+| 3 | `AR_horse_armor_x` | Eastern Reinforced Iron Plate and Mail Barding | 75/95 | 55/35/25/45/23 | **90/50/50/60/30** | 同上 · Iron Plate + Mail |
+| 4 | `AR_horse_armor_z2` | Eastern Studded Barding | 60/135 | 55/35/25/45/23 | **90/50/50/60/30** | 同上 · Studded 变体 |
+| 5 | `AR_horse_armor_za` | Reinforced Studded Leather Barding | 60/90 | 55/35/25/45/23 | **90/50/50/60/30** | 同上 · Reinforced Studded |
+
+### B. Half Lamellar/Plate/Scale Barding（中档 · 6 件 · 方案 C · Empire Half body/arm 平顶 · h 70 sub Empire 90）
+
+| # | id | 游戏名 | v1 b/wt | 原 v2 | **新 v2 h/b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|---|
+| 6 | `AR_horse_armor_y` | Eastern Half Lamellar Barding | 60/80 | 55/35/10/45/11 | **70/50/5/60/17** | 方案 C · body/arm 达 Empire Half 顶 · h 70 sub Empire 90 |
+| 7 | `AR_horse_armor_y3` | Eastern Half Alternating Lamellar Barding | 60/80 | 55/35/10/45/11 | **70/50/5/60/17** | 同上 |
+| 8 | `AR_horse_armor_w` | Eastern Reinforced Iron Plate Barding | 65/85 | 55/35/10/45/11 | **70/50/5/60/17** | 同上 · Iron Plate 变体 |
+| 9 | `AR_horse_armor_v` | Eastern Half Iron Plate Barding | 58/70 | 55/35/10/45/11 | **70/50/5/60/17** | 同上 |
+| 10 | `AR_horse_armor_g` | Eastern Studded Mail Barding | 58/95 | 55/35/10/45/11 | **70/50/5/60/17** | 同上 |
+| 11 | `AR_horse_armor_y2` | Eastern Half Studded Barding | 50/135 | 55/35/10/45/11 | **70/50/5/60/17** | 同上 |
+
+### A. Saddle / Fur Harness（民用 · 2 件 · 不动）
+
+| # | id | 游戏名 | v1 b/wt | **v2 h/b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 12 | `AR_horse_armor_zh` | Steppe Heavy Fur Harness | 18/25.5 | **5/0/0/5/8.5** | vanilla `steppe_fur_harness` direct（民用不升） |
+| 13 | `AR_horse_armor_zf` | Steppe Heavy Saddle | 12/23.5 | **5/0/0/5/8.5** | vanilla `steppe_harness` direct（民用不升） |
+
+**状态**：13 件 🔵 log-only · Full 顶点 90/50/50/60/30（Empire Cataphract 平顶 · 华夏中原线特批）· Half 顶 70/50/5/60/17（方案 C · Empire Half body/arm 平顶 · h 70 sub Empire 90）
+
+---
+
+## Khuzait 全 6 类收官统计（2026-09-24）
+
+**总数**：**232 件 Khuzait 决议归档**（HeadArmor 129 · BodyArmor 42 · Cape 38 · HandArmor 4 · LegArmor 6 · HorseHarness 13）· 全 🔵 log-only
+
+**顶点结构**：
+| 类型 | 顶点 | 定位 | 越权级别 |
+|---|---|---|---|
+| **HeadArmor** | G.2 铁浮屠 4 件 **148/82/45** | 华夏中原线 · Closed Lamellar 完整覆盖 | +7 vs Khuzait vanilla 141 · 用户特批 |
+| **BodyArmor** | Heavy Lamellar 2 件 **138/122/67** | 华夏中原线 · 全身扎甲 + Double Mail 内衬 | +38 vs Khuzait vanilla 100 · 用户特批 |
+| **Cape** | Heavy Lamellar Shoulders 4 件 **40/30** | 用户特批 arm=30 顶级臂甲档 | +5 vs Empire Elite Heavy 25 · 用户特批 |
+| **HandArmor** | Plated Gauntlets **50 arm** | Plated Gauntlets vs Vambraces 精工分档 | 无越权 |
+| **LegArmor** | Splint Boots 2 件 **40 leg** ⚠ | Plate Splint 板条钢甲 | +4 vs vanilla 36 · 用户特批 |
+| **HorseHarness** | Full Barding 5 件 **90/50/50/60/30** · Half 6 件 **70/50/5/60/17** | 华夏中原线 · Empire Cataphract 具装马甲 | Full 平 Empire · Half body/arm 平 Empire · h 70 sub 90 · 用户特批 |
+
+**⚠ 越权总览**：
+- 华夏中原线 body 顶 138（Heavy Lamellar × 2）· 头 顶 148（铁浮屠 × 4）· head B 家族 5 件（Cataphract 命名 130-135）· head A.14 Fluted Sideguards 130
+- Cape arm=30 特批档 6 件（Lamellar Pauldrons + Heavy Lamellar Shoulders）
+- LegArmor Splint Boots 2 件 40
+- **HorseHarness Full 5 件 90/50/50/60/30**（Empire Cataphract 平顶）· **Half 6 件 70/50/5/60/17**（Empire Half body/arm 平顶）
+
+**累计**：帝国 378+4 override + Vlandia 312 + Battania 307 + Sturgia 194 + Aserai 343 + **Khuzait 232** = **1770 件决议归档**
+
+**下一步**：进入 **Nord 文化**（最后一个文化 · Khuzait 收官后剩 Nord 全 6 类）· 或先落地 deploy 已归档的 6 文化决议
+
+---
+
+# Nord 文化（NavalDLC · 精英维京海战 kingdom）
+
+## Nord · 全 5 类 · 65 件（2026-09-24 · 选项 B · Nordic 精英升级）
+
+**触发**：2026-09-24 发现 Nord 是 NavalDLC 官方 DLC 添加的完整 kingdom（不是 mod）· 有 82 件 Culture.nord 装备（65 armor + 9 shield + 8 civilian）· **完全未参与 RBM 平衡** · Berserker Helmet vanilla h=45 vs Sturgia RBM 顶 150 严重欠强
+
+**用户 quote**：
+- "我确实在游戏中遇到了 Nord 这个文化，无论是游戏内的 Encyclopedia 还是 Retinued 的内的装备分类中也展现出了 Nord 这个文化"
+- "选项 B 我认可，请为我落实"
+
+**⚠⚠ 第二次 Vanilla+RBM Override**（首次批量 · 65 件 NavalDLC）：
+- 首次（2026-09-24 早）：Empire `lamellar_with_scale_skirt` / `imperial_scale_armor` 2 件互调
+- 本次（2026-09-24 晚）：NavalDLC Nord 65 件全审 · 首次批量 vanilla override
+- **意义**：铁律"vanilla+RBM 唯一权威 · 设计终稿"再次被用户明示突破 · NavalDLC 装备未经 RBM 调整属于官方遗漏 · v2 平衡承担补齐
+
+**选项 B 分档策略**（Sturgia RBM 尺度 + 精英升级 5-10）：
+- BodyArmor 顶 **115** (+10 vs Sturgia 105)
+- HeadArmor 顶 **155** (+5 vs Sturgia 150 · **越跨文化 head 最高**)
+- Cape 顶 **35 body / 30 arm**（Blackened Cape · Nordic Lamellar Pauldrons + arm 30 沿用 Khuzait 特批）
+- HandArmor 顶 **60** (+4 vs Sturgia 56)
+- LegArmor 顶 **65** (+5 vs Sturgia 60 · **越跨文化 leg 最高**)
+
+**Nord 命名精工前缀**：Berserker（狂战士）· Huscarl（维京贵族亲卫）· Vendel Noble/Ornate（Vendel 精英）· Mastercrafted Northern（皇家精工）· Blackened Assassin（刺客顶档）· Northman Raider（突袭者）· Norse/Nordic Heavy Mail（精英链甲）· Majestic（皇家）· Reinforced（加强）
+
+### Nord · HeadArmor · 15 件
+
+**anchor**：Sturgia `sturgian_lord_helmet_c` 150/95/50（Nord Vendel 命名 · Vendel Nord 是同源）· Empire Cataphract 系 mid-anchor 100-130
+
+| # | id | 游戏名 | v1 h/wt | **v2 h/b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `berserker_helmet_reinforced` | Berserker Reinforced Helmet | 45/3.5 | **155/95/50/3.5** | Nord 顶 · +5 vs Sturgia 150 · Berserker Reinforced 精工升级 |
+| 2 | `berserker_helmet` | Berserker Helmet | 42/2.0 | **125/45/35/2.0** | 无 Reinforced · Leather mat · sub 顶 |
+| 3 | `nord_helmet_a` | Ornate Vendel Helmet | 42/3.3 | **140/70/45/3.3** | Ornate Vendel 精工 · sub Berserker Reinforced |
+| 4 | `nord_helmet_b` | Vendel Noble Helmet | 40/3.2 | **138/68/40/3.2** | Vendel Noble |
+| 5 | `nord_helmet_c` | Brass Vendel Helmet | 42/3.2 | **135/68/40/3.2** | Brass -3 vs Ornate |
+| 6 | `improved_assassin_hood_q5` | Blackened Hood | 48/0.4 | **125/45/35/0.6** | Blackened Assassin 精工顶 · Leather mat · wt 微调 |
+| 7 | `nord_helmet_d` | Nordic Spectacle Helmet | 36/2.8 | **110/30/25/2.8** | Spectacle 中高档 · 类 Sturgia Goggled 系 |
+| 8 | `nord_helmet_da` | Nordic Spectacle Helm over Padded | 32/2.5 | **95/20/15/2.5** | Padded 内衬 sub Spectacle 15 |
+| 9 | `nord_helmet_e` | Nordic Nasal Helm over Mail | 33/2.3 | **100/22/35/2.3** | Nasal + Mail aventail |
+| 10 | `nord_helmet_ea` | Nordic Nasal Helmet | 26/2.2 | **80/12/25/2.2** | 无 aventail 简版 |
+| 11 | `nord_helmet_f` | Nordic Iron Helm over Mail | 28/2.1 | **85/22/30/2.1** | Iron + Mail |
+| 12 | `nord_helmet_fa` | Nordic Iron Helmet | 24/2.0 | **70/12/22/2.0** | 无 aventail 简版 |
+| 13 | `nordic_civilian_hat_fur_brim` | Nordic Civilian Hat with Fur Brim | 11/0.6 | **14/0/0/0.6** | 民用 |
+| 14 | `nordic_civilian_hat` | Nordic Civilian Hat | 7/0.5 | **7/0/0/0.5** | 维持民用 |
+| 15 | `nord_king_crown` | Northern Majestic Crown | 4/0.3 | **20/0/0/0.3** | 装饰 crown · 类 vanilla 冠饰系 |
+
+### Nord · BodyArmor · 22 件
+
+**anchor**：Sturgia `sturgian_lamellar_fortified` 105/75/45 + Nord +10 精英升级 · Nordic Heavy Mail 系对齐 `northern_brass_lamellar_over_mail` 90/50/45
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 b/l/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `nord_king_armor` | Heavy Mastercrafted Northern Armor | 55/20/18/26 | **115/80/50/28** | Nord 顶 · +10 vs Sturgia 105 · 皇家 Mastercrafted 精工升级 |
+| 2 | `nord_king_armor_d` | Mastercrafted Northern Armor | 50/15/15/25 | **110/75/45/25** | Mastercrafted 次顶 |
+| 3 | `nord_king_armor_b` | Reinforced Huscarl Armor | 48/12/10/24 | **105/70/45/24** | Huscarl 精英 · = Sturgia 顶 |
+| 4 | `nord_king_armor_c` | Gilded Shield-Companion Armor | 40/14/6/21 | **100/60/35/21** | Shield-Companion 中高 |
+| 5 | `improved_assassin_armor_q5` | Blackened Armor | 45/15/20/5 | **95/55/40/5** | Blackened Assassin 精工 · Leather 略降 |
+| 6 | `nord_chainmail_armor` | Nordic Heavy Mail Armor | 42/20/20/22 | **90/50/45/22** | vanilla `northern_brass_lamellar_over_mail` 90/50/45 direct |
+| 7 | `norse_chainmail_pleatedtrousers` | Norse Chainmail | 40/17/6/16 | **85/45/40/16** | Norse 精工 mail |
+| 8 | `nordic_chainmail_c` | Reinforced Mail Coat | 37/15/10/18 | **80/45/35/18** | Reinforced Mail 中高 |
+| 9 | `nordic_chainmail_a` | Nordic Long Heavy Mail | 35/12/10/18 | **77/44/44/18** | vanilla `sturgian_chainmale_longsleeve` 77/44/44 direct |
+| 10 | `northman_raider_armor` | Northern Raider Armor | 45/22/12/23 | **75/45/35/23** | Raider 中档 · 反映 Raider 精英突袭者 |
+| 11 | `pirate_tier_3_armor` | Sky Chain Armor | 40/6/6/20 | **70/35/30/20** | Pirate Tier 3 精工中档 |
+| 12 | `heavy_gambeson_armor` | Mariner Heavy Gambeson | 22/8/8/6.5 | **50/32/28/6** | Gambeson 中档 |
+| 13 | `heavy_gambeson_armor_plain` | Mariner Gambeson | 15/4/4/5 | **32/20/18/5** | 简版 Gambeson |
+| 14 | `double_belted_leather_armor` | Long Leather Vest | 18/8/4/6 | **28/18/15/6** | Leather 中档 |
+| 15 | `naval_strappy_tunic` | Nordic Luxury Tunic | 18/6/4/5 | **22/15/12/5** | Cloth 民用中档 |
+| 16 | `pirate_tier_2_body` | Pirate Leather Armor | 15/6/6/5 | **22/15/12/5** | Pirate Tier 2 |
+| 17 | `pirate_a` | Pirate Cloth Armor | 10/4/4/3 | **14/8/6/3** | Cloth 民用 |
+| 18 | `nord_casual_tunic` | Nordic Woolen Tunic | 9/4/3/2 | **12/8/6/2** | Casual |
+| 19 | `nordic_civilian_dress_plaid` | Nordic Plaid Dress | 8/2/2/4 | **10/6/5/4** | Civilian |
+| 20 | `nordic_civilian_dress` | Nordic Dress | 8/2/2/4 | **10/6/5/4** | 同上 |
+| 21 | `dress_norse_lady` | Northern Knotwork Tunic | 6/3/3/2 | **8/6/5/2** | 女装民用 |
+| 22 | `nord_poor_civil` | Old Linen Tunic | 4/1/1/3 | **6/4/3/3** | 民用极档 |
+
+### Nord · Cape · 15 件（沿用 Cape 三部分律 + Khuzait arm=30 特批档）
+
+**Cape 三部分律应用**：Shoulder/Pauldron 命名 → body+arm；Cape/Cloak 命名 → arm=0；视觉判断优先
+
+| # | id | 游戏名 | v1 b/a | **v2 b/a/wt** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `improved_assassin_shoulder_q5` | Blackened Cape | 36/12 | **32/12/0.85** | Cape 命名严格 arm=0 · 但视觉允许 arm 12 (原值保留) · body 32 精工顶 |
+| 2 | `northman_raider_shoulder` | Nordic Armored Shoulder Pads | 16/8 | **32/22/4.0** | Shoulder 命名 + Plate · Nordic 精英 shoulder |
+| 3 | `nord_shoulder_b` | Northern Lamellar Pauldrons | 8/12 | **30/30/2.7** | ⚠ Lamellar Pauldrons + Plate → arm 30 顶级臂甲档（沿用 Khuzait 特批） |
+| 4 | `nord_shoulder_a` | Reinforced Lamellar Pauldrons | 7/10 | **28/30/2.5** | 同上 + Reinforced -2 body |
+| 5 | `nord_king_shoulder_armor` | Northern Majestic Shoulder | 10/4 | **25/22/1.0** | Nord king shoulder + Plate 精英 |
+| 6 | `nord_king_shoulder_armor_b` | Gilded Noble Shoulder | 10/2 | **25/20/2.5** | Gilded Noble Shoulder |
+| 7 | `bandit_hybrid_armor_shoulder_b` | Raider Reinforced Shoulderguard | 16/8 | **25/18/4.0** | Raider Shoulder + Leather |
+| 8 | `chainmail_shoulder_armor_b` | Chainmail Shoulder Guards | 10/2 | **20/15/3.0** | Shoulder 命名 + Chainmail 中档 |
+| 9 | `berserker_cloak` | Berserker Cloak | 20/5 | **25/0/3.8** | Cloak 命名 · arm=0 (Cape 铁律) |
+| 10 | `northman_raider_cape` | Northmen Raider Heavy Fur Cape | 19/10 | **22/0/2.3** | Cape 命名 · arm=0 |
+| 11 | `fur_cape_a` | Nordic Furry Mail Cape | 17/8 | **20/0/1.5** | Cape 命名 · arm=0 |
+| 12 | `nord_fur_shoulder` | Long Linen Fur Cape | 13/4 | **18/0/3.0** | ⚠ id 有 shoulder 但命名是 "Fur Cape" · 视觉判断为 Cape · arm=0 |
+| 13 | `fur_cape_b` | Nordic Furry Cape | 8/6 | **10/0/1.2** | 民用 Cape |
+| 14 | `cape_norse_lady` | Northern Fur Cape | 6/3 | **8/0/1.0** | 女装民用 Cape |
+| 15 | `nord_casual_cloak` | Long Woolen Cloak | 5/2 | **6/0/0.5** | Cloak 命名 |
+
+### Nord · HandArmor · 7 件
+
+**anchor**：Sturgia `northern_plated_gloves` 56 + Nord +4 精英升级
+
+| # | id | 游戏名 | v1 arm/wt | **v2 arm/wt** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `mail_mitten_d` | Reinforced Northern Mail Mittens | 28/1.7 | **60/1.7** | Nord 顶 · +4 vs Sturgia 56 · Reinforced Northern 精工升级 |
+| 2 | `mail_mitten_g` | Mail Mittens with Leather Reinforcement | 26/1.7 | **56/1.7** | vanilla `northern_plated_gloves` 56 direct 平顶 |
+| 3 | `hybrid_armor_gloves_b` | Majestic Gloves | 22/1.8 | **50/1.8** | Majestic 精工中高 · Plate mat |
+| 4 | `northman_wrist_armor` | Northmen Raider Wrist Guards | 15/1.2 | **35/1.2** | Raider Wrist 中档 |
+| 5 | `studded_arm_guards` | Studded Arm Guards | 10/1.1 | **25/1.1** | Studded 中低 |
+| 6 | `splinted_bracers` | Splinted Bracers | 7/1.1 | **20/1.1** | Splinted 中低 |
+| 7 | `nord_casual_bracers` | Leather Bracers | 9/0.6 | **18/0.6** | 民用 |
+
+### Nord · LegArmor · 6 件
+
+**anchor**：Sturgia `northern_plated_boots` 60（跨文化最高 leg）+ Nord +5 精英升级
+
+| # | id | 游戏名 | v1 leg/wt | **v2 leg/wt** | 依据 |
+|---|---|---|---|---|---|
+| 1 | `hybrid_armor_boots_b` | Majestic Iron Boots | 22/2.0 | **65/2.0** | Nord 顶 · +5 vs Sturgia 60 · Majestic Iron 皇家精工 |
+| 2 | `improved_assassin_boot_q5` | Blackened Boots | 25/1.0 | **60/1.0** | Blackened Assassin 精工 · = Sturgia 顶 |
+| 3 | `strapped_jackboots` | Strapped Jackboots | 7/0.7 | **28/0.7** | Jackboots 中低 |
+| 4 | `northman_raider_boot` | Northern Raider Boots | 7/0.4 | **22/0.4** | Raider 中档 |
+| 5 | `nord_casual_boots` | Short Flap Boots | 4/0.5 | **12/0.5** | 民用 |
+| 6 | `nord_poor_boot` | Worn Leather Boots | 3/0.5 | **8/0.5** | 民用极档 |
+
+### Nord 收官统计（2026-09-24）
+
+- **总件数**：65 件（HeadArmor 15 + BodyArmor 22 + Cape 15 + HandArmor 7 + LegArmor 6）
+- **顶点结构**：
+  - HeadArmor: `berserker_helmet_reinforced` **155/95/50**（跨文化 head 最高 · +5 越 Sturgia 150）
+  - BodyArmor: `nord_king_armor` **115/80/50**（+10 越 Sturgia 105）
+  - Cape: Blackened Cape body 32 · Lamellar Pauldrons arm 30
+  - HandArmor: Reinforced Northern Mail Mittens **60**（+4 越 Sturgia 56）
+  - LegArmor: Majestic Iron Boots **65**（跨文化 leg 最高 · +5 越 Sturgia 60）
+- **⚠ 越权总览**（NavalDLC vanilla override · 65 件）：
+  - Head 155 · Leg 65 · Body 115 · Hand 60 · Cape 32/30 均越 Sturgia RBM 顶
+  - **head 155 是跨文化 head 最高**（越 Sturgia 150 顶 · 反映 Nord 精英维京海战文化）
+  - **leg 65 是跨文化 leg 最高**（越 Sturgia 60 顶 · Nord 精英）
+  - 但 body/hand 顶 sub Empire/Aserai/Khuzait 精工线（115 sub 138 · 60 sub 63）· Nord 定位是"精英维京海战" 不是"跨文化精工帝国"
+- **实现**：需要在 `OSABalance_armor_override.xml` 里添加 65 条 vanilla nord id 覆盖 · 类似 Empire 2 件 override 机制
+- **状态**：65 件 🔵 log-only
+
+---
+
+## 全项目累计（2026-09-24 · Nord 完成）
+
+**总数**：**1835 件决议归档**
+- 帝国 378 + 4 vanilla override（含 lamellar_with_scale_skirt / imperial_scale_armor 互调 + Cataphract 联动）
+- Vlandia 312 + 3 修订
+- Battania 307
+- Sturgia 194
+- Aserai 343
+- Khuzait 232
+- **Nord 65（NavalDLC · 首次批量 vanilla override）**
+
+**跨文化顶点全图**：
+| 文化 | Body 顶 | Head 顶 | 定位 |
+|---|---:|---:|---|
+| Empire | 118 (imperial_scale override) · 135 (lamellar_with_scale_skirt override 高身甲) | 144 (imperial_goggled_helmet Cataphract) | 罗马拜占庭 |
+| Vlandia | 100 (sturgian_fortified_armor) | 140 (full_helm_over_mail_coif) | Frankish Knight |
+| Battania | 96 (battania_warlord_armor) | 121 (battanian_crowned_helmet) | Celtic 部落 |
+| Sturgia | 105 (sturgian_lamellar_fortified) | 150 (sturgian_lord_helmet_c) | Nordic Warlord |
+| Aserai | 138 (Mastercrafted Chain Hauberk · 波斯萨珊线) | 135 (Immortal's) | Persian Immortal + 沙漠部落 |
+| Khuzait | 138 (Heavy Lamellar · 华夏中原线) | 148 (铁浮屠 G 家族) | 华夏中原精工帝国 |
+| **Nord**（新） | **115** (Heavy Mastercrafted Northern) | **155** (Berserker Reinforced) | **精英维京海战 kingdom** |
+
+**跨文化 head 排序**：Nord 155 > Sturgia 150 > Khuzait 148 > Empire 144 > Vlandia 140 > Aserai 135 > Battania 121
+**跨文化 body 排序**：Aserai 138 = Khuzait 138 > Empire 135 > Nord 115 > Sturgia 105 > Vlandia 100 > Battania 96
 
 ---
 

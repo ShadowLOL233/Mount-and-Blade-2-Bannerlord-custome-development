@@ -34,6 +34,7 @@ namespace RetinuesCultureFilter.Mixins
         [DataSourceProperty] public bool CultureBattaniaSelected => CultureFilterState.CurrentIndex == 3;
         [DataSourceProperty] public bool CultureSturgiaSelected  => CultureFilterState.CurrentIndex == 4;
         [DataSourceProperty] public bool CultureKhuzaitSelected  => CultureFilterState.CurrentIndex == 5;
+        [DataSourceProperty] public bool CultureNordSelected     => CultureFilterState.CurrentIndex == 6;
 
         [DataSourceMethod] public void ExecuteSelectCultureEmpire()   { SetIndex(0); }
         [DataSourceMethod] public void ExecuteSelectCultureVlandia()  { SetIndex(1); }
@@ -41,6 +42,7 @@ namespace RetinuesCultureFilter.Mixins
         [DataSourceMethod] public void ExecuteSelectCultureBattania() { SetIndex(3); }
         [DataSourceMethod] public void ExecuteSelectCultureSturgia()  { SetIndex(4); }
         [DataSourceMethod] public void ExecuteSelectCultureKhuzait()  { SetIndex(5); }
+        [DataSourceMethod] public void ExecuteSelectCultureNord()     { SetIndex(6); }
 
         private void SetIndex(int i)
         {
@@ -61,6 +63,7 @@ namespace RetinuesCultureFilter.Mixins
             OnPropertyChangedWithValue(CultureBattaniaSelected, nameof(CultureBattaniaSelected));
             OnPropertyChangedWithValue(CultureSturgiaSelected,  nameof(CultureSturgiaSelected));
             OnPropertyChangedWithValue(CultureKhuzaitSelected,  nameof(CultureKhuzaitSelected));
+            OnPropertyChangedWithValue(CultureNordSelected,     nameof(CultureNordSelected));
         }
     }
 }

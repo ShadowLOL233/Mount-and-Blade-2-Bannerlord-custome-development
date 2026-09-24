@@ -557,6 +557,60 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 47. OSA v2 · Empire HeadArmor 100% 收官 + Cape 铁律 + Cape 家族启动（2026-09-23）
+
+**HeadArmor 收官**：本日完成 Empire HeadArmor 全 165 件 v2 手工审 · 累计 15+ 家族批次归档（帽/头饰 · Roman Helmet · Lord/Guarded Lord · Nasalhelm · Elite · Cataphract v3 · Palatine/Crowned · 特殊/独立 · Ridge/Intercisa/Lion · Legatus · Conical/Pointed · Kettle · TV/AR 尾单）。全 165 件严格头 > 身 > 臂序 · vanilla+RBM 顶点 `imperial_goggled_helmet` 144/82/45 raw 300 未越权。
+
+**DESIGN_PHILOSOPHY.md 创建**（本 repo `OpenSourceArmouryRBMBalance/DESIGN_PHILOSOPHY.md`）：从 165 件手工审经验提炼的宪法级设计基调 · 含**两条铁律**（vanilla+RBM 唯一权威 · 头 > 身 > 臂 HeadArmor 专属）+ Cape 铁律三部分 + 通用 7 原则 + 6 装备类型应用推演 + 工作流纪律 + 用户反馈信号识别表 + vanilla 锚点速查 + 核心教训。BALANCE_V2_LOG.md 顶部导引至此哲学文档。
+
+**Cape 家族启动 · 铁律三部分立法**：
+1. **命名二分律**：shoulder/pauldron 命名 → 允许 arm > 0（body > arm 严格序）· 无 → arm = 0
+2. **arm mesh-tiered 分档律**：Elite Heavy 顶档 arm 25 · Standard Shoulders 20 · Pauldrons 12 · Studded Strip 6-8 · Chainmail 10-12 · Leather 4-8
+3. **视觉判断优先律**（F 家族揭示）：命名允许 ≠ 数值强制 · mesh 视觉不覆盖上臂时 arm 必须 = 0（override 命名默认） · 新增"部分覆盖" arm 15 档（F.5 Harness Over Scale 首次运用）
+
+**Cape 家族进度**：89 件 Empire Cape 已归档 27 件（30.3%）
+- **G. Plate Lamellar Shoulders/Pauldrons 19 件**（Elite Heavy 顶档 · G.1b Gilded 42/25 · G.1a Standard 40/20 · G.2 Pauldrons 35/12 · G.3 Studded Strip 26/8）
+- **F. Scale Shoulders 8 件**（视觉判断优先律首次实证 · 6/8 件 arm 清 0 · F.5 arm 15 部分覆盖新档 · F.2 Scale+Lamellar arm 20）
+
+**arm 堆叠机制说明**：Bannerlord `final_arm = sum(HeadArmor + BodyArmor + Cape + HandArmor).arm`（加法制）· OSA 精英兵 arm 总值比 RBM 基线高 ~25 点（26%）· **故意设计取舍**换取 OSA "Cape 特色" 忠实反映 mesh 视觉覆盖。用户拍板接受此膨胀。
+
+**下一步**：Cape 剩余 62 件（推荐 E. Chainmail Shoulders 7 件 → C. Leather Shoulders 6 件 → D. Leather Cape w/ Pelt 5 件 → J. Pelt Cloak 12 件 → 其他）
+
+### 46. PSPortFix v1.0.0 · PS 默认 town 港口崩溃修复（2026-09-23）
+
+**背景**：用户在自建 town Aetofolia（河边非海边）点 town menu 的 "Enter Port" 选项时游戏 TWCrashUploader 弹窗崩溃。
+
+**诊断**（本 repo `PSPortFix/README.md` 完整）：
+- 系统扫描 PS 工作坊 `Player_Settlement_Templates/` 里 6 个文化的 `_default.xml`
+- **全部 69 个 town 变体（empire 19 + 其他 5 文化各 10）都缺 `<Location id="port"/>` 声明**
+- NavalDLC 的 `LocationComplexTemplate.town_complex` 全局给所有 town 注入 "Enter Port" 菜单选项（fallback scene `empire_interior_tavern_a`）
+- Fallback tavern scene 不含 wharf entity → 引擎 port 逻辑加载 tavern 时 native crash
+- 对比：PS `Player_Settlement_Templates_War_Sails/` 里 60 个 War Sails 变体全部有 `<Location id="port" scene_name="{culture}_shipyard"/>` 定义——用户建 town 时若未选 War Sails 模板则中招
+
+**修复策略**：workshop XML 直接补丁（v1.0）
+- 工具目录 `PSPortFix/Tools/`：`apply-port-fix.ps1` / `revert-port-fix.ps1` / `verify-port-fix.ps1`
+- Baselines 备份到 `PSPortFix/Baselines/`（apply 时 sha256 记录）
+- 每个 culture 用对应 vanilla shipyard scene（empire→`empire_shipyard` · vlandia→`vlandia_shipyard` · battania→`battania_shipyard` · sturgia→`sturgia_shipyard` · aserai→`aserai_shipyard` · khuzait→`khuzait_shipyard`）
+- 注入标记 `<!-- PSPortFix v1 -->` 用于 verify 检测
+
+**2026-09-23 apply 结果**：69 / 69 towns patched（empire 19 · vlandia 10 · battania 10 · sturgia 10 · aserai 10 · khuzait 10）· 全 6 文化 baseline sha256 已归档
+
+**风险 · 已知限制**：
+- **Steam workshop 更新会覆盖**：需定期 `verify-port-fix.ps1` 检测 + 重新 apply
+- 只补 port location 不补 building_shipyard：避免影响 town building tree
+- 不修 vanilla（不该修 · 河边内陆 town vanilla 若有 shipyard 走另一路径）
+
+**未来 v2.0 方向**：升级为 Harmony DLL runtime patch 避免 workshop 覆盖依赖
+
+**用户操作项**：**关掉 Bannerlord 后重启游戏** → 进 Aetofolia → 点 "Enter Port" 应能进入 empire_shipyard 场景 · 报告成功/失败
+
+**2026-09-23 状态更新 · 🔵 SHELVED**：用户重启后测试 Aetofolia "Enter Port" **仍崩溃**（TWCrashUploader 弹窗）· 但用户确认**vanilla 带海港的城市（如 Argoron 类）Enter Port 完全正常** → 崩溃跟"port location 定义缺失"关系不大，是 **PS-built town + NavalDLC port menu 的其他兼容性问题**（可能是 snapshot in save / mesh 缺失 / NavalDLC hook 冲突）。
+
+**用户决议**：非致命 bug（vanilla 港口可用），当前不深挖，**搁置**待未来精力允许时诊断。PSPortFix v1.0 保留（无害 · 未来新建 default 变体 town 也不受影响）· cheat_mode = 1 保留供未来诊断用。若未来重启诊断，路径：
+1. 从 Encyclopedia (N 键) 查 Aetofolia 内部 template variant id
+2. 对照 default 与 warsails 路径不同的崩溃行为
+3. 定位是 save snapshot 问题（需 Harmony DLL runtime patch）还是 mod 冲突（需 bisect）
+
 ### 45. Shader cache 恢复 · Exit Game 崩溃根因归档 · mod 清单收尾（2026-09-22）
 
 **Exit Game 崩溃复现**：MNR 卸载 (§44) 后用户在主菜单**点 Exit Game** 复现崩溃。误诊为退回 §40 那种 pinned-DLL 元数据崩，但 rgl_log 显示崩在同 `pbr_terrain.rs` shader compile 路径。

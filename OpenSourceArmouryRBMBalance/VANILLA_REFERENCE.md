@@ -156,3 +156,59 @@
    - `Heavy X` → 找 `heavy_X_*` vanilla 参照
    - `Cataphract` → 找 `empire_lord_helmet` / `empire_guarded_lord_helmet` / `imperial_goggled_helmet` 参照
    - `Guarded` → 找 `empire_guarded_lord_helmet` 参照
+
+---
+
+## Empire · Cape · 17 件（2026-09-23 归档）
+
+**关键设计观察**：vanilla+RBM 全 17 件 Empire Cape 的 **arm_armor = 0**（RBM 设计意图：Cape 是纯 body_armor / mantle · 无肩甲延伸）。OSA 在 Cape 上加了 arm（pauldron/spaulder 结构）是 **OSA 系统性设计特色**（2026-09-20 旧日志已确认）。
+
+### 📖 Leather 类（6 件 · body 12-27 · 皮革护肩/背带）
+
+| id | wt | b/a | 名称 |
+|---|---:|---|---|
+| `a_empire_plated_shoulder_a` | 4.1 | 12/0 | Legionary Studded Harness |
+| `woven_leather_shoulders` | 1.6 | 16/0 | Woven Leather Shoulders |
+| `varangian_bra_basic` | 2.5 | 18/0 | Decorated Leather Harness |
+| `varangian_bra_royal` | 2.7 | 22/0 | Caped Leather Harness |
+| `empire_warrior_padded_armor_shoulder` | 1.6 | 24/0 | Legionary Padded Straps |
+| `varangian_bra_padded` | 3.2 | 27/0 | Decorated Leather Harness with Padding |
+
+### 🔗 Chainmail 类（1 件 · body 35）
+
+| id | wt | b/a | 名称 |
+|---|---:|---|---|
+| `varangian_bra_mail` | 3.2 | 35/0 | Decorated Leather Harness over Mail |
+
+### 🛡 Plate 类（10 件 · body 15-55 · Pauldron/Lamellar/Scale）
+
+| id | wt | b/a | 名称 |
+|---|---:|---|---|
+| `a_pauldron_cape_c` | 3.5 | 15/0 | Bronze Pauldrons |
+| `empire_plate_armor_shoulder_a` | 3.6 | 17/0 | Bronze Plate Pauldrons |
+| `a_pauldron_cape_b` | 3.5 | 20/0 | Bronze Pauldrons with Neck Guard |
+| `empire_plate_armor_shoulder_b` | 3.6 | 21/0 | Iron Plate Pauldrons |
+| `a_empire_plated_shoulder_b` | 4.1 | 22/0 | Lamellar Pauldrons |
+| `pauldron_cape_a` | 3.5 | 30/0 | Legionary Cape |
+| `studded_imperial_neckguard` | 3.6 | 31/0 | Neckguard with Bronze Plate Pauldrons |
+| `imperial_studded_strip_shoulders` | 4.1 | 34/0 | Legionary Reinforced Studded Harness |
+| `varangian_bra_scale` | 4.0 | 40/0 | Decorated Leather Harness over Scale |
+| **`imperial_lamellar_shoulders`** | 3.5 | **55/0** | **Heavy Lamellar Pauldrons** ⭐ 顶点 |
+
+### Cape 家族梯度 · Empire
+
+```
+Cloth / 无 Cape                                    body 0-5
+Leather 护肩 (Legionary Studded/Padded/Woven)      body 12-27
+Chainmail 护肩 (varangian_bra_mail)                body 35
+Plate Pauldron (Bronze/Iron/Neckguard)             body 15-31
+Plate Heavy Lamellar (imperial_lamellar_shoulders) body 55 ⭐ 顶点
+```
+
+### Cape 家族关键约束
+
+- **vanilla Empire Cape 顶点**：`imperial_lamellar_shoulders` **55/0/3.5**（raw = 55 · scaled with Cape mult 1.8 = 99）
+- **OSA Empire Cape 需在此顶点内**：raw body ≤ 55
+- **OSA arm 特色可保留**：OSA 明确添加 arm_armor（0-12）反映 pauldron mesh 的物理外形，vanilla 侧无对应设计
+- **头 > 身 > 臂原则不适用**（Cape 无 head_armor 字段）
+- **拟议 Cape 铁律**（待用户确认）：`body_armor ≥ arm_armor`（斗篷主体 > 肩甲延伸）

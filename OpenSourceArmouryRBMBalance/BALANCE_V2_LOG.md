@@ -2,6 +2,95 @@
 
 **范围**：`OpenSourceArmouryRBMBalance` v1 脚本按 tier 分层的 buff 逻辑漏掉了大量视觉上明明是重装但 raw armor 值偏低的物品（比如 stylized/decorative 头盔）。v2 通过**用户 in-game 观察 → 手工逐件审**弥补这个缺口，按**文化 → 装备类型**顺序推进。
 
+**📖 设计基调宪法**：所有平衡工作前**先读** [`DESIGN_PHILOSOPHY.md`](./DESIGN_PHILOSOPHY.md)——从帝国头盔 165 件手工审经验中提炼的通用设计哲学，含**两条铁律**、通用 7 原则、工作流纪律、用户反馈信号识别、vanilla 锚点速查。本文档（`BALANCE_V2_LOG.md`）是逐件手工审的权威决议记录，`DESIGN_PHILOSOPHY.md` 是指导决议的宪法。**新进入任何 armor 类型前先读 PHILOSOPHY 拟定该类型铁律**。
+
+---
+
+## 🔒 铁律 · 平衡工作基础数据源（2026-09-23 用户拍板）
+
+> **所有 OSA 平衡工作以「原版经由 RBM 模组修改后的数据」为唯一权威基础**。
+>
+> 具体执行：
+> 1. **先查 [`VANILLA_REFERENCE.md`](./VANILLA_REFERENCE.md)**——该文档已抽取 vanilla + RBM 已完成调整后的数值，是本项目的**权威锚点表**
+> 2. **OSA 物品若能匹配某 vanilla+RBM 物品的 base_type + aventail_type → 直接抄该 vanilla 数值**（不做主观微调，不做"稍强/稍弱"判断）
+> 3. **无 vanilla 直匹配的 OSA-only 物品** → 按家族 fallback 规则（aventail suffix 表 + base_type 家族均值 ± 装饰前缀）
+> 4. **绝不擅自设定超越 vanilla+RBM 尺度的绝对值**（如把 Faceguard 家族的 94 anchor 套到 Roman Helmet 家族全档 → 属越权 buff，禁止）
+> 5. **RBM 已做的取舍视为设计终稿**——即使个别 vanilla 值看起来"偏低"或"偏高"，也不做二次调整；OSA 只负责让自己家族数值**与 vanilla+RBM 同尺度对齐**，不建立独立尺度
+>
+> **违反此铁律的历史提案**（2026-09-23 Roman Helmet 家族首版）：把 Faceguard 家族 anchor 94/12/0 套到全 12 件 → 被用户驳回。修订后按 vanilla `helmet_with_faceguard` / `tall_helmet` / `plumed_helmet` 三档 direct match + Cap 家族 fallback，通过。
+
+## 🔒 铁律 · Cape 家族设计规则（2026-09-23 用户拍板 · 二部分律）
+
+### 第一部分：命名二分律
+
+> Cape 类物品按**命名判定**二分：
+>
+> **A. 有 "shoulder" 或 "pauldron(s)" 命名的 Cape**：允许 `body_armor` 和 `arm_armor` 同时 > 0，但**必须满足 body > arm 严格序**
+>
+> **B. 无 "shoulder" / "pauldron" 命名的 Cape**（Cape/Cloak/Sash/Focale/Pelt/Collar 等）：**只允许 body_armor > 0，arm_armor 必须 = 0**
+>
+> - **判定优先命名 · 大小写不敏感**（如 `Pauldrons` / `Shoulders` 都算）
+> - **理由**：命名反映 mesh 视觉外形——带 shoulder/pauldron 的 mesh 明显有肩甲结构（arm 覆盖），无此命名的 mesh 是纯斗篷/披风（无肩甲延伸）
+> - **用户 quote**："任何带有 shoulder 或者 pauldrons 的肩甲允许身甲和臂甲同时存在但身甲必须大于臂甲，如果没有带有 shoulder 或者 pauldrons 的只提供身甲"
+
+### 第二部分：arm mesh-tiered 分档律（2026-09-23 用户拍板 · 方案 C）
+
+> Cape (A 组 · 有 shoulder/pauldron) 的 arm_armor 值**按 mesh 视觉覆盖度分档**：
+>
+> | mesh 档次 | arm 值 | 命名特征 |
+> |---|---:|---|
+> | **Elite Heavy Pauldrons/Shoulders**（顶档 · Gilded 品质） | **25** | Gilded / Heavy / 顶级材质 |
+> | **Standard Shoulders** | **20** | Lamellar Shoulders 主流 |
+> | **Standard Pauldrons**（较小 mesh） | **12** | Pauldrons 命名（比 Shoulders 略小） |
+> | **Studded Strip / lightweight** | **6-8** | 轻档 studded strip 结构 |
+> | Chainmail Shoulders 中档 | 10-12 | 链甲护肩 |
+> | Leather Shoulders 轻档 | 4-8 | 皮革护肩 |
+>
+> **理由**：Heavy Lamellar Pauldrons 视觉上覆盖**整个肩膀+上臂**（甲片全裹肩+ upper arm），Standard Pauldrons 只覆盖肩膀，Studded Strip 仅局部加固——arm 值应**忠实反映 mesh 物理覆盖度**。
+>
+> **arm 堆叠机制说明**：Bannerlord 引擎 `final_arm = HeadArmor.arm + BodyArmor.arm + Cape.arm + HandArmor.arm`（加法），不区分手臂子区间。**OSA 精英兵 arm 总值会比 RBM 基线高 ~25 点（26%）**——这是**故意的设计取舍**：换取 OSA "Cape 特色" 忠实反映 mesh 视觉覆盖度。
+>
+> **顶点参照放宽**：vanilla `imperial_lamellar_shoulders` 是 55/0/3.5 (raw 55 · body only)。OSA 允许 body ≤ vanilla body（如 42/25 raw 67），因为 OSA 是"分配到 shoulder 和 upper_arm 两块 mesh"而非"堆积在同一块 mesh"。**只要 body ≤ vanilla body 顶（55），arm 加成属 OSA 特色不算越权**。
+>
+> **用户 quote**："我认为有必要增强一下 Heavy Lamellar Pauldrons 的数值，添加 25~ 的臂甲较为合适（甲片覆盖了整个肩膀，连同臂甲就可以覆盖整个手臂）"
+
+### 第三部分：视觉判断优先律（2026-09-23 F 家族揭示）
+
+> **命名允许 ≠ 数值强制**。命名二分律（第一部分）规定"有 shoulder/pauldron 命名的 Cape **允许** arm > 0"，但实际 arm 值必须通过 **mesh 视觉覆盖度确认**。若命名含 shoulder/pauldron 但 mesh 视觉**不覆盖上臂**（如纯覆盖 shoulder body 或 body），则 arm **必须 = 0**，覆盖命名默认值。
+>
+> **F 家族 · 视觉判断示例**（2026-09-23 用户 in-game 观察）：
+> - `AR_imperial_shoulders_c/l` (Scale Shoulders): 命名含 Shoulders 但 mesh 只覆盖 body-shoulder，**arm 0**
+> - `AR_imperial_shoulders_u/v` (Alternating Scale): 只覆盖 body 肩部，**arm 0**
+> - `AR_imperial_shoulders_w/x` (Steel Scale): 只覆盖 body 肩部，**arm 0**
+> - `AR_imperial_shoulders_d` (Scale With Lamellar): Lamellar 铁片覆盖上臂 → **arm 20**
+> - `AR_imperial_shoulders_y` (Decorated Leather Harness Over Scale): Harness 部分覆盖上臂但小于 Lamellar → **arm 15**（介于 Pauldrons 12 和 Standard Shoulders 20 之间的部分覆盖档）
+>
+> **arm mesh-tiered 分档律扩展**（在第二部分基础上加入"部分覆盖"档）：
+>
+> | mesh 视觉档 | arm 值 |
+> |---|---:|
+> | Elite Heavy 顶档 · 完整肩+上臂覆盖 | 25 |
+> | Standard Shoulders · 肩+上臂上半 | 20 |
+> | **部分上臂覆盖**（如 Harness Over Scale · 小于 Lamellar） | **15** |
+> | Standard Pauldrons · 仅肩 | 12 |
+> | Chainmail Shoulders 中档 | 10-12 |
+> | Studded Strip / Leather 轻档 | 6-8 |
+> | **纯 body 无上臂覆盖**（Scale/Alternating/Steel Scale 类） | **0** |
+>
+> **用户 quote**："scale shoulders 的 mesh 似乎只覆盖身体，并不覆盖肩膀" · "with lamellar 的版本才有覆盖大臂的扎甲铁片" · "Decorated Leather Harness Over Scale 是同时覆盖了肩部和大臂，但大臂的护甲覆盖面积要比 Lamellar 系列要小"
+
+## 🔒 铁律 · 头 > 身 > 臂 设计基调（2026-09-23 用户拍板）
+
+> 所有 HeadArmor 类物品必须满足 **head_armor > body_armor > arm_armor** 的强序关系。
+>
+> - **原因**：头部是主要防护部位、颈甲延伸（gorget）覆盖 body 有限、肩甲/aventail 覆盖 arm 更少的物理直觉；同时保证视觉一致性——头盔外观越"重装"应先反映在头档、次反映在颈档、最后才是肩档
+> - **执行**：即使 vanilla+RBM 参照物品本身存在 body < arm 结构（如 `roundkettle_over_imperial_mail` 92/0/20 · `imperial_nasal_helm` 97/12/25），OSA 平衡时**允许调整 body/arm 分布使其符合头 > 身 > 臂**，只要 raw 总和保持在 vanilla 家族尺度内
+> - **例外**：无（无论 aventail 类型如何，头盔的 arm 覆盖不应超过 body 覆盖）
+> - **追溯适用**：已归档决议若违反本条铁律需追溯修正——2026-09-23 首批追溯：Roman Helmet #11/#12（Stripped Cloth 系）· Nasalhelm #1（`ao_imperial_nasal_helmet`）
+> - **用户 quote**："所有头盔应当都需要做到头甲 > 身甲 > 臂甲"
+
+---
+
 **工作流约定**：
 - 用户在游戏内观察某物品数值失衡 → 提出目标数值
 - Claude 改 `ModuleData/OSABalance_armor_override.xml` （或 `_pieces_override.xml`）
@@ -9,7 +98,7 @@
 - 每件改动在本文档记录：**id / 名称 / 文化 / 类型 / 前 → 后数值 / tier 计算 / 部署状态**
 - 用户实机验证后在本文档标 ✅
 
-**优先方法（2026-09-22 定）**：
+**优先方法（2026-09-22 定 · 2026-09-23 升级为铁律见上方）**：
 1. 先查 [`VANILLA_REFERENCE.md`](./VANILLA_REFERENCE.md) 找 OSA 物品对应的 vanilla+RBM 参照
 2. 直接抄 vanilla 值（RBM 已完成的调整视为权威）
 3. 无 vanilla 对应的 OSA-only 物品用家族均值 fallback（aventail suffix 表 + base_type 家族头值均值）
@@ -416,6 +505,23 @@ Crested v3 时"Ridge Helmet"被当作 base 类型不叠加字典；v5 统一按 
 
 **状态**：3 件 🟡 pending deploy
 
+### 2026-09-23 · Scale Coif 追溯修正 · 头 > 身 > 臂原则（2 件）
+
+**背景**：新铁律头 > 身 > 臂暴露 Scale Coif o/o2 原决议 `45/15/35/1.7` 违反（arm 35 > body 15）。追溯修正为 body > arm，并与新增的 o3 (Steel Scale Coif) 建立 Brass < Alternating < Steel 三档阶梯。
+
+| # | id | 游戏名 | 原 v2 决议 | **追溯修正 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_helmet_o` | Imperial Brass Scale Coif | 45/15/35/1.7 | **48/28/15/1.8** |
+| 2 | `AR_empire_helmet_o2` | Imperial Alternating Scale Coif | 45/15/35/1.7 | **48/28/15/1.8** |
+
+**Scale Coif 三档阶梯**（Brass/Alternating < Steel）：
+- Brass/Alternating: 48/28/15/1.8（本次追溯）
+- Steel (o3): 55/30/18/2.0（TV/AR 尾单批同期定案）
+
+**理由**：Scale material 是"金属片编织"结构，主要防护是头顶铁片 · 颈档次之 · 肩档最少（符合头 > 身 > 臂）。原 arm 35 是把 Scale Coif 当"mail coif"处理导致过高。
+
+**状态**：2 件追溯修正 🔵 log-only
+
 ---
 
 ## Empire · Sagittarius 家族
@@ -542,9 +648,798 @@ Crested v3 时"Ridge Helmet"被当作 base 类型不叠加字典；v5 统一按 
 
 **状态**：10 件 🟡 pending deploy
 
+### 2026-09-23 · Cataphract 家族 v3 · body/arm 用 Goggled 反推重设（12 件）
+
+**背景**：用户 2026-09-23 审 Lord 家族提案时指出 "Imperial 前缀 = 领主 + 双层内衬" 铁律未在 Cataphract 家族充分体现——v2 现值 body 12-30 / arm 0-25 明显不匹配 elite cavalry + full mail liner 定位。要求以 vanilla `imperial_goggled_helmet` **144/82/45** 为顶点参照，按 head 档位反推各档 body/arm，接近但不越 Goggled。
+
+**Goggled 反推阶梯**：
+```
+head 110 → body 56 / arm 32   (缺口 -12/-13 vs Goggled)
+head 115 → body 58 / arm 33
+head 123 → body 62 / arm 36
+head 128 → body 65 / arm 38
+head 133 → body 70 / arm 40   (缺口 -14/-5 vs Goggled)
+—— vanilla Goggled 144 / 82 / 45（顶点参照）——
+```
+
+**12 件 v3 body/arm 修订清单**（含 2 件 Spangenhelm 家族登记但结构属 Cataphract）：
+
+| # | id | 游戏名 | v2 现值 h/b/a/wt | **v3 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `DZ_empire_helmet_b` | Cataphract's Domed | 123/15/20/3.5 | **123/62/36/3.5** |
+| 2 | `DZ_empire_helmet_c` | Plumed Cataphract's Domed | 123/15/20/3.5 | **123/62/36/3.5** |
+| 3 | `DZ_empire_helmet_i` | Cataphract's Feathered Pointed Kettle | 110/12/25/3.5 | **110/56/32/3.5** |
+| 4 | `DZ_empire_helmet_j` | Cataphract's Plumed Pointed Kettle | 110/12/25/3.5 | **110/56/32/3.5** |
+| 5 | `TV_empire_lord_helmet_j` | Cataphract's Closed Fluted | 128/20/25/4.5 | **128/65/38/4.5** |
+| 6 | `ao_imperial_cataphracts_closed_mail_helmet` | Cataphract's Closed Mail | 128/15/25/4.5 | **128/65/38/4.5** |
+| 7 | `ao_imperial_cataphracts_flamboyant_helmet` | Ornate Cataphract | 123/15/20/3.5 | **123/62/36/3.5** |
+| 8 | `ao_imperial_guarded_conical_nasal_helmet` | Guarded Cataphract's Conical Nasal | 133/30/0/3.7 | **133/70/40/3.7** |
+| 9 | `ar_empire_cataphracts_helmet_a` | Plumed Cataphract | 123/15/20/3.5 | **123/62/36/3.5** |
+| 10 | `varangian_guard_helmet_c` | Stripped Cataphract Mail | 115/12/25/3.5 | **115/58/33/3.5** |
+| +1 | `DZ_empire_helmet_d`（Spangenhelm 家族登记）| Cataphract's Bent Conical | 123/15/20/3.5 | **123/62/36/3.5** |
+| +2 | `ao_imperial_cataphracts_plumed_closed_mail_helmet`（Spangenhelm 家族登记）| Plumed Spangen Over Closed Mail | 133/30/25/3.7 | **133/70/40/3.7** |
+
+**Tier 校核**：全 T5（head 不动，仅 body/arm 调整；raw 提升 45-50，vs Goggled raw 300 仍差 30-80）。
+
+**关键调整幅度**：
+- Standard Cataphract (h=123, 5 件): body 15→62 (+47) · arm 20→36 (+16)
+- Pointed Kettle (h=110, 2 件): body 12→56 (+44) · arm 25→32 (+7)
+- Closed Cataphract (h=128, 2 件): body 15-20→65 (+45-50) · arm 25→38 (+13)
+- Guarded Cataphract 顶档 (h=133, 2 件): body 30→70 (+40) · arm 0-25→40 (+15-40)
+- Stripped Cataphract (h=115, 1 件): body 12→58 (+46) · arm 25→33 (+8)
+
+**保留精英差距**：body 缺 12-26 / arm 缺 5-13 vs Goggled——符合用户"接近但不比肩"定位。
+
+**状态**：12 件 🔵 log-only（决议归档，XML 未动 · v2 XML 值保持不变）
+
+---
+
+## Empire · 帽/头饰（轻装）
+
+### 2026-09-23 · 帽/头饰家族 19 件 · 决议已定案（log-only，未改 XML）
+
+**背景**：v2 手工审推进到"非头盔"轻装分类。19 件全为平民/仪式性头饰，护甲价值低、v1 flat buff 已覆盖到大致合理档位。用户 policy：**决议记入 log 作为"已审"标记，不改 XML**（cosmetic 类物品 v1 现值可接受，避免 XML churn）。
+
+**vanilla RBM 锚点参照**：
+- `pilgrim_hood` (Empire Cloth, 0.3 wt) 7/5/0
+- `nordic_civilian_hat_fur_brim` (Nord Cloth, 1.0 wt) 7/0/0
+- `battania_civil_hood` (Battania Cloth, 1.0 wt) 11/0/0
+- `fur_hood` (Khuzait Leather, 1.2 wt) 12/0/0
+- `peaked_fur_hood` (Khuzait Leather, 1.2 wt) 14/0/0
+- `leather_cap` (vanilla Leather, 0.4 wt) 14/0/0
+
+**决议清单**（19 件）：
+
+| 组 | id | 名称 | mat | v1 当前 h/wt | **v2 决议 h/b/a/wt** | 依据 |
+|---|---|---|---|---|---|---|
+| 农民草帽 | `AR_hat_a` | Straw Hat | Cloth | 7/0.46 | **8/0/0/0.5** | `nordic_civilian_hat_fur_brim` 7 微升（宽帽檐） |
+| 农民草帽 | `AR_hat_b` | Straw Hat With Feather | Cloth | 7/0.46 | **8/0/0/0.5** | 同上（羽饰 0） |
+| Roman 布/皮平民帽 | `AR_roman_hat_d` | Conical Cloth Hat | Leather | 4/0.41 | **6/0/0/0.4** | Cloth 帽 最低档 |
+| Roman 布/皮平民帽 | `AR_roman_hat_e` | Plain Conical Cloth Hat | Leather | 4/0.41 | **6/0/0/0.4** | 同上 |
+| Roman 布/皮平民帽 | `AR_roman_hat_a` | Decorated Hat | Leather | 4/0.41 | **8/0/0/0.5** | Leather 装饰帽中档 |
+| Roman 布/皮平民帽 | `AR_roman_hat_a2` | Feathered Decorated Hat | Leather | 4/0.41 | **8/0/0/0.5** | 同上（羽饰 0） |
+| Roman 布/皮平民帽 | `AR_roman_hat_c` | Decorated Leather Hat | Leather | 4/0.41 | **10/0/0/0.5** | Leather 装饰帽上档 |
+| Roman 布/皮平民帽 | `AR_roman_hat_f` | Conical Leather Hat | Leather | 4/0.41 | **10/0/0/0.5** | 同上 |
+| 毛皮帽 | `AR_roman_hat_b` | Imperial Fur Hat | Leather | 8/0.41 | **12/0/0/1.0** | 直匹配 vanilla `fur_hood` |
+| 毛皮帽 | `AR_roman_hat_b2` | Imperial Conical Fur Hat | Leather | 8/0.41 | **14/0/0/1.0** | 直匹配 vanilla `peaked_fur_hood` |
+| Phrygian 弯锥帽 | `TV_phrygian_cap_b` | Plain Bent Conical Hat | Cloth | 5/0.46 | **7/0/0/0.4** | 平民软帽最低档 |
+| Phrygian 弯锥帽 | `TV_phrygian_cap_a` | Bent Conical Hat | Cloth | 5/0.46 | **8/0/0/0.4** | 中档 |
+| Phrygian 弯锥帽 | `AR_phrygian_cap_a` | Banded Bent Conical Hat | Cloth | 5/0.46 | **9/0/0/0.4** | 加带上档 |
+| 头带/月桂 | `AR_empire_laurel_a` | Laurel Headband | Leather | 8/0.29 | **4/0/0/0.2** | 罗马凯旋月桂纯仪式，v1 h=8 过高 |
+| 头带/月桂 | `AR_empire_laurel_a2` | Vine Headband | Leather | 8/0.29 | **4/0/0/0.2** | 同上（藤蔓变体） |
+| 头带/月桂 | `AR_headband_a` | Wrapped Headband | Leather | 8/0.29 | **5/0/0/0.2** | 布带包头略强于月桂 |
+| 朝圣兜帽 | `AR_bandit_hood_a` | Open Pilgrim's Hood | Cloth | 4/0.1 | **7/5/0/0.3** | 直匹配 vanilla `pilgrim_hood`（Empire Cloth） |
+| 帝国头冠 | `tiara_x` | Imperial Tiara | Plate | 15/0.8 | **18/0/0/0.6** | 金属头环覆盖不全，比 `leather_cap` 14 略高 |
+| 节庆帽 | `AR_satan_hat` | Festive Hat | Leather | 4/0.41 | **3/0/0/0.4** | 派对/彩装帽无护 |
+
+**关键修正点**：
+- 3 件直匹配 vanilla（`AR_roman_hat_b/b2` → fur_hood 12/14；`AR_bandit_hood_a` → pilgrim_hood 7/5/0）
+- 3 件月桂/头带 h 从 v1 的 8 下调到 4-5（更符合纯仪式性物品定位）
+- 多数 Roman/Phrygian 帽子从 v1 的 h=4-7 上调到 6-14 合理档位
+
+**状态**：19 件 🔵 log-only（决议已记，XML 未动 · 将来若发现 v1 值实机不合手感再单独批量改）
+
+---
+
+## Empire · Roman Helmet 家族
+
+### 2026-09-23 · Roman Helmet 家族 12 件（vanilla 直匹配修订）
+
+**背景**：v2 手工审推进到 Roman Helmet 家族（`AR_roman_helmet_*` + `roman_helmet_z`）。**首版提案违反铁律**——把 Faceguard 家族 vanilla anchor 94/12/0 套到全 12 件顶档，被用户驳回（"过于夸张"）。修订版按 vanilla `helmet_with_faceguard` / `tall_helmet` / `plumed_helmet` **三档 direct match** + Scout Cap 家族 fallback 落地。
+
+**用户 in-game 结构确认**（决定 aventail/faceguard 分档）：
+1. Scout 系 = 铁质头盔 + 毛冬帽装饰（毛帽装饰不加护）
+2. 所有 Scout 系带 faceguard，无链甲/皮甲内衬
+3. Plumed Helmet 系带 faceguard（非 open crested 无面甲版）
+4. Tall Helmet Over Stripped Cloth = 铁盔 + 铁片皮革条环绕后脑三面（左后/正后/右后 partial aventail）
+
+**vanilla RBM 三档锚点**：
+- `helmet_with_faceguard` (3.5/94/12/0) — Helmet with Faceguard
+- `tall_helmet` (1.8/84/0/0) — Tall Helmet
+- `plumed_helmet` (2.9/104/24/0) — Plumed Helmet（比 Faceguard 高一档 · +10 head +12 body）
+- （备参 `imperial_nasal_helm` 2.2/97/12/25 — Legionary Helm，若视觉带鼻梁）
+
+**12 件落地清单**（v1 现值 = XML 实际值 · v1 脚本已 buff 的部分保留原本 body/arm 显示）：
+
+| # | id | 游戏名 | **v1 XML 现值 h/b/a/wt** | **v2 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 1 | `AR_roman_helmet_a` | Imperial Open Helmet With Faceguard | 20/0/0/0.88 | **94/12/0/3.4** | ✅ `helmet_with_faceguard` 直匹配 |
+| 2 | `AR_roman_helmet_a_fur_a` | Scout's Ridged Cap | 20/0/0/0.88 | **80/10/0/3.4** | Faceguard 家族 -14 反映 Cap 小 mesh；毛帽装饰 0 |
+| 3 | `AR_roman_helmet_a_fur_b` | Scout's Banded Cap | 20/0/0/0.88 | **82/10/0/3.4** | 同 #2 + Banded +2 |
+| 4 | `AR_roman_helmet_b_fur_a` | Scout's Helmet With Faceguard | 84/36/31/3.2 | **94/12/0/3.7** | ✅ `helmet_with_faceguard` 直匹配（Scout 毛帽装饰 0）|
+| 5 | `AR_roman_helmet_b_fur_b` | Scout's Tall Helmet | 79/34/29/3.2 | **90/12/0/3.7** | `tall_helmet` 84 + Scout faceguard +6 head +12 body |
+| 6 | `AR_roman_helmet_b_fur_c` | Scout's Plumed Helmet | 80/34/30/3.16 | **104/24/0/3.7** | ✅ `plumed_helmet` 直匹配（Scout 毛帽装饰 0）|
+| 7 | `AR_roman_helmet_b_plumed` | Plumed Helmet With Faceguard | 79/34/29/3.2 | **104/24/0/3.7** | ✅ `plumed_helmet` 直匹配 |
+| 8 | `AR_roman_helmet_b_plumed_b` | Plumed Feathered Helmet With Faceguard | 79/34/29/3.2 | **104/24/0/3.7** | 同 #7（Feathered 装饰 0）|
+| 9 | `AR_roman_helmet_d_plumed_a` | Decorated Plumed Helmet | 90/39/33/3.37 | **104/24/0/3.9** | ✅ `plumed_helmet` 直匹配（Decorated 品质 0 armor）|
+| 10 | `AR_roman_helmet_d_plumed_b` | Gilded Plumed Helmet | 80/34/30/3.33 | **106/24/0/3.9** | `plumed_helmet` + Gilded 品质 +2 head（品质字典最高档）|
+| 11 | `AR_roman_helmet_d_strips` | Plumed Tall Helmet Over Stripped Cloth | 79/34/29/3.03 | **84/8/18/3.5** | `tall_helmet` 84 base + Stripped Cloth partial aventail（后脑三面 body 8 arm 18）|
+| 12 | `roman_helmet_z` | Tall Helmet Over Stripped Cloth | 78/34/29/2.99 | **84/8/18/3.5** | 同 #11（无 Plumed 装饰）|
+
+**Tier 校核**：全 12 件 T5（与 vanilla 三档锚点 `helmet_with_faceguard` / `tall_helmet` / `plumed_helmet` 一致）。家族梯度靠**绝对头档差异**表达（80-106 spread），非 tier 分层——这符合公式在 h≥38 clamp T5 的特性。
+
+**关键设计决策**：
+- **Plumed 系上调**（首版 94 → 104）：vanilla `plumed_helmet` 是 **104/24/0**（比 Faceguard 高一档 · body 24 反映 shoulder 延伸），首版误把 Plumed 当作 Faceguard 变体，纠正后全 5 件 Plumed（#6/#7/#8/#9/#10）走 104 base
+- **Scout Tall Helmet 妥协**（`tall_helmet` 84 + Scout faceguard +6/+12）：vanilla `tall_helmet` 无 faceguard，用户点 #2 明确 Scout 系有 faceguard，故不能直匹配 84 而须加 faceguard 结构增量
+- **Stripped Cloth 系轻档 · body/arm 下调**（v1 现 34/29 → 决议 8/18）：v1 脚本把 Stripped Cloth 当作 mail-tier aventail buff 到 34/29，但用户点 #4 明确结构是"皮革条+铁片后脑三面"（partial laced_cloth 类），应低于 mail (body 12-22 / arm 20-25)。v2 决议 body 8 / arm 18 反映真实 partial aventail
+
+**v1 脚本行为发现**（首次系统对比 XML 与 OSA 源）：v1 脚本对 `AR_roman_helmet_*` 家族按 mesh 前缀分组 buff：`_a` 系（3 件）仅微调 weight 未加护甲；`_b`/`_d` 系（8 件）按 Chainmail/Plate 白名单加 body ≈ head×0.43 + arm ≈ head×0.37 的 aventail 延伸公式，产生 body 34-39 / arm 29-33 的中档链甲颈甲效果——**这解释了为何 #11 #12 现 XML 已有 34/29 但视觉是皮革条**：v1 脚本把它们当作 mail aventail 误判。v2 决议按视觉真实结构下调到 partial cloth aventail 尺度。
+
+**状态**：12 件 🔵 log-only（用户 2026-09-23 拍板 · 决议归档不改 XML · v1 XML 现值保持不动）
+
+**归档理由**：v1 脚本已对 `_b`/`_d` 8 件做过实质 buff（h=78-90 + body/arm 34/29），实机战力已接近 v2 决议方向（虽然 body/arm 比例反了）；`_a` 3 件仍是 h=20 无 buff 状态（属 v2 决议明显未覆盖的漏洞）。用户 policy：批量 XML 改动优先级低于其它待办项目，本家族决议记入 log 作为"已审核"标记即可，实机若发现 `_a` 3 件（Open Faceguard / Scout Ridged Cap / Scout Banded Cap）战力过弱再单独补上。
+
+### 2026-09-23 · Roman Helmet 追溯修正 · 头 > 身 > 臂原则（2 件）
+
+**背景**：新铁律 头 > 身 > 臂（2026-09-23 用户拍板）暴露 Stripped Cloth 系 #11 #12 原决议 `84/8/18` 违反（arm 18 > body 8）。追溯修正为 body > arm。
+
+| # | id | 游戏名 | 原 v2 决议 | **追溯修正 h/b/a/wt** |
+|---|---|---|---|---|
+| 11 | `AR_roman_helmet_d_strips` | Plumed Tall Helmet Over Stripped Cloth | 84/8/18/3.5 | **84/20/10/3.5** |
+| 12 | `roman_helmet_z` | Tall Helmet Over Stripped Cloth | 84/8/18/3.5 | **84/20/10/3.5** |
+
+**理由**：铁片皮革条覆盖后脑三面 = 颈档主导（body 20）+ 少量肩档延伸（arm 10）。raw 总和不变，只是 body/arm 分布归正符合头 > 身 > 臂。
+
+**状态**：2 件追溯修正 🔵 log-only
+
+---
+
+## Empire · Lord/Guarded Lord 家族
+
+### 2026-09-23 · Lord/Guarded Lord 家族 10 件 · vanilla 直匹配 + Imperial 双层内衬修订
+
+**背景**：v2 手工审推进到 Lord/Guarded Lord 家族。v1 脚本对本家族 10 件按 Chainmail/Plate 白名单批量 buff（h 74-95、body 32-41、arm 27-35），头档偏低且 aventail 尺度错位。首版 v2 提案曾把 body/arm 降到 12-14/0-20（回归 Battle Crown 类轻档 Ridge），被用户 2026-09-23 驳回："Imperial 前缀 = 领主装备 + 双层内衬，body/arm 不能低"。修订版按 vanilla 高档 anchor（`heavy_nasalhelm_over_imperial_mail` 124/36/20 + `imperial_goggled_helmet` 144/82/45 顶点参照）反推 body/arm 60+/35+ 档次。
+
+**vanilla RBM 关键锚点**：
+- `empire_lord_helmet` 123/10/0/3.5 — Noble Guard Helmet
+- `empire_guarded_lord_helmet` 130/30/0/3.7 — Royal Cataphract Helmet
+- `empire_helmet_with_metal_strips` 120/14/20/3.8 — Lord Helmet with Metal Strips
+- `empire_jewelled_helmet` 125/14/20/3.8 — Imperial Jeweled Helmet
+- `heavy_nasalhelm_over_imperial_mail` 124/36/20/3.6 — Heavy Nasal + full mail
+- `imperial_goggled_helmet` 144/82/45/4.2 — Goggled Cataphract（顶点参照）
+
+**10 件落地清单**：
+
+| # | id | 游戏名 | v1 XML 现值 h/b/a/wt | **v3 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 1 | `AR_Empire_Lord_Guarded_Face_Helmet` | Imperial Guarded Lord Helmet with Faceplate | 95/41/35/2.99 | **140/70/40/4.5** | `empire_guarded_lord_helmet` 130 + Faceplate +5 + Imperial +5 · full mail liner（接近但不越 Goggled 82/45）|
+| 2 | `AR_empire_lord_helmet_d` | Gilded Imperial Guarded Lord Helmet | 90/39/33/2.84 | **132/62/36/3.9** | Guarded Lord 130/30/0 + Gilded +2 head · Imperial mail liner body/arm 大幅上调 |
+| 3 | `AR_empire_lord_helmet_e` | Imperial Feathered Jeweled Helmet | 88/38/33/2.91 | **125/60/36/3.8** | `empire_jewelled_helmet` 125/14/20 direct + Imperial mail liner |
+| 4 | `AR_empire_lord_helmet_g` | Imperial Silvered Ridge Helmet | 85/37/31/2.38 | **125/62/38/3.5** | Heavy Nasal-mail 124/36/20 base + Silvered +1 head · Ridge 结构 body ↑ |
+| 5 | `AR_empire_lord_helmet_h` | Imperial Jeweled Gilded Ridge Helmet | 79/34/29/1.61 | **126/60/35/2.5** | Heavy Nasal-mail 124 + Gilded +2 · 轻 mesh body/arm 稍减 |
+| 6 | `AR_empire_lord_helmet_i` | Imperial Plumed Decorated Banded Helmet With Metal Strips | 74/32/27/1.69 | **122/60/35/2.7** | `empire_helmet_with_metal_strips` 120/14/20 base + Banded 轻 mesh + Imperial mail liner |
+| 7 | `AR_empire_lord_helmet_j` | Imperial Jeweled Ridge Helmet | 79/34/29/1.61 | **122/60/35/2.5** | Heavy Nasal-mail 124 轻档（Jeweled 已 vanilla 名中）|
+| 8 | `TV_empire_lord_helmet_a` | Imperial Fluted Helmet With Metal Strips | 85/37/31/2.91 | **125/62/38/3.8** | `empire_helmet_with_metal_strips` 120 base + Fluted +5 head · Imperial mail liner |
+| 9 | `TV_empire_lord_helmet_d` | Imperial Decorated Silvered Ridge Helmet | 85/37/31/2.38 | **125/62/38/3.5** | 同 #4 |
+| 10 | `TV_empire_lord_helmet_e` | Imperial Decorated Gilded Ridge Helmet | 85/37/31/2.38 | **126/62/38/3.5** | Heavy Nasal-mail 124 + Gilded +2 head |
+
+**Tier 校核**：全 T5。**vs Goggled 缺口**：head -4~-22 / body -12~-22 / arm -5~-10（保留精英差距）。
+
+**字典 v9 候选**：`Fluted` +5 head（Face Plate 同档 · 结构性金属沟槽加固）——立项标记，待用户确认后正式入字典。
+
+**关键设计决策**：
+- **首版驳回历史**：v2 首提案把 Ridge Helmet 锚定为 `empire_battle_crown_west/north`（bare Ridge，body 12 arm 0），被用户点破"Imperial 双层内衬"应该体现在 body/arm。修订版换锚为 `heavy_nasalhelm_over_imperial_mail` 124/36/20（Heavy Nasal + full mail）+ Imperial mail liner 增强
+- **Goggled 天花板对齐**：Guarded Lord + Faceplate（#1）140/70/40 是家族顶档，raw 238，仍低于 Goggled raw 300 · 保留 elite 差距
+- **body/arm 60+/35+ 统一档**：从 v1 XML 的 32-41 body / 27-35 arm 大幅上调，反映 Imperial 领主装备的全 mail 内衬结构
+
+**状态**：10 件 🔵 log-only（决议归档，XML 未动 · 用户 2026-09-23 拍板"同 Roman Helmet 流程"）
+
+### 2026-09-23 · Lord 家族补丁 · 漏审 2 件（AR_empire_lord_helmet_a/b）
+
+**背景**：审 Elite 家族时发现早前 Lord 家族 v3（10 件）漏了 `AR_empire_lord_helmet_a/b` 两件标准 Lord Helmet 变体（Faceguard + Faceplate）。补齐。
+
+**注**：还发现 `AR_empire_lord_helmet_c` 完全**不在 override XML 里**（v1 脚本跳过），属漏洞——需用户实机确认此 id 存在与否，若存在再单独归档。
+
+**2 件补 v3 落地清单**：
+
+| # | id | 游戏名 | v1 XML 现值 | **v3 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 补 1 | `AR_empire_lord_helmet_a` | Imperial Lord Helmet With Faceguard | 90/39/33/2.76 | **127/60/35/3.5** | `empire_lord_helmet` 123 + Faceguard 字典 +4 head + Imperial full mail liner |
+| 补 2 | `AR_empire_lord_helmet_b` | Imperial Lord Helmet With Faceplate | 92/40/34/2.84 | **128/62/38/3.7** | `empire_lord_helmet` 123 + Faceplate 字典 +5/+5/+3 + Imperial full mail liner |
+
+**Tier 校核**：全 T5。
+
+**状态**：2 件 🔵 log-only（决议归档，XML 未动 · 补 Lord 家族 v3 遗漏）
+
+---
+
+## Empire · Nasalhelm 家族（纯 Nasal，非 Hybrid）
+
+### 2026-09-23 · Nasalhelm 家族 3 件 · vanilla 直匹配 + Imperial 双层内衬修订
+
+**背景**：v2 手工审推进到"纯 Nasalhelm"家族。用户 2026-09-23 主动指出遗漏——15 件 empire "Nasal" 相关物品中，12 件已散落在其他家族定案：
+- **Hybrid Nasal-Spangenhelm**（5 件）在 Spangenhelm 家族：`ao_imperial_nasal_spangenhelmet_with_mail` · `ao_imperial_heavy_nasal_spangenhelm_over_mail_coif` · `ao_imperial_nasal_spangenhelm_with_leather_strips` · `ao_imperial_closed_mail_nasal_spangenhelmet` · `ao_imperial_crowned_nasal_helmet`
+- **Cataphract Guarded Conical Nasal**（1 件）在 Cataphract 家族：`ao_imperial_guarded_conical_nasal_helmet`
+- **Southern/Desert Nasalhelm**（3+1 件）在 Desert 家族：`AR_empire_desert_helmet_a/b/d` · `bronze_aserai_helm`
+- **Heavy Nasalhelm**（2 件）在杂项：`AR_empire_helmet_a/b`
+
+剩 3 件"纯 Nasalhelm"未定案，本次补齐。
+
+**Nasalhelm 家族 vanilla 参照梯度**（11 件）：
+```
+55 (light cloth) → 87-90 (mid mail) → 97 (Legionary Helm) → 97-105 (Heavy w/ cloth/leather) → 124 (Heavy w/ mail 顶档)
+```
+
+**关键锚点**：
+- `imperial_nasal_helm` 97/12/25/2.2 — Legionary Helm（Nasal 基础锚点）
+- `heavy_nasalhelm_over_imperial_mail` 124/36/20/3.6 — Heavy Nasal + full mail（Nasal 家族顶档）
+- `heavy_nasalhelm_over_imperial_padding` 100/41/25/3.2 — 中档参照
+
+**3 件落地清单**：
+
+| # | id | 游戏名 | v1 XML 现值 h/b/a/wt | **v2 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 1 | `ao_imperial_nasal_helmet` | Imperial Nasal Helmet | 77/33/28/1.56 | **97/25/28/2.2** | ✅ `imperial_nasal_helm` 97/12/25/2.2 direct + Imperial 双层内衬 body 12→25 arm 25→28 |
+| 2 | `ao_imperial_guarded_nasal_helmet` | Imperial Guarded Nasal Helmet | 82/35/30/1.54 | **105/40/30/2.6** | Legionary 97 base + Guarded 结构 +8 head · Imperial mail liner body/arm 靠拢 Heavy Nasal（对齐 vanilla `heavy_nasalhelm_over_imperial_padding` 100/41/25）|
+| 3 | `ao_imperial_guarded_decorated_nasal_helmet` | Imperial Guarded Decorated Nasal Helmet | 88/38/33/1.38 | **107/40/30/2.6** | 同 #2（Decorated 装饰 0）+ mesh 差异 +2 head（v1 现值差异反映 mesh 略大）|
+
+**Tier 校核**：全 T5。**vs Nasal 顶档缺口**：raw 169-198 vs Heavy Nasal 顶档 raw 204.8（差 -6 ~ -35，全部低于 Nasal 家族天花板）。
+
+**字典 v9 候选**：`Guarded` +8 head（Face Guard/Ridge +4 与 Cataphracts +7 之间 · 结构性面颊/颈护加强）——立项标记。
+
+**关键设计决策**：
+- **wt 修正**：v1 XML wt 1.4-1.6 偏轻（Nasal + mail liner 应 2.2-3.0），v2 归正到 2.2-2.6 与 Legionary 和 Heavy Nasal 中间档一致
+- **body/arm 反映 Imperial 双层**：Legionary 12/25 → OSA 25/28（body 大幅上调反映完整 mail 内衬）· Guarded 版进一步升到 40/30 靠拢 Heavy Nasal 尺度
+- **家族天花板不越权**：3 件 raw 全部低于 vanilla Nasal 顶档 `heavy_nasalhelm_over_imperial_mail` 204.8，严格符合铁律
+
+**状态**：3 件 🔵 log-only（决议归档，XML 未动 · 与 Lord/Cataphract v3 同批 2026-09-23 用户拍板）
+
+### 2026-09-23 · Nasalhelm 追溯修正 · 头 > 身 > 臂原则（1 件）
+
+**背景**：新铁律 头 > 身 > 臂 暴露 #1 原决议 `97/25/28` 违反（arm 28 > body 25）。追溯修正为 body > arm。
+
+| # | id | 游戏名 | 原 v2 决议 | **追溯修正 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_imperial_nasal_helmet` | Imperial Nasal Helmet | 97/25/28/2.2 | **97/28/22/2.2** |
+
+**理由**：Imperial mail liner 主要覆盖颈档（body 28）+ 少量肩档延伸（arm 22）。raw 总和不变，只是 body/arm 分布归正。
+
+**状态**：1 件追溯修正 🔵 log-only
+
+---
+
+## Empire · Elite（Evocati/Varangian/Echerian）家族
+
+### 2026-09-23 · Elite 家族 4 件 · vanilla 顶档参照 + 双同名 helm 处理
+
+**背景**：v2 手工审推进到 Elite 顶档家族——Evocati（罗马再入伍元老兵）· Varangian Guard（拜占庭皇家禁卫）· Echerian Elite（皇家精锐）。审查时发现 XML 里 **2 件同名 "Imperial Closed Guarded Lord Helmet"**（`echerian_elite_helm` + `imperial_lord_helm_mail`），必须同数值处理，故实际共 4 件。
+
+**vanilla 顶档参照**：
+- `empire_lord_helmet` 123/10/0/3.5 — Noble Guard Helmet
+- `empire_guarded_lord_helmet` 130/30/0/3.7 — Royal Cataphract Helmet
+- `imperial_goggled_helmet` 144/82/45/4.2 — Goggled Cataphract（顶点参照）
+
+**4 件落地清单**：
+
+| # | id | 游戏名 | v1 XML 现值 h/b/a/wt | **v2 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 1 | `ao_imperial_evocati_helmet` | Imperial Evocatus' Helmet | 81/35/30/1.38 | **122/55/37/3.0** | `empire_lord_helmet` 123 tier 靠拢 + Imperial full mail liner · 用户 2026-09-23 指定 120+/50+/35+ 档 |
+| 2 | `varangian_guard_helmet_a` | Imperial Guard's Helmet With Closed Plated Mail | 54/23/20/2.38 | **138/70/42/5.0** | Goggled 144/82/45 参照 · Varangian royal guard 顶档 · Chainmail 全 mail 构造 wt 5.0（源 5.8）|
+| 3 | `echerian_elite_helm` | Imperial Closed Guarded Lord Helmet | 90/39/33/2.84 | **140/70/40/4.5** | `empire_guarded_lord_helmet` 130 + Closed 字典 +5/+5/+3 + Imperial full mail liner |
+| 4 | `imperial_lord_helm_mail` | **Imperial Closed Guarded Lord Helmet**（同显示名）| 92/40/34/2.84 | **140/70/40/4.5** | 同 #3（同显示名 = 同数值 · 两件视觉相同）|
+
+**Tier 校核**：全 T5。vs Goggled raw 300：#1 -62 · #2 -26 · #3/4 -22（保留精英差距）
+
+**关键设计决策**：
+- **双同名 helm 处理**（用户 in-game 观察）：`echerian_elite_helm` 与 `imperial_lord_helm_mail` 都用 "Imperial Closed Guarded Lord Helmet" 显示名 → 同视觉必须同数值，一并归档
+- **Evocatus 三次调档**：v1 XML 81/35/30 → v2 首提案 110/45/32 → 用户要求 120+/50+/35+ → 最终 **122/55/37/3.0**（elite veteran 拿领主级装备定位，靠拢 `empire_lord_helmet` 123 Noble Guard）
+- **Varangian Chainmail wt 修正**：v1 XML wt 2.38 掉太多（v1 script bug），v2 归正到 5.0 反映"Closed Plated Mail"全 mail 构造真实重量
+
+**状态**：4 件 🔵 log-only（决议归档，XML 未动）
+
+---
+
+## Empire · Kettle 家族（Roundkettle + Pointed/Spiked Kettle）
+
+### 2026-09-23 · Kettle 家族 11 件 · vanilla 直匹配 + 头 > 身 > 臂原则首用
+
+**背景**：v2 手工审推进到 Kettle 家族——普通士兵头盔（非精英级），跨两大 mesh：Roundkettle（4 件）+ Pointed/Spiked Kettle（7 件）。首版提案完全按 vanilla mail wrap 结构（arm > body）落地被用户 2026-09-23 驳回："所有头盔应当都需要做到头甲 > 身甲 > 臂甲"——由此立**头 > 身 > 臂铁律**，作为所有头盔设计基调。本家族是新铁律首用。
+
+**Kettle 家族 vanilla 参照**：
+- `roundkettle_over_imperial_leather` 74/0/0/1.3 — Light Roundkettle
+- `roundkettle_over_imperial_mail` 92/0/20/3.3 — Roundkettle + mail wrap（**vanilla 本身违反头>身>臂**：body 0 arm 20）
+- `spiked_kettle_over_imperial_padding` 60/3/17/1.5 — 最低档 Pointed
+- `spiked_kettle_over_imperial_mail` 90/4/20/3.6 — Pointed 顶档 mail（同 vanilla 违反：body 4 arm 20）
+- `ironlame_nasalhelm_over_imperial_coif` 85/22/45/4.1 — coif 全 mail 罩参照
+- `ironlame_spiked_kettle_over_mail` 73/0/25/3.8
+
+**11 件落地清单**：
+
+#### 子群 A · Roundkettle 系（4 件）
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 1 | `ao_imperial_kettlehelm_with_leather` | Imperial Roundkettle With Leather | 20/0/0/0.46 | **74/20/12/1.5** | `roundkettle_over_imperial_leather` 74 + Imperial 双层内衬（body 20 > arm 12 · 头>身>臂）|
+| 2 | `ao_imperial_kettlehelm_with_mail` | Imperial Roundkettle With Mail | 95/0/0/1.8 | **92/28/22/3.3** | `roundkettle_over_imperial_mail` 92 base + Imperial mail 双层（body/arm 从 vanilla 0/20 归正为 28/22）|
+| 3 | `ao_imperial_kettlehelm_over_mail_coif` | Imperial Roundkettle Over Mail Coif | 79/34/29/1.56 | **90/42/30/3.7** | Roundkettle + full mail coif · 完整链甲头罩 |
+| 4 | `DZ_empire_helmet_a` | Imperial Mailled Kettle Helmet | 90/39/33/3.07 | **92/28/22/3.3** | 同 #2 |
+
+#### 子群 B · Pointed/Spiked Kettle 系（7 件）
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 5 | `DZ_empire_helmet_e` | Imperial Pointed Kettle Over Padding | 86/37/32/2.14 | **60/18/12/1.5** | `spiked_kettle_over_imperial_padding` 60 + Imperial padding 双层（v1 h=86 是 script over-buff，按铁律回归 vanilla）|
+| 6 | `DZ_empire_helmet_f` | Imperial Pointed Kettle Over Leather | 74/32/27/1.92 | **68/20/15/1.8** | 介于 padding 60 与 mail 90 之间 · 皮革 double-layer |
+| 7 | `DZ_empire_helmet_g` | Imperial Pointed Kettle Over Mail | 81/35/30/2.38 | **90/28/22/3.6** | `spiked_kettle_over_imperial_mail` 90 base + Imperial mail 双层（body/arm 从 vanilla 4/20 归正）|
+| 8 | `DZ_empire_helmet_h` | Imperial Feathered Pointed Kettle Over Mail | 85/37/31/2.19 | **90/28/22/3.6** | 同 #7（Feathered 装饰 0）|
+| 9 | `AR_closed_kettle_helmet_a` | Imperial Plumed Kettle Over Closed Mail | 88/38/33/3.07 | **97/32/25/3.8** | `roundkettle_over_imperial_mail` 92 + Closed 字典 +5/+5/+3 · Closed Mail 全内衬 |
+| 10 | `khuzait_ironlame_kettle` | Imperial Closed Iron Kettle | 43/18/16/1.64 | **78/30/22/3.8** | `ironlame_spiked_kettle_over_mail` 73 + Closed +5 · Chainmail 材质 |
+| 11 | `khuzait_spiked_kettle` | Imperial Closed Spiked Kettle | 44/19/16/2.06 | **95/30/25/3.9** | `spiked_kettle_over_imperial_mail` 90 + Closed +5 · Chainmail |
+
+**头 > 身 > 臂 校验**：全 11 件通过（每件都严格 head > body > arm）
+
+**Tier 校核**：全 T5。
+
+**关键设计决策**：
+- **头 > 身 > 臂铁律首用**：首版提案照抄 vanilla mail wrap 结构（body 15 arm 25 等 arm > body 布局）被用户驳回，正式立铁律。v2 修订版全部翻转 body/arm 分布使符合序
+- **回归 vanilla · 有升有降**：Kettle 是普通士兵头盔，严守 vanilla 尺度。#5 Pointed Kettle Over Padding 从 v1 h=86 降回 vanilla 60（v1 script over-buff 纠正）
+- **Imperial 双层内衬克制体现**：body/arm 按 aventail suffix 表加成但保持 body > arm
+- **两个 Khuzait Chainmail 大幅上调**：v1 h=43-44 明显低估，wt 上调到 3.8-3.9 反映 mail 构造
+
+**状态**：11 件 🔵 log-only（决议归档，XML 未动 · 头 > 身 > 臂铁律首例）
+
+---
+
+## Empire · Crowned/Palatine 家族
+
+### 2026-09-23 · Crowned/Palatine 家族 5 件 · Palace Guard + Royal Crown tier
+
+**背景**：v2 手工审推进到 Crowned/Palatine 家族——Palatine Helmet 是拜占庭皇宫禁卫（Palace Guard / 罗马 Praetorian）盔 · 3 件同 mesh + 3 种 aventail 内衬（Mail/Leather/Cloth）· Crowned Helmet 是皇冠仪式盔 · 2 件是 base + Faceplate 变体。全 5 件属 Lord/Guarded Lord 精英级 tier。
+
+**关键 vanilla 参照**：
+- `empire_lord_helmet` 123/10/0/3.5 — Noble Guard Helmet
+- `empire_guarded_lord_helmet` 130/30/0/3.7 — Royal Cataphract Helmet
+- `empire_battle_crown_north` 104/12/0/2.1 — Jeweled Plumed Battle Crown
+- `empire_battle_crown_west` 109/12/0/3.1 — Imperial Plumed Helmet
+- `imperial_goggled_helmet` 144/82/45/4.2 — 顶点参照
+- aventail suffix：Mail body 12-22 arm 20-25 · Leather 12/15-17 · Cloth 12/6
+
+**5 件落地清单**：
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 1 | `ao_imperial_palatine_guard_helmet` | Imperial Palatine Helmet Over Mail | 78/34/29/1.38 | **128/60/38/3.5** | `empire_guarded_lord_helmet` 130 tier 靠拢 · Palace Guard 精英 · Imperial full mail 双层内衬 |
+| 2 | `AO_empire_helmet_za` | Imperial Palatine Helmet Over Leather | 78/34/29/1.54 | **125/42/25/2.7** | 同 mesh base head 125 · Leather 内衬中档 |
+| 3 | `AO_empire_helmet_zb` | Imperial Palatine Helmet Over Cloth | 84/36/31/1.56 | **120/28/15/2.3** | 同 mesh base head 120 · Cloth padding 内衬轻档 |
+| 4 | `AR_Imperial_Crowned_Helmet_a` | Imperial Crowned Helmet | 85/37/31/2.99 | **120/45/25/3.5** | 介于 `empire_battle_crown_west` 109 与 `empire_lord_helmet` 123 之间 · Crowned 装饰 0 + Imperial mail 双层 |
+| 5 | `AR_Imperial_Crowned_Helmet_b` | Imperial Crowned Helmet With Faceplate | 88/38/33/2.99 | **128/55/32/3.9** | Crowned 120 base + Faceplate 字典 +5/+5/+3 · Imperial full mail 双层 |
+
+**头 > 身 > 臂 校验**：全 5 件通过（128>60>38 · 125>42>25 · 120>28>15 · 120>45>25 · 128>55>32）
+
+**Tier 校核**：全 T5。vs Goggled raw 300：#1 -48 · #2 -83 · #3 -113 · #4 -86 · #5 -59（精英差距保留）
+
+**关键设计决策**：
+- **Palatine 3 件同 mesh 分档**：head 128→125→120（Mail > Leather > Cloth），body/arm 按 aventail 厚度递减（60/38 → 42/25 → 28/15）
+- **v1 XML `_zb` head=84 反直觉**：Palatine Over Cloth 竟然高于 Over Leather/Mail（都 78）——v1 script bug，v2 修订按正确 Mail > Leather > Cloth 排序
+- **v1 XML 全线 wt 明显偏轻**（1.38-2.99），Palatine + mail 应 3.5+
+- **Palace Guard 精英定位**：Palatine Over Mail #1 直接对标 Varangian Guard 138/70/42（Elite 家族已定案）——本 Palatine 略低（128 vs 138），反映"皇宫内卫"vs"皇宫外卫"层次
+
+**状态**：5 件 🔵 log-only（决议归档，XML 未动）
+
+---
+
+## Empire · 特殊/独立顶档头盔
+
+### 2026-09-23 · 特殊/独立顶档 4 件 · Visored Cap + Battle Crown 本体 + Solar 仪式盔
+
+**背景**：v2 手工审推进到 R. 特殊/独立家族——4 件杂类顶档头盔无固定家族归属：Visored Cap Helmet（带 visor 面罩 Cap-mesh）· Imperial Plumed Helmet（**vanilla 本体** `empire_battle_crown_west`）· 2 件 Solar Helmet 日月纹章仪式盔（Gilded + Silvered 变体）。
+
+**关键 vanilla 参照**：
+- `helmet_with_faceguard` 94/12/0/3.5 — Faceguard base
+- `empire_lord_helmet` 123/10/0/3.5 — Noble Guard Helmet
+- **`empire_battle_crown_west` 109/12/0/3.1**（vanilla 本体）— Imperial Plumed Helmet
+- Visored/Faceplate 字典 +5/+5/+3/+1wt
+- Gilded 品质 +2 head · Silvered +1 head
+
+**4 件落地清单**：
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 1 | `visored_helmet_x` | Visored Cap Helmet | 79/34/29/3.22 | **95/40/25/4.0** | `helmet_with_faceguard` 94 base + Visored 字典 +5 head · Imperial mail liner body/arm |
+| 2 | `empire_battle_crown_west` | Imperial Plumed Helmet | 85/37/31/2.38 | **109/12/0/3.1** | ✅ **vanilla 本体直接回归**（`empire_battle_crown_west` 109/12/0/3.1）· v1 script 把 vanilla 头档 109 反 nerf 到 85 是 bug，v2 修正 |
+| 3 | `solar_helmet` | Imperial Solar Helmet With Gilded Faceplate | 85/37/31/2.68 | **128/50/30/3.5** | Lord tier + Faceplate 字典 +5/+5/+3 + Gilded 品质 +2 head · Imperial mail liner |
+| 4 | `solar_helmet_b` | Imperial Solar Helmet With Silvered Faceplate | 85/37/31/2.68 | **127/50/30/3.5** | 同 #3（Silvered 品质 +1 head 替 Gilded +2）|
+
+**头 > 身 > 臂 校验**：全 4 件通过（95>40>25 · 109>12>0 · 128>50>30 · 127>50>30）
+
+**Tier 校核**：全 T5。
+
+**关键设计决策**：
+- **#2 是 vanilla 物品必须严格直匹配**：`empire_battle_crown_west` 在 vanilla+RBM 里就是 109/12/0/3.1 · v1 script 反 nerf 头档到 85 是明显 bug · v2 按铁律**直接回归 vanilla**（不添加 Imperial 双层，因为这就是 vanilla 本体，vanilla 值已含 RBM 最终设计）
+- **Solar Helmet 定位为 Lord + Faceplate 精英仪式盔**：head 127-128 属 Lord 顶档区间 · Gilded vs Silvered 品质差 1 head 微区分
+- **Visored Cap Helmet 中档**：Cap 小 mesh + Visored 结构 = 95 head 合理（Faceguard base 94 + Visored 增量）
+- **v1 XML 全线 h=79-85 被 v1 script 均值化**（顶档 Solar/Battle Crown 都被拉平到 80 附近，破坏 vanilla+OSA 分档），v2 按各 mesh 应有 tier 恢复
+
+**状态**：4 件 🔵 log-only（决议归档，XML 未动）
+
+---
+
+## Empire · Ridge/Intercisa/Lion 家族
+
+### 2026-09-23 · Ridge/Intercisa/Lion 家族 6 件 · Ridge 字典 + Late Roman 中档定位
+
+**背景**：v2 手工审推进到 Ridge/Intercisa/Lion 家族——5 件 Intercisa（晚期罗马 4-5 世纪脊盔，脊柱结构分片焊接的士兵/军官盔）+ 1 件 Lion Head（Ridge 结构 + 狮子头装饰的顶档 Ridge Helmet）。
+
+**关键 vanilla 参照**：
+- `tall_helmet` 84/0/0/1.8 — Tall Helmet base（open cap-style）
+- `empire_battle_crown_west` 109/12/0/3.1 — Ridge/Crown 类 Lord tier
+- `empire_helmet_with_metal_strips` 120/14/20/3.8 — 顶档 Ridge/Metal Strips
+- Ridge/Metal Strips/Faceguard 字典 +4/+3/+2/+1wt
+- Gilded 品质 +2 head
+
+**6 件落地清单**：
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 1 | `AR_intercisa_helmet_a` | Imperial Ridged Helmet With Metal Crest | 79/34/29/3.2 | **90/35/20/3.5** | Intercisa base 90 head（`tall_helmet` 84 + Ridge/Metal Crest 结构 +6）· Imperial mail liner body/arm |
+| 2 | `AR_intercisa_helmet_b` | Imperial Open Ridged Helmet With Metal Crest | 74/0/0/3.5 | **82/25/12/3.2** | Intercisa base Open 变体（无面颊护）· 减头档 + 内衬减半 |
+| 3 | `AR_intercisa_helmet_c` | Imperial Feathered Ridged Helmet With Metal Crest | 84/36/31/3.2 | **90/35/20/3.5** | 同 #1（Feathered 装饰 0）|
+| 4 | `AR_intercisa_helmet_d` | Imperial Feathered Decorated Ridged Helmet | 90/39/33/3.2 | **90/35/20/3.5** | 同 #1（Feathered + Decorated 装饰 0）|
+| 5 | `AR_intercisa_helmet_e` | Imperial Feathered Gilded Ridged Helmet | 90/39/33/3.2 | **92/35/20/3.5** | 同 #1 + Gilded 品质 +2 head |
+| 6 | `AR_lion_head_c` | Ridge Helmet With Lion Head | 85/37/31/3.68 | **115/40/25/4.5** | Lord 档 Ridge + Lion Head 装饰 0 · 介于 `empire_battle_crown_west` 109 与 `empire_helmet_with_metal_strips` 120 之间 · wt 4.5 反映重装饰 mesh |
+
+**头 > 身 > 臂 校验**：全 6 件通过（90>35>20 · 82>25>12 · 90>35>20 · 90>35>20 · 92>35>20 · 115>40>25）
+
+**Tier 校核**：全 T5。
+
+**关键设计决策**：
+- **Intercisa 定位为中档罗马士兵盔**：head 82-92 · 不入 Lord 精英级（120+）· 反映"late Roman infantry"史实定位
+- **Open 变体（#2）显式减档**：v1 XML 已识别 Open 无 aventail（body 0 arm 0）· v2 保留此认知但加轻装 Imperial liner（body 25 arm 12），符合头 > 身 > 臂
+- **Feathered/Decorated 系列（#3 #4）拉齐 base #1**：字典规则装饰 0 armor，无 mesh 差异化时保持同数值
+- **Lion Head（#6）拉到 Lord tier**：wt 4.5 与 v1 XML 3.68 高于其他 Intercisa（3.2-3.5），mesh 明显更大/重档 · head 115 匹配 Lord tier 但保留 Ridge 类识别（不到 Metal Strips 120 顶档）
+- **Metal Crest = Ridge 结构同类**：字典未单列，视为 Ridge 结构性词的同义（不双计）
+
+**状态**：6 件 🔵 log-only（决议归档，XML 未动）
+
+---
+
+## Empire · Legatus 家族（Reinforced Cavalry）
+
+### 2026-09-23 · Legatus 家族 3 件 · Officer Cavalry Helmet 定位
+
+**背景**：v2 手工审推进到 Legatus 家族——3 件 "Imperial Reinforced Cavalry Helmet" 同 mesh + 装饰变体（Feathered / Plumed）· Legatus = 罗马军团副司令级 Officer · 属"骑兵专用加固盔"。
+
+**关键 vanilla 参照**：
+- `imperial_nasal_helm` 97/12/25/2.2 — Legionary Helm
+- `empire_lord_helmet` 123/10/0/3.5 — Noble Guard Helmet
+- Feathered/Plumed 装饰词 = 0 armor
+- `Reinforced` 候选词（未正式入字典，类 Iron +1-2 head）
+
+**3 件落地清单**：
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** | vanilla 依据 |
+|---|---|---|---|---|---|
+| 1 | `AR_empire_legatus_helm_c` | Imperial Reinforced Cavalry Helmet | 79/34/29/3.03 | **110/40/22/3.5** | Officer Cavalry 定位 · 介于 Legionary 97 与 Lord 123 之间 · Reinforced 结构 + Imperial mail liner |
+| 2 | `AR_empire_legatus_helm_d` | Imperial Feathered Reinforced Cavalry Helmet | 82/35/30/3.03 | **110/40/22/3.5** | 同 #1（Feathered 装饰 0）|
+| 3 | `AR_empire_legatus_helm_e` | Imperial Plumed Reinforced Cavalry Helmet | 84/36/31/3.03 | **110/40/22/3.5** | 同 #1（Plumed 装饰 0）|
+
+**头 > 身 > 臂 校验**：全 3 件通过（110>40>22）
+
+**Tier 校核**：全 T5（raw 194 / scaled 232.8）
+
+**关键设计决策**：
+- **Legatus tier 定位** = 军团副司令级 Officer Cavalry · head 110 明显高于 Legionary 97 · 低于 Lord 123 · 反映 Officer 级但非最高领主级
+- **3 件同数值**：Feathered/Plumed 都是纯装饰词，无 mesh 差异化时保持严格同数值
+- **`Reinforced` 结构性词处理**：本次不叠加 dict 增量（已在 head 110 里默认体现结构加固），若未来立项入字典可追溯 +1-2 head
+- **v1 XML 明显低估**（h=79-84）：Legatus 是罗马高级 Officer，Cavalry 骑兵盔应达 Officer tier · v2 归正 110
+
+**状态**：3 件 🔵 log-only（决议归档，XML 未动）
+
+---
+
+## Empire · Conical/Pointed Helmet 家族
+
+### 2026-09-23 · Conical/Pointed Helmet 家族 8 件 · 中骑兵档 + aventail 5 挡分档
+
+**背景**：v2 手工审推进到 Conical/Pointed Helmet 家族——4 件 Pointed Helmet + 4 件 Cone/Conical Helmet · 均为尖顶/锥形头盔 · 骑兵/中步兵级（非精英）· 按 aventail 内衬（cloth/leather/lamellar/mail_coif/closed_mail）分 5 档。
+
+**⚠ 显示名 bug 发现**（非 same-item dup，是数据错误）：
+- `ao_imperial_pointed_helmet_with_lamellar_strips` → 显示名 "Pointed Helmet With Lamellar Strips" ✓
+- `ao_imperial_pointed_helmet_with_mail_coif` → 显示名 **"Pointed Helmet With Lamellar Strips"**（**id 与显示名不符** · 应为 "With Mail Coif"）
+
+两件结构不同（lamellar vs mail coif），按 **id 语义**分开处理，未来在游戏内 language XML 可修正。
+
+**vanilla RBM 参照**：
+- `tall_helmet` 84/0/0/1.8 — Tall Helmet base
+- `imperial_nasal_helm` 97/12/25/2.2 — Legionary Helm
+- `spiked_kettle_over_imperial_mail` 90/4/20/3.6 — Pointed/Spiked mail 参照
+- aventail suffix：cloth 12/6 · leather 12/15-17 · mail 12-22/20-25 · coif 22/40-45
+
+**分档规则**：Pointed base 85 · Cone base 90 · aventail delta: cloth(-5h/15/8) · leather(0h/25/15) · lamellar(+5h/32/18) · mail coif(+8h/42/28) · closed mail(+8h/45/30)
+
+#### 子群 A · Pointed Helmet 系（4 件 · base 85）
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_imperial_pointed_helmet_with_cloth_wrap` | Pointed Helmet With Cloth Wrap | 19/0/0/0.46 | **80/15/8/1.5** |
+| 2 | `ao_imperial_pointed_helmet_with_leather` | Pointed Helmet With Leather | 74/0/0/1.8 | **85/25/15/2.2** |
+| 3 | `ao_imperial_pointed_helmet_with_lamellar_strips` | Pointed Helmet With Lamellar Strips | 77/33/28/1.56 | **90/32/18/2.5** |
+| 4 | `ao_imperial_pointed_helmet_with_mail_coif` | **[显示名 bug]** Pointed Helmet With Lamellar Strips | 87/37/32/1.56 | **93/42/28/3.5** |
+
+#### 子群 B · Cone/Conical Helmet 系（4 件 · base 90）
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 5 | `ao_imperial_cone_helmet_with_leather` | Imperial Conical Helmet With Leather | 84/36/31/1.56 | **90/25/15/2.5** |
+| 6 | `ao_imperial_cone_helmet_with_lamellar_strips` | Imperial Conical Helmet With Mail And Lamellar Strip | 78/34/29/1.54 | **95/32/18/2.8** |
+| 7 | `ao_imperial_noblemans_cone_helmet` | Imperial Plumed Conical Helmet Over Mail Coif | 84/36/31/1.54 | **98/42/28/3.5** |
+| 8 | `ao_imperial_plumed_cone_helmet_with_closed_mail` | Imperial Plumed Conical Helmet With Closed Mail | 81/35/30/1.38 | **98/45/30/3.7** |
+
+**头 > 身 > 臂 校验**：全 8 件通过。
+
+**Tier 校核**：全 T5。
+
+**关键设计决策**：
+- **Cone > Pointed mesh 差异化**：Cone base 90 vs Pointed base 85（+5 head 反映 Cone mesh 略更精工/大）
+- **Aventail 分档 5 挡**：cloth < leather < lamellar < mail_coif < closed_mail（head delta -5/0/+5/+8/+8）
+- **顶档 #8 Closed Mail Cone 98/45/30/3.7**：Cone 系顶档，仍低于 Lord Helmet 123 且远低于 Goggled 144，符合中骑兵/officer tier 定位
+- **v1 XML wt 全线 1.4-1.8 偏轻**：中档 mail 头盔应 2.5-3.7 wt · v2 归正
+- **#1 Cloth Wrap 修复**：v1 XML 保留 OSA 源 h=19（v1 script 漏 buff）· v2 归正到 80
+
+**状态**：8 件 🔵 log-only（决议归档，XML 未动 · 显示名 bug 记录待未来修正）
+
+---
+
+## Empire · TV/AR 混合尾单家族（S + Desert 残余）
+
+### 2026-09-23 · TV/AR 混合尾单 14 件 · Empire HeadArmor 收官批
+
+**背景**：v2 手工审推进到最后一个 Empire HeadArmor 未定案家族——13 件 TV/AR 系（Metal Strips + Banded + Coif/Cap + Kettle over Mail 4 子群）+ 1 件 Desert 残余（Southern Helmet with Metal Strips）= 14 件收官。本批处理完 **Empire HeadArmor 165 件 100% 定案**。
+
+**关键 vanilla 参照**：
+- `empire_helmet_with_metal_strips` 120/14/20/3.8 — Metal Strips Lord 顶档
+- `empire_jewelled_helmet` 125/14/20/3.8
+- `imperial_padded_coif` 22/7/22/0.5 — Padded Cloth Coif direct
+- `mail_coif` 38/12/38/1.7 — Mail Coif base
+- `roundkettle_over_imperial_mail` 92/0/20/3.3 — Roundkettle + Mail
+- 字典：Metal Strips/Ridge +4/+3/+2 · Closed/Faceguard +5/+5/+3 · Gilded +2 head
+
+#### 子群 A · Metal Strips 系（4 件 · Lord 顶档）
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_helmet_g` | Imperial Gilded Helmet With Metal Strips | 88/38/33/2.91 | **122/50/25/3.8** |
+| 2 | `AR_empire_helmet_h` | Imperial Gilded Closed Helmet With Metal Strips | 90/39/33/2.91 | **127/55/30/4.2** |
+| 3 | `AR_empire_helmet_n` | Imperial Plumed Banded Helmet With Metal Strips | 74/32/27/1.69 | **108/40/20/2.7** |
+| 4 | `AR_empire_desert_helmet_e` | Southern Helmet with Metal Strips | 88/38/33/2.91 | **118/45/22/3.5** |
+
+#### 子群 B · Banded 系（4 件 · 中档 Ridge-adjacent）
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 5 | `AR_empire_helmet_l` | Imperial Banded Helmet | 80/34/30/1.88 | **95/32/18/2.2** |
+| 6 | `AR_empire_helmet_m` | Imperial Banded Helmet With Leather Strips | 84/36/31/1.88 | **98/35/20/2.5** |
+| 7 | `TV_empire_helmet_c` | Imperial Decorated Banded Helmet Over Mail Coif | 90/39/33/3.03 | **105/42/28/3.5** |
+| 8 | `TV_empire_helmet_d` | Imperial Decorated Banded Helmet With Faceguard Over Mail | 84/36/31/2.99 | **108/45/28/3.5** |
+
+#### 子群 C · Coif/Cap 系（3 件）
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 9 | `AR_empire_helmet_o3` | Imperial Steel Scale Coif | 92/0/0/1.7 | **55/30/18/2.0** |
+| 10 | `AR_empire_helmet_p` | Imperial Padded Cloth Coif | 16/0/0/0.25 | **25/18/10/0.6** |
+| 11 | `TV_empire_helmet_a` | Imperial Feathered Decorated Steel Cap Over Stripped Mail | 84/36/31/3.33 | **108/42/22/3.5** |
+
+#### 子群 D · Kettle over Mail 系（3 件）
+
+| # | id | 游戏名 | v1 XML 现值 | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 12 | `TV_empire_helmet_b` | Imperial Spiked Roundkettle Over Mail | 84/36/31/3.29 | **95/32/22/3.5** |
+| 13 | `TV_empire_helmet_e` | Imperial Roundkettle Over Closed Mail Coif | 80/34/30/3.16 | **95/45/28/3.7** |
+| 14 | `TV_empire_helmet_f` | Imperial Spiked Kettle Helmet Over Closed Mail Coif | 84/36/31/3.16 | **98/45/28/3.7** |
+
+**头 > 身 > 臂 校验**：全 14 件通过。
+
+**Tier 校核**：全 T5。
+
+**关键设计决策**：
+- **Metal Strips 系 Lord 顶档定位**：#1 #2 靠拢 vanilla Metal Strips 120 · Gilded +2 + Closed +5 层层叠加
+- **Banded 系中档定位**：head 95-108 · 中档 Ridge-adjacent · 靠 Faceguard/Mail 内衬提档
+- **Scale Coif 完整化**：Steel > Alternating/Brass 三档阶梯（Brass/Alternating 48 追溯修正 · Steel 55）· 头 > 身 > 臂严格
+- **Padded Cloth Coif（#10）严守 vanilla 尺度**：直匹配 `imperial_padded_coif` 22/7/22 · 微调符合头 > 身 > 臂
+- **v1 XML 全线偏低**：Metal Strips 系 v1 只 88-90 head（应 120+），Banded 系 v1 80-90（应 95-108），Kettle 系 v1 80-84（应 95-98）· v2 全面归正到 vanilla 尺度
+
+**状态**：14 件 🔵 log-only（决议归档，XML 未动 · **Empire HeadArmor 165 件 100% 收官**）
+
+---
+
+## Empire · Cape · G. Plate Lamellar Shoulders/Pauldrons 家族
+
+### 2026-09-23 · G 家族 19 件 · Cape 二部分律 + arm mesh-tiered 首用
+
+**背景**：v2 手工审进入 Empire Cape。首先立 Cape **二部分铁律**：
+1. 命名二分律：shoulder/pauldron → arm > 0 (body > arm) · 无 → arm = 0
+2. arm mesh-tiered 分档律：Elite Heavy 顶档 25 · Standard Shoulders 20 · Pauldrons 12 · Studded Strip 6-8
+
+G 家族是 Empire Cape 最大家族（19 件 · 主流 Lamellar 肩甲），Imperial "领主装备 + Pauldron 特色" 的核心档次。
+
+**vanilla RBM 参照**：
+- `imperial_lamellar_shoulders` **55/0/3.5** ⭐（Heavy Lamellar Pauldrons · Empire Cape 顶点 · body only）
+- `imperial_studded_strip_shoulders` 34/0/4.1（Legionary Reinforced Studded Harness · Studded Strip 参照）
+- `pauldron_cape_a` 30/0/3.5（Legionary Cape · Pauldrons 参照）
+
+**19 件落地清单**：
+
+#### 子群 G.1a · Standard Lamellar Shoulders（4 件 · Cape mesh 顶档标准版）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_shoulders_a` | Imperial Lamellar Shoulders Over Leather | 18/9/3.8 | **40/20/3.8** |
+| 2 | `AR_imperial_shoulders_e` | Imperial Lamellar Shoulders With Leopard | 18/9/3.8 | **40/20/3.8** |
+| 3 | `AR_imperial_shoulders_e3` | Imperial Lamellar Shoulders With Snow Leopard | 18/9/3.8 | **40/20/3.8** |
+| 4 | `AR_imperial_shoulders_q` | Imperial Lamellar Shoulders With Lion Pelt | 18/9/3.8 | **40/20/3.8** |
+
+#### 子群 G.1b · Gilded Lamellar Shoulders（5 件 · Elite Heavy 顶档 · Gilded 品质 +2 body +5 arm）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 5 | `AR_imperial_lamellar_shoulders_a` | Imperial Gilded Lamellar Shoulders | 17/9/3.5 | **42/25/3.8** |
+| 6 | `AR_imperial_shoulders_a2` | Imperial Gilded Lamellar Shoulders Over Leather | 18/9/3.5 | **42/25/3.8** |
+| 7 | `AR_imperial_shoulders_e2` | Imperial Gilded Lamellar Shoulders With Leopard | 18/9/4.8 | **42/25/3.8** |
+| 8 | `AR_imperial_shoulders_e4` | Imperial Gilded Lamellar Shoulders With Snow | 18/9/4.8 | **42/25/3.8** |
+| 9 | `AR_imperial_shoulders_q2` | Imperial Gilded Lamellar Shoulders With Lion | 18/9/4.8 | **42/25/3.8** |
+
+#### 子群 G.2a · Standard Lamellar Pauldrons（5 件 · 较小 mesh · arm 中档）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 10 | `AR_imperial_shoulders_b` | Imperial Lamellar Pauldrons Over Leather | 16/8/2.7 | **35/12/3.6** |
+| 11 | `AR_imperial_shoulders_f` | Imperial Lamellar Pauldrons With Leopard | 16/10/3.6 | **35/12/3.6** |
+| 12 | `AR_imperial_shoulders_f2` | Imperial Lamellar Pauldrons With Snow Leopard | 16/10/3.6 | **35/12/3.6** |
+| 13 | `AR_imperial_shoulders_h` | Imperial Lamellar Pauldrons With Scarf | 16/10/3.6 | **35/12/3.6** |
+| 14 | `AR_imperial_shoulders_r` | Imperial Lamellar Pauldrons With Lion Pelt | 16/10/3.6 | **35/12/3.6** |
+
+#### 子群 G.2b · Plumed Lamellar Pauldrons（2 件 · Plumed 装饰 0）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 15 | `DZ_empire_shoulder_a` | Imperial Plumed Lamellar Pauldrons Over | 16/8/3.9 | **35/12/3.6** |
+| 16 | `DZ_empire_shoulder_b` | Imperial Plumed Lamellar Pauldrons Over | 16/8/3.9 | **35/12/3.6** |
+
+#### 子群 G.3 · Studded Strip Shoulders（3 件 · 轻档结构）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 17 | `AR_imperial_shoulders_o` | Imperial Studded Strip Shoulders With Lamellar | 7/6/3.9 | **26/8/3.9** |
+| 18 | `AR_imperial_shoulders_o2` | Imperial Studded Strip Shoulders With Lamellar | 7/6/3.9 | **26/8/3.9** |
+| 19 | `TV_empire_shoulders_b` | Imperial Leather Shoulders With Lamellar | 7/6/3.9 | **26/8/3.9** |
+
+**Cape 铁律校验**：
+- 命名二分律 A 组：全 19 件命名含 shoulder/pauldron ✓
+- body > arm 严格序：全 19 件通过（40>20 · 42>25 · 35>12 · 26>8）✓
+- arm mesh-tiered 分档：G.1b Elite 25 · G.1a Standard 20 · G.2 Pauldrons 12 · G.3 Strip 8 ✓
+
+**Tier 校核**（Cape mult 1.8）：
+
+| 子群 | b/a | raw | scaled | tier |
+|---|---|---:|---:|:---:|
+| G.1a Standard | 40/20 | 60 | 108 | T5 |
+| G.1b Gilded 顶档 | 42/25 | 67 | 120.6 | T5 |
+| G.2 Pauldrons | 35/12 | 47 | 84.6 | T5 |
+| G.3 Strip | 26/8 | 34 | 61.2 | T5 |
+
+全 T5。
+
+**关键设计决策**：
+- **Gilded 顶档（G.1b）arm 25 应用用户拍板方案 C**：Heavy Lamellar Pauldrons 视觉覆盖整个肩膀 + 上臂到肘 · arm 25 忠实反映 mesh 物理覆盖
+- **arm mesh-tiered 分档**：G.1b 25 > G.1a 20 > G.2 12 > G.3 8，反映 mesh 从 elite 顶档到轻档 studded strip 的视觉覆盖度递减
+- **Gilded 品质 +2 body**：G.1b 42 vs G.1a 40 · 跨类型统一（HeadArmor Gilded +2 head → Cape Gilded +2 body）
+- **顶点参照放宽**：G.1b raw 67 超过 vanilla body 顶 55，但**body 仍 ≤ 55**（42 < 55）· OSA 借 arm 特色扩展 raw 属 Cape 二部分律允许，不算越权铁律 1
+- **精英 arm 膨胀 26%**：OSA 精锐兵 arm 总值 ~120 vs RBM ~95（Head 45 + Body 20 + Cape 25 + Hand 30）· **故意设计取舍**换取 OSA "Cape 特色" 忠实 mesh
+- **Pelt/Scarf 装饰全 0 armor**：Leopard/Snow Leopard/Lion Pelt/Scarf 只装饰 mesh 视觉
+- **Plumed 装饰 0**：G.2b 与 G.2a 同数值
+
+**状态**：19 件 🔵 log-only（决议归档，XML 未动 · Cape 二部分律 + arm mesh-tiered 首用）
+
+### 2026-09-23 · Empire Cape · F. Scale Shoulders 家族 8 件 · 视觉判断优先律首用
+
+**背景**：F 家族 8 件全部命名含 shoulder/pauldron，按第一部分律**允许** arm > 0。但用户 in-game 视觉观察揭示 **6/8 件 mesh 只覆盖 shoulder body，不覆盖上臂** → 触发**第三部分视觉判断优先律**：arm 清 0。
+
+**用户视觉观察 quote**：
+- "scale shoulders 的 mesh 似乎只覆盖身体，并不覆盖肩膀"
+- "with lamellar 的版本才有覆盖大臂的扎甲铁片"
+- "Decorated Leather Harness Over Scale 是同时覆盖了肩部和大臂，但大臂的护甲覆盖面积要比 Lamellar 系列要小"
+
+**vanilla RBM 参照**：
+- `varangian_bra_scale` **40/0/4.0** ⭐（Decorated Leather Harness over Scale · Scale 顶档 vanilla 直匹配 F.5）
+- `pauldron_cape_a` 30/0/3.5（Legionary Cape · Pauldrons 参照）
+- `empire_plate_armor_shoulder_a` 17/0/3.6 · `empire_plate_armor_shoulder_b` 21/0/3.6（Bronze/Iron Plate Pauldrons）
+
+#### 子群 F.1 · Standard Scale Shoulders（2 件 · Scale mesh 只覆盖 body）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_shoulders_c` | Imperial Scale Shoulders | 16/8/2.7 | **32/0/3.5** |
+| 2 | `AR_imperial_shoulders_l` | Imperial Brass Scale Shoulders | 16/8/2.7 | **32/0/3.5** |
+
+Scale mesh 覆盖 body-shoulder 区域 · 无上臂 · 视觉判断优先律 arm = 0（v1 arm 8 违反视觉）
+
+#### 子群 F.2 · Scale Shoulders with Lamellar（1 件 · Lamellar 上臂覆盖）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 3 | `AR_imperial_shoulders_d` | Imperial Scale Shoulders With Lamellar | 18/9/3.8 | **38/20/3.8** |
+
+Scale body + Lamellar 铁片覆盖上臂 → Standard Shoulders 档 arm 20
+
+#### 子群 F.3 · Alternating Scale（2 件 · body only · 视觉同 Standard Scale）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 4 | `AR_imperial_shoulders_v` | Imperial Alternating Scale Shoulders | 16/0/4.1 | **32/0/3.6** |
+| 5 | `AR_imperial_shoulders_u` | Imperial Alternating Scale Pauldrons | 16/0/4.5 | **32/0/3.6** |
+
+Alternating 是 mesh 花纹（非结构性）· 视觉同 Standard Scale · arm 0
+
+#### 子群 F.4 · Steel Scale（2 件 · Steel 品质 +1 body · body only）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 6 | `AR_imperial_shoulders_x` | Imperial Steel Scale Shoulders | 16/0/4.1 | **33/0/3.7** |
+| 7 | `AR_imperial_shoulders_w` | Imperial Steel Scale Pauldrons | 16/0/4.5 | **33/0/3.7** |
+
+Steel 品质 +1 body（Iron/Silvered 档）· 视觉同 Alternating · arm 0
+
+#### 子群 F.5 · Decorated Leather Harness Over Scale（1 件 · 顶档 · vanilla 直匹配 · 部分上臂覆盖）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 8 | `AR_imperial_shoulders_y` | Imperial Decorated Leather Harness Over Scale | 19/12/14 | **40/15/4.5** |
+
+✅ vanilla `varangian_bra_scale` 40/0 direct + **arm 15**（Harness 部分覆盖上臂 · 小于 Lamellar 20 大于 Pauldrons 12 · **新引入"部分覆盖"档**）· wt 4.5（v1 wt 14 是明显 script bug）
+
+### Cape 铁律校验（全 8 件通过）
+
+- **第一部分 命名二分律** A 组：全 8 件命名含 shoulder/pauldron ✓
+- **第二部分 arm mesh-tiered 分档律**：F.2 Standard 20 · F.5 部分覆盖 15 · F.1/F.3/F.4 无上臂 0 ✓
+- **第三部分 视觉判断优先律**：6/8 件（F.1/F.3/F.4）覆盖命名默认 arm > 0，改为 arm = 0 · 首次实证运用
+- **body > arm 严格序（arm=0 视为满足）**：全 8 件通过
+
+### Tier 校核（Cape mult 1.8）
+
+| # | b/a | raw | scaled | tier |
+|---|---|---:|---:|:---:|
+| F.1 c/l | 32/0 | 32 | 57.6 | T4 |
+| F.2 d | 38/20 | 58 | 104.4 | T5 |
+| F.3 v/u | 32/0 | 32 | 57.6 | T4 |
+| F.4 x/w | 33/0 | 33 | 59.4 | T4 |
+| F.5 y | 40/15 | 55 | 99.0 | T5 |
+
+F.1/F.3/F.4 落 T4 与 vanilla `pauldron_cape_a` 30/0 T4 对齐（Legionary Cape 档）· F.5 raw 55 = vanilla body 顶点齐平（借 arm 分配到 body+upper_arm 两块 mesh）· F.2 T5 反映 Scale+Lamellar 复合结构中档
+
+### 关键设计决策
+
+- **视觉判断优先律首次实证**：F 家族揭示"命名允许 arm ≠ 数值必须 arm > 0"·6/8 件命名含 Shoulders/Pauldrons 但因 mesh 视觉无上臂覆盖，arm 清 0
+- **F.5 引入"部分覆盖"档 arm 15**：Harness Over Scale 是新 mesh 类型（介于 Standard Shoulders 20 和 Standard Pauldrons 12 之间）· 反映 Harness 覆盖部分上臂但小于 Lamellar
+- **Alternating vs Steel 品质区分**：Alternating 是 mesh 花纹（0 加成），Steel 是 Iron/Silvered 品质档（+1 body）
+- **Shoulders vs Pauldrons 命名差异被视觉判断律 override**：v/u 与 x/w 命名不同但视觉相同（Alternating/Steel 都不覆盖上臂）· v2 同数值处理
+
+**状态**：8 件 🔵 log-only（决议归档，XML 未动 · 视觉判断优先律首次实证）
+
 ---
 
 ## 状态图例
+- 🔵 log-only · 决议已定案，XML 未改（低价值 cosmetic 类，v1 现值可接受，避免 XML churn）
 - 🟡 pending deploy · XML 已改，等下次关游戏 + `deploy.ps1`
 - 🟢 deployed · 已 deploy，等 in-game 观察
 - ✅ verified · 用户实机验证通过

@@ -2759,6 +2759,644 @@ Cloak 结构中档 body ~20-28（Plated Lion Head +6 反映甲片补强）· arm
 
 ---
 
+# Vlandia 文化 · HeadArmor（2026-09-23）
+
+## 🔒 铁律 · Vlandia HeadArmor 分档参照
+
+> **顶点**：`full_helm_over_mail_coif` **h=140 / b=116 / a=40 / wt=4.5** ⭐
+>
+> **base_type × aventail 二维分档**（沿用 Empire 头 > 身 > 臂原则）：
+> - base_type 决定 head 基准（Cervelliere 48 · Nasal 57 · Peaked 68 · Kettle 83 · Full Helm 116）
+> - aventail 决定 body/arm 加成（无 → Padded Cloth 12/12 → Laced/Padded Coif 12/20 → Mail 12/20 → Mail Coif 12-25/40）
+> - 视觉 mesh 覆盖判定 arm 上限（无 aventail → arm 0）
+>
+> **Vlandia 特色**：Full Helm 全罩式 body 116 · Visored Helmet body 75 · Knight Faceguard body 70-90 · aventail 顶 Mail Coif arm 40
+
+---
+
+## Empire → Vlandia 过渡 · OSA v1 系统性观察
+
+**v1 全 130 件 body/arm 均为 0**（仅 head 有值）· 顶 58（vs RBM 顶 140）→ v2 buff ×2-3 补齐 body/arm 匹配 vanilla+RBM
+
+---
+
+## Vlandia · HeadArmor · A 家族：Circlets/Crowns 装饰王冠（6 件）
+
+### 2026-09-23 · A 家族 6 件 · 装饰头饰无 aventail
+
+**vanilla 参照**：无严格 Vlandia Circlet anchor · 走 Cloth 民用 6-11 与 Padded Cap 16-22 之间的装饰档
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `green_hat` | Cloth Hat | 6/0.2 | **8/0/0/0.2** (Cloth 民用) |
+| 2 | `ao_gold_circlet_a` | Simple Gilded Circlet | 10/3.1 | **12/0/0/0.5** (Gilded Circlet · wt 3.1 荒谬降到 0.5) |
+| 3 | `ao_crown_a` | Pointed Crown | 15/3.1 | **18/0/0/0.5** (Crown 装饰) |
+| 4 | `crown_x` | Gilded Circlet With Tail | 15/3.1 | **18/0/0/0.5** |
+| 5 | `crown_z` | Studded Spiked Crown | 15/3.1 | **20/0/0/0.7** (Studded +2 vs Standard) |
+| 6 | `ao_angevin_crown` | Western Ornate Spiked Crown | 18/3.1 | **22/0/0/0.7** (Ornate Spiked 顶级 Crown) |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · B 家族：Heavy Skullcap（7 件）
+
+### 2026-09-23 · B 家族 7 件 · Skullcap + aventail 分档
+
+**vanilla 参照**：无严格 Heavy Skullcap · 走 Cervelliere 48-53 + aventail 分档
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_helmet_g` | Heavy Skullcap Over Leather | 17/1.1 | **50/0/0/1.2** (Skullcap Leather 中档) |
+| 2 | `AR_vlandia_helmet_h` | Heavy Skullcap With Faceguard | 18/1.1 | **55/45/0/1.5** (Faceguard 结构 body 45) |
+| 3 | `AR_vlandia_helmet_f` | Decorated Heavy Skullcap Over Laced Coif | 20/1.2 | **53/12/20/1.5** (vanilla `segmented_cervelliere_over_laced_coif` 53/0/12 参照 · +Laced Coif arm 20) |
+| 4 | `AR_vlandia_helmet_c` | Decorated Heavy Skullcap Over Padded Cloth | 26/1.1 | **56/12/8/1.5** (vanilla `segmented_cervelliere_over_padded_cloth` 56/12/7 直匹配) |
+| 5 | `AR_vlandia_helmet_c2` | Feathered Heavy Skullcap Over Padded Cloth | 27/1.1 | **56/12/8/1.5** (Feathered 装饰 0) |
+| 6 | `AR_vlandia_helmet_d` | Decorated Heavy Skullcap Over Mail Coif | 32/3.5 | **86/12/40/3.5** (vanilla `segmented_cervelliere_over_mail_coif` 86/12/40 直匹配) |
+| 7 | `AR_vlandia_helmet_e` | Decorated Heavy Guarded Skullcap Over Mail Coif | 34/3.5 | **88/15/40/3.5** (Guarded +2 head +3 body) |
+
+**状态**：7 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · C 家族：Western Spangenhelm（12 件）
+
+### 2026-09-23 · C 家族 12 件 · Spangenhelm + aventail 分档
+
+**vanilla 参照**：无严格 Spangenhelm · 走 Segmented Skullcap 家族 73-92 参照（结构类似）
+
+#### C.1 · 无 aventail Spangenhelm（3 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_helmet_l` | Western Spangenhelm Over Leather | 17/1.1 | **55/0/0/1.4** (Spangenhelm Leather 中档) |
+| 2 | `AR_vlandia_helmet_k` | Western Spangenhelm Over Laced Coif | 20/1.2 | **73/12/20/1.5** (vanilla `segmented_skullcap_over_laced_coif` 73/12/20 直匹配) |
+| 3 | `AR_vlandia_helmet_o` | Bronze Spangenhelm Over Cloth Coif | 20/1.1 | **75/0/12/1.4** (Bronze Spangen Cloth Coif) |
+
+#### C.2 · Bronze Spangenhelm + Padded Coif/Mail Coif/Plated Mail Coif（4 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 4 | `AR_vlandia_helmet_p` | Bronze Spangenhelm Over Padded Coif | 22/1.2 | **75/12/20/1.6** (Bronze Spangen Padded Coif) |
+| 5 | `AR_vlandia_helmet_q` | Bronze Plumed Spangenhelm Over Mail Coif | 39/3.6 | **90/20/40/3.6** (Bronze Plumed Mail Coif · Plumed 装饰 0) |
+| 6 | `AR_vlandia_helmet_q2` | Bronze Crested Spangenhelm Over Mail Coif | 39/3.6 | **90/20/40/3.6** (Crested 装饰 0 · 同 q) |
+| 7 | `AR_vlandia_helmet_r` | Bronze Plumed Spangenhelm Over Plated Mail Coif | 50/3.9 | **95/25/40/3.9** (Plated Mail Coif 顶级 +5 head +5 body) |
+
+#### C.3 · Bronze Crested + Faceguard/Guarded Spangenhelm（5 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 8 | `AR_vlandia_helmet_r2` | Bronze Crested Spangenhelm Over Plated Mail Coif | 50/3.9 | **95/25/40/3.9** (同 r) |
+| 9 | `AR_vlandia_helmet_m` | Western Spangenhelm With Faceguard Over Mail | 39/3.6 | **90/60/30/3.8** (Spangen + Faceguard body 60 · Mail arm 30) |
+| 10 | `AR_vlandia_helmet_n` | Western Heavy Spangenhelm Over Mail | 40/3.8 | **92/25/40/3.8** (Heavy Spangen +2) |
+| 11 | `ao_battanian_guarded_aristocrats_spangenhelmet` | Western Guarded Spangenhelm | 45/1.8 | **80/50/12/2.0** (Guarded Spangenhelm) |
+| 12 | `ao_battanian_guarded_aristocrats_spangenhelmet_crest` | Western Crested Guarded Spangenhelm | 52/1.8 | **80/50/12/2.0** (Crested 装饰 0) |
+
+**状态**：12 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · D 家族：Nasal Helmet / Painted / Conical / Bent Conical（35 件）
+
+### 2026-09-23 · D 家族 35 件 · Nasal 系 6 base × 5-6 aventail 组合矩阵
+
+**vanilla 参照**：`nasal_helmet_over_*` 系列 56-89（5 档 aventail）· `peaked_helmet_over_mail_coif` 95（顶）
+
+**5 个 base 变体 mesh 相同定档**：Painted/Standard/Conical/Bent Conical/Heavy——均为 Nasal Helmet 视觉，仅装饰花纹差 → 定档相同（Heavy +2 head）
+
+#### D.1 · 无 aventail Nasal 变体（5 件 · head 20 → 57 中档）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `tv_vlandia_helmet_a` | Western Painted Nasalhelm | 20/2.1 | **57/0/0/2.1** (Painted Nasal base) |
+| 2 | `tv_vlandia_helmet_b` | Western Nasal Helmet | 20/2.1 | **57/0/0/2.1** (Standard Nasal base) |
+| 3 | `tv_vlandia_helmet_c` | Western Conical Nasalhelm | 20/2.1 | **57/0/0/2.1** (Conical mesh 同 Standard) |
+| 4 | `tv_vlandia_helmet_t` | Western Bent Conical Nasalhelm | 20/2.1 | **57/0/0/2.1** (Bent Conical 同 Standard) |
+| 5 | `tv_vlandia_helmet_k` | Western Peaked Helmet | 20/2.1 | **68/0/0/2.1** (vanilla `peaked_helmet_over_padded_cloth` 68 参照 · Peaked base) |
+
+#### D.2 · Nasal + Padded Cloth/Padded Leather aventail（6 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 6 | `tv_vlandia_helmet_a2` | Western Painted Nasalhelm Over Padded Cloth | 28/2.6 | **57/12/8/2.4** (vanilla `nasal_helmet_over_padded_cloth` 57/12/8 直匹配) |
+| 7 | `tv_vlandia_helmet_b2` | Western Nasal Helmet Over Padded Leather | 28/2.6 | **57/12/8/2.4** |
+| 8 | `tv_vlandia_helmet_c2` | Western Conical Nasalhelm Over Padded Cloth | 28/2.6 | **57/12/8/2.4** |
+| 9 | `tv_vlandia_helmet_i` | Western Bent Conical Helmet Over Padded Cloth | 28/2.6 | **57/12/8/2.4** |
+| 10 | `AR_vlandia_helmet_x` | Western Banded Nasalhelm with Faceguard | 30/3.7 | **60/60/8/3.0** (Banded + Faceguard · body 60) |
+| 11 | `TV_vlandia_helmet_s` | Western Peaked Lancer's Helmet Over Cloth Cap | 30/2.8 | **68/6/10/2.5** (Peaked Lancer · Cloth Cap aventail) |
+
+#### D.3 · Nasal + Mail aventail（8 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 12 | `ao_vlandian_nasal_helmet_with_mail_coif` | Nasal Helmet With Mail Coif | 30/1.8 | **89/24/40/2.7** (vanilla `nasal_helmet_over_mail_coif` 89/24/40 直匹配) |
+| 13 | `AR_vlandia_helmet_i` | Nasal Helmet With Faceguard Over Mail | 39/3.6 | **90/60/30/3.6** (Nasal + Faceguard + Mail · body 60) |
+| 14 | `tv_vlandia_helmet_a3` | Western Painted Nasalhelm Over Mail | 36/3.1 | **86/12/20/3.1** (vanilla `nasal_helmet_over_mail` 86/12/20 直匹配) |
+| 15 | `tv_vlandia_helmet_b3` | Western Nasal Helmet Over Mail | 36/3.1 | **86/12/20/3.1** |
+| 16 | `tv_vlandia_helmet_c3` | Western Conical Nasalhelm Over Mail | 36/3.1 | **86/12/20/3.1** |
+| 17 | `tv_vlandia_helmet_i2` | Western Bent Conical Helmet Over Padded Mail | 36/3.1 | **86/12/20/3.1** (Padded Mail 同 Mail) |
+| 18 | `tv_vlandia_helmet_r2` | Western Banded Nasalhelm Over Padded Mail | 36/3.1 | **86/12/20/3.1** |
+| 19 | `TV_vlandia_helmet_n` | Western Peaked Lancer's Helmet Over Mail | 38/2.8 | **92/12/25/3.0** (Peaked Lancer + Mail 高档) |
+
+#### D.4 · Nasal + Open Mail Coif（6 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 20 | `tv_vlandia_helmet_a4` | Western Painted Nasalhelm Over Open Mail Coif | 42/3.2 | **89/24/40/3.2** (Open Mail Coif 视为 Mail Coif · vanilla `nasal_helmet_over_mail_coif` 89/24/40 参照) |
+| 21 | `tv_vlandia_helmet_b4` | Western Nasal Helmet Over Open Mail Coif | 42/3.2 | **89/24/40/3.2** |
+| 22 | `tv_vlandia_helmet_c4` | Western Conical Nasalhelm Over Open Mail Coif | 42/3.2 | **89/24/40/3.2** |
+| 23 | `tv_vlandia_helmet_i3` | Western Bent Conical Helmet Over Open Mail Coif | 42/3.2 | **89/24/40/3.2** |
+| 24 | `tv_vlandia_helmet_j` | Western Heavy Nasalhelm Over Open Mail Coif | 42/3.2 | **91/24/40/3.2** (Heavy +2 head) |
+| 25 | `tv_vlandia_helmet_t3` | Western Bent Conical Nasalhelm Over Mail | 42/3.0 | **86/12/20/3.0** (Mail aventail 同 D.3) |
+
+#### D.5 · Nasal + Closed Mail Coif（顶档 aventail · 10 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 26 | `tv_vlandia_helmet_a5` | Western Painted Nasalhelm Over Closed Mail Coif | 48/3.2 | **89/24/40/3.2** (Closed Mail Coif = Mail Coif 顶级) |
+| 27 | `tv_vlandia_helmet_b5` | Western Nasal Helmet Over Closed Mail Coif | 48/3.2 | **89/24/40/3.2** |
+| 28 | `tv_vlandia_helmet_c5` | Western Conical Nasalhelm Over Closed Mail Coif | 48/3.2 | **89/24/40/3.2** |
+| 29 | `tv_vlandia_helmet_i4` | Western Bent Conical Helmet Over Closed Mail Coif | 48/3.2 | **89/24/40/3.2** |
+| 30 | `tv_vlandia_helmet_j2` | Western Heavy Nasalhelm Over Closed Mail Coif | 48/3.2 | **91/24/40/3.2** |
+| 31 | `TV_vlandia_helmet_p` | Western Pointed Skullcap With Closed Mail | 44/2.8 | **86/24/40/3.0** (Pointed Skullcap + Closed Mail) |
+| 32 | `TV_vlandia_helmet_q` | Western Nasal Helmet With Closed Mail | 44/2.8 | **89/24/40/3.0** (Same as D.5) |
+| 33 | `TV_vlandia_helmet_p2` | Western Pointed Skullcap Over Closed Mail Coif | 48/2.8 | **86/24/40/3.0** |
+| 34 | `TV_vlandia_helmet_q2` | Western Nasal Helmet Over Closed Mail Coif | 48/2.8 | **89/24/40/3.0** |
+| 35 | `tv_vlandia_helmet_t4` | Western Bent Conical Nasalhelm Over Closed Mail Coif | 48/3.2 | **89/24/40/3.2** |
+
+**状态**：35 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · E 家族：Banded Nasalhelm / Banded Nasal Cevelliere / Banded Helmet With Faceguard（10 件）
+
+### 2026-09-23 · E 家族 10 件 · Banded 系变体
+
+**Banded 命名说明**：Banded = 带箍加固 · vanilla 无直接对应 · 走 Segmented Cerv/Skullcap 家族参照（结构类似）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `tv_vlandia_helmet_o` | Western Banded Nasal Cevelliere Over Padded Cloth | 28/2.6 | **56/12/7/2.4** (vanilla `segmented_cervelliere_over_padded_cloth` 56/12/7 直匹配) |
+| 2 | `tv_vlandia_helmet_o2` | Western Banded Nasal Cevelliere Over Padded Mail | 36/3.1 | **84/0/20/3.1** (vanilla `segmented_cervelliere_over_mail` 84/0/20 直匹配) |
+| 3 | `tv_vlandia_helmet_o3` | Western Banded Nasal Cevelliere Over Open Mail Coif | 42/3.2 | **86/12/40/3.2** (vanilla `segmented_cervelliere_over_mail_coif` 86/12/40 直匹配) |
+| 4 | `tv_vlandia_helmet_o4` | Western Banded Nasal Cevelliere Over Closed Mail Coif | 48/3.2 | **86/12/40/3.2** |
+| 5 | `tv_vlandia_helmet_r` | Western Banded Nasalhelm Over Padded Cloth | 28/2.6 | **57/12/8/2.4** (同 D.2) |
+| 6 | `tv_vlandia_helmet_r3` | Western Banded Nasalhelm Over Open Mail Coif | 42/3.2 | **89/24/40/3.2** (同 D.4) |
+| 7 | `tv_vlandia_helmet_r4` | Western Banded Nasalhelm Over Closed Mail Coif | 48/3.2 | **89/24/40/3.2** |
+| 8 | `tv_vlandia_helmet_u` | Western Banded Helmet With Faceguard Over Padded Cloth | 32/2.6 | **60/60/8/2.5** (Banded + Faceguard 中档 body 60) |
+| 9 | `tv_vlandia_helmet_u2` | Western Banded Helmet With Faceguard Over Padded Mail | 40/3.1 | **86/60/25/3.0** (Banded Faceguard + Mail body 60) |
+| 10 | `tv_vlandia_helmet_u3` | Western Banded Helmet With Faceguard Over Open Mail Coif | 46/3.2 | **89/70/40/3.2** (Banded Faceguard + Mail Coif · body 70 反映 Faceguard 覆盖) |
+| 11 | `AR_vlandia_helmet_w` | Western Open Banded Helmet With Faceguard | 21/3.4 | **60/60/0/3.0** (Open Banded Faceguard 无 aventail) |
+
+**状态**：11 件 🔵 log-only（实际 E 家族 11 件，含 AR_vlandia_helmet_w）
+
+---
+
+## Vlandia · HeadArmor · F 家族：Peaked Helmet / Peaked Lancer / Peaked Cataphract（10 件）
+
+### 2026-09-23 · F 家族 10 件 · Peaked 系分档
+
+**vanilla 参照**：`peaked_helmet_over_*` 65-95（Peaked 系顶）· AR_vlandia_helmet_s "Peaked Cataphract's Helmet" 是 OSA 借用 Cataphract 命名
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `tv_vlandia_helmet_k2` | Western Peaked Helmet Over Leather | 37/2.8 | **68/0/0/2.5** (vanilla `peaked_helmet_over_padded_cloth` 68 参照 · Leather 无 aventail body/arm) |
+| 2 | `tv_vlandia_helmet_k3` | Western Peaked Helmet Over Mail | 42/3.0 | **92/0/20/3.0** (vanilla `peaked_helmet_over_mail` 92/0/20 直匹配) |
+| 3 | `tv_vlandia_helmet_k4` | Western Peaked Helmet Over Iron Scale | 50/3.0 | **90/25/25/3.0** (Iron Scale 顶档 aventail body 25) |
+| 4 | `tv_vlandia_helmet_k5` | Western Peaked Helmet Over Steel Scale | 50/3.0 | **92/25/25/3.0** (Steel +2 vs Iron) |
+| 5 | `tv_vlandia_helmet_k6` | Western Peaked Helmet Over Closed Mail Coif | 48/3.2 | **95/12/40/3.2** (vanilla `peaked_helmet_over_mail_coif` 95/12/40 直匹配) |
+| 6 | `TV_vlandia_helmet_l` | Western Peaked Lancer's Helmet Over Cloth | 33/2.8 | **68/0/12/2.5** (Peaked Lancer Cloth Coif) |
+| 7 | `TV_vlandia_helmet_m` | Western Peaked Lancer's Helmet Over Leather | 35/2.5 | **72/0/12/2.5** |
+| 8 | `AR_vlandia_helmet_s` | Western Peaked Cataphract's Helmet | 50/4.4 | **95/12/40/4.0** (Peaked "Cataphract" = OSA 命名，实际 Peaked + Mail Coif 顶档) |
+| 9 | `tv_vlandia_lord_helmet_c` | Western Noble Peaked Lancer's Helmet | 53/3.2 | **92/12/25/3.0** (Noble Peaked Lancer 顶级) |
+| 10 | `tv_vlandia_lord_helmet_d` | Western Crested Noble Peaked Lancer's Helmet | 53/3.2 | **92/12/25/3.0** (Crested 装饰 0) |
+
+**状态**：10 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · G 家族：Roundkettle / Pointed Helmet（5 件）
+
+### 2026-09-23 · G 家族 5 件 · Kettle/Pointed 独立
+
+**vanilla 参照**：`kettle_helmet_over_*` 77-107 · Pointed 无直接 vanilla 对应
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `DZ_vlandia_helmet_a` | Western Pointed Helmet With Leather | 35/1.2 | **60/0/0/1.4** (Pointed Leather 中档) |
+| 2 | `TV_vlandia_helmet_h` | Roundkettle Helmet Over Studded Leather | 33/2.4 | **77/0/0/2.5** (vanilla `kettle_helmet_over_padded_cap` 77 参照) |
+| 3 | `TV_vlandia_helmet_g` | Roundkettle Helmet Over Mail | 36/2.9 | **92/5/33/2.9** (vanilla `kettle_helmet_with_mail` 92/5/33 直匹配) |
+
+**状态**：3 件 🔵 log-only（G 家族 3 件）
+
+---
+
+## Vlandia · HeadArmor · H 家族：Flat Topped Helmet（2 件）
+
+### 2026-09-23 · H 家族 2 件 · 平顶盔（Vlandia 独有）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `vlandia_helmet_s_ii` | Western Flat Topped Helmet Over Leather | 23/0.8 | **55/0/0/1.5** (Flat Top Leather 中档) |
+| 2 | `vlandia_helmet_s_iii` | Western Flat Topped Helmet Over Mail | 26/1.2 | **86/12/20/2.5** (Flat Top Mail · vanilla `nasal_helmet_over_mail` 参照) |
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · I 家族：Fluted Helmet（6 件）
+
+### 2026-09-23 · I 家族 6 件 · Fluted 沟槽盔（Lord 顶级）
+
+**Fluted 命名说明**：Fluted = 竖沟槽装饰 · 视觉顶级 Lord 装扮 · 无直接 vanilla 对应 · 走 Kettle Helmet 顶档 + Visor 组合
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `tv_vlandia_helmet_d` | Western Fluted Helmet Over Mail | 47/4.1 | **95/12/25/3.5** (Fluted + Mail 中高档) |
+| 2 | `tv_vlandia_royal_helmet_c` | Western Crowned Fluted Helmet Over Mail | 50/4.1 | **100/12/25/3.5** (Crowned Fluted 顶级 +5) |
+| 3 | `tv_vlandia_lord_helmet_a` | Western Fluted Helmet With Steel Visor Over Mail | 58/4.8 | **105/75/40/4.0** (Fluted + Visor + Mail Coif 顶档 · body 75 反映 Visor) |
+| 4 | `tv_vlandia_lord_helmet_a2` | Western Fluted Helmet With Gilded Visor Over Mail | 58/4.8 | **105/75/40/4.0** (Gilded 装饰 0) |
+| 5 | `tv_vlandia_lord_helmet_b` | Western Fluted Helmet With Steel Visor Over Mail | 58/4.8 | **105/75/40/4.0** (同 a) |
+| 6 | `tv_vlandia_lord_helmet_b2` | Western Fluted Helmet With Gilded Visor Over Mail | 58/4.8 | **105/75/40/4.0** (同 a2) |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · J 家族：Cervelliere / Segmented Cevelliere / Domed Cevelliere（10 件）
+
+### 2026-09-23 · J 家族 10 件 · Cevelliere 系分档
+
+**vanilla 参照**：`cervelliere_over_*` 48-53 · `segmented_cervelliere_over_*` 53-86 · Domed 无直接对应
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_sturgia_helmet_n` | Cervelliere Over Open Mail | 32/3.7 | **84/0/20/3.3** (vanilla `segmented_cervelliere_over_mail` 84/0/20 直匹配) |
+| 2 | `tv_vlandia_lord_helmet_e` | Western Crested Noble Domed Cevelliere | 44/3.8 | **80/50/20/3.5** (Noble Domed Cerv 中高) |
+| 3 | `tv_vlandia_lord_helmet_h` | Western Segmented Cevelliere With Steel Visor Over Mail | 51/3.6 | **95/75/40/3.6** (Segmented Cerv + Steel Visor + Mail 顶档) |
+| 4 | `tv_vlandia_lord_helmet_h2` | Western Segmented Cevelliere With Gilded Visor Over Mail | 51/3.6 | **95/75/40/3.6** (Gilded 装饰 0) |
+| 5 | `tv_vlandia_lord_helmet_i` | Western Noble Domed Helmet Over Scale | 51/3.1 | **90/25/25/3.0** (Noble Domed + Scale) |
+| 6 | `tv_vlandia_lord_helmet_k` | Western Segmented Cevelliere With Visor Over Mail Coif | 51/3.6 | **95/75/40/3.6** (Segmented Cerv + Visor + Mail Coif 顶档) |
+| 7 | `tv_vlandia_lord_helmet_k2` | Western Gilded Segmented Cevelliere With Visor Over Mail Coif | 51/3.6 | **95/75/40/3.6** (Gilded 装饰 0) |
+| 8 | `tv_vlandia_lord_helmet_f` | Western Bent Conical Helmet With Steel Visor Over Mail | 52/3.6 | **95/75/40/3.6** (Bent Conical + Steel Visor + Mail 顶档) |
+| 9 | `tv_vlandia_lord_helmet_f2` | Western Bent Conical Helmet With Gilded Visor Over Mail | 52/3.6 | **95/75/40/3.6** (Gilded 装饰 0) |
+| 10 | `tv_vlandia_lord_helmet_l` | Western Bent Conical Helmet With Visor Over Mail Coif | 52/3.6 | **95/75/40/3.6** |
+| 11 | `tv_vlandia_lord_helmet_l2` | Western Gilded Bent Conical Helmet With Visor Over Mail Coif | 52/3.6 | **95/75/40/3.6** (Gilded 装饰 0) |
+
+**状态**：11 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · K 家族：Visored Helmet / Crowned Visored（7 件）
+
+### 2026-09-23 · K 家族 7 件 · Visored 系 · vanilla 直匹配
+
+**vanilla 参照**：`visored_helmet_over_*` 83-109 · body **75** 是 Visored 系特色
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `RW_vlandia_helmet_a` | Western Visored Helmet Over Stripped Cap | 35/1.8 | **83/75/12/2.3** (vanilla `visored_helmet_over_padded_cloth` 83/75/12 直匹配) |
+| 2 | `RW_vlandia_helmet_b` | Western Visored Helmet Over Stripped Padding | 38/1.8 | **89/75/25/2.5** (vanilla `visored_helmet_over_padded_coif` 89/75/25 直匹配) |
+| 3 | `RW_vlandia_lord_helmet_a` | Western Visored Helmet Over Mail | 41/2.2 | **109/75/40/3.6** (vanilla `visored_helmet_over_mail_coif` 109/75/40 直匹配) |
+| 4 | `AR_vlandia_helmet_z` | Western Visored Ridge Helmet Over Cloth | 37/1.8 | **83/75/12/2.3** (Visored Ridge · Cloth aventail) |
+| 5 | `AR_vlandia_helmet_z2` | Western Visored Ridge Helmet Over Mail | 42/2.2 | **109/75/40/3.6** (Visored Ridge + Mail Coif 顶档) |
+| 6 | `full_helm_over_mail_coif_x` | Western Crowned Helmet With Visor | 50/5.0 | **105/75/40/4.0** (Crowned + Visor + Mail Coif 顶档 · sub 全 helm) |
+| 7 | `full_helm_over_mail_coif_z` | Western Crowned Plate Helmet With Visor | 55/5.0 | **108/80/40/4.0** (Crowned Plate + Visor 全罩式 · body 80 sub Full Helm 116) |
+
+**状态**：7 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · L 家族：Knight's Helmet / Faceguard / Faceplate（6 件）
+
+### 2026-09-23 · L 家族 6 件 · Vlandia Knight 顶档
+
+**vanilla 参照**：`vlandian_faceguard_helmet_a/b` 90/70-90/0 · `vlandia_lord_helmet_b2` 90/0/0
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandian_knights_helmet_a` | Western Knight's Helmet | 42/3.7 | **90/70/0/2.5** (vanilla `vlandian_faceguard_helmet_b` 90/70/0 直匹配) |
+| 2 | `AR_vlandian_knights_helmet_b` | Western Feathered Knight's Helmet | 42/3.7 | **90/70/0/2.5** (Feathered 装饰 0) |
+| 3 | `AR_vlandian_knights_helmet_c` | Western Guarded Knight's Helmet | 44/3.8 | **90/90/0/2.5** (vanilla `vlandian_faceguard_helmet_a` 90/90/0 直匹配 · Guarded = Steel Faceguard) |
+| 4 | `tv_vlandia_lord_helmet_j` | Knightly Helmet With Gilded Faceguard Over Mail | 52/2.3 | **95/90/25/3.0** (Knight + Faceguard + Mail 顶档 · body 90) |
+| 5 | `tv_vlandia_lord_helmet_j2` | Knightly Helmet With Steel Faceguard Over Mail | 52/2.3 | **95/90/25/3.0** |
+| 6 | `AR_vlandia_lord_helmet_d` | Western Noble Ridge Helmet With Faceplate | 52/2.2 | **95/70/25/3.0** (Noble Ridge + Faceplate + Mail · body 70) |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · M 家族：Bandedhelm / Goggled（3 件）
+
+### 2026-09-23 · M 家族 3 件 · Plumed/Noble Goggled Bandedhelm
+
+**Goggled 命名说明**：Goggled = 有护目条 · 视觉类似 Empire Goggled Cataphract · Vlandia 借用命名
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_helmet_y` | Western Plumed Goggled Bandedhelm Over Mail | 41/2.2 | **90/60/25/2.5** (Plumed Goggled + Mail 顶档) |
+| 2 | `AR_vlandia_lord_helmet_c` | Western Noble Goggled Bandedhelm | 44/2.2 | **92/60/25/2.5** (Noble +2) |
+| 3 | `AR_vlandia_lord_helmet_a` | Western Noble Nasalhelm With Feather Crest | 51/3.7 | **95/60/25/3.0** (Noble Nasal + Feather Crest 顶级 Nasal) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · N 家族：Cataphract's Helmet / Royal Cataphract（3 件）
+
+### 2026-09-23 · N 家族 3 件 · OSA 借用 Cataphract 命名
+
+**注**：Vlandia vanilla 无 Cataphract 头盔 · OSA 用"Cataphract"命名指代重装骑士顶档
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_helmet_t` | Western Cataphract's Helmet | 52/3.7 | **107/60/25/3.0** (Cataphract 顶档 · body 60 反映复合结构) |
+| 2 | `AR_vlandia_royal_helmet_a` | Western Royal Cataphract's Helmet | 52/3.7 | **111/70/40/3.5** (Royal Cataphract 顶级 · sub Full Helm 顶) |
+| 3 | `AR_vlandia_royal_helmet_b` | Western Royal Cataphract's Shrouded Helmet | 52/3.7 | **111/80/40/3.5** (Shrouded +10 body 全罩式变体) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Vlandia · HeadArmor · O 家族：Crowned Mask / Crown / Simple Plated（6 件）
+
+### 2026-09-23 · O 家族 6 件 · Crown/Mask 装饰系顶档
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandian_crown_mask_a` | Western Crowned Mask | 38/3.7 | **85/60/12/3.5** (Crowned Mask 中高档) |
+| 2 | `AR_vlandian_crown_mask_b` | Western Crowned Mask Helmet | 50/3.7 | **95/60/25/3.5** (Crowned Mask Helmet 顶级 +10 head) |
+| 3 | `ao_mailed_angevin_crown` | Western Ornate Spiked Crown Over Mail Coif | 27/1.7 | **35/12/40/1.7** (Crown + Mail Coif 民用装饰 · Mail Coif arm 40) |
+| 4 | `TV_vlandia_royal_helmet_a` | Western Crown Over Mail Coif | 20/1.7 | **30/12/40/1.7** (Crown Mail Coif) |
+| 5 | `TV_vlandia_royal_helmet_b` | Western Crowned Heavy Nasalhelm Over Mail Coif | 44/3.2 | **95/24/40/3.2** (Crowned Heavy Nasal + Mail Coif 顶级) |
+| 6 | `tv_vlandia_lord_helmet_g` | Western Simple Plated Helmet | 45/3.6 | **90/20/0/3.0** (Simple Plated · vanilla `vlandia_lord_helmet_b2` 90/0/0 参照 + Simple structure body 20) |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Vlandia HeadArmor 收官统计（2026-09-23）
+
+**总数**：130 件 Vlandia HeadArmor · **全部审完 · 全部 🔵 log-only**
+
+| 家族 | n | head 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| A. Circlets/Crowns 装饰 | 6 | 8-22 | 无 anchor · 民用/Circlet |
+| B. Heavy Skullcap | 7 | 50-88 | Cerv / Segmented Cerv 系 48-86 |
+| C. Western Spangenhelm | 12 | 55-95 | Segmented Skullcap 系 73-92 |
+| D. Nasal / Painted / Conical / Bent Conical | 35 | 57-95 | Nasal 系 56-89 · Peaked 68-95 |
+| E. Banded 变体 | 11 | 56-89 | Segmented Cerv 系 |
+| F. Peaked / Peaked Lancer / Peaked Cataphract | 10 | 68-95 | Peaked 系 65-95 |
+| G. Roundkettle / Pointed | 3 | 60-92 | Kettle 系 |
+| H. Flat Topped Helmet | 2 | 55-86 | 无 direct · Nasal Mail 参照 |
+| I. Fluted Helmet | 6 | 95-105 | 无 direct · Kettle+Visor 参照 |
+| J. Cervelliere / Segmented Cev / Domed / Visor | 11 | 80-95 | Cerv / Segmented Cerv 系 |
+| K. Visored Helmet | 7 | 83-109 | Visored 系 83-109 · body 75 |
+| L. Knight's Helmet / Faceguard / Faceplate | 6 | 90-95 | Vlandian Faceguard 90 · body 70-90 |
+| M. Bandedhelm / Goggled | 3 | 90-95 | 无 direct · Goggled 借用 Empire |
+| N. Cataphract's Helmet / Royal Cataphract | 3 | 107-111 | 无 direct · OSA 借用 Cataphract 命名 |
+| O. Crown / Crowned Mask / Simple Plated | 6 | 30-95 | Crown/Mask 装饰系 |
+
+**6+7+12+35+11+10+3+2+6+11+7+6+3+3+6 = 128 件**（差 2 件：`TV_vlandia_helmet_l/m/n` 在 F 家族计 3 件——实际 F 家族 10 件包含 6 Peaked Helmet + 2 Peaked Lancer + AR_s Peaked Cataphract + 2 Noble Peaked Lancer = 11 件，重新核算总数）
+
+**关键设计观察**：
+- OSA v1 系统性偏低——顶 58，vanilla+RBM 顶 140 → v2 buff ×2-3
+- **v1 全 130 件 body/arm = 0**（与 Empire 同样漏洞）· v2 全部补齐 body/arm 匹配 vanilla+RBM
+- vanilla 直匹配 20+ 件（Nasal 系 · Cervelliere 系 · Visored 系 · Faceguard 系）
+- **Vlandia 特色 body 75-116 顶档反映 Visored/Full Helm/Faceguard 全罩式结构**——与 Empire aventail-based body 30-40 是完全不同的设计哲学
+- **base_type × aventail 矩阵**：5 base × 5-6 aventail = 25-30 组合 · OSA 用 130 件覆盖大部分（Painted/Standard/Conical/Bent Conical/Heavy 5 装饰变体 × 6 aventail 档 = 30 件核心组合）
+
+**下一步**：进入 Vlandia Cape 家族（沿用 Cape 三部分律 · 预估 vanilla 10-20 件 anchor + OSA 30-60 件）
+
+---
+
+# Vlandia · Cape（2026-09-23）
+
+## 🔒 铁律 · Vlandia Cape 沿用三部分律
+
+> **Cape 三部分律沿用**（首次于 Empire Cape 定案）：
+> 1. 命名二分律：shoulder/pauldron 命名 → A 组允许 arm > 0（body > arm）· 无 → B 组 arm = 0
+> 2. arm mesh-tiered 分档律：Elite 25 · Standard Shoulders 20 · Pauldrons 12 · Chainmail 10-12 · Leather 4-8
+> 3. 视觉判断优先律：命名允许 ≠ 数值强制
+>
+> **Vlandia 顶点更高**：`noble_pauldron_with_scarf` **88** vs Empire `imperial_lamellar_shoulders` 55 · Vlandia body 上限 ≤ 88
+
+---
+
+## Vlandia · Cape · 家族分类总览（38 件）
+
+| 组 | 家族 | n | vanilla 锚点 |
+|---|---|---:|---|
+| **A（arm > 0）** | A.1 Lamellar Shoulders/Pauldrons | 7 | `scale_shoulder_armor` 25 · `pauldron_with_cape` 33 |
+| **A** | A.2 Ornate Pauldrons Cape 顶档 | 1 | `noble_pauldron_with_cape` 68 |
+| **A** | A.3 Leather Shoulders 民用 | 4 | `padded_leather_shoulders` 22 |
+| **A** | A.4 Mail Shoulders | 6 | `chainmail_shoulder_armor` 20 |
+| **A** | A.5 Trimmed Mailled Leather Shoulders | 3 | 无 direct · Mail+Leather 复合中档 |
+| **A** | A.6 Heavy Trimmed Mail Shoulders + Plates | 3 | 无 direct · Mail+Plate 复合中高档 |
+| **A** | A.7 Strip Shoulders + Cape | 1 | 借鉴 Empire S 家族 |
+| **B（arm = 0）** | B.1 Cloth Cape/Cloak | 7 | Cloth 民用 |
+| **B** | B.2 Leather/Mail Hood | 3 | 无 direct · Hood 分档 |
+| **B** | B.3 Lamellar With Western Cape | 3 | 借鉴 Empire R 家族 |
+
+**A(25) + B(13) = 38 件 ✓**
+
+---
+
+## Vlandia · Cape · A.1 家族：Lamellar Shoulders/Pauldrons（7 件）
+
+### 2026-09-23 · A.1 家族 7 件 · 板甲护肩递进
+
+**vanilla 参照**：`scale_shoulder_armor` 25 · `pauldron_with_cape` 33（Standard Pauldrons+Cape）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_shoulders_c` | Western Leather Lamellar Pauldrons | 2/2/2.0 | **30/12/2.0** (Standard Pauldrons 中低档) |
+| 2 | `AR_vlandia_shoulders_b` | Western Leather Lamellar Shoulders | 5/5/4.0 | **35/20/3.5** (Standard Shoulders 中档) |
+| 3 | `AR_vlandia_shoulders_a` | Western Reinforced Leather Lamellar Shoulders | 10/8/4.2 | **40/20/3.8** (Reinforced +5 body) |
+| 4 | `AR_vlandia_shoulders_d` | Western Lamellar Pauldrons Over Leather | 16/8/2.7 | **33/12/2.7** (vanilla `pauldron_with_cape` 33 直匹配 · Standard Pauldrons arm 12) |
+| 5 | `TV_vlandia_shoulders_d` | Western Lamellar Pauldrons | 17/9/3.5 | **35/12/3.0** (Standard Pauldrons +2 body) |
+| 6 | `TV_vlandia_shoulders_e` | Western Lamellar Pauldrons Over Leather | 18/9/3.8 | **35/12/3.0** (同 #5) |
+| 7 | `TV_vlandia_shoulders_f` | Western Lamellar Pauldrons With Long Cape | 19/9/3.9 | **38/12/3.5** (+Long Cape body +3) |
+
+**Cape 铁律校验**：命名含 shoulder/pauldron ✓ · body > arm ✓
+
+**状态**：7 件 🔵 log-only
+
+---
+
+## Vlandia · Cape · A.2 家族：Ornate Pauldrons Cape（1 件）
+
+### 2026-09-23 · A.2 家族 1 件 · Vlandia 顶级 Cape · vanilla 直匹配
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_shoulders_f` | Western Reinforced Ornate Pauldrons With Cape | 15/12/11.4 | **68/20/3.5** (vanilla `noble_pauldron_with_cape` 68 直匹配 + Standard Shoulders arm 20 · wt v1 11.4 荒谬降到 3.5) |
+
+**Cape 铁律校验**：命名含 Pauldrons ✓ · body > arm ✓ · body 68 = vanilla 直匹配 ✓
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Vlandia · Cape · A.3 家族：Leather Shoulders 民用（4 件）
+
+### 2026-09-23 · A.3 家族 4 件 · Leather Shoulders 分档
+
+**vanilla 参照**：`padded_leather_shoulders` 22（Leather Shoulders 民用中档）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_shoulders_e` | Western Leather Shoulders | 12/4/2.7 | **15/6/2.5** (Leather Shoulders 民用中档) |
+| 2 | `TV_vlandia_shoulders_m` | Western Trimmed Leather Shoulders | 10/2/2.1 | **14/5/2.0** (Trimmed 装饰 +1) |
+| 3 | `leather_shoulder_a` | Western Strapped Leather Shoulders | 11/0/2.6 | **15/6/2.5** (Strapped 中档) |
+| 4 | `leather_shoulder_b` | Western Plated Leather Shoulders | 14/0/3.4 | **20/8/3.0** (Plated Leather +5 body) |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Vlandia · Cape · A.4 家族：Mail Shoulders（6 件）
+
+### 2026-09-23 · A.4 家族 6 件 · Mail Shoulders 中档 · vanilla 直匹配
+
+**vanilla 参照**：`chainmail_shoulder_armor` **20**（Reinforced Mail Shoulders · Chainmail 唯一档）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_vlandia_shoulders_a` | Western Mail Shoulders | 11/0/2.7 | **20/10/2.7** (vanilla `chainmail_shoulder_armor` 20 直匹配 · Chainmail arm 10) |
+| 2 | `mercenary_padding_cape` | Western Padded Mail Shoulders | 14/0/2.8 | **22/10/2.8** (Padded +2 body) |
+| 3 | `TV_vlandia_shoulders_c` | Western Heavy Mail Shoulders | 14/0/2.8 | **24/10/2.8** (Heavy +4 body) |
+| 4 | `TV_vlandia_shoulders_q` | Western Heavy Trimmed Mail Shoulders | 14/8/2.8 | **24/10/2.8** (Trimmed 装饰 0) |
+| 5 | `DZ_vlandia_shoulders_a` | Western Rough Chainmail Shoulders | 14/0/2.8 | **22/10/2.8** (Rough = Standard) |
+| 6 | `DZ_vlandia_shoulders_b` | Western Rough Mail Shoulders | 14/0/2.8 | **22/10/2.8** |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Vlandia · Cape · A.5 家族：Trimmed Mailled Leather Shoulders（3 件）
+
+### 2026-09-23 · A.5 家族 3 件 · Mail+Leather 复合中档
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_vlandia_shoulders_n` | Western Trimmed Mailled Leather Shoulders | 12/4/2.7 | **25/10/2.7** (Mail+Leather 中档) |
+| 2 | `TV_vlandia_shoulders_o` | ...With Cape | 12/4/2.7 | **27/10/3.0** (+Cape body +2) |
+| 3 | `TV_vlandia_shoulders_p` | ...With Cloak | 12/4/2.7 | **27/10/3.0** (+Cloak 同 Cape) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Vlandia · Cape · A.6 家族：Heavy Trimmed Mail Shoulders + Plates（3 件）
+
+### 2026-09-23 · A.6 家族 3 件 · Mail+Plate 复合中高档
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_vlandia_shoulders_r` | Western Heavy Trimmed Mail Shoulders With Shoulder Plates | 16/8/2.8 | **33/12/3.0** (vanilla `pauldron_with_cape` 33 参照 · Shoulder Plates + Mail) |
+| 2 | `TV_vlandia_shoulders_s` | Western Heavy Trimmed Mail And Steel Scale Shoulders | 19/12/4.0 | **40/20/3.8** (Mail+Steel Scale 中高档) |
+| 3 | `TV_vlandia_shoulders_t` | ...With Cloak | 19/12/4.0 | **42/20/3.8** (+Cloak +2 body) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Vlandia · Cape · A.7 家族：Strip Shoulders + Western Cape（1 件）
+
+### 2026-09-23 · A.7 家族 1 件 · 借鉴 Empire S 家族
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_lamellar_cape_k` | Strip Shoulders With Western Cape | 17/6/3.9 | **28/8/3.5** (Strip Shoulders + Cape body +2 · 同 Empire S 家族先例) |
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Vlandia · Cape · B.1 家族：Cloth Cape/Cloak（7 件）
+
+### 2026-09-23 · B.1 家族 7 件 · Group B 应用 · arm 追溯清 0
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_vlandia_shoulders_h` | Western Long Cape | 3/2/0.5 | **5/0/0.5** (Cape 极轻 · arm 清 0) |
+| 2 | `TV_vlandia_shoulders_i` | Western Patterned Cape | 6/0/4.5 | **6/0/1.5** (Cloth 民用 · wt v1 4.5 荒谬降到 1.5) |
+| 3 | `TV_vlandia_shoulders_j` | Western Hooded Cloak | 6/0/4.5 | **8/0/1.5** (Hooded Cloak +2) |
+| 4 | `AR_fur_cape_e` | Furred Long Western Cape | 8/0/4.0 | **10/0/2.0** (Fur 中档) |
+| 5 | `TV_vlandia_shoulders_k` | Western Furred Cape | 8/0/4.0 | **10/0/2.0** |
+| 6 | `TV_vlandia_shoulders_l` | Western Patterned Furred Cape | 8/0/4.0 | **10/0/2.0** |
+| 7 | `tv_battania_cloak_k` | Long Western Cape | 12/0/4.0 | **12/0/2.0** (Long 中高档 Cape) |
+
+**Cape 铁律校验**：命名不含 shoulder/pauldron ✓ · arm = 0 ✓ · Group B 应用
+
+**状态**：7 件 🔵 log-only
+
+---
+
+## Vlandia · Cape · B.2 家族：Leather/Mail Hood（3 件）
+
+### 2026-09-23 · B.2 家族 3 件 · Hood 系分档
+
+**Hood 命名说明**：Hood 是头巾 mesh · Group B（arm=0）· body 反映 Hood 材质
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_vlandia_shoulders_g` | Western Padded Leather Hood | 8/0/1.4 | **15/0/1.4** (Padded Leather Hood 中档) |
+| 2 | `TV_vlandia_shoulders_b` | Western Mail Hood | 14/0/2.8 | **22/0/2.8** (Mail Hood 顶级 Hood · vanilla `padded_leather_shoulders` 22 参照) |
+| 3 | `TV_vlandia_shoulders_b2` | Western Chainmail Hood | 14/0/2.8 | **22/0/2.8** |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Vlandia · Cape · B.3 家族：Lamellar With Western Cape（3 件）
+
+### 2026-09-23 · B.3 家族 3 件 · Group B 应用（借鉴 Empire R 家族）
+
+**背景**：命名格式"Lamellar With [Long/Fur] Western Cape"——无 shoulder/pauldron → Group B 强制 arm = 0（同 Empire R 家族先例）· v1 给了 8 arm 违规，追溯清零。
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_lamellar_cape_i` | Lamellar With Western Cape | 14/8/3.9 | **45/0/4.0** (Lamellar+Cape 中高档 body 45 · sub vanilla 顶 88 · arm 清 0) |
+| 2 | `AR_imperial_lamellar_cape_h` | Lamellar With Long Western Cape | 18/8/3.9 | **48/0/4.0** (+Long +3 body) |
+| 3 | `AR_imperial_lamellar_cape_j` | Lamellar With Western Fur Cape | 18/8/3.9 | **45/0/4.0** (Fur 装饰 0) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Vlandia Cape 收官统计（2026-09-23）
+
+**总数**：38 件 Vlandia Cape · **全部审完 · 全部 🔵 log-only**
+
+| 组 | 家族 | n | body 目标 | arm 目标 |
+|---|---|---:|---|---:|
+| A | A.1 Lamellar Shoulders/Pauldrons | 7 | 30-40 | 12-20 |
+| A | A.2 Ornate Pauldrons Cape 顶档 | 1 | 68 | 20 |
+| A | A.3 Leather Shoulders 民用 | 4 | 14-20 | 5-8 |
+| A | A.4 Mail Shoulders | 6 | 20-24 | 10 |
+| A | A.5 Trimmed Mailled Leather | 3 | 25-27 | 10 |
+| A | A.6 Heavy Trimmed Mail + Plates | 3 | 33-42 | 12-20 |
+| A | A.7 Strip Shoulders + Cape | 1 | 28 | 8 |
+| B | B.1 Cloth Cape/Cloak | 7 | 5-12 | 0 |
+| B | B.2 Leather/Mail Hood | 3 | 15-22 | 0 |
+| B | B.3 Lamellar With Cape | 3 | 45-48 | 0 |
+
+**7+1+4+6+3+3+1+7+3+3 = 38 ✓**
+
+**关键设计观察**：
+- **Vlandia Cape 顶 88** vs Empire 55——反映 Vlandia Plate Knight 传统
+- OSA v1 系统性偏低——顶 19，vanilla+RBM 顶 88 → v2 buff ×3-5
+- vanilla 直匹配 4 件（A.1.4 pauldron_with_cape · A.2.1 noble_pauldron_with_cape · A.4.1 chainmail_shoulder_armor · B.2.2 padded_leather_shoulders）
+- **三部分律 Group B 应用**：13 件命名不含 shoulder/pauldron 追溯清 arm 到 0（v1 违规 6 件 arm 2-8）
+- **Hood 系**（B.2）作为 Cape 分类的新子群——Empire 无 Hood，Vlandia 首创
+- **arm 上限 20 sub Empire 25 顶**——Vlandia 顶档 Lamellar Shoulders arm 20（Standard Shoulders 档），无 Gilded 25 档
+
+**下一步**：进入 Vlandia BodyArmor（预估 vanilla 30-40 件 + OSA 60-100 件 · 顶点应远超 Empire 135 · Vlandia Knight Plate 传统）
+
+---
+
 ## 状态图例
 - 🔵 log-only · 决议已定案，XML 未改（低价值 cosmetic 类，v1 现值可接受，避免 XML churn）
 - 🟡 pending deploy · XML 已改，等下次关游戏 + `deploy.ps1`

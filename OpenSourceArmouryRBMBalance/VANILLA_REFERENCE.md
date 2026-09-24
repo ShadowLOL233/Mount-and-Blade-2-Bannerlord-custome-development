@@ -475,3 +475,257 @@ Cataphract Full Coverage (Chainmail) ⭐            h=90    b=50    l=50   a=60 
 - 保留全 4 字段无害，且未来引擎若真支持马部位差异化，OSA 已经 ready
 
 **用户 quote 记录**："RBM模组修改后的马甲同时有头甲、马甲、臂甲和腿甲，但我却没有在你的马甲平衡中看到四个数据" → 引发本节反编译核实
+
+---
+
+# Vlandia 文化
+
+## Vlandia · HeadArmor · 70 件（2026-09-23 归档）
+
+**关键设计观察**：Vlandia 头盔梯度**极其丰富**——70 件覆盖民用 6-11 → Padded/Cloth 16-22 → Cervelliere 48-53 → Nasal Helmet 56-95 → Peaked/Kettle 65-105 → Full Helm 108-140 顶点。**Vlandia 特色 Full Helm 全罩式** body_armor 顶 116（覆盖颊+颈甲），远超 Empire aventail 系（body 30-40）。
+
+### 🧣 Cloth Headwrap/Scarf 民用（7 件 · h 6-11）
+
+| id | mat | wt | h/b/a | 名称 |
+|---|---|---:|---|---|
+| `womens_headwrap_c` | Cloth | 0.1 | 6/0/0 | Rural Head Wrap |
+| `head_wrapped` | Cloth | 0.3 | 9/0/0 | Female Rural Headwrap |
+| `head_wrapping` | Cloth | 0.05 | 9/0/0 | Peasant Head Wrapping |
+| `headscarf_c` | Cloth | 0.3 | 9/0/0 | Luxurious Head Scarf |
+| `head_piece` | Cloth | 0.2 | 10/0/0 | Female Rural Scarf |
+| `headscarf` | Cloth | 0.5 | 10/0/0 | Loose Head Scarf |
+| `cloth_headwrap` | Cloth | 0.4 | 11/7/11 | Cloth Headwrap |
+
+### 🧢 Padded Cap/Coif（6 件 · h 16-22 · 底层软垫头饰）
+
+| id | mat | wt | h/b/a | 名称 |
+|---|---|---:|---|---|
+| `padded_cap` | Cloth | 0.2 | 16/0/0 | Padded Cap |
+| `padded_coif` | Cloth | 0.5 | 16/5/0 | Padded Half Coif |
+| `arming_cap` | Cloth | 0.2 | 17/7/17 | Padded Coif |
+| `laced_coif` | Cloth | 0.4 | 19/0/19 | Laced Coif |
+| `open_padded_coif` | Cloth | 0.3 | 21/0/0 | Open Padded Coif |
+| `arming_coif` | Cloth | 0.3 | 22/0/0 | Leather Coif |
+
+### 🎩 Padded Leather Cape（1 件 · h 31）
+
+| id | mat | wt | h/b/a | 名称 |
+|---|---|---:|---|---|
+| `padded_leather_cape` | Leather | 1.0 | 31/0/0 | Padded Leather Cape |
+
+### ⛑ Cervelliere 家族（4 件 · h 48-53 · 板甲小盔）
+
+| id | wt | h/b/a | 名称 · aventail 类型 |
+|---|---:|---|---|
+| `cervelliere_over_laced_coif` | 1.1 | 48/0/15 | Cervelliere · Laced Coif |
+| `cervelliere_over_cloth_headwrap` | 1.0 | 50/6/10 | Cervelliere · Cloth Headwrap |
+| `cervelliere_over_padded_cap` | 1.0 | 51/0/0 | Cervelliere · Padded Cap |
+| `cervelliere_over_arming_coif` | 0.9 | 53/0/0 | Cervelliere · Arming Coif |
+
+### ⛑ Segmented Cervelliere 家族（4 件 · h 53-86 · 分片小盔 + aventail 等级）
+
+| id | wt | h/b/a | 名称 · aventail |
+|---|---:|---|---|
+| `segmented_cervelliere_over_laced_coif` | 1.3 | 53/0/12 | Segmented · Laced Coif |
+| `segmented_cervelliere_over_padded_cloth` | 1.2 | 56/12/7 | Segmented · Padded Cloth |
+| `segmented_cervelliere_over_mail` | 3.3 | 84/0/20 | Segmented · Mail |
+| `segmented_cervelliere_over_mail_coif` | 3.2 | 86/12/40 | Segmented · Mail Coif |
+
+### ⛑ Nasal Cervelliere（4 件 · h 54-81 · 带鼻梁 Cervelliere）
+
+| id | wt | h/b/a | 名称 · aventail |
+|---|---:|---|---|
+| `nasal_cervelliere_over_padded_cap` | 1.0 | 54/12/0 | Nasal Cerv · Padded Cap |
+| `nasal_cervelliere_over_laced_coif` | 1.1 | 59/12/13 | Nasal Cerv · Laced Coif |
+| `nasal_cervelliere_over_padded_coif` | 1.2 | 61/15/25 | Nasal Cerv · Padded Coif |
+| `nasal_cervelliere_over_mail_coif` | 2.6 | 81/24/40 | Nasal Cerv · Mail Coif |
+
+### ⛑ Nasal Helmet 家族（6 件 · h 56-89 · 鼻梁盔 + aventail 6 档）
+
+| id | wt | h/b/a | 名称 · aventail |
+|---|---:|---|---|
+| `nasal_helmet_over_cloth_headwrap` | 1.1 | 56/16/10 | Nasal · Cloth Headwrap |
+| `nasal_helmet_over_padded_cloth` | 1.2 | 57/12/8 | Nasal · Padded Cloth |
+| `nasal_helmet_over_padded_coif` | 1.4 | 58/15/25 | Nasal · Padded Coif |
+| `nasal_helmet_over_laced_coif` | 1.3 | 60/12/18 | Nasal · Laced Coif |
+| `nasal_helmet_over_mail` | 3.1 | 86/12/20 | Nasal · Mail |
+| `nasal_helmet_over_mail_coif` | 2.7 | 89/24/40 | Nasal · Mail Coif |
+
+### ⛑ Peaked Helmet 家族（4 件 · h 65-95 · 尖顶盔）
+
+| id | wt | h/b/a | 名称 · aventail |
+|---|---:|---|---|
+| `peaked_helmet_over_laced_coif` | 1.1 | 65/0/12 | Peaked · Laced Coif |
+| `peaked_helmet_over_padded_cloth` | 1.0 | 68/0/12 | Peaked · Padded Cloth |
+| `peaked_helmet_over_mail` | 2.6 | 92/0/20 | Peaked · Mail |
+| `peaked_helmet_over_mail_coif` | 2.7 | 95/12/40 | Peaked · Mail Coif |
+
+### ⛑ Segmented Skullcap 家族（4 件 · h 73-92 · 分片头盔 + aventail 4 档）
+
+| id | wt | h/b/a | 名称 · aventail |
+|---|---:|---|---|
+| `segmented_skullcap_over_laced_coif` | 1.2 | 73/12/20 | Segmented Skull · Laced Coif |
+| `segmented_skullcap_over_padded_coif` | 1.3 | 75/12/20 | Segmented Skull · Padded Coif |
+| `segmented_skullcap_over_padded_cloth` | 1.1 | 77/8/10 | Segmented Skull · Padded Cloth |
+| `segmented_skullcap_over_mail_coif` | 3.5 | 92/25/40 | Segmented Skull · Mail Coif |
+
+### 🪖 Kettle Helmet/Hat 家族（10 件 · h 77-107 · Vlandia 标志性水壶盔）
+
+| id | wt | h/b/a | 名称 · aventail |
+|---|---:|---|---|
+| `kettle_helmet_over_padded_cap` | 1.2 | 77/0/0 | Kettle · Padded Cap |
+| `kettle_helmet_over_laced_coif` | 1.2 | 80/0/20 | Kettle · Laced Coif |
+| `kettle_helmet_over_padded_cloth` | 1.1 | 83/0/10 | Kettle · Padded Cloth |
+| `kettle_hat_over_padded_coif` | 1.4 | 84/5/22 | Kettle Hat · Padded Coif |
+| `kettle_hat_over_padded_cloth` | 1.2 | 85/0/0 | Kettle Hat · Padded Cloth |
+| `kettle_helmet_over_padded_coif` | 1.3 | 85/0/25 | Kettle · Padded Coif |
+| `kettle_helmet_over_arming_coif` | 1.0 | 87/0/0 | Kettle · Arming Coif |
+| `kettle_helmet_with_leather` | 1.0 | 88/0/0 | Kettle with Leather |
+| `kettle_helmet_with_mail` | 2.7 | 92/5/33 | Kettle with Mail |
+| `kettle_hat_over_mail_coif` | 2.9 | 105/0/40 | Kettle Hat · Mail Coif |
+| `kettle_helmet_over_mail` | 3.1 | 107/12/20 | Kettle · Mail |
+
+### 🪖 Guards Kettle（3 件 · h 83-109 · 护卫水壶盔）
+
+| id | wt | h/b/a | 名称 · aventail |
+|---|---:|---|---|
+| `guards_kettle_over_laced_coif` | 1.4 | 83/0/20 | Guards Kettle · Laced Coif |
+| `guards_kettle_over_padded_coif` | 1.5 | 89/5/25 | Guards Kettle · Padded Coif |
+| `guards_kettle_over_mail_coif` | 3.2 | 109/12/40 | Guards Kettle · Mail Coif |
+
+### 🎭 Visored Helmet（4 件 · h 83-109 · 面甲盔 · body 顶 75）
+
+| id | wt | h/b/a | 名称 · aventail |
+|---|---:|---|---|
+| `visored_helmet_over_padded_cloth` | 2.3 | 83/**75**/12 | Visored · Padded Cloth |
+| `visored_helmet_over_padded_coif` | 2.5 | 89/**75**/25 | Visored · Padded Coif |
+| `visored_helmet_over_laced_coif` | 2.4 | 90/**75**/20 | Visored · Laced Coif |
+| `visored_helmet_over_mail_coif` | 3.6 | 109/**75**/40 | Visored · Mail Coif |
+
+### 🎭 Faceguard Knight Helmet + Lord Helmet（3 件 · h 90 · Vlandia Knight 顶档 · body 70-90）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `vlandia_lord_helmet_b2` | 4.1 | 90/0/0 | Plated Helmet (Lord) |
+| `vlandian_faceguard_helmet_a` | 2.2 | 90/**90**/0 | Knight Helmet with Steel Faceguard |
+| `vlandian_faceguard_helmet_b` | 2.3 | 90/**70**/0 | Knight Helmet with Bronze Faceguard |
+
+### 👑 Western Plated/Crowned Helmet（3 件 · h 98-105）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `western_plated_helmet` | 4.1 | 98/15/0 | Plated Helmet with Sideguards |
+| `western_crowned_helmet` | 3.7 | 100/10/0 | Crowned Helmet |
+| `western_crowned_plated_helmet` | 3.9 | 105/15/20 | Crowned Plate Helmet |
+
+### 🎭 Full Helm 家族（7 件 · h 108-140 · **Vlandia 顶点** · body 116 全罩）
+
+| id | wt | h/b/a | 名称 · aventail |
+|---|---:|---|---|
+| `full_helm_over_padded_cap` | 3.1 | 108/**116**/0 | Full Helm · Padded Cap |
+| `full_helm_over_arming_coif` | 3.0 | 109/**116**/0 | Full Helm · Arming Coif |
+| `full_helm_over_laced_coif` | 3.5 | 111/**113**/20 | Full Helm · Laced Coif |
+| `full_helm_over_cloth_headwrap` | 3.2 | 113/**116**/12 | Full Helm · Cloth Headwrap |
+| `full_helm_over_padded_cloth` | 3.1 | 116/**116**/12 | Full Helm · Padded Cloth |
+| `full_helm_over_mail_coif` | 4.5 | **140/116/40** ⭐ | Full Helm · Mail Coif ⭐ Vlandia 顶点 |
+
+### Vlandia HeadArmor 家族梯度
+
+```
+Cloth Headwrap/Scarf 民用                             h 6-11
+Padded Cap/Coif/Arming Coif 底层软垫                   h 16-22
+Padded Leather Cape                                   h 31
+Cervelliere 板甲小盔                                   h 48-53
+Segmented Cervelliere / Nasal Cervelliere              h 53-86
+Nasal Helmet 系                                       h 56-89
+Peaked Helmet 尖顶盔                                   h 65-95
+Segmented Skullcap 分片头盔                            h 73-92
+Kettle Helmet / Kettle Hat / Guards Kettle              h 77-109
+Visored Helmet 面甲盔（body 75 特色）                  h 83-109
+Vlandian Faceguard Knight Helmet（body 70-90）        h 90
+Plated Helmet / Crowned Helmet                        h 98-105
+Full Helm 全罩式（body 116 顶）                        h 108-140 ⭐ 顶点
+```
+
+### Vlandia HeadArmor 家族关键约束
+
+- **顶点**：`full_helm_over_mail_coif` **h=140 / b=116 / a=40 / wt=4.5** ⭐
+- **body 顶 116**（Full Helm 全罩式 · 覆盖颊甲+颈甲，非 aventail）· vanilla Full Helm 5 件 body=113-116
+- **arm 顶 40**（Mail Coif aventail · 各基型 + Mail Coif 都是 arm 40）· Kettle/Guards Kettle/Visored/Full Helm 顶档均达 40
+- **aventail 6 档**（从下到上）：无 → Cloth Headwrap / Padded Cap → Arming Coif → Padded Cloth → Padded Coif / Laced Coif → Mail → Mail Coif
+- **子结构分档**（同 base_type + aventail 差异）：
+  - 无 aventail → 只 head 值
+  - Cloth/Padded Cap → head + 少量 body
+  - Laced/Padded Coif → head + body 12 + arm 12-25
+  - Mail → head + arm 20 (body 变)
+  - Mail Coif → head + body 12-25 + arm 40 (顶档 aventail)
+- **Vlandia 特色 base_type**：
+  - **Full Helm**（全罩式）：body 116 是 Vlandia 独有的"整个颊+颈甲"设计
+  - **Kettle Helmet/Hat**：西方水壶盔（宽檐防日+防箭），Vlandia 标志性
+  - **Visored Helmet**：面甲盔（可开合），body 75 反映面甲结构
+  - **Cervelliere / Segmented Cervelliere / Nasal Cervelliere**：Vlandia 三段板甲小盔梯度
+  - **Peaked Helmet**：尖顶盔（骑士早期）
+  - **Segmented Skullcap**：分片头盔（Vlandia + Sturgia 共有）
+- **无 Cataphract 类**：Vlandia 是 Knight 板甲骑士，非 Cataphract 复合甲——命名"Cataphract"应视为 OSA 借用 Empire 概念的翻译，实际 vanilla Vlandia 无 Cataphract 头盔
+
+---
+
+## Vlandia · Cape · 10 件（2026-09-23 归档）
+
+**关键设计观察**：vanilla+RBM Vlandia Cape 10 件 arm_armor 全 0（RBM 设计意图同 Empire · Cape 是纯 body_armor / mantle · 无肩甲延伸）。**Vlandia 顶点 `noble_pauldron_with_scarf` 88** —— **比 Empire 顶 55 高 1.6×**，反映 Vlandia Knight 板甲传统。
+
+### 🧣 Cloth Hood 民用（2 件 · body 7-9）
+
+| id | mat | wt | body | 名称 |
+|---|---|---:|---:|---|
+| `green_hood` | Cloth | 0.5 | 7 | Green Hood |
+| `hood` | Cloth | 0.4 | 9 | Hood |
+
+### 🔗 Chainmail Shoulders（1 件 · body 20）
+
+| id | mat | wt | body | 名称 |
+|---|---|---:|---:|---|
+| `chainmail_shoulder_armor` | Chainmail | 1.4 | 20 | Reinforced Mail Shoulders |
+
+### 🦌 Padded Leather Shoulders（1 件 · body 22）
+
+| id | mat | wt | body | 名称 |
+|---|---|---:|---:|---|
+| `padded_leather_shoulders` | Cloth | 1.4 | 22 | Padded Leather Shoulders |
+
+### 🛡 Plate Pauldrons 家族（6 件 · body 25-88 · 板甲护肩递进）
+
+| id | wt | body | 名称 |
+|---|---:|---:|---|
+| `scale_shoulder_armor` | 1.7 | 25 | Scale Shoulderguards |
+| `pauldron_with_cape` | 1.3 | 33 | Pauldrons with Cape |
+| `pauldron_over_scale_armor` | 3.4 | 50 | Reinforced Ornate Pauldrons over Scale |
+| `noble_pauldron` | 1.2 | 60 | Ornate Pauldrons |
+| `noble_pauldron_with_cape` | 1.8 | 68 | Ornate Pauldrons with Cape |
+| `noble_pauldron_with_scarf` | 3.2 | **88** | Reinforced Ornate Pauldrons ⭐ 顶点 |
+
+### Vlandia Cape 家族梯度
+
+```
+Cloth Hood                                            body 7-9
+Chainmail Reinforced Mail Shoulders                   body 20
+Padded Leather Shoulders                              body 22
+Plate Scale Shoulderguards                            body 25
+Plate Pauldrons with Cape (Standard)                  body 33
+Plate Pauldrons over Scale (Reinforced Ornate)        body 50
+Plate Ornate Pauldrons (Noble)                        body 60
+Plate Ornate Pauldrons with Cape (Noble)              body 68
+Plate Reinforced Ornate Pauldrons (顶) ⭐              body 88
+```
+
+### Vlandia Cape 家族关键约束
+
+- **vanilla 顶点**：`noble_pauldron_with_scarf` **88/0/3.2**（Reinforced Ornate Pauldrons · Vlandia Knight 顶档）
+- **OSA Vlandia Cape 需在此顶点内**：raw body ≤ 88（比 Empire 顶 55 高，反映 Vlandia Plate 传统）
+- **Vlandia 顶 88 vs Empire 顶 55 差异**：Empire Lamellar 复合结构 vs Vlandia Reinforced Plate · Vlandia Plate 材质更重更硬
+- **命名子结构分档**（同 Empire 三部分律）：
+  - Rule 1A（有 shoulder/pauldron 命名）：允许 body + arm，body > arm
+  - Rule 1B（无 shoulder/pauldron 命名，如 Cape/Cloak/Hood）：arm 必须 = 0
+  - Rule 2 arm mesh-tiered 分档律：Elite Heavy 25 · Standard Shoulders 20 · Standard Pauldrons 12 · Chainmail 10-12 · Leather 4-8
+  - Rule 3 视觉判断优先律：命名允许 ≠ 数值强制
+- **arm 上限**：Vlandia OSA arm ≤ 25（Elite Heavy · 同 Empire）

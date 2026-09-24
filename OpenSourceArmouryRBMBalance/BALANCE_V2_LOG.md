@@ -3397,6 +3397,511 @@ Cloak 结构中档 body ~20-28（Plated Lion Head +6 反映甲片补强）· arm
 
 ---
 
+# Vlandia · BodyArmor（2026-09-23）
+
+## 🔒 铁律 · Vlandia BodyArmor 沿用 Empire 铁律
+
+> **BodyArmor 三档序**：`body ≥ leg > arm`（vanilla Vlandia 遵守，顶点 `sturgian_fortified_armor` 100/95/100 arm=body 齐）
+>
+> **顶点**：`sturgian_fortified_armor` **100/95/100/26** ⭐ · body ≤ 100 · arm ≤ 100
+>
+> **材质硬约束**：Cloth ≤ 28 · Leather ≤ 24 · Chainmail 37-77 · Plate 75-100
+>
+> **Vlandia 特色**：arm 顶 100 反映 Full Sleeve Hauberk（全臂锁子甲）· 板衣 Brigandine 顶档 · Aketon 命名
+
+---
+
+## Vlandia · BodyArmor · 家族分类总览（94 件）
+
+| 家族 | n | body 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| **A. Cloth 民用** | 11 | 2-6 | `cloth_tunic` 6 · `long_hemp_tunic` 8 |
+| **B. Padded Gambeson / Cavalry Tunic** | 7 | 14-19 | `gambeson_b` 18 · `aketon` 19 |
+| **C. Tabard Over Aketon** | 4 | 18-24 | `leather_coat_over_cloth` 18 |
+| **D. Leather Vest / Cuirass Over Aketon** | 4 | 24-28 | `leather_coat` 20 · `padded_coat` 28 |
+| **E. Mail Shirt / Chainmail Shirt** | 3 | 41 | `mail_shirt` 41/33/36 |
+| **F. Double Mail Hauberk / Padded Mail / Mercenary Mail** | 5 | 40-45 | `red/white_coat_over_mail` 45/38/42 |
+| **G. Mailed Robe 系列** | 5 | 40 | 无 · Robe+Mail 中档 |
+| **H. Leather/Padded Coat Over Hauberk** | 8 | 45 | `red/white_coat_over_mail` 45 |
+| **I. Tabard Over Mail Hauberk** | 8 | 45-52 | `red_coat_over_mail` 45 · `banded_leather_over_mail` 52 |
+| **J. Padded Vest Over Scale** | 4 | 50-52 | `leather_scale_armor` 24（低）· `plated_leather_coat` 75 |
+| **K. Lamellar Over Heavy Mail Hauberk** | 3 | 75-82 | `plated_leather_coat` 75 · `coat_of_plates_over_mail` 82 |
+| **L. Scale Cuirass Over Mail** | 8 | 65-80 | `hauberk` 77 · `coat_of_plates_over_mail` 82 |
+| **M. Long Scale Coat + Reticulated Plate** | 12 | 75-92 | `plated_leather_coat` 75 · `coat_of_plates_over_mail` 82 |
+| **N. Heavy Padded Coat + Reticulated Plate 顶档** | 12 | 92-100 | `sturgian_fortified_armor` 100 ⭐ |
+
+**合计 11+7+4+4+3+5+5+8+8+4+3+8+12+12 = 94 ✓**
+
+---
+
+## Vlandia · BodyArmor · A 家族：Cloth 民用（11 件）
+
+### 2026-09-23 · A 家族 11 件 · Cloth 民用
+
+**vanilla 参照**：`cloth_tunic` 6/5/5 · `monk_robe` 6/6/5 · `long_hemp_tunic` 8/8/6
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_armor_i` | Western Long Woolen Tunic | 2/1/1/0.4 | **6/5/5/0.4** (vanilla `long_woolen_tunic` 直匹配) |
+| 2 | `TV_vlandia_armor_u` | Western Rich Tunic | 2/1/1/0.4 | **6/5/5/0.4** (vanilla `cloth_tunic` 直匹配) |
+| 3-5 | `AR_monk_robe_a/a2/b` | Western [Colored/Plain/Brown] Robe | 5/2/1/0.5 | **6/6/5/0.5** (vanilla `monk_robe` 6/6/5 直匹配 · 3 件同档) |
+| 6-7 | `TV_monk_robe_a/c` | Western Patterned Robe / Belted | 5/2/1/0.5 | **6/6/5/0.5** (同 monk_robe) |
+| 8 | `DZ_vlandia_armor_a` | Western Noble Robes | 6/3/3/2.7 | **8/8/6/1.5** (vanilla `long_hemp_tunic` 8/8/6 参照 · Noble +2 · wt v1 2.7 降到 1.5) |
+
+**状态**：11 件 🔵 log-only（3-5 与 6-7 各批量归为同档）
+
+---
+
+## Vlandia · BodyArmor · B 家族：Padded Gambeson / Cavalry Tunic（7 件）
+
+### 2026-09-23 · B 家族 7 件 · Padded 中档
+
+**vanilla 参照**：`gambeson_b` 18/18/18 · `aketon` 19/19/19 · `padded_short_coat` 23/19/18
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_armor_a2` | Western Heavy Padded Coat | 14/5/5/2.4 | **19/19/19/2.4** (vanilla `aketon` Heavy 直匹配) |
+| 2 | `AR_vlandia_armor_j` | Western Padded Gambeson | 14/5/5/2.4 | **18/18/18/2.4** (vanilla `gambeson_b` 直匹配) |
+| 3 | `AR_vlandia_armor_k` | Western Sleeveless Padded Gambeson | 14/9/2/2.2 | **18/18/10/2.2** (Sleeveless arm -8) |
+| 4 | `AR_vlandia_armor_l` | Western Short Padded Gambeson | 14/2/5/2.2 | **18/12/18/2.2** (Short leg -6) |
+| 5 | `AR_vlandia_armor_m` | Western Sleeveless Short Padded Gambeson | 14/5/2/2.0 | **18/12/10/2.0** (双 short) |
+| 6 | `AR_vlandia_armor_t` | Western Cavalry Tunic | 14/3/3/1.9 | **18/18/14/2.0** (Cavalry Tunic 中档) |
+| 7 | `mercenary_gambeson` | Western Mercenary Gambeson | 16/8/6/8.3 | **19/19/19/2.5** (vanilla `aketon` 参照 · wt v1 8.3 降到 2.5) |
+
+**状态**：7 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · C 家族：Tabard Over Aketon（4 件）
+
+### 2026-09-23 · C 家族 4 件 · Tabard+Aketon 复合中档
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_vlandian_tabard_over_aketon` | Western Tabard Over Aketon | 16/3/3/3.4 | **20/19/16/3.0** (Tabard+Aketon 中档) |
+| 2 | `ao_vlandian_tabard_over_aketon_b` | Plain Tabard Over Aketon | 16/3/3/3.4 | **20/19/16/3.0** (Plain 同) |
+| 3 | `TV_vlandia_armor_e` | Patterned Tabard Over Aketon | 16/3/3/3.4 | **20/19/16/3.0** (Patterned 装饰 0) |
+| 4 | `AO_vlandia_armor_c` | Leather Tabard Over Aketon | 20/3/3/3.4 | **22/19/16/3.2** (Leather Tabard +2 body) |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · D 家族：Leather Vest / Cuirass Over Aketon（4 件）
+
+### 2026-09-23 · D 家族 4 件 · Leather Cuirass 中档
+
+**vanilla 参照**：`leather_coat` 20/20/15 · `leather_scale_armor` 24/22/18
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_armor_n` | Padded Vest Over Leather | 22/6/6/3.1 | **22/18/12/3.0** (vanilla `woven_leather_vest` 22/18/12 直匹配) |
+| 2 | `AR_vlandia_armor_q2` | Leather Cuirass Over Aketon | 24/5/5/12 | **24/22/18/6.0** (vanilla `leather_scale_armor` 24/22/18 直匹配 · wt v1 12 降到 6.0) |
+| 3 | `AR_vlandia_armor_r` | Leather Cuirass Over Stripped Gambeson | 24/5/5/12 | **24/22/18/6.0** (同 q2) |
+| 4 | `ao_crude_mail_with_tunic` | Crude Mail Over Tunic | 26/16/16/9.5 | **28/25/16/6.0** (Padded Footman 中档 · vanilla `padded_coat` 28/32/26 参照 · Crude 品质 -2) |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · E 家族：Mail Shirt / Chainmail Shirt（3 件）
+
+### 2026-09-23 · E 家族 3 件 · Mail Shirt 中档 · vanilla 直匹配
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_armor_d` | Western Mail Shirt | 25/13/11/7.5 | **41/33/36/7.5** (vanilla `mail_shirt` 41/33/36 直匹配) |
+| 2 | `AR_vlandia_armor_d2` | Western Chainmail Shirt | 25/13/11/7.5 | **41/33/36/7.5** (同 d) |
+| 3 | `AR_empire_armor_l` | Western Mail Shirt With Rolled Cloth | 27/13/11/7.5 | **43/33/36/7.5** (+Rolled Cloth +2 body) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · F 家族：Double Mail Hauberk / Padded Mail / Mercenary Mail（5 件）
+
+### 2026-09-23 · F 家族 5 件 · Mail 中档
+
+**vanilla 参照**：`vlandia_chainmail` 40/44/40 · `veteran_mercenary_armor` 37/33/13
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_vlandia_armor_h2` | Double Mail Hauberk | 27/14/12/9.5 | **40/44/40/8.0** (vanilla `vlandia_chainmail` Heavy 直匹配) |
+| 2 | `mercenary_mail_armor` | Mercenary Mail Armor | 29/12/14/10.3 | **37/33/13/8.0** (vanilla `veteran_mercenary_armor` 直匹配) |
+| 3 | `TV_vlandia_armor_l` | Western Mail Armor | 29/12/14/10.3 | **37/33/13/8.0** (同 mercenary_mail_armor) |
+| 4 | `TV_vlandia_armor_j` | Plated Leather Over Mail | 29/10/8/8.6 | **41/33/36/8.6** (vanilla `mail_shirt` + Plated Leather) |
+| 5 | `TV_vlandia_armor_h` | Padded Double Mail Hauberk | 32/16/14/9.5 | **42/44/40/9.0** (+Padded +2 body) |
+
+**状态**：5 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · G 家族：Mailed Robe 系列（5 件）
+
+### 2026-09-23 · G 家族 5 件 · Chainmail Robe 中档
+
+**Mailed Robe 命名说明**：Cloth Robe + Mail 内衬 · 走 Mail Shirt 41/33/36 参照
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_monk_robe_c` | Mailed Colored Robe | 30/16/16/12 | **40/33/36/9.0** (Mailed Robe 中档 · wt v1 12 降到 9.0) |
+| 2 | `AR_monk_robe_c2` | Mailed Plain Robe | 30/16/16/12 | **40/33/36/9.0** (Plain 同) |
+| 3 | `AR_monk_robe_d` | Mailed Black Robe | 30/16/16/12 | **40/33/36/9.0** (Black 装饰 0) |
+| 4 | `TV_monk_robe_b` | Mailled Patterned Robe | 30/16/16/12 | **40/33/36/9.0** |
+| 5 | `TV_monk_robe_d` | Mailled Patterned Belted Robe | 30/16/16/12 | **40/33/36/9.0** |
+
+**状态**：5 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · H 家族：Leather/Padded Coat Over Hauberk（8 件）
+
+### 2026-09-23 · H 家族 8 件 · Coat Over Hauberk 中高档
+
+**vanilla 参照**：`red/white_coat_over_mail` 45/38/42（Tabard over Mail Hauberk）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AP_leather_tabard_d` | Sleeveless Leather Short Coat Over Hauberk | 28/8/8/28.6 | **43/33/36/10** (Sleeveless Short 中档 · wt v1 28.6 降到 10) |
+| 2 | `leather_tabard_over_mail` | Sleeveless Leather Coat Over Hauberk | 28/14/8/28.6 | **45/38/36/10** (Sleeveless 中档) |
+| 3 | `TV_vlandia_armor_b2` | Sleeveless Padded Coat Over Hauberk | 28/14/8/28.6 | **45/38/36/10** (Padded 变体) |
+| 4 | `TV_vlandia_armor_b4` | Sleeveless Padded Short Coat Over Hauberk | 28/8/8/28.6 | **43/33/36/10** (Short) |
+| 5 | `AR_vlandia_armor_f` | Western Long Hauberk | 30/14/14/12 | **45/38/42/9.0** (vanilla `red_coat_over_mail` 45/38/42 直匹配 · Long Hauberk 顶级 arm 42) |
+| 6 | `AP_leather_tabard_a` | Leather Coat Over Hauberk | 31/14/12/28.6 | **45/38/42/10** |
+| 7 | `AP_leather_tabard_c` | Leather Short Coat Over Hauberk | 31/8/12/28.6 | **43/33/42/10** |
+| 8 | `TV_vlandia_armor_b` | Padded Coat Over Hauberk | 31/14/12/28.6 | **45/38/42/10** |
+| 9 | `TV_vlandia_armor_b3` | Padded Short Coat Over Hauberk | 31/8/12/28.6 | **43/33/42/10** |
+
+**状态**：9 件 🔵 log-only（实际 9 件，重新数）
+
+---
+
+## Vlandia · BodyArmor · I 家族：Tabard Over Mail Hauberk（7 件）
+
+### 2026-09-23 · I 家族 7 件 · vanilla 直匹配 Tabard 系列
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_armor_c` | Tabard Over Mail Hauberk | 34/12/12/15 | **45/38/42/9.0** (vanilla `red_coat_over_mail` 直匹配) |
+| 2 | `TV_vlandia_armor_a` | Leather Coat Over Mail | 34/12/12/28.6 | **45/38/42/10** |
+| 3 | `TV_vlandia_armor_c` | Patterned Tabard Over Mail Hauberk | 34/12/12/9.6 | **45/38/42/9.6** (vanilla `white_coat_over_mail` 直匹配) |
+| 4 | `TV_vlandia_armor_i` | Patterned Coat Over Mail | 34/12/12/28.6 | **45/38/42/10** |
+| 5 | `TV_vlandia_armor_i2` | Decorated Coat Over Mail | 34/12/12/28.6 | **45/38/42/10** (Decorated 装饰 0) |
+| 6 | `TV_vlandia_armor_o` | Heavy Plated Leather Over Mail | 34/16/12/8.6 | **48/38/42/9.0** (Heavy Plated +3 body) |
+| 7 | `LE_vlandia_armor_a` | Patterned Tabard Over Sloven Mail | 35/12/12/15 | **45/38/42/9.0** |
+| 8 | `LE_vlandia_armor_b` | Red Tabard Over Sloven Mail | 35/12/12/15 | **45/38/42/9.0** |
+
+**状态**：8 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · J 家族：Padded Vest Over Steel/Brass Scale（2 件）
+
+### 2026-09-23 · J 家族 2 件 · Padded+Scale 中档
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_armor_p` | Padded Vest Over Steel Scale | 36/12/8/15.1 | **52/27/27/10** (vanilla `banded_leather_over_mail` 52/27/27 参照) |
+| 2 | `AR_vlandia_armor_p2` | Padded Vest Over Brass Scale | 36/12/8/15.1 | **50/27/27/10** (Brass -2 vs Steel) |
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · K 家族：Chainmail 中高档 Long Hauberk（8 件）
+
+### 2026-09-23 · K 家族 8 件 · Long Hauberk + Coat 中高档
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_armor_o` | Padded Vest Over Mail | 33/12/10/10.2 | **45/33/36/10** (Padded Vest + Mail) |
+| 2 | `TV_vlandia_armor_f` | Padded Chainmail | 38/16/14/12 | **50/38/42/10** (Padded Chainmail 中高) |
+| 3 | `AR_vlandia_armor_e` | Plated Mail Shirt | 40/14/15/7.5 | **50/38/42/8.0** (Plated Mail 中高) |
+| 4 | `AR_vlandia_leather_a` | Leather Vest Over Mail Hauberk | 40/22/12/21 | **52/38/42/12** |
+| 5 | `TV_vlandia_armor_k` | Decorated Tunic Over Long Hauberk | 40/22/12/21 | **52/38/42/12** |
+| 6 | `TV_vlandia_armor_m` | Heavy Padded Mail Hauberk | 40/22/12/21 | **52/38/42/12** |
+| 7 | `TV_vlandia_armor_n` | Decorated Aketon Over Mail | 40/22/12/21 | **52/38/42/12** |
+| 8 | `AR_vlandia_armor_q` | Leather Cuirass Over Long Hauberk | 33/14/14/12 | **50/38/42/10** |
+| 9 | `AR_vlandia_armor_r2` | Leather Cuirass Over Stripped Mail | 33/14/14/12 | **50/38/42/10** |
+
+**状态**：9 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · L 家族：Lamellar Over Heavy Mail Hauberk（3 件）
+
+### 2026-09-23 · L 家族 3 件 · Plate 高档 · vanilla 直匹配
+
+**vanilla 参照**：`plated_leather_coat` 75/56/60（Rough Brigandine · Plate 高档 anchor）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_lamellar_b` | Leather Lamellar Over Heavy Mail Hauberk | 35/14/14/16 | **75/56/60/14** (vanilla `plated_leather_coat` 75/56/60 直匹配 · wt v1 16 降到 14) |
+| 2 | `AR_vlandia_lamellar_a` | Steel Lamellar Over Heavy Mail Hauberk | 46/14/14/22 | **78/56/60/16** (Steel +3 vs Leather Lamellar) |
+| 3 | `AR_vlandia_lamellar_a2` | Brass Lamellar Over Heavy Mail Hauberk | 46/14/14/22 | **76/56/60/16** (Brass -2 vs Steel) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · M 家族：Scale Cuirass Over Mail（8 件）
+
+### 2026-09-23 · M 家族 8 件 · Scale Cuirass + Mail 中高档
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_empire_armor_e` | Scale Over Mail Shirt | 47/13/14/7.5 | **65/38/42/9.0** (Scale+Mail 中高档 body 65) |
+| 2 | `TV_empire_armor_e2` | Brass Scale Over Mail Shirt | 47/13/14/7.5 | **63/38/42/9.0** (Brass -2) |
+| 3 | `TV_vlandia_armor_d` | Steel Scale Cuirass Over Chainmail | 47/14/14/10 | **65/38/42/10** |
+| 4 | `TV_vlandia_armor_d2` | Brass Scale Cuirass Over Chainmail | 47/14/14/10 | **63/38/42/10** |
+| 5 | `AR_empire_scale_armor_e2` | Scale Cuirass Over Stripped Gambeson | 48/5/5/12 | **65/33/36/10** |
+| 6 | `AR_vlandia_armor_h2` | Reticulated Plate Over Aketon | 48/5/5/12 | **68/33/36/10** (Reticulated Plate +3 body) |
+| 7 | `AR_empire_scale_armor_e` | Scale Cuirass Over Stripped Mail | 52/12/10/21.5 | **68/38/42/12** |
+| 8 | `AR_empire_scale_armor_e3` | Scale Cuirass Over Stripped Scale | 52/20/10/20.1 | **72/44/44/12** (vanilla `hauberk` 77/44/44 参照 · sub-顶 2) |
+
+**状态**：8 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · N 家族：Long Scale Coat / Reticulated Plate（顶档 8 件）
+
+### 2026-09-23 · N 家族 8 件 · Plate 顶档 + vanilla 直匹配
+
+**vanilla 参照**：`hauberk` 77/44/44 · `plated_leather_coat` 75/56/60 · `coat_of_plates_over_mail` 82/38/49
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_vlandia_armor_p` | Decorated Long Bronze Scale Cuirass | 50/20/10/20.1 | **75/56/60/14** (Decorated Long Bronze Scale = Rough Brigandine 参照) |
+| 2 | `TV_vlandia_armor_q` | Decorated Long Steel Scale Cuirass | 50/20/10/20.1 | **77/56/60/14** (Steel +2) |
+| 3 | `TV_vlandia_armor_s` | Long Steel Scale Coat | 50/20/10/20.1 | **77/56/60/14** |
+| 4 | `TV_vlandia_armor_s2` | Long Bronze Scale Coat | 50/20/10/20.1 | **75/56/60/14** |
+| 5 | `AR_vlandia_scale_b` | Rough Scale Vest Over Mail | 50/22/16/15.1 | **75/56/60/13** (vanilla `plated_leather_coat` 直匹配) |
+| 6 | `AR_vlandia_armor_h` | Reticulated Plate Over Long Hauberk | 52/14/14/12 | **82/44/49/13** (vanilla `coat_of_plates_over_mail` 82/38/49 参照) |
+| 7 | `AR_vlandia_armor_s` | Padded Vest Over Mailed Steel Scale | 52/20/10/20.1 | **78/56/60/14** |
+| 8 | `AR_vlandia_armor_s2` | Padded Vest Over Mailed Brass Scale | 52/20/10/20.1 | **76/56/60/14** |
+| 9 | `AR_vlandia_scale_a` | Long Scale Vest Over Mail Hauberk | 52/24/16/36.9 | **80/56/60/15** (wt v1 36.9 降到 15) |
+| 10 | `TV_empire_armor_n` | Scale Cuirass Over Mail With Scale Skirt | 52/21/16/34 | **82/56/60/16** (Scale Skirt +body) |
+| 11 | `TV_empire_armor_o` | Scale Cuirass With Scale Skirt | 52/20/4/34 | **77/56/44/16** |
+| 12 | `TV_vlandia_armor_t` | Long Steel Scale Coat Over Hauberk | 52/25/20/26 | **82/56/60/15** (顶级 Long Coat + Hauberk) |
+| 13 | `TV_vlandia_armor_t2` | Long Bronze Scale Coat Over Hauberk | 52/25/20/26 | **80/56/60/15** (Bronze -2) |
+
+**状态**：13 件 🔵 log-only
+
+---
+
+## Vlandia · BodyArmor · O 家族：Heavy Padded Coat + Reticulated Plate 顶档（4 件）
+
+### 2026-09-23 · O 家族 4 件 · Vlandia BodyArmor 顶点
+
+**vanilla 参照**：`sturgian_fortified_armor` **100/95/100/26** ⭐（Brigandine over Hauberk 顶点）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_armor_a` | Heavy Padded Coat Over Mail | 49/22/20/28.6 | **90/60/80/16** (Heavy Padded Coat + Mail · sub-顶 10) |
+| 2 | `TV_vlandia_armor_r` | Heavy Padded Coat Over Hauberk | 49/22/20/28.6 | **90/60/80/16** (同 a) |
+| 3 | `TV_vlandia_armor_g` | Mailled Brigandine With Decorated Tabard | 50/16/14/23.2 | **95/70/85/18** (Brigandine sub-顶) |
+| 4 | `AR_vlandia_armor_b` | Heavy Padded Coat Over Mail And Lamellar | 55/25/20/28.6 | **100/95/100/22** (vanilla `sturgian_fortified_armor` 100/95/100 直匹配 · 顶点) |
+| 5 | `AR_vlandia_armor_u` | Reticulated Plate Over Scale Coat | 57/20/16/21.4 | **100/70/80/20** (Reticulated Plate 顶 · body 100 顶) |
+
+**状态**：5 件 🔵 log-only
+
+---
+
+## Vlandia BodyArmor 收官统计（2026-09-23）
+
+**总数**：94 件 Vlandia BodyArmor · **全部审完 · 全部 🔵 log-only**
+
+| 家族 | n | body 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| A. Cloth 民用 | 11 | 6-8 | `cloth_tunic` 6 · `long_hemp_tunic` 8 |
+| B. Padded Gambeson | 7 | 18-19 | `gambeson_b` 18 · `aketon` 19 |
+| C. Tabard Over Aketon | 4 | 20-22 | 无 direct |
+| D. Leather Vest | 4 | 22-28 | `leather_coat` 20 · `padded_coat` 28 |
+| E. Mail Shirt | 3 | 41-43 | `mail_shirt` 41/33/36 |
+| F. Double Mail Hauberk | 5 | 37-42 | `vlandia_chainmail` 40 · `veteran_mercenary_armor` 37 |
+| G. Mailed Robe | 5 | 40 | `mail_shirt` 参照 |
+| H. Coat Over Hauberk | 9 | 43-45 | `red_coat_over_mail` 45 |
+| I. Tabard Over Mail | 8 | 45-48 | `red/white_coat_over_mail` 45 |
+| J. Padded Vest Over Scale | 2 | 50-52 | `banded_leather_over_mail` 52 |
+| K. Lamellar Over Heavy Mail | 3 | 75-78 | `plated_leather_coat` 75 |
+| L. Scale Cuirass Over Mail | 8 | 63-72 | 无 direct · 65-72 中高档 |
+| M. Long Scale Coat / Reticulated | 13 | 75-82 | `plated_leather_coat` 75 · `coat_of_plates_over_mail` 82 |
+| N. Chainmail 中高档 Long Hauberk | 9 | 45-52 | `red_coat_over_mail` 45 |
+| O. Heavy Padded Coat + Reticulated 顶 | 5 | 90-100 | `sturgian_fortified_armor` 100 ⭐ |
+
+**合计 11+7+4+4+3+5+5+9+8+2+3+8+13+9+5 = 96 件**（比枚举 94 多 2，因 H/N 家族边界模糊 · G/H 表中列 K 家族划归 N）
+
+**关键设计观察**：
+- OSA v1 系统性偏低——顶 57，vanilla+RBM 顶 100 → v2 buff ×1.5-2.5
+- vanilla 直匹配 15+ 件（Cloth 民用 · Mail Shirt · Padded Gambeson · Coat Over Hauberk · Lamellar/Rough Brigandine · Brigandine over Mail · Brigandine over Hauberk 顶点）
+- **Vlandia arm 顶 100**（Full Sleeve Hauberk）· 比 Empire 67 高 50% · 全 Chainmail/Plate 顶档 arm 40-100
+- **命名共享 Empire 但属 Vlandia**：AR_empire_scale_armor_e/e2/e3 · AR_empire_armor_l · TV_empire_armor_e/e2/n/o 等 8 件 id 前缀 empire 但 culture=vlandia · 按 Vlandia 尺度定档
+
+**下一步**：进入 Vlandia HandArmor / LegArmor / HorseHarness
+
+---
+
+# Vlandia · HandArmor（2026-09-23）
+
+## 🔒 铁律 · Vlandia HandArmor
+
+> **顶点**：`lordly_mail_mitten` **60/1.7** · arm ≤ 60（比 Empire 63 略低）
+> **命名子结构**：Bracers/Vambraces < Gauntlets < Mittens（Mail 全手 · Vlandia 顶档）
+> **Vlandia 特色**：Mail Mittens 系为主 · 无 Cloth Padded 档
+
+## Vlandia HandArmor · 9 件 · vanilla 直匹配
+
+| # | id | 游戏名 | v1 arm/wt | **v2 决议 arm/wt** |
+|---|---|---|---|---|
+| 1 | `TV_vlandia_gloves_c` | Strapped Leather Bracers | 4/0.5 | **20/0.6** (Leather Bracers 轻档) |
+| 2 | `TV_vlandia_gloves_d` | Leather Gloves | 4/0.4 | **22/0.5** (Leather Gloves 中低档) |
+| 3 | `TV_vlandia_gloves_e` | Blackened Leather Gloves | 4/0.4 | **22/0.5** (Blackened 装饰 0) |
+| 4 | `TV_vlandia_gloves_f` | Leather Gloves | 4/0.4 | **22/0.5** (同 d) |
+| 5 | `TV_vlandia_gloves_a` | Leather Gauntlets | 15/1.5 | **30/1.0** (Leather Gauntlets 中档) |
+| 6 | `TV_vlandia_gloves_g` | Mail Gloves | 18/1.4 | **45/1.4** (vanilla `mail_mitten` 45 直匹配) |
+| 7 | `TV_vlandia_gloves_b` | Mail Gauntlets | 20/1.4 | **48/1.4** (vanilla `reinforced_mail_mitten` 48 直匹配) |
+| 8 | `TV_vlandia_gloves_i` | Plated Splint Gloves | 20/1.0 | **40/1.0** (vanilla `reinforced_leather_vambraces` Splint 40 直匹配) |
+| 9 | `TV_vlandia_gloves_h` | Plated Splint Bracers With Mail | 22/1.4 | **50/1.5** (Plated Splint + Mail 高档 · 介于 48-60 之间) |
+
+**状态**：9 件 🔵 log-only
+
+---
+
+# Vlandia · LegArmor（2026-09-23）
+
+## 🔒 铁律 · Vlandia LegArmor
+
+> **顶点**：`mail_cavalier_boots` **43/1.8** · leg ≤ 43（比 Empire 62 低 30%）
+> **命名子结构**：Boots With Greaves < Mail Boots
+> **Vlandia 特色**：Mail Boots + Leather Cavalier 二档 · 无 Plate 顶档
+
+## Vlandia LegArmor · 7 件 · vanilla 直匹配
+
+| # | id | 游戏名 | v1 leg/wt | **v2 决议 leg/wt** |
+|---|---|---|---|---|
+| 1 | `AR_vlandia_boots_a` | Boots With Leather Greaves | 14/0.9 | **32/0.9** (vanilla `leather_cavalier_boots` 32 直匹配) |
+| 2 | `DZ_vlandia_boots_a` | Mail Boots | 20/1.8 | **43/1.8** (vanilla `mail_cavalier_boots` 43 直匹配) |
+| 3 | `TV_vlandia_boots_b` | Mailled Shoes | 20/1.8 | **40/1.6** (Mail Shoes -3 vs Mail Boots) |
+| 4 | `AR_vlandia_boots_b` | Boots With Iron Greaves | 22/2.7 | **38/2.0** (Iron Greaves 中高档 · sub Mail 43) |
+| 5 | `AR_vlandia_boots_c` | Boots With Gilded Greaves | 22/2.7 | **38/2.0** (Gilded 装饰 0 · 同 Iron) |
+| 6 | `TV_vlandia_boots_a` | Mailled Boots With Leather Greaves | 23/3.0 | **43/2.5** (Mail Boots + Leather Greaves 顶级组合) |
+| 7 | `TV_vlandia_boots_c` | Mailled Splint Boots | 24/3.5 | **43/2.8** (Mailled Splint 顶级) |
+
+**状态**：7 件 🔵 log-only
+
+---
+
+# Vlandia · HorseHarness（2026-09-23 · 全 4 字段）
+
+## 🔒 铁律 · Vlandia HorseHarness
+
+> **顶点**：`chain_barding` **h=90/b=40/l=40/a=50/wt=26** · 全字段 ≤ Empire 顶
+>
+> **Vlandia 特色**：全 Chainmail 材质 · 无 Plate/Scale 顶档 · Half vs Full 差异在 leg（Half=25 vs Full=40 · Empire Half=5 vs Full=50）
+>
+> **⚠ 引擎只读 body_armor**——补齐 head/arm/leg 是 RBM 风格一致（装饰性）
+
+## Vlandia HorseHarness · 34 件分类
+
+### A 家族：Leather Harness 民用（3 件 · h/b 极轻）
+
+**vanilla 无 Vlandia 民用 Harness anchor** · 走 Empire `stripped_leather_harness` 10/5/5/10 参照
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_zah` | Light Harness | 0/10/0/0/20 | **10/8/5/10/8** (Light Harness 民用 · wt 20→8) |
+| 2 | `AR_horse_armor_s` | Heavy Harness | 0/12/0/0/30 | **12/12/5/12/10** (Heavy Harness 中民用) |
+| 3 | `AR_horse_armor_zai` | Heavy Harness | 0/12/0/0/30 | **12/12/5/12/10** (同 s) |
+
+### B 家族：Half Padded/Cloth Barding（3 件 · Half 中低档）
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 4 | `AR_horse_armor_zal` | Half Padded Barding | 0/30/0/0/70 | **35/18/12/22/14** (Half Padded 中低档 · wt 70→14) |
+| 5 | `AR_horse_armor_zat` | Half Cloth Barding | 0/30/0/0/70 | **35/18/12/22/14** |
+| 6 | `TV_horse_armor_c3` | Half Padded Barding | 0/30/0/0/70 | **35/18/12/22/14** |
+
+### C 家族：Padded/Cloth Barding Full（3 件 · Full 中低档）
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 7 | `AR_horse_armor_zak` | Padded Barding | 0/35/0/0/110 | **45/22/22/28/16** (Full Padded · wt 110→16) |
+| 8 | `AR_horse_armor_zas` | Cloth Barding | 0/35/0/0/110 | **45/22/22/28/16** |
+| 9 | `TV_horse_armor_b3` | Padded Barding | 0/35/0/0/110 | **45/22/22/28/16** |
+
+### D 家族：Heavy Padded/Cloth Barding（6 件 · Heavy 中档）
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 10 | `AR_horse_armor_o` | Half Padded Barding | 0/40/0/0/135 | **50/25/12/30/16** (Heavy Half · wt 135→16) |
+| 11 | `AR_horse_armor_zaj` | Heavy Padded Barding | 0/40/0/0/135 | **55/28/22/32/17** |
+| 12 | `AR_horse_armor_zar` | Heavy Cloth Barding | 0/40/0/0/135 | **55/28/22/32/17** |
+| 13 | `AR_horse_armor_zau` | Half Cloth Barding | 0/40/0/0/135 | **50/25/12/30/16** |
+| 14 | `TV_horse_armor_a3` | Heavy Padded Barding | 0/40/0/0/135 | **55/28/22/32/17** |
+| 15 | `TV_horse_armor_d3` | Half Padded Barding | 0/40/0/0/135 | **50/25/12/30/16** |
+
+### E 家族：Half Leather Scale / Half Steel Scale / Half Lamellar（6 件 · Half 中高档）
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 16 | `AR_horse_armor_m` | Half Leather Scale Barding | 0/50/0/0/135 | **60/30/12/40/17** (Half Scale 中高档 · sub Half 顶 60) |
+| 17 | `AR_horse_armor_p` | Padded Barding | 0/50/0/0/135 | **65/35/22/42/18** |
+| 18 | `AR_horse_armor_p2` | Padded Barding | 0/50/0/0/135 | **65/35/22/42/18** |
+| 19 | `TV_horse_armor_c` | Half Steel Scale Barding | 0/50/0/0/70 | **60/30/12/40/15** |
+| 20 | `TV_horse_armor_c2` | Half Lamellar Barding | 0/50/0/0/70 | **60/30/12/40/15** |
+| 21 | `TV_horse_armor_d2` | Half Lamellar Barding | 90/50/5/60/17 | **60/38/12/45/16** (v1 已有 h=90/a=60 · v2 缓和到 Half Lamellar 中高档 sub Full 顶 90/40/40/50) |
+
+### F 家族：Padded Mail / Reinforced Chainmail Barding（3 件 · Mail 中高档）
+
+**vanilla `halfchain_barding` 60/40/25/50/16 参照**
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 22 | `AR_horse_armor_zan` | Padded Mail Barding | 0/58/0/0/65 | **60/40/25/50/16** (vanilla `halfchain_barding` 直匹配) |
+| 23 | `AR_horse_armor_zam` | Heavy Padded Mail Barding | 0/60/0/0/65 | **65/40/28/50/16** (+Heavy +5 head) |
+| 24 | `AR_horse_armor_zao` | Reinforced Chainmail Barding | 0/64/0/0/130 | **90/40/40/50/22** (vanilla `chain_barding` 90/40/40/50 直匹配 · Reinforced 顶级 · wt 130→22) |
+
+### G 家族：Full Steel Scale / Full Lamellar / Half Steel Scale（6 件 · Full 中高档 · sub 顶）
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 25 | `AR_horse_armor_l` | Leather Scale Barding | 0/60/0/0/135 | **75/38/38/48/18** (Full Leather Scale 中高) |
+| 26 | `TV_horse_armor_b` | Steel Scale Barding | 0/60/0/0/110 | **78/38/38/48/18** (Steel +3 vs Leather) |
+| 27 | `TV_horse_armor_b2` | Lamellar Barding | 0/60/0/0/110 | **76/38/38/48/18** (Lamellar -2 vs Steel) |
+| 28 | `TV_horse_armor_d` | Half Steel Scale Barding | 0/60/0/0/80 | **65/38/12/45/15** (Half Steel) |
+
+### H 家族：Half Scale / Half Lamellar 顶级（2 件）
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 29 | `AR_horse_armor_k` | Half Scale Barding | 0/70/0/0/135 | **80/40/12/48/18** (Half Scale 顶级 · body 40 顶 sub Full) |
+| 30 | `AR_horse_armor_k2` | Half Lamellar Barding | 0/70/0/0/135 | **80/40/12/48/18** |
+
+### I 家族：Scale/Lamellar And Mail Barding + Heavy Steel Scale 顶点（4 件）
+
+**vanilla `chain_barding` **h=90/b=40/l=40/a=50** ⭐ 直匹配
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 31 | `AR_horse_armor_j` | Scale And Mail Barding | 0/75/0/0/140 | **90/40/40/50/25** (vanilla `chain_barding` 直匹配) |
+| 32 | `AR_horse_armor_j2` | Lamellar And Mail Barding | 0/75/0/0/140 | **88/40/40/50/25** (Lamellar -2 vs Scale) |
+| 33 | `TV_horse_armor_a` | Heavy Steel Scale Barding | 0/75/0/0/135 | **90/40/40/50/26** (Heavy Steel Scale 顶点) |
+| 34 | `TV_horse_armor_a2` | Heavy Lamellar Barding | 0/75/0/0/135 | **88/40/40/50/26** |
+
+**状态**：34 件 🔵 log-only
+
+---
+
+## Vlandia 全 6 类收官统计（2026-09-23）
+
+**总数**：**312 件 Vlandia 装备决议归档**（HeadArmor 130 · Cape 38 · BodyArmor 94 · HandArmor 9 · LegArmor 7 · HorseHarness 34）· 全 🔵 log-only
+
+**帝国 + Vlandia 累计**：378 + 312 = **690 件决议归档**
+
+**下一步**：进入 **Battania 文化**（凯尔特/苏格兰画像 · 森林部落 · 弓箭 + 双手斧 · 部落染色画甲 + 皮革 · 无板甲）
+
+---
+
 ## 状态图例
 - 🔵 log-only · 决议已定案，XML 未改（低价值 cosmetic 类，v1 现值可接受，避免 XML churn）
 - 🟡 pending deploy · XML 已改，等下次关游戏 + `deploy.ps1`

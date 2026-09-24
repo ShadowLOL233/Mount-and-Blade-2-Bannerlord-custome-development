@@ -729,3 +729,152 @@ Plate Reinforced Ornate Pauldrons (顶) ⭐              body 88
   - Rule 2 arm mesh-tiered 分档律：Elite Heavy 25 · Standard Shoulders 20 · Standard Pauldrons 12 · Chainmail 10-12 · Leather 4-8
   - Rule 3 视觉判断优先律：命名允许 ≠ 数值强制
 - **arm 上限**：Vlandia OSA arm ≤ 25（Elite Heavy · 同 Empire）
+
+---
+
+## Vlandia · BodyArmor · 29 件（2026-09-23 归档）
+
+**关键设计观察**：Vlandia BodyArmor 顶 100（`sturgian_fortified_armor` Brigandine over Hauberk）· **比 Empire 135 低 26%**（Empire Cataphract 复合甲更重）· 但 Vlandia arm 顶 100 > Empire 67——Vlandia Knight 强调**臂部覆盖**（Full Sleeve Hauberk 传统），Empire 强调 body 覆盖。
+
+### 👕 Cloth 民用（8 件 · body 6-8）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `cloth_tunic` | 0.4 | 6/5/5 | Simple Cloth Tunic |
+| `long_woolen_tunic` | 0.4 | 6/5/5 | Long Woolen Tunic |
+| `monk_robe` | 0.5 | 6/6/5 | Scholar Robe |
+| `sackcloth_tunic` | 0.6 | 6/5/5 | Sackcloth Tunic |
+| `vlandian_corset_dress` | 0.5 | 6/6/5 | Corseted Dress |
+| `vlandian_noble_woman_dress` | 0.6 | 6/5/5 | Silken Noble Dress |
+| `vlandian_woman_dress` | 0.7 | 6/6/5 | Aproned Dress |
+| `long_hemp_tunic` | 0.6 | 8/8/6 | Long Hemp Tunic |
+
+### 🧥 Padded Gambeson / Aketon（4 件 · body 16-19）
+
+| id | mat | wt | b/l/a | 名称 |
+|---|---|---:|---|---|
+| `padded_leather_shirt` | Leather | 1.8 | 16/16/11 | Padded Leather Shirt |
+| `gambeson_b` | Cloth | 2.0 | 18/18/18 | Aketon |
+| `leather_coat_over_cloth` | Cloth | 0.7 | 18/18/7 | Leather Coat Over Cloth |
+| `aketon` | Cloth | 2.4 | 19/19/19 | Heavy Aketon |
+
+### 🦌 Leather Vest/Coat（4 件 · body 20-24）
+
+| id | mat | wt | b/l/a | 名称 |
+|---|---|---:|---|---|
+| `leather_coat` | Leather | 2.3 | 20/20/15 | Leather Tunic |
+| `woven_leather_vest` | Leather | 4.7 | 22/18/12 | Woven Leather Vest |
+| `padded_short_coat` | Cloth | 2.2 | 23/19/18 | Padded Short Coat |
+| `sleeveless_padded_coat` | Cloth | 2.2 | 23/25/10 | Sleeveless Padded Coat |
+| `sleeveless_padded_short_coat` | Cloth | 2.0 | 23/20/10 | Sleeveless Padded Short Coat |
+| `leather_scale_armor` | Leather | 8.6 | 24/22/18 | Leather Scale Armor |
+| `padded_coat` | Cloth | 2.4 | 28/32/26 | Padded Footman Coat |
+
+### 🔗 Chainmail Mail Shirt/Hauberk（5 件 · body 37-45）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `veteran_mercenary_armor` | 8.2 | 37/33/13 | Fortified Mercenary Armor |
+| `vlandia_chainmail` | 10 | 40/44/40 | Heavy Mail Hauberk |
+| `mail_shirt` | 7.5 | 41/33/36 | Mail Shirt |
+| `red_coat_over_mail` | 8.6 | 45/38/42 | Red Tabard over Mail Hauberk |
+| `white_coat_over_mail` | 9.6 | 45/38/42 | White Tabard over Mail Hauberk |
+
+### 🔗 Chainmail 高档（2 件 · body 52-77）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `banded_leather_over_mail` | 8.6 | 52/27/27 | Banded Leather Over Mail |
+| `hauberk` | 12.3 | 77/44/44 | Double Mail Hauberk |
+
+### 🛡 Plate 顶档（3 件 · body 75-100）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `plated_leather_coat` | 12.7 | 75/56/60 | Rough Brigandine |
+| `coat_of_plates_over_mail` | 20.11 | 82/38/49 | Brigandine over Mail |
+| `sturgian_fortified_armor` | 26 | **100/95/100** ⭐ | Brigandine over Hauberk ⭐ 顶点 |
+
+### Vlandia BodyArmor 家族梯度
+
+```
+Cloth 民用 (tunic/dress/robe)                          body 6-8
+Padded Leather Shirt / Aketon (Padded/Cloth)           body 16-19
+Leather Coat/Vest / Padded Short Coat                  body 20-24
+Padded Footman Coat (Cloth 顶)                          body 28
+Chainmail Mercenary Armor                              body 37
+Chainmail Mail Shirt/Hauberk                           body 40-45
+Chainmail Banded Leather Over Mail                     body 52
+Chainmail Double Mail Hauberk                          body 77
+Plate Rough Brigandine                                 body 75
+Plate Brigandine over Mail                             body 82
+Plate Brigandine over Hauberk (顶) ⭐                  body 100
+```
+
+### Vlandia BodyArmor 家族关键约束
+
+- **顶点**：`sturgian_fortified_armor` **100/95/100/26**（Brigandine over Hauberk）· body ≤ 100 · arm ≤ 100
+- **Vlandia vs Empire 差异**：
+  - Vlandia 顶 100 < Empire 顶 135（Vlandia Knight 板甲更轻）
+  - Vlandia arm 顶 100 > Empire arm 67（Vlandia Full Sleeve Hauberk 传统 · 全臂锁子甲）
+  - Vlandia leg 顶 95 ≈ Empire leg 122（Vlandia 无 Scale Skirt 强化）
+- **序**：`body_armor ≥ leg_armor > arm_armor`（vanilla 全 29 件遵守，唯 `sturgian_fortified_armor` arm=100=body 齐）
+- **材质分档硬约束**：Cloth ≤ 28（Padded Footman Coat 顶）· Leather ≤ 24 · Chainmail 37-77 · Plate 75-100
+- **结构描述子分档**：Tunic 民用 · Padded Gambeson/Aketon 中档 · Coat Over Mail 中高档 · Brigandine 顶档
+- **Vlandia 特色 base_type**：Aketon 命名（Cloth Gambeson 变体）· Tabard Over Mail Hauberk（骑士外袍）· Brigandine（板衣 · Plate 顶档）
+
+---
+
+## Vlandia · HandArmor · 5 件（2026-09-23 归档）
+
+**关键设计观察**：Vlandia HandArmor 顶 `lordly_mail_mitten` **60** · 比 Empire 顶 63 略低 · 全为 Mail/Plate 系（无 Cloth Padded Mitten）
+
+| id | mat | wt | arm | 名称 |
+|---|---|---:|---:|---|
+| `khuzait_heavy_armor_bracer` | Plate | 2.2 | 38 | Khan's Plated Bracers |
+| `reinforced_leather_vambraces` | Plate | 1.0 | 40 | Splint Vambraces |
+| `mail_mitten` | Chainmail | 1.4 | 45 | Mail Mittens |
+| `reinforced_mail_mitten` | Chainmail | 1.6 | 48 | Reinforced Mail Mittens |
+| `lordly_mail_mitten` | Chainmail | 1.7 | **60** | Heavy Mail Mittens ⭐ 顶点 |
+
+### Vlandia HandArmor 关键约束
+
+- **顶点**：`lordly_mail_mitten` 60/1.7 · arm ≤ 60（比 Empire 63 略低）
+- **命名子结构**：Bracers/Vambraces（前臂）< Mittens（Mail 全手）
+- **Vlandia 特色**：全线 Mail Mittens 系为主（无 Padded Mitten）· 反映 Vlandia Knight Mail 传统
+
+---
+
+## Vlandia · LegArmor · 2 件（2026-09-23 归档）
+
+**关键设计观察**：Vlandia LegArmor 极简 · 顶 `mail_cavalier_boots` **43** · 无 Plate Boots 顶档（Empire Lamellar Plate Boots 62）
+
+| id | mat | wt | leg | 名称 |
+|---|---|---:|---:|---|
+| `leather_cavalier_boots` | Leather | 0.9 | 32 | Leather Cavalier Boots |
+| `mail_cavalier_boots` | Chainmail | 1.8 | **43** | Mail Cavalier Boots ⭐ 顶点 |
+
+### Vlandia LegArmor 关键约束
+
+- **顶点**：`mail_cavalier_boots` 43/1.8 · leg ≤ 43（比 Empire 62 低 30%）
+- **Vlandia 特色**：Mail Boots + Leather Boots 二档 · 无 Plate 顶档
+
+---
+
+## Vlandia · HorseHarness · 2 件（2026-09-23 归档 · 全 4 字段）
+
+**关键设计观察**：Vlandia HorseHarness 极简 · 只 2 件 · 全 Chainmail 材质 · **顶点 `chain_barding` h=90 b=40 l=40 a=50** · 比 Empire `imperial_scale_barding` 90/50/50/60 稍弱（body -10, arm -10）
+
+**⚠ 引擎机制回忆**：HorseHarness 引擎硬 code 只用 body_armor · head/arm/leg 三字段是 RBM 装饰性填充（见 Empire HorseHarness 引擎机制核实）
+
+| id | wt | h/b/l/a | 名称 |
+|---|---:|---|---|
+| `halfchain_barding` | 16 | **60/40/25/50** | Half Mail Barding |
+| `chain_barding` | 26 | **90/40/40/50** ⭐ | Reinforced Chainmail Barding ⭐ 顶点 |
+
+### Vlandia HorseHarness 关键约束
+
+- **顶点**：`chain_barding` **h=90/b=40/l=40/a=50/wt=26** · 全字段 ≤ Empire 顶点
+- **无民用 Harness**（Vlandia 无 stripped_leather_harness / imperial_riding_harness 等值）· 只有 Barding 中高档
+- **Half vs Full 差异**：Half `halfchain_barding` **l=25** vs Full `chain_barding` **l=40** · Vlandia 半覆盖 leg 25（比 Empire Half 5 高很多）
+- **Vlandia 特色**：全 Chainmail 材质 · 无 Plate/Scale 顶档 · 反映 Vlandia Knight Mail 传统

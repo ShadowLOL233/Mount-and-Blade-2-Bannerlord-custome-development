@@ -2369,7 +2369,15 @@ public static void SetBound(this Village village, Settlement boundTarget) {
   - **帝国 HandArmor · 12 件**（A. Cloth Armwrap/Vambrace 2 · B. Plate Vambraces 中低 2 · C. Durkhan Lamellar 2 · D. Plate Gloves 中高 2 · E. Gauntlets 顶档 4）· **body 恒 0 · arm 上限 63**（`lamellar_plate_gauntlets`）· Vambraces < Gloves < Gauntlets 命名子结构分档
   - **帝国 LegArmor · 11 件**（A. Slippers/Shoes 3 · B. Boots+Greaves 中档 1 · C. Light Lamellar 中低 2 · D. Suede Splint 中档 1 · E. Plate Boots 高档 4）· **body 恒 0 · leg 上限 62**（`lamellar_plate_boots`）· Slippers < Shoes < Boots < Boots With Greaves < Lamellar Plate Boots
   - **帝国 HorseHarness · 26 件**（A. 民用 Harness 3 · B. Half Padded 3 · C. Half Leather 1 · C+. Full Studded Leather 1 · D. Half Lamellar 4 · E. Half Mail 4 · F. Half 顶级半覆盖 3 · G. Full/Heavy 顶点 7）· **⚠ 反向下调批 + 全 4 字段修订**（body ×0.5-0.7 · wt ×0.15-0.30 · 补齐 head/arm/leg）· 顶点参照 vanilla `imperial_scale_barding` h=90/b=50/l=50/a=60/wt=30 · **⚠ 引擎机制核实**：dnSpy 反编译确认 vanilla+RBM 引擎硬 code 对马只用 body_armor 字段（`Agent.GetBaseArmorEffectivenessForBodyPart` 对非人类返回 ArmorTorso · RBM `ArmorRework` 同分支）· head/arm/leg 三字段是"XML pattern 一致 + 未来兼容"装饰性填充，真正决定防护的是 body_armor · v2 保留全 4 字段与 RBM 风格一致
-  - **合计 165+89+75+12+11+26 = 378 件决议归档 · 全部 🔵 log-only 状态**——决议归档，XML 未动，避免 churn，累积一批再 deploy
+  - **帝国 6 类合计 165+89+75+12+11+26 = 378 件决议归档 · 全部 🔵 log-only 状态**——决议归档，XML 未动，避免 churn，累积一批再 deploy
+  - **Vlandia 全 6 类完成（2026-09-23）**：HeadArmor 130 · Cape 38 · BodyArmor 94 · HandArmor 9 · LegArmor 7 · HorseHarness 34 = **312 件决议**
+    - **Vlandia HeadArmor 130 件**（15 家族 A-O）：顶点 `full_helm_over_mail_coif` 140/116/40 · Vlandia 特色 Full Helm 全罩式 body 116 · Visored Helmet body 75 · Nasal 系 5 装饰变体 × 6 aventail 矩阵
+    - **Vlandia Cape 38 件**（10 家族 A.1-B.3）：顶 `noble_pauldron_with_scarf` 88（比 Empire 55 高 1.6×）· Hood 系新档 · 三部分律沿用
+    - **Vlandia BodyArmor 94 件**（15 家族 A-O）：顶 `sturgian_fortified_armor` 100/95/100 · Vlandia arm 顶 100 反映 Full Sleeve Hauberk 传统（比 Empire 67 高）· Brigandine 顶档
+    - **Vlandia HandArmor 9 件**：顶 `lordly_mail_mitten` 60 · 全 Mail Mittens 系 · 无 Cloth Padded 档
+    - **Vlandia LegArmor 7 件**：顶 `mail_cavalier_boots` 43 · 无 Plate 顶档 · 极简 2 档
+    - **Vlandia HorseHarness 34 件**：顶 `chain_barding` h=90/b=40/l=40/a=50 · 全 Chainmail · Half vs Full 差异 leg 25 vs 40（比 Empire 5 vs 50 收窄）
+  - **累计 帝国 378 + Vlandia 312 = 690 件决议归档**
 
   **Cape 三部分律速查**（2026-09-23 用户拍板）：
   1. **命名二分律**：有 shoulder/pauldron 命名 → 允许 body + arm 同 > 0（**body > arm 严格序**）；无此命名（Cape/Cloak/Sash/Focale/Pelt/Collar）→ **arm 必须 = 0**

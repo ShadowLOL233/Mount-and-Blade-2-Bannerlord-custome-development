@@ -557,6 +557,53 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
 
+### 49. OSA v2 · HorseHarness T1-T9 跨文化统一体系全面重审（2026-09-24 晚）
+
+**触发**：#48 全 6 文化 deploy 后 · 用户 review HorseHarness 数值发现 3 个体系问题：
+1. **Half Barding 应该只下调护甲值不下调护甲等级**（vanilla RBM 规则 · Full 90/50/50/60 → Half 90/50/5/60 · 只 leg 减）· 我们前决议 Empire Half Padded 30-35/18-22/3/20-22 · h/b/a 都降 · 违反 vanilla 原则
+2. **跨文化同材质马甲护甲等级不一致**（Sturgia OSA Chainmail 45 vs Vlandia OSA Chainmail 90 · 差 2 倍 · 因为 Sturgia vanilla `northern_ring_barding` 顶 45 低 · 我们按 vanilla direct anchor 让 OSA 也被 vanilla 弱数值限制）
+3. **复合结构马甲欠强**（用户所举例：Vlandia `Western Lamellar And Mail Barding` "扎甲+链甲+面部内衬" 三层复合 · v2 决议 88/40/40/50 · sub 单层 `chain_barding` 90/40 · 违反物理直觉）
+
+**用户 quote**：
+- "Half Barding 应该只下调护甲值而非下调护甲等级"
+- "同样材质的马甲，存在不同文化之间却被定义为不同护甲等级"
+- "三层防护的性能却只换来了 40 马甲+护甲等级 5，这不恰当"
+
+**修订方案**：建立**跨文化统一 T1-T9 分档体系**（详见 `BALANCE_V2_LOG.md` HorseHarness · T1-T9 章节末尾）
+
+| Tier | 结构 | Full 顶 | Half 顶 |
+|---|---|---|---|
+| T1 民用 | Saddle/Harness | 10/10/8/10/8 | — |
+| T2 Padded/Cloth | 布垫单层 | 45/22/22/28/16 | 45/22/3/28/13 |
+| T3 Leather | 皮革单层 | 55/30/30/35/16 | 55/30/3/35/13 |
+| T4 Studded Leather | 皮革加强 | 65/35/35/40/18 | 65/35/5/40/14 |
+| T5 半复合 | Padded Mail/Leather Scale | 75/40/40/50/22 | 75/40/5/50/16 |
+| T6 Chainmail 单层 | Mail/Ring/Chain | **90/40/40/50/26** vanilla direct | 90/40/5/50/17 |
+| T7 Scale/Lamellar/Plate 单层 | 甲片单层 | **90/50/50/60/30** vanilla direct | 90/50/5/60/17 vanilla direct |
+| T8 复合双层 | Scale+Mail / Lamellar+Mail / Mail+Plate | **⚠ 95/52/52/62/28** (越 vanilla) | 95/52/5/62/17 |
+| T9 复合三层顶点 | 保留位（未采用） | 100/55/55/65/30 | 100/55/5/65/22 |
+
+**重审件数**：97 件（Empire 26 + Vlandia 34 + Sturgia 6 + Aserai 31）· Khuzait 13 华夏中原线特批不变 · Nord 无 HorseHarness
+
+**关键越权**（用户特批范围）：
+- **Sturgia 5 件全升**：vanilla `northern_ring_barding` 45/35/5/45 顶 → OSA Sturgia 拉到 90/40-50 · 反映"精英维京骑兵文化"不应被 vanilla 弱数值限制
+- **Vlandia T8 双层 2 件**：`AR_horse_armor_j/j2` (Scale/Lamellar And Mail) · 95/52 · 越 `chain_barding` 90
+- **Aserai T8 双层 2 件**：`AR_horse_armor_zaq/zaq2` (Half/Full Mail And Plate) · 95/52 · 越 `mail_and_plate_barding` 90/47
+
+**装饰前缀简化**：Silvered/Gilded/Decorated/Reinforced/Plated 无数值加成（只命名区分）· Heavy wt +2 · Brass -2 body · Noble +2 head/body
+
+**Pipeline 复用**：`manual_override.ps1` decisions hashtable 4 段全部覆写（Empire/Vlandia/Sturgia/Aserai HorseHarness）· rerun 生成器 420 件 XML 无变化（Khuzait 13 + Nord 65 + Aserai body 20 + Khuzait 231 + Empire override 4 + Vlandia L 3 + 97 HorseHarness 修订）· deploy 完成
+
+**Deploy 状态**：
+- ✅ XML 已 deploy 到 game Modules
+- ✅ 4 文化代表件已核实：DZ_horse_armor_h Empire Half Lamellar 90/50/5/60/17 · AR_horse_armor_j Vlandia Scale And Mail 95/52/52/62/28 · AR_horse_armor_zag Sturgia Chainmail Barding 90/40/40/50/26 · AR_horse_armor_zaq2 Aserai Mail And Plate 95/52/52/62/28
+
+**Claude 不能驱动的实机验证**（用户操作项）：
+- 完全关闭 launcher + Bannerlord.exe 后重启（不重启 XML 变更不生效）
+- 战役内检查代表件 UI 显示：Sturgia Chainmail 应显示 body 40（前 35 · 现应 40）· Vlandia Scale And Mail 应 body 52（前 40）
+- Cataphract 类玩家 · Sturgia OSA 装备手感应显著提升
+- 战场观察：复合结构 T8 马甲防御是否符合直觉（Aserai Mail And Plate 应 > 单层 Scale）
+
 ### 48. OSA v2 · 全 7 文化收官 + Nord/Empire vanilla override + 323 件 manual patch 落地（2026-09-24）
 
 **背景**：本日一次性完成 OSA v2 剩余全部工作 · 从"Khuzait 华夏中原线 + 铁浮屠 148 特批"起 · 到 Aserai 波斯萨珊线追加 · Empire vanilla override 首次打破铁律 · Vlandia L 家族修订 · Nord NavalDLC 65 件完整 v2 平衡（第 7 个文化 · 首次批量 vanilla override）· 最终**手工 override XML 落地 deploy** · 全项目决议归档 1770+ 件 · 手工 XML override 323 件生效。

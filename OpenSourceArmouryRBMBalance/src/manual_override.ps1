@@ -459,6 +459,149 @@ $decisions['AR_horse_armor_y2']  = @{ h=70; b=50; l=5;  a=60; wt=17 }
 $decisions['AR_horse_armor_zh']  = @{ h=5;  b=0;  l=0;  a=5;  wt=8.5 }
 $decisions['AR_horse_armor_zf']  = @{ h=5;  b=0;  l=0;  a=5;  wt=8.5 }
 
+# ==================== Empire HorseHarness 26 件 (2026-09-24 T1-T9 重审) ====================
+# T1 民用 3
+$decisions['AR_horse_armor_zg']  = @{ h=5;  b=5;  l=3;  a=5;  wt=6 }   # Light Harness
+$decisions['AR_horse_armor_zc']  = @{ h=8;  b=12; l=5;  a=8;  wt=8 }   # Noble Harness (+Noble)
+$decisions['AR_horse_armor_zb']  = @{ h=12; b=15; l=5;  a=12; wt=10 }  # Stripped Noble
+# T2 Half Padded 3
+$decisions['AR_horse_armor_n3']  = @{ h=45; b=22; l=3;  a=28; wt=13 }
+$decisions['AR_horse_armor_n']   = @{ h=45; b=22; l=3;  a=28; wt=13 }
+$decisions['AR_horse_armor_n2']  = @{ h=45; b=22; l=3;  a=28; wt=13 }
+# T3 Half Leather 1
+$decisions['AR_horse_armor_i']   = @{ h=55; b=30; l=3;  a=35; wt=13 }
+# T4 Full Studded Leather 1
+$decisions['AR_horse_armor_h']   = @{ h=65; b=35; l=35; a=40; wt=18 }
+# T7 Half Lamellar 4 (Lamellar 归 T7 单层甲片 = Scale)
+$decisions['DZ_horse_armor_e']   = @{ h=90; b=50; l=5;  a=60; wt=20 }  # +Heavy wt +3
+$decisions['DZ_horse_armor_f']   = @{ h=90; b=50; l=5;  a=60; wt=17 }
+$decisions['DZ_horse_armor_g']   = @{ h=90; b=50; l=5;  a=60; wt=20 }  # +Heavy wt +3
+$decisions['DZ_horse_armor_h']   = @{ h=90; b=50; l=5;  a=60; wt=17 }
+# T6 Half Mail 4
+$decisions['AR_horse_armor_b']   = @{ h=90; b=40; l=5;  a=50; wt=17 }
+$decisions['AR_horse_armor_b2']  = @{ h=90; b=40; l=5;  a=50; wt=17 }
+$decisions['AR_horse_armor_a']   = @{ h=90; b=40; l=5;  a=50; wt=17 }
+$decisions['AR_horse_armor_a2']  = @{ h=90; b=40; l=5;  a=50; wt=17 }
+# T7 Half Plate/Scale 3
+$decisions['AR_horse_armor_f']   = @{ h=90; b=50; l=5;  a=60; wt=17 }
+$decisions['AR_horse_armor_zaa'] = @{ h=90; b=50; l=5;  a=60; wt=17 }
+$decisions['AR_horse_armor_zac'] = @{ h=90; b=50; l=5;  a=60; wt=17 }
+# T7 Full Lamellar 2 (归 T7 单层甲片)
+$decisions['DZ_horse_armor_b']   = @{ h=90; b=50; l=50; a=60; wt=30 }
+$decisions['DZ_horse_armor_d']   = @{ h=90; b=50; l=50; a=60; wt=30 }
+# T7 Full Plate/Scale 3
+$decisions['AR_horse_armor_e']   = @{ h=90; b=50; l=50; a=60; wt=30 }
+$decisions['AR_horse_armor_zab'] = @{ h=90; b=50; l=50; a=60; wt=30 }
+$decisions['AR_horse_armor_zad'] = @{ h=90; b=50; l=50; a=60; wt=30 }
+# T7 Full Lamellar Heavy 2 (Heavy wt +2)
+$decisions['DZ_horse_armor_a']   = @{ h=90; b=50; l=50; a=60; wt=32 }
+$decisions['DZ_horse_armor_c']   = @{ h=90; b=50; l=50; a=60; wt=32 }
+
+# ==================== Vlandia HorseHarness 34 件 (2026-09-24 T1-T9 重审) ====================
+# T1 民用 3
+$decisions['AR_horse_armor_zah'] = @{ h=10; b=8;  l=5;  a=10; wt=8 }
+$decisions['AR_horse_armor_s']   = @{ h=12; b=12; l=5;  a=12; wt=10 }
+$decisions['AR_horse_armor_zai'] = @{ h=12; b=12; l=5;  a=12; wt=10 }
+# T2 Half Padded/Cloth 3
+$decisions['AR_horse_armor_zal'] = @{ h=45; b=22; l=3;  a=28; wt=13 }
+$decisions['AR_horse_armor_zat'] = @{ h=45; b=22; l=3;  a=28; wt=13 }
+$decisions['TV_horse_armor_c3']  = @{ h=45; b=22; l=3;  a=28; wt=13 }
+# T2 Padded/Cloth Full 3
+$decisions['AR_horse_armor_zak'] = @{ h=45; b=22; l=22; a=28; wt=16 }
+$decisions['AR_horse_armor_zas'] = @{ h=45; b=22; l=22; a=28; wt=16 }
+$decisions['TV_horse_armor_b3']  = @{ h=45; b=22; l=22; a=28; wt=16 }
+# T2 Heavy Padded/Cloth 6 (Heavy +2 head, +2 wt)
+$decisions['AR_horse_armor_o']   = @{ h=47; b=22; l=3;  a=28; wt=15 }  # Half
+$decisions['AR_horse_armor_zaj'] = @{ h=47; b=22; l=22; a=28; wt=18 }  # Full
+$decisions['AR_horse_armor_zar'] = @{ h=47; b=22; l=22; a=28; wt=18 }  # Full
+$decisions['AR_horse_armor_zau'] = @{ h=45; b=22; l=3;  a=28; wt=13 }  # Half (no Heavy)
+$decisions['TV_horse_armor_a3']  = @{ h=47; b=22; l=22; a=28; wt=18 }  # Full
+$decisions['TV_horse_armor_d3']  = @{ h=45; b=22; l=3;  a=28; wt=13 }  # Half
+# T5 半复合 (Leather Scale · Padded Mail) 4
+$decisions['AR_horse_armor_m']   = @{ h=75; b=40; l=5;  a=50; wt=16 }  # Half Leather Scale
+$decisions['AR_horse_armor_p']   = @{ h=45; b=22; l=22; a=28; wt=16 }  # Padded Full → T2
+$decisions['AR_horse_armor_p2']  = @{ h=45; b=22; l=22; a=28; wt=16 }  # Padded Full → T2
+$decisions['AR_horse_armor_l']   = @{ h=75; b=40; l=40; a=50; wt=22 }  # Leather Scale Full → T5 Full
+# T7 Half Scale/Lamellar 6
+$decisions['TV_horse_armor_c']   = @{ h=90; b=50; l=5;  a=60; wt=17 }  # Half Steel Scale
+$decisions['TV_horse_armor_c2']  = @{ h=90; b=50; l=5;  a=60; wt=17 }  # Half Lamellar
+$decisions['TV_horse_armor_d2']  = @{ h=90; b=50; l=5;  a=60; wt=17 }  # Half Lamellar
+$decisions['TV_horse_armor_d']   = @{ h=90; b=50; l=5;  a=60; wt=17 }  # Half Steel Scale
+$decisions['AR_horse_armor_k']   = @{ h=90; b=50; l=5;  a=60; wt=17 }  # Half Scale
+$decisions['AR_horse_armor_k2']  = @{ h=90; b=50; l=5;  a=60; wt=17 }  # Half Lamellar
+# T5 Padded Mail 2 (半复合)
+$decisions['AR_horse_armor_zan'] = @{ h=75; b=40; l=40; a=50; wt=22 }  # Padded Mail
+$decisions['AR_horse_armor_zam'] = @{ h=77; b=40; l=40; a=50; wt=24 }  # Heavy Padded Mail
+# T6 Chainmail Full 1
+$decisions['AR_horse_armor_zao'] = @{ h=90; b=40; l=40; a=50; wt=26 }  # Reinforced Chainmail (vanilla direct)
+# T7 Full Scale/Lamellar 2
+$decisions['TV_horse_armor_b']   = @{ h=90; b=50; l=50; a=60; wt=30 }  # Steel Scale Full
+$decisions['TV_horse_armor_b2']  = @{ h=90; b=50; l=50; a=60; wt=30 }  # Lamellar Full
+# T7 Full Heavy Scale/Lamellar 2 (Heavy wt +2)
+$decisions['TV_horse_armor_a']   = @{ h=90; b=50; l=50; a=60; wt=32 }  # Heavy Steel Scale
+$decisions['TV_horse_armor_a2']  = @{ h=90; b=50; l=50; a=60; wt=32 }  # Heavy Lamellar
+# ⚠ T8 复合双层 2 (用户特批越 vanilla · Scale/Lamellar + Mail)
+$decisions['AR_horse_armor_j']   = @{ h=95; b=52; l=52; a=62; wt=28 }  # Scale And Mail
+$decisions['AR_horse_armor_j2']  = @{ h=95; b=52; l=52; a=62; wt=28 }  # Lamellar And Mail
+
+# ==================== Sturgia HorseHarness 6 件 (2026-09-24 T1-T9 重审 · 跨文化统一) ====================
+# ⚠ Sturgia vanilla `northern_ring_barding` 45/35/5/45/15 大幅越权 · 用户批准跨文化统一
+$decisions['AR_horse_armor_zi']   = @{ h=12; b=13; l=5;  a=12; wt=8 }   # T1 Heavy Noble Harness
+$decisions['AR_horse_armor_zd']   = @{ h=90; b=40; l=40; a=50; wt=26 }  # T6 Plated Ring Barding (Chainmail Full)
+$decisions['AR_horse_armor_zag']  = @{ h=90; b=40; l=40; a=50; wt=26 }  # T6 Chainmail Barding Full
+$decisions['AR_horse_armor_zae']  = @{ h=90; b=50; l=50; a=60; wt=30 }  # T7 Iron Scale Barding Full
+$decisions['AR_horse_armor_zae2'] = @{ h=90; b=50; l=50; a=60; wt=30 }  # T7 Steel Scale Barding Full
+$decisions['AR_horse_armor_zaf']  = @{ h=90; b=40; l=40; a=50; wt=26 }  # T6 Ringed Mail Barding Full
+
+# ==================== Aserai HorseHarness 31 件 (2026-09-24 T1-T9 重审) ====================
+# T1 民用 1
+$decisions['AR_horse_armor_ze']   = @{ h=8;  b=12; l=5;  a=8;  wt=8 }  # Heavy Harness (+Heavy)
+# T2 Wicker Dromedary (Cloth/Padded 变体)
+$decisions['tv_camel_armor_i']    = @{ h=45; b=22; l=3;  a=28; wt=13 }  # Half Wicker
+$decisions['tv_camel_armor_j']    = @{ h=45; b=22; l=22; a=28; wt=16 }  # Wicker Full
+# T3 Padded Leather Dromedary
+$decisions['tv_camel_armor_h']    = @{ h=55; b=30; l=30; a=35; wt=16 }  # Padded Leather Full
+# T2 Half Padded 3
+$decisions['AR_horse_armor_q']    = @{ h=45; b=22; l=3;  a=28; wt=13 }
+$decisions['AR_horse_armor_q2']   = @{ h=45; b=22; l=3;  a=28; wt=13 }
+$decisions['AR_horse_armor_q3']   = @{ h=45; b=22; l=3;  a=28; wt=13 }
+# T3 Half Padded Leather Dromedary
+$decisions['tv_camel_armor_g']    = @{ h=55; b=30; l=3;  a=35; wt=13 }
+# T7 Half Scale Dromedary 2
+$decisions['tv_camel_armor_a']    = @{ h=90; b=50; l=5;  a=60; wt=17 }  # Brass Half Scale (装饰无加成)
+$decisions['tv_camel_armor_b']    = @{ h=90; b=50; l=5;  a=60; wt=17 }  # Steel Half Scale
+# T2 Padded Full 3
+$decisions['AR_horse_armor_r']    = @{ h=45; b=22; l=22; a=28; wt=16 }
+$decisions['AR_horse_armor_r2']   = @{ h=45; b=22; l=22; a=28; wt=16 }
+$decisions['AR_horse_armor_r3']   = @{ h=45; b=22; l=22; a=28; wt=16 }
+# T4 Studded Leather Dromedary 2
+$decisions['tv_camel_armor_e']    = @{ h=65; b=35; l=5;  a=40; wt=14 }  # Half
+$decisions['tv_camel_armor_f']    = @{ h=65; b=35; l=35; a=40; wt=18 }  # Full
+# T6 Half Mail 4
+$decisions['AR_horse_armor_u']    = @{ h=90; b=40; l=5;  a=50; wt=17 }
+$decisions['AR_horse_armor_u2']   = @{ h=90; b=40; l=5;  a=50; wt=17 }
+$decisions['AR_horse_armor_t']    = @{ h=90; b=40; l=5;  a=50; wt=17 }
+$decisions['AR_horse_armor_t2']   = @{ h=90; b=40; l=5;  a=50; wt=17 }
+# T7 Half Scale/Lamellar 3
+$decisions['AR_horse_armor_d']    = @{ h=90; b=50; l=5;  a=60; wt=17 }
+$decisions['AR_horse_armor_d2']   = @{ h=90; b=50; l=5;  a=60; wt=17 }
+$decisions['AR_horse_armor_d3']   = @{ h=90; b=50; l=5;  a=60; wt=17 }
+# T7 Half Plate 1
+$decisions['AR_horse_armor_zap']  = @{ h=90; b=50; l=5;  a=60; wt=17 }
+# ⚠ T8 Half Mail And Plate 1 (复合双层)
+$decisions['AR_horse_armor_zaq']  = @{ h=95; b=52; l=5;  a=62; wt=17 }
+# T7 Full Plate 1
+$decisions['AR_horse_armor_zap2'] = @{ h=90; b=50; l=50; a=60; wt=30 }
+# ⚠ T8 Full Mail And Plate 1 (复合双层 · 越 vanilla)
+$decisions['AR_horse_armor_zaq2'] = @{ h=95; b=52; l=52; a=62; wt=28 }
+# T7 Full Scale/Lamellar 3
+$decisions['AR_horse_armor_c']    = @{ h=90; b=50; l=50; a=60; wt=30 }
+$decisions['AR_horse_armor_c2']   = @{ h=90; b=50; l=50; a=60; wt=30 }
+$decisions['AR_horse_armor_c3']   = @{ h=90; b=50; l=50; a=60; wt=30 }
+# T7 Full Scale Dromedary 2
+$decisions['tv_camel_armor_c']    = @{ h=90; b=50; l=50; a=60; wt=30 }
+$decisions['tv_camel_armor_d']    = @{ h=90; b=50; l=50; a=60; wt=30 }
+
 Write-Host "Decisions loaded: $($decisions.Count) items" -ForegroundColor Green
 
 # ---------- source XML index ----------

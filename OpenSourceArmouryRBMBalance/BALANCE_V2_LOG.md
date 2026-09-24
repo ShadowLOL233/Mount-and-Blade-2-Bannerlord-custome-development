@@ -6770,6 +6770,89 @@ Wait - Zebra Skin/Lion Pelt 命名无 shoulder/pauldron → 归 B 组
 
 ---
 
+## HorseHarness · T1-T9 跨文化统一体系（2026-09-24 全面重审）
+
+### 触发
+
+用户 2026-09-24 review deploy 后 · 提出 3 个体系问题：
+1. **Half Barding 应该只下调护甲值不下调护甲等级**（vanilla RBM 规则：Half = Full h/b/a 保持 · 只 leg 减）
+2. **同材质马甲跨文化不应有不同护甲等级**（Sturgia OSA Chainmail 45 vs Vlandia OSA Chainmail 90 · 差 2 倍）
+3. **复合结构马甲欠强**（Vlandia `Lamellar And Mail Barding` 三层复合仅 body 40 · sub 单层 chainmail 90/40）
+
+用户 quote：
+- "Half Barding 应该只下调护甲值而非下调护甲等级"
+- "同样材质的马甲，存在不同文化之间却被定义为不同护甲等级的问题"
+- "扎甲覆盖+链甲+面部内衬的马甲，三层防护的性能却只换来了 40 马甲+护甲等级 5，这不恰当"
+
+### 新 T1-T9 分档体系（跨文化统一 · 用户批准）
+
+| Tier | 结构定位 | Full 顶 (h/b/l/a/wt) | Half 顶 (h/b/l/a/wt) |
+|---|---|---|---|
+| T1 民用 | Saddle/Harness/Fur | 10/10/8/10/8 | — |
+| T2 Padded/Cloth | 布垫单层 | 45/22/22/28/16 | 45/22/3/28/13 |
+| T3 Leather | 皮革单层 | 55/30/30/35/16 | 55/30/3/35/13 |
+| T4 Studded Leather | 皮革加强 | 65/35/35/40/18 | 65/35/5/40/14 |
+| T5 半复合 (Padded Mail / Leather Scale) | 半复合 | 75/40/40/50/22 | 75/40/5/50/16 |
+| T6 Chainmail 单层 | Mail/Ring/Chain | **90/40/40/50/26** (`chain_barding` direct) | 90/40/5/50/17 |
+| T7 Scale/Lamellar/Plate 单层 | 甲片单层顶 | **90/50/50/60/30** (`imperial_scale_barding` direct) | 90/50/5/60/17 (`half_scale_barding` direct) |
+| T8 复合双层 | Scale+Mail / Lamellar+Mail / Mail+Plate | ⚠ **95/52/52/62/28** (越 vanilla) | 95/52/5/62/17 |
+| T9 复合三层顶点 | Lamellar+Mail+Leather (未采用) | 100/55/55/65/30 | 100/55/5/65/22 |
+
+**装饰前缀简化**：
+- Silvered/Gilded/Decorated/Reinforced/Plated：**无数值加成**，只命名区分
+- Heavy：**wt +2** 反映结构重量
+- Brass：**-2 body** vs Iron/Steel
+- Noble：**+2 head/body** 精工微加
+
+### ⚠ 越权总览（用户特批范围）
+
+**跨文化统一原则**（越 vanilla RBM 顶）：
+- **Sturgia 6 件全升**（越 `northern_ring_barding` 45 顶 · Sturgia OSA Chainmail 90 · Scale 90/50/50/60）· 反映 Sturgia 精英维京骑兵文化不应被 vanilla 弱数值限制
+- **Vlandia T8 双层 2 件**：`AR_horse_armor_j/j2` (Scale/Lamellar And Mail) · 95/52/52/62/28 · 越 vanilla `chain_barding` 90/40（复合升档 · 用户所举例）
+- **Aserai T8 双层 2 件**：`AR_horse_armor_zaq/zaq2` (Half/Full Mail And Plate) · 95/52 · 越 vanilla `mail_and_plate_barding` 90/47
+
+**保留 vanilla direct**（无越权）：
+- Empire T7 Full 顶 90/50/50/60/30 = `imperial_scale_barding` direct
+- Vlandia T6 Full 顶 90/40/40/50/26 = `chain_barding` direct
+- Aserai T7 Full 顶 90/50/50/60/30 与 Empire T7 一致
+- Khuzait 华夏中原线 13 件不动（用户特批 Full 90/50/50/60/30 · Half 70/50/5/60/17）
+
+### 关键顶点变化
+
+| id | 文化 | 命名 | 旧 v2 | **新 v2** | 变化说明 |
+|---|---|---|---|---|---|
+| DZ_horse_armor_h | Empire | Half Lamellar | 65/35/5/40/20 | **90/50/5/60/17** | ↑ Lamellar 归 T7 单层甲片 · Half 只减 leg |
+| AR_horse_armor_b | Empire | Half Mail | 80/40/5/50/18 | **90/40/5/50/17** | ↑ T6 Half h 拉到跨文化统一 90 |
+| DZ_horse_armor_d | Empire | Lamellar Full | 85/45/45/55/25 | **90/50/50/60/30** | ↑ 归 T7 顶 |
+| AR_horse_armor_zag | Sturgia | Chainmail Barding | 45/35/5/45/15 | **90/40/40/50/26** | ⚠ ↑↑ 越 vanilla · 跨文化统一 |
+| AR_horse_armor_zae | Sturgia | Iron Scale Barding | 45/35/5/45/15 | **90/50/50/60/30** | ⚠ ↑↑ 越 vanilla · 跨文化统一 |
+| AR_horse_armor_j | Vlandia | Scale And Mail | 90/40/40/50/25 | **⚠ 95/52/52/62/28** | ↑ T8 复合升档（用户所举例） |
+| AR_horse_armor_j2 | Vlandia | Lamellar And Mail | 88/40/40/50/25 | **⚠ 95/52/52/62/28** | ↑ T8 复合升档（三层复合修正） |
+| AR_horse_armor_zaq2 | Aserai | Mail And Plate Full | 90/47/47/57/26 | **⚠ 95/52/52/62/28** | ↑ T8 越 vanilla `mail_and_plate` |
+| TV_horse_armor_c2 | Vlandia | Half Lamellar | 60/30/12/40/15 | **90/50/5/60/17** | ↑ T7 Half 跨文化统一 |
+
+### 3 问题解决对照
+
+| 问题 | 修正机制 |
+|---|---|
+| **1 · Half 只减 leg** | 所有 Half 系 h/b/a 保持同 Tier Full 顶 · 只 leg 3-5 · wt 减 30-40% |
+| **2 · 跨文化统一** | Sturgia OSA 从 45 拉到 90 (T6/T7) · 不受 vanilla `northern_ring_barding` 弱数值限制 |
+| **3 · 复合升档** | T8 双层复合越 vanilla 5 body · Vlandia Scale/Lamellar And Mail + Aserai Mail And Plate 归 T8 95/52 |
+
+### 保留决策
+
+- **T9 三层复合位未采用**：OSA 命名无明确"三层"件（Lamellar And Mail 命名显式两层 · 内含皮革内衬）· 未来扩展保留
+- **Khuzait 华夏中原线维持特批**：用户前明示 Full 90/50/50/60/30 · Half 70/50/5/60/17（方案 C）· 不进入 T7 90/50/5/60/17 · 保留 h=70 sub Empire
+
+### 收官统计
+
+- **重审件数**：97 件（Empire 26 + Vlandia 34 + Sturgia 6 + Aserai 31）
+- **保持不变**：Khuzait 13 件（华夏中原线特批）· Nord 0 件（NavalDLC 无 HorseHarness）
+- **总 HorseHarness 覆盖**：110 件（100%）· 全跨文化统一 T1-T9 体系
+- **状态**：97 件已 deploy XML · 用户重启游戏后生效
+
+---
+
 ## 状态图例
 - 🔵 log-only · 决议已定案，XML 未改（低价值 cosmetic 类，v1 现值可接受，避免 XML churn）
 - 🟡 pending deploy · XML 已改，等下次关游戏 + `deploy.ps1`

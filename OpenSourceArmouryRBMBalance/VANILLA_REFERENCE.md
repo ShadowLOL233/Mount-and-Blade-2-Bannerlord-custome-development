@@ -1166,3 +1166,166 @@ Warlord Helmet / Highland Crowned 顶 ⭐             h 95-121
 | `battania_horse_harness_scaled` | Chainmail | 20.6 | **50/35/30/45** ⭐ | Scale Barding ⭐ 顶点 |
 
 **Battania HorseHarness 特色**：极简 4 档 · 顶点 `battania_horse_harness_scaled` h=50/b=35/l=30/a=45 · **比 Empire/Vlandia 顶低**（Empire 90/50/50/60）· Battania 无重装骑兵传统 · **⚠ 引擎只读 body_armor**（回忆 HorseHarness 引擎机制）
+
+---
+
+# Sturgia 文化
+
+## Sturgia · HeadArmor · 33 件（2026-09-23 归档）
+
+**关键设计观察**：Sturgia HeadArmor 顶 **150/95/50**（`sturgian_lord_helmet_c` Plated Warlord Helmet）· **绝对顶点 · 高于 Empire/Vlandia/Battania**·  Sturgia 特色：**Goggled Helmet**（护目盔 · Vendel 风）+ Spangenhelm + Nasal Helmet + Warlord Helmet + Battle Crown · 维京 Nordic 战士传统
+
+### 🧣 Cloth/Fur Cap 民用（5 件 · h 6-21）
+
+| id | mat | wt | h | 名称 |
+|---|---|---:|---:|---|
+| `womens_headwrap_b` | Cloth | 0.2 | 6 | Head Scarf |
+| `nordic_leather_cap` | Leather | 0.4 | 14 | Fur Cap with Ear Flaps |
+| `nordic_fur_cap` | Leather | 0.3 | 18 | Fur Rimmed Cap |
+| `northern_fur_cap` | Leather | 0.5 | 19 | Fur Cap |
+| `roughhide_cap` | Cloth | 0.5 | 21 | Roughhide Cap |
+
+### ⛑ Nasal/Spangenhelm 无 aventail（4 件 · h 50-67）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `nasal_helmet` | 1.8 | 50/12/0 | Steel Cap with Nose Guard |
+| `sturgian_crown` | 2.4 | 50/0/0 | Jeweled Fur Rimmed Helmet |
+| `spangenhelm_with_padded_cloth` | 1.3 | 61/3/15 | Spangenhelm with Padded Cloth |
+| `spangenhelm_with_leather` | 1.2 | 67/0/20 | Spangenhelm With Leather |
+
+### ⛑ Nasal Helmet + aventail（4 件 · h 63-85）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `nasal_helmet_with_leather` | 1.2 | 63/12/25 | Nasal Helmet with Leather |
+| `nasal_helmet_with_mail` | 1.5 | 65/12/20 | Nasal Helmet with Mail |
+| `nasalhelm_over_leather` | 1.4 | 65/12/0 | Nasalhelm over Leather |
+| `nasalhelm_over_mail` | 1.8 | 75/12/17 | Nasalhelm over Mail |
+
+### ⛑ Sturgian Steel Nasal Cap 系（3 件 · h 83-98）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `sturgian_helmet_base` | 1.8 | 83/12/0 | Steel Nasal Cap |
+| `sturgian_helmet_open` | 1.8 | 85/12/17 | Mailed Nasal Helmet |
+| `sturgian_helmet_b_open` | 1.8 | 98/14/0 | Plumed Decorated Mailed Nasal Helmet |
+
+### 🎭 Goggled Helmet 系（Sturgia 标志性 · 7 件 · h 86-133）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `nordic_helmet` | 4.1 | 86/40/40 | Closed Mail Goggled Helmet |
+| `goggled_helmet_over_leather` | 1.4 | 87/16/0 | Goggled Helmet over Leather |
+| `northern_goggled_helmet` | 1.8 | 89/24/20 | Sea Raider Goggled Helmet |
+| `closed_goggled_helmet` | 4.1 | 104/64/40 | Northern Closed Warlord Helmet |
+| `goggled_helmet_over_mail` | 1.8 | 106/24/20 | Goggled Helmet over Mail |
+| `sturgian_helmet_b_close` | 3.0 | 107/82/30 | Closed Decorated Goggled Helmet |
+| `goggled_helmet_over_full_mail` | 4.4 | 114/74/40 | Closed Huscarl Helmet |
+| `decorated_goggled_helmet` | 4.2 | 133/82/45 | Reinforced Closed Goggled Helmet |
+
+### 👑 Warlord Helmet / Battle Crown（10 件 · h 113-150 · Sturgia 顶档）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `northern_warlord_helmet` | 3.6 | 113/36/12 | Warlord Helmet with Cheek Guards |
+| `sturgian_lord_helmet_b` | 3.4 | 115/36/20 | Warlord Helmet with Nose Guard |
+| `sturgian_lord_helmet_a` | 3.6 | 116/24/20 | Ridged Warlord Helmet |
+| `sturgian_helmet_closed` | 1.8 | 118/82/30 | Closed Warlord Helmet |
+| `lendman_helmet_over_mail` | 1.9 | 119/24/20 | Warlord Helmet over Mail |
+| `sturgia_heavy_cavalary_helmet` | 2.8 | 120/12/20 | Heavy Cavalry Helmet |
+| `sturgian_battle_crown` | 2.2 | 125/12/0 | Battle Crown |
+| `lendman_helmet_over_full_mail` | 4.3 | 127/84/45 | Closed Warlord Helmet over Full Mail |
+| `sturgian_lord_helmet_c` | 4.4 | **150/95/50** ⭐ | Plated Warlord Helmet ⭐ 顶点 |
+
+### Sturgia HeadArmor 关键约束
+
+- **顶点**：`sturgian_lord_helmet_c` **150/95/50/4.4** ⭐ · h ≤ 150（跨文化最高）
+- **body 顶 95**（Plated Warlord · Full Mail 类似 Vlandia Full Helm 但更重）
+- **arm 顶 50**（Full Mail aventail · sub Empire Cataphract 65）
+- **Sturgia 特色 base_type**：
+  - **Goggled Helmet**（护目盔 · Vendel 风格 · 维京独有）
+  - **Warlord Helmet**（战王盔 · Cheek Guards / Nose Guard / Ridged 多变体）
+  - **Nasal Helmet + Spangenhelm**（维京经典）
+  - **Battle Crown**（战王冠 h 125）
+  - **Steel Nasal Cap** + **Mailed Nasal Helmet**（Sturgian 系列 base 83-98）
+- **Vendel/Boar/Lendman 命名**（OSA 借用 Nordic 历史部族名）
+
+---
+
+## Sturgia · Cape · 6 件（2026-09-23 归档）
+
+**关键设计观察**：Sturgia Cape 顶 **40**（`brass_lamellar_shoulder_white` Lamellar Pauldrons）· **比 Battania 45 还低**——Sturgia 无重装 Cape 传统，主流是 Nordic Lamellar Shoulders + Fur Pelt
+
+| id | mat | wt | body | 名称 |
+|---|---|---:|---:|---|
+| `a_brass_lamellar_shoulder_white_a` | Plate | 1.0 | 10 | Lamellar Shoulder Guards |
+| `stitched_leather_shoulders` | Leather | 1.5 | 14 | Stitched Leather Shoulders |
+| `brass_scale_shoulders` | Plate | 2.2 | 25 | Decorated Scale Shoulder Guards |
+| `a_brass_lamellar_shoulder_white_b` | Plate | 5.0 | 25 | Reinforced Lamellar Shoulder Guards |
+| `mail_shoulders` | Chainmail | 2.7 | 30 | Mail Shoulder Guards |
+| `brass_lamellar_shoulder_white` | Plate | 5.0 | **40** ⭐ | Lamellar Pauldrons ⭐ 顶点 |
+
+### Sturgia Cape 关键约束
+
+- **顶点**：`brass_lamellar_shoulder_white` **40/0/5**（Lamellar Pauldrons · Plate 顶）
+- **Sturgia Cape 顶 40**（vs Empire 55 · Vlandia 88 · Battania 45）· 跨文化最低
+- **主流 Plate Lamellar Shoulders/Pauldrons**（4/6 件 Plate）· Mail 唯一 30 · Leather 唯一 14
+- 三部分律沿用 · Sturgia OSA arm ≤ 20（Lamellar Pauldrons Elite 档）
+
+---
+
+## Sturgia · BodyArmor · 41 件（2026-09-23 归档 · 简表）
+
+**顶点**：`sturgian_lamellar_fortified` **105/75/45/26**（Heavy Lamellar over Hauberk · Plate 顶）
+
+**梯度**：
+- Cloth 民用 6-11（tunic/dress 系）
+- Leather 中档 13-26（tunic w/ vest → tabard）
+- Chainmail Mail Shirt/Hauberk 中高档 35-77（Huscarl Hauberk · Double Hauberk）
+- Plate Lamellar 顶档 36-105（Lamellar Vest → Lamellar over Mail → Heavy Lamellar over Hauberk）
+
+**关键 vanilla anchor**：
+- `nordic_hauberk` 44/22/38（Huscarl Mail Shirt · Chainmail 中档）
+- `sturgian_chainmale_longsleeve` 77/44/44（Decorated Double Hauberk · Chainmail 顶）
+- `northern_brass_lamellar_over_mail` 90/50/45（Heavy Lamellar over Mail）
+- `sturgian_lamellar_fortified` **105/75/45** ⭐ 顶
+
+---
+
+## Sturgia · HandArmor · 2 件（2026-09-23 归档）
+
+| id | mat | wt | arm | 名称 |
+|---|---|---:|---:|---|
+| `northern_brass_bracers` | Plate | 1.3 | 41 | Bronze Bracers |
+| `northern_plated_gloves` | Plate | 1.5 | **56** ⭐ | Plate Reinforced Gloves ⭐ 顶点 |
+
+**Sturgia HandArmor 顶 56**（vs Empire 63 · Vlandia 60 · Battania 50）· 极简 2 档
+
+---
+
+## Sturgia · LegArmor · 7 件（2026-09-23 归档）
+
+**顶点**：`northern_plated_boots` **60/2.9**（Huscarl Plated Boots · 跨文化最高 · vs Empire 62 略低）
+
+| id | mat | wt | leg | 名称 |
+|---|---|---:|---:|---|
+| `sturgia_boots_d` | Leather | 1.0 | 20 | Wrapped Boots |
+| `sturgia_boots_c` | Leather | 1.2 | 23 | Tied Boots |
+| `sturgia_boots_a` | Leather | 1.55 | 27 | Simple Leather Boots |
+| `sturgia_boots_b` | Leather | 1.8 | 29 | Tied Leather Boots |
+| `mail_chausses` | Chainmail | 2.9 | 42 | Mail Chausses |
+| `strapped_mail_chausses` | Chainmail | 3.0 | 43 | Strapped Mail Chausses |
+| `northern_plated_boots` | Plate | 2.9 | **60** ⭐ | Huscarl Plated Boots ⭐ 顶点 |
+
+---
+
+## Sturgia · HorseHarness · 3 件（2026-09-23 归档）
+
+| id | mat | wt | h/b/l/a | 名称 |
+|---|---|---:|---|---|
+| `northern_noble_harness` | Leather | 8.9 | 8/5/5/8 | Rough Cavalry Saddle |
+| `northern_light_harness` | Leather | 7.2 | 20/10/8/8 | Light Saddle |
+| `northern_ring_barding` | Chainmail | 15.2 | **45/35/5/45** ⭐ | Ring Mail Barding ⭐ 顶点 |
+
+**Sturgia HorseHarness 顶 h=45/b=35/l=5/a=45** · 极简 3 档 · Half 结构（leg 5）· 无 Full 全覆盖顶（vs Empire 90/50/50/60）

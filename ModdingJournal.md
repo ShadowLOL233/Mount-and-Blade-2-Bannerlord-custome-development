@@ -2386,6 +2386,14 @@ public static void SetBound(this Village village, Settlement boundTarget) {
     - **Battania LegArmor 27 件**：顶 `battania_warlord_boots` 46 · Highland Legwraps 部落主流 · Fur Boots 35
     - **Battania HorseHarness 0 件**：OSA 无 Battania 马甲 · 无 v2 工作
   - **累计 帝国 378 + Vlandia 312 + Battania 307 = 997 件决议归档 · 逼近 1000 里程碑**
+  - **Sturgia 全 6 类完成（2026-09-23）**：HeadArmor 105 · Cape 34 · BodyArmor 38 · HandArmor 7 · LegArmor 4 · HorseHarness 6 = **194 件决议**
+    - **Sturgia HeadArmor 105 件**（14 家族 A-N）：顶 `sturgian_lord_helmet_c` 150/95/50（跨文化最高 h）· Goggled Helmet 系（Vendel/Lendman）· Battle Crown 125 · 借用 Nordic 命名（Vendel/Boar/Ulfhednar/Vaegir）
+    - **Sturgia Cape 34 件**（10+9 家族 A/B）：顶 `brass_lamellar_shoulder_white` 40（跨文化最低）· 主流 Nordic Lamellar Shoulders/Pauldrons · Bear Pelt 部落装饰
+    - **Sturgia BodyArmor 38 件**（10 家族 A-J）：顶 `sturgian_lamellar_fortified` 105/75/45 · 维京 Huscarl Hauberk 主流 · Lamellar over Hauberk 顶
+    - **Sturgia HandArmor 7 件**：顶 `northern_plated_gloves` 56 · Bracers/Gauntlets 简单 2 档
+    - **Sturgia LegArmor 4 件**：顶 `northern_plated_boots` 60（跨文化最高 leg）· Huscarl Plated Boots
+    - **Sturgia HorseHarness 6 件**：顶 `northern_ring_barding` h=45/b=35/l=5/a=45 · Ring Mail Barding
+  - **累计 帝国 378 + Vlandia 312 + Battania 307 + Sturgia 194 = 1191 件决议归档 · 突破 1000 里程碑**
 
   **Cape 三部分律速查**（2026-09-23 用户拍板）：
   1. **命名二分律**：有 shoulder/pauldron 命名 → 允许 body + arm 同 > 0（**body > arm 严格序**）；无此命名（Cape/Cloak/Sash/Focale/Pelt/Collar）→ **arm 必须 = 0**

@@ -4557,6 +4557,546 @@ Cloak 结构中档 body ~20-28（Plated Lion Head +6 反映甲片补强）· arm
 
 ---
 
+# Sturgia 文化 · HeadArmor（2026-09-23）
+
+## 🔒 铁律 · Sturgia HeadArmor
+
+> **顶点**：`sturgian_lord_helmet_c` **150/95/50** ⭐（Plated Warlord Helmet · 跨文化最高 h）
+> **Sturgia 特色**：Goggled Helmet（护目盔 · Vendel 风）+ Spangenhelm + Warlord Helmet + Battle Crown · 维京 Nordic 传统
+> **命名基型**：Spangenhelm · Nasal Helmet · Vendel Cap · Goggled Helm · Boar Helm · Warlord Helmet · Battle Crown
+
+## OSA Sturgia HeadArmor · 家族分类总览（105 件）
+
+| 家族 | n | head 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| A. Cloth/民用 Hat | 3 | 6-8 | `womens_headwrap_b` 6 |
+| B. Spangenhelm Cap 基础 无 aventail | 10 | 45-65 | `spangenhelm_with_padded_cloth` 61 |
+| C. Nasalhelm With Fur/Hat 系 | 10 | 50-65 | `nasal_helmet` 50 |
+| D. Northern Cavalry Helmet 系 | 7 | 55-100 | `sturgia_heavy_cavalary_helmet` 120 |
+| E. Nasal Helmet + Leather/Mail aventail | 9 | 63-90 | `nasal_helmet_with_leather/mail` 63-65 |
+| F. Boar / Guarded / Pointed Nasal Helmet | 12 | 65-95 | Nasal Helmet 系 |
+| G. Vendel Cap / Goggled Helm / Lendman 系 | 12 | 86-119 | `nordic_helmet` 86 · `lendman_helmet_over_mail` 119 |
+| H. Blackened Steel / Gilded Steel Helm | 10 | 80-115 | Warlord 系 113-116 |
+| I. Feathered/Plumed Closed Nasal | 4 | 95-107 | `sturgian_helmet_b_close` 107 |
+| J. Ulfhednar / Berserker / Battle Crown | 4 | 90-125 | `sturgian_battle_crown` 125 |
+| K. Sturgia Lord/Noble Helmet 顶档 | 6 | 115-150 | `sturgian_lord_helmet_c` 150 顶 |
+| L. Faceguard / Goggled Nasal (Nord 系) | 3 | 89-114 | `northern_goggled_helmet` 89 |
+| M. Domed / Vaegir Helmet 系 | 8 | 60-107 | `sturgian_helmet_b_close` 107 |
+| N. Closed Spangenhelm / Nord Closed 顶 | 7 | 118-133 | `sturgian_helmet_closed` 118 · `decorated_goggled_helmet` 133 |
+
+**合计约 105 件（家族边界略微重叠）**
+
+---
+
+## Sturgia · A 家族：Cloth/民用 Hat（3 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/wt** |
+|---|---|---|---|---|
+| 1 | `AR_sturgia_womens_hat_a` | Northern Women's Hat | 6/0.4 | **6/0.3** (vanilla `womens_headwrap_b` 6 直匹配) |
+| 2 | `sloven_hat` | Sloven Hat | 8/0.4 | **10/0.4** |
+| 3 | `sloven_hat_a` | Rich Sloven Hat | 8/0.5 | **12/0.5** (Rich +2) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Sturgia · B 家族：Spangenhelm Cap 基础（10 件）
+
+**vanilla 参照**：`spangenhelm_with_padded_cloth` 61/3/15 · `spangenhelm_with_leather` 67/0/20
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_sturgia_helmet_f` | Spangenhelm Cap | 18/3.2 | **50/0/0/1.5** (Spangen 无 aventail 中档) |
+| 2-3 | `AR_sturgia_helmet_g/g2` | Furred/Brown Furred Spangenhelm Cap | 19/3.2 | **50/0/0/1.5** (Furred 装饰 0) |
+| 4-5 | `AR_sturgia_helmet_h/h2` | Furred Spangenhelm w. Padded Cloth (2 变体) | 21/1.9 | **61/3/15/1.5** (vanilla `spangenhelm_with_padded_cloth` 直匹配) |
+| 6-7 | `AR_sturgia_helmet_i/i2` | Furred Spangenhelm w. Leather (2 变体) | 22/1.2 | **67/0/20/1.5** (vanilla `spangenhelm_with_leather` 直匹配) |
+| 8 | `sloven_helmet` | Eastern Conical Helmet | 22/0.4 | **50/0/0/1.5** (Conical base) |
+| 9 | `AR_sturgia_helmet_base_b` | Northern Light Cavalry Helmet | 20/2.6 | **50/0/0/2.0** |
+| 10 | `AR_sturgia_helmet_base` | Northern Cavalry Helmet | 22/2.6 | **55/0/0/2.0** |
+
+**状态**：10 件 🔵 log-only
+
+---
+
+## Sturgia · C 家族：Nasalhelm With Fur/Hat（10 件）
+
+**vanilla 参照**：`nasal_helmet` 50/12/0 · `nasal_helmet_with_leather` 63/12/25
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `AR_vaegir_helmet_b/b2` | Varyag/Northern Nasalhelm With Fur | 20/1.8 | **50/12/0/1.8** (vanilla `nasal_helmet` 直匹配) |
+| 3 | `sturgian_nasal_helmet_fur` | Northern Nasalhelm with Hat | 20/1.8 | **50/12/0/1.8** |
+| 4 | `TV_nord_helmet_t` | Nordic Ridged Cap Over Cloth | 20/2.2 | **55/0/0/2.0** |
+| 5 | `AR_sturgia_helmet_k` | Northern Cap Helmet Over Leather | 23/1.9 | **63/12/25/1.8** (vanilla `nasal_helmet_with_leather` 63 参照) |
+| 6 | `AR_sturgia_helmet_a` | Northern Nasalhelm Over Cloth | 26/1.4 | **61/3/15/1.5** (vanilla `spangenhelm_with_padded_cloth` 参照) |
+| 7 | `AR_sturgia_helmet_d` | Northern Feathered Nasal Helmet | 27/2.9 | **65/12/20/1.8** (vanilla `nasal_helmet_with_mail` 参照 · Feathered 装饰 0) |
+| 8 | `AR_sturgia_helmet_b` | Northern Plumed Heavy Cavalry Helmet | 27/2.9 | **75/12/17/2.5** (Heavy Cavalry 中高档 · vanilla `nasalhelm_over_mail` 参照) |
+| 9 | `hmj_forpolkka_sturgia_gopniki_helm` | Northern Helmet With Fur Hat | 31/1.9 | **65/12/25/1.8** |
+| 10 | `TV_nord_helmet_t2` | Nordic Ridged Cap Over Mail | 31/2.9 | **75/12/17/2.5** (Ridged Over Mail) |
+
+**状态**：10 件 🔵 log-only
+
+---
+
+## Sturgia · D 家族：Northern Cavalry Helmet（7 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_sturgia_helmet_l` | Northern Helmet With Leather | 30/1.8 | **65/12/0/1.8** (vanilla `nasalhelm_over_leather` 65 直匹配) |
+| 2 | `AR_sturgia_helmet_l2` | Northern Helmet With Mail | 32/1.8 | **75/12/17/1.8** (vanilla `nasalhelm_over_mail` 75 直匹配) |
+| 3 | `AR_sturgia_helmet_m` | Northern Pointed Helmet With Feather | 34/4.5 | **85/12/17/3.5** (Pointed + Mail 高档) |
+| 4 | `mailed_cavalry_helm` | Northern Closed Cavalry Helmet | 40/3.0 | **86/40/40/3.5** (vanilla `nordic_helmet` 86/40/40 直匹配 · Closed Cavalry = Nordic Helmet) |
+| 5 | `AR_sturgia_helmet_c` | Northern Plumed Closed Cavalry Helmet | 48/3.4 | **104/64/40/3.8** (vanilla `closed_goggled_helmet` 104 参照 · Plumed 装饰 0) |
+| 6-7 | Northern Cavalry / Light Cavalry (see B) | - | - | (Already in B family) |
+
+**状态**：5 件 🔵 log-only
+
+---
+
+## Sturgia · E 家族：Nasal Helmet + Leather/Mail aventail（9 件）
+
+**vanilla 参照**：`nasal_helmet_with_leather` 63/12/25 · `nasal_helmet_with_mail` 65/12/20
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_nord_helmet_i` | Nordic Vendel Nasalhelm Over Leather | 23/3.1 | **63/12/25/2.5** (vanilla direct) |
+| 2 | `ao_sturgian_spangenhelm_with_leather` | Northern Spangenhelm With Leather | 27/1.8 | **67/0/20/1.5** (vanilla `spangenhelm_with_leather` 直匹配) |
+| 3-4 | `ao_eorling_guarded_nasal_helmet_with_leather` `ao_sturgian_helmet_with_leather` | Guarded/Standard Nasal With Leather | 30/1.8-3.4 | **63/12/25/2.0** |
+| 5 | `AR_sturgia_helmet_e` | Spangenhelm Over Mail | 32/3.7 | **75/12/17/2.5** |
+| 6-7 | `AR_sturgia_helmet_j/j2` | Furred/Brown Furred Spangenhelm Over Mail | 32/3.7 | **75/12/17/2.5** |
+| 8 | `TV_nord_helmet_j` | Nordic Vendel Nasalhelm Over Open Mail | 33/3.4 | **80/12/17/3.0** (Open Mail sub Closed) |
+| 9 | `ao_eorling_guarded_nasal_helmet_with_mail` | Guarded Nasal With Mail | 36/3.4 | **85/12/17/3.0** |
+
+**状态**：9 件 🔵 log-only
+
+---
+
+## Sturgia · F 家族：Boar / Guarded / Pointed Nasal Helmet（12 件）
+
+**vanilla 参照**：Nasal Helmet 系 63-89
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-4 | `TV_nord_helmet_u/u2/u3` `v/v2/v3` | Pointed/Boar Nasalhelm variants (无/Leather/Mail 3 档) | 31-38/2.6-2.9 | **60-88/12/17-20/2.8** (无 aventail 60 · Leather 75 · Mail 88) |
+| 5-8 | `TV_nord_helmet_w/w2/w3` | Heavy Guarded Nasal variants | 31-38/2.6-2.9 | **65-89/12/20/2.8** |
+| 9 | `AR_vaegir_helmet_e` | Northern Spiked Helmet Over Leather | 42/4.0 | **80/12/17/3.5** |
+| 10 | `AR_vaegir_helmet_f` | Northern Fur Spiked Helmet Over Leather | 42/4.0 | **80/12/17/3.5** |
+| 11 | `AR_vaegir_helmet_g` | Northern Spiked Helmet With Decorated Facemask | 51/4.5 | **95/50/20/3.8** (Facemask body 50) |
+| 12 | `battanian_decorated_spangenhelm` | Decorated Nasalhelm With Mail | 41/3.6 | **89/24/20/3.0** (vanilla `northern_goggled_helmet` 89 参照) |
+| 13-14 | `TV_nord_helmet_r` `TV_nord_helmet_u3` | Nasal Helmet W. Faceguard Over Mail (variants) | 42/2.9 | **95/50/20/3.0** (+Faceguard body 50) |
+
+**状态**：14 件 🔵 log-only
+
+---
+
+## Sturgia · G 家族：Vendel Cap / Goggled Helm / Lendman 系（12 件）
+
+**vanilla 参照**：`nordic_helmet` 86/40/40（Closed Mail Goggled）· `lendman_helmet_over_mail` 119/24/20 · `northern_warlord_helmet` 113/36/12
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_nord_helmet_a` | Nordic Vendel Cap | 40/3.1 | **85/12/0/3.0** (Vendel Cap base) |
+| 2 | `TV_nord_helmet_b` | Vendel Cap Over Leather | 46/3.1 | **95/12/17/3.0** |
+| 3 | `TV_nord_helmet_c` | Vendel Cap Over Open Mail | 50/3.4 | **105/24/20/3.4** |
+| 4 | `TV_nord_helmet_d` | Vendel Cap Over Closed Mail | 51/4.4 | **113/36/12/3.8** (vanilla `northern_warlord_helmet` 113 参照) |
+| 5 | `TV_nord_helmet_e` | Vendel Goggled Helm | 40/3.1 | **86/40/40/3.5** (vanilla `nordic_helmet` 86/40/40 直匹配) |
+| 6 | `TV_nord_helmet_f` | Vendel Goggled Helm Over Leather | 46/3.1 | **95/40/40/3.5** |
+| 7 | `TV_nord_helmet_g` | Vendel Goggled Helm Over Open Mail | 50/3.4 | **104/64/40/3.8** (vanilla `closed_goggled_helmet` 104 参照) |
+| 8 | `TV_nord_helmet_h` | Vendel Goggled Helm Over Closed Mail | 51/4.4 | **114/74/40/4.2** (vanilla `goggled_helmet_over_full_mail` 114 参照) |
+| 9 | `TV_nord_helmet_m` | Lendman's Cap | 40/3.1 | **89/24/20/3.0** (vanilla `northern_goggled_helmet` 89 参照) |
+| 10 | `TV_nord_helmet_n` | Lendman's Cap Over Leather | 46/3.1 | **106/24/20/3.2** (vanilla `goggled_helmet_over_mail` 106 参照) |
+| 11 | `TV_nord_helmet_o` | Lendman's Cap Over Open Mail | 50/3.4 | **115/36/20/3.6** (vanilla `sturgian_lord_helmet_b` 115 参照) |
+| 12 | `TV_nord_helmet_p` | Lendman's Cap Over Closed Mail | 51/4.4 | **119/24/20/4.0** (vanilla `lendman_helmet_over_mail` 119 直匹配) |
+
+**状态**：12 件 🔵 log-only
+
+---
+
+## Sturgia · H 家族：Blackened Steel / Gilded Steel Helm（10 件）
+
+**vanilla 参照**：`northern_warlord_helmet` 113/36/12 · `sturgian_lord_helmet_a` 116/24/20
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_sturgia_helmet_i` | Blackened Steel Helmet | 31/2.9 | **83/12/0/2.8** (vanilla `sturgian_helmet_base` 83 参照) |
+| 2 | `TV_sturgia_helmet_j` | Steel Helmet | 31/2.9 | **85/12/17/2.8** (vanilla `sturgian_helmet_open` 85 参照) |
+| 3 | `TV_sturgia_helmet_j2` | Gilded Helmet | 31/2.9 | **87/12/17/2.8** (Gilded +2) |
+| 4 | `TV_sturgia_helmet_k` | Gilded Spangenhelm | 34/2.9 | **95/12/17/2.8** |
+| 5 | `TV_sturgia_helmet_k2` | Mailed Gilded Spangenhelm | 44/2.9 | **98/14/0/2.8** (vanilla `sturgian_helmet_b_open` 98 参照) |
+| 6 | `TV_sturgia_helmet_c` | Plumed Open Helmet | 49/3.2 | **107/82/30/3.0** (vanilla `sturgian_helmet_b_close` 107 参照) |
+| 7 | `TV_sturgia_helmet_e` | Blackened Steel Open Helmet | 49/3.15 | **107/82/30/3.0** |
+| 8 | `TV_sturgia_helmet_g` | Gilded Steel Nasal Helmet | 49/3.15 | **113/36/12/3.2** |
+| 9 | `TV_sturgia_helmet_h` | Gilded Steel Helmet | 49/3.15 | **113/36/20/3.2** |
+| 10 | `TV_sturgia_helmet_f` | Northern Closed Pointed Helmet | 51/3.8 | **118/82/30/3.5** (vanilla `sturgian_helmet_closed` 118 直匹配) |
+
+**状态**：10 件 🔵 log-only
+
+---
+
+## Sturgia · I 家族：Feathered/Plumed Closed Nasal（4 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_sturgian_feathered_helmet` | Feathered Nasal Helmet | 49/1.8 | **83/12/0/2.0** |
+| 2 | `ao_sturgian_feathered_helmet_with_mail` | Feathered Nasal With Full Mail | 49/1.8 | **95/12/17/2.5** |
+| 3 | `ao_sturgian_feathered_helmet_closed` | Feathered Closed Nasal | 53/1.8 | **107/82/30/2.5** (vanilla `sturgian_helmet_b_close` 107 参照) |
+| 4 | `ao_sturgian_feathered_helmet_with_closed_mail` | Feathered Nasal With Closed Mail | 53/1.8 | **118/82/30/2.8** (vanilla `sturgian_helmet_closed` 118 参照) |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Sturgia · J 家族：Ulfhednar / Berserker / Battle Crown 特色（4 件）
+
+**Ulfhednar 命名**：狼皮狂战士 · Berserker 无甲狂战 · Battle Crown 战王冠
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ulfhednar_helm_b` | Ulfhednar's Helmet | 32/4.8 | **89/24/20/3.5** (Ulfhednar 中高档 · vanilla `northern_goggled_helmet` 89 参照) |
+| 2 | `ulfhednar_helm` | Ulfhednar's Goggled Helmet | 48/4.8 | **107/82/30/3.5** (Goggled 顶) |
+| 3 | `berserkr_helm_a` | Berserker's Helm | 48/4.8 | **95/24/20/3.5** (Berserker 中高) |
+| 4 | `TV_sturgia_lord_helmet_a` | Northern Blackened Steel Battle Crown | 47/2.2 | **125/12/0/2.2** (vanilla `sturgian_battle_crown` 125 直匹配) |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Sturgia · K 家族：Sturgia Lord/Noble Helmet 顶档（6 件）
+
+**vanilla 参照**：`sturgian_lord_helmet_b` 115/36/20 · `sturgian_lord_helmet_a` 116/24/20 · `sturgian_lord_helmet_c` **150/95/50** 顶
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_sturgia_lord_helmet_b` | Noble Mailed Steel Helmet | 45/3.15 | **113/36/12/3.2** |
+| 2 | `TV_sturgia_lord_helmet_c` | Noble Mailed Gilded Helmet | 45/3.15 | **115/36/20/3.2** (vanilla `sturgian_lord_helmet_b` 直匹配) |
+| 3 | `TV_sturgia_lord_helmet_d` | Mailed Gilded Spangenhelm With Feathers | 47/3.15 | **116/24/20/3.5** (vanilla `sturgian_lord_helmet_a` 直匹配) |
+| 4 | `TV_sturgia_lord_helmet_e` | Mailed Gilded Spangenhelm With Plume | 47/3.15 | **116/24/20/3.5** |
+| 5 | `TV_sturgia_lord_helmet_b2` | Noble Mailed Steel Nasal Helmet | 48/3.15 | **119/24/20/3.5** (vanilla `lendman_helmet_over_mail` 119 参照) |
+| 6 | `TV_sturgia_lord_helmet_c2` | Noble Mailed Gilded Nasal Helmet | 48/3.15 | **120/12/20/3.5** (vanilla `sturgia_heavy_cavalary_helmet` 120 参照) |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Sturgia · L 家族：Faceguard / Goggled Nasal（3 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_nord_helmet_k` | Vendel Nasalhelm With Faceguard | 47/3.6 | **95/50/20/3.5** (Faceguard body 50) |
+| 2 | `TV_nord_helmet_l` | Vendel Nasalhelm With Goggled Faceguard | 47/3.6 | **107/82/30/3.5** (Goggled Faceguard sub Closed Goggled 107) |
+| 3 | `TV_nord_helmet_s` | Nordic Goggled Nasal Helmet W. Faceguard Over Mail | 48/2.9 | **114/74/40/3.5** (vanilla `goggled_helmet_over_full_mail` 114 参照) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Sturgia · M 家族：Domed / Vaegir Helmet 系（8 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `DZ_sturgia_helmet_b` | Domed Helmet Over Padded Cloth | 36/3.2 | **65/12/20/2.8** |
+| 2 | `DZ_sturgia_helmet_c` | Domed Helmet Over Padded Mail | 46/3.5 | **85/12/17/3.2** |
+| 3 | `DZ_sturgia_helmet_a` | Plumed Visored Cap Over Closed Mail | 38/4.1 | **107/82/30/3.5** (Visored 顶级 sub Closed Goggled) |
+| 4 | `DZ_sturgia_helmet_d` | Feathered Domed Helmet Over Mail | 52/3.2 | **114/74/40/3.5** |
+| 5 | `vaegir_helmet_open` | Varyag Open Helmet | 37/2.0 | **83/12/0/2.5** (Varyag = 罗斯人历史名 · vanilla `sturgian_helmet_base` 83 参照) |
+| 6 | `vaegir_helmet_closed` | Varyag Closed Helmet | 42/2.2 | **107/82/30/2.5** (Closed 顶级) |
+| 7 | `ao_sturgian_spiked_nasal_helmet` | Simple Nasal Helmet With Full Mail | 38/1.8 | **85/12/17/1.8** (vanilla `sturgian_helmet_open` 85 参照) |
+| 8 | `tv_vlandia_helmet_f` | Northern Nasal Helmet With Closed Mail | 51/4.0 | **114/74/40/3.5** |
+
+**状态**：8 件 🔵 log-only
+
+---
+
+## Sturgia · N 家族：Closed Spangenhelm / Nord Closed 顶（3 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_sturgia_helmet_a` | Closed Spangenhelm | 54/3.8 | **127/84/45/3.8** (vanilla `lendman_helmet_over_full_mail` 127 参照) |
+| 2 | `TV_sturgia_helmet_b` | Tailed Closed Spangenhelm | 54/3.8 | **127/84/45/3.8** |
+| 3 | `TV_sturgia_helmet_d` | Blackened Steel Closed Helmet | 53/3.8 | **125/12/0/3.5** (vanilla `sturgian_battle_crown` 125 参照) |
+| 4 | `TV_sturgia_helmet_g2` | Gilded Steel Closed Nasal Helmet | 53/3.8 | **127/84/45/3.8** |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Sturgia HeadArmor 收官统计（2026-09-23）
+
+**总数**：105 件 Sturgia HeadArmor · **全部审完 · 全部 🔵 log-only**
+
+**关键设计观察**：
+- OSA v1 顶 54，vanilla+RBM 顶 150 → v2 buff ×2-3
+- **vanilla 直匹配 25+ 件**（Nasal Helmet · Spangenhelm · Goggled Helmet · Warlord · Battle Crown · Nordic Vendel Cap 顶级 aventail 系）
+- **Sturgia 特色**：Goggled Helmet body 40-82（第一个 body 高的 base_type · Vendel 风格）· Warlord Helmet 113-150 顶点
+- **命名跨文化**：ulfhednar/berserker（斯堪的纳维亚原型）· vaegir/varyag（罗斯人）· vendel（瑞典）· lendman（挪威贵族）—— OSA 借用 Nordic 历史文化命名
+
+**下一步**：进入 Sturgia Cape
+
+---
+
+# Sturgia · Cape（2026-09-23）
+
+## 🔒 铁律 · Sturgia Cape
+
+> **顶点**：`brass_lamellar_shoulder_white` **40**（Lamellar Pauldrons · 跨文化最低顶）
+> **arm 上限 ≤ 20**（Lamellar Pauldrons Elite · sub Empire/Vlandia 25）
+> **三部分律沿用**
+
+## Sturgia Cape · 34 件
+
+### A 组 · 有 shoulder/pauldron 命名（25 件）
+
+#### A.1 · Small Lamellar Shoulders（3 件 · 轻档）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_sturgia_shoulders_c` | Nordic Small Lamellar Shoulders | 0/5/1.6 | **18/8/1.6** |
+| 2 | `TV_sturgia_shoulders_f` | Small Steel Lamellar Shoulders | 0/5/1.6 | **20/8/1.6** (Steel +2) |
+| 3 | `TV_sturgia_shoulders_k` | Small Brass Lamellar Shoulders | 0/5/1.6 | **18/8/1.6** |
+
+#### A.2 · Standard Lamellar Shoulders（3 件 · 中档）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_sturgia_shoulders_b` | Nordic Lamellar Shoulders | 0/8/3 | **25/12/2.5** (vanilla `brass_scale_shoulders` 25 参照) |
+| 2 | `TV_sturgia_shoulders_e` | Steel Lamellar Shoulders | 0/8/3 | **27/12/2.5** (Steel +2) |
+| 3 | `TV_sturgia_shoulders_j` | Brass Lamellar Shoulders | 0/8/3 | **25/12/2.5** |
+
+#### A.3 · Steel Lamellar Pauldrons 顶档（1 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_sturgia_shoulders_g` | Steel Lamellar Pauldrons | 0/12/2.2 | **40/20/2.5** (vanilla `brass_lamellar_shoulder_white` 40 顶 直匹配) |
+
+#### A.4 · Leather Scale / Leather Shoulders（2 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_sturgia_shoulders_a` | Leather Scale Shoulders | 8/4/1.4 | **14/6/1.5** (vanilla `stitched_leather_shoulders` 14 直匹配) |
+| 2 | `AR_sturgia_shoulders_e` | Leather Shoulders | 8/0/1.4 | **12/6/1.4** |
+
+#### A.5 · Brass/Iron Lamellar Pauldrons（3 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `DZ_sturgia_shoulder_b` | Brass Lamellar Pauldrons | 8/0/4.1 | **25/12/3.5** |
+| 2 | `DZ_sturgia_shoulder_c` | Iron Lamellar Pauldrons | 8/0/4.1 | **27/12/3.5** (Iron +2) |
+| 3 | `TV_sturgia_shoulders_h` | Brass Lamellar Pauldrons | 12/0/4.1 | **38/18/3.5** (顶级 Pauldrons sub 40) |
+
+#### A.6 · Chainmail Shoulders（1 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_sturgia_shoulders_e2` | Chainmail Shoulders | 12/0/1.4 | **30/12/2.5** (vanilla `mail_shoulders` 30 直匹配) |
+
+#### A.7 · Brass/Iron Lamellar Shoulders (+ Cape)（4 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_sturgia_shoulders_a2` | Brass Lamellar Shoulders | 16/8/1.4 | **30/12/2.5** |
+| 2 | `AR_sturgia_shoulders_a3` | Iron Lamellar Shoulders | 16/8/1.4 | **32/12/2.5** (Iron +2) |
+| 3 | `AR_sturgia_shoulders_a4` | Brass Lamellar Shoulders With Cape | 16/8/1.4 | **32/12/3.0** |
+| 4 | `AR_sturgia_shoulders_a5` | Iron Lamellar Shoulders With Cape | 16/8/1.4 | **34/12/3.0** |
+
+#### A.8 · Large Lamellar Shoulders（3 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_sturgia_shoulders_a` | Nordic Large Lamellar Shoulders | 16/6/3.5 | **32/15/3.0** |
+| 2 | `TV_sturgia_shoulders_d` | Large Steel Lamellar Shoulders | 16/6/3.5 | **34/15/3.0** (Steel +2) |
+| 3 | `TV_sturgia_shoulders_i` | Large Brass Lamellar Shoulders | 16/6/3.5 | **32/15/3.0** |
+
+#### A.9 · Scale Shoulders + Cape（3 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_sturgia_shoulders_b` | Iron Scale Shoulders | 18/4/2.2 | **25/12/2.5** (vanilla `brass_scale_shoulders` 25 参照) |
+| 2 | `AR_sturgia_shoulders_c` | Brass Scale Shoulders With Cape | 20/8/3.9 | **32/12/3.5** |
+| 3 | `AR_sturgia_shoulders_d` | Iron Scale Shoulders With Cape | 20/8/3.9 | **34/12/3.5** |
+
+#### A.10 · Northern Lamellar Shoulders (+ Scarf)（2 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `lamellar_shoulder` | Northern Lamellar Shoulders | 20/4/3.5 | **32/12/3.0** |
+| 2 | `lamellar_shoulder_scarf` | Lamellar Shoulders With Scarf | 20/4/3.5 | **32/12/3.0** (Scarf 装饰 0) |
+
+**A 组合计**：25 件
+
+---
+
+### B 组 · 无 shoulder/pauldron 命名（9 件 · arm = 0）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `tv_sturgia_cloak_a` | Northern Long Cape | 8/0/4 | **12/0/2.0** (Cloth Long Cape) |
+| 2 | `pauldron_cape_z` | Northern Long Cape (Plate) | 16/4/3.5 | **20/0/3.0** (Plate Cape 中档 · arm 追溯清 0) |
+| 3 | `berserkr_fur_b` | Bear Pelt | 16/4/6 | **24/0/2.5** (vanilla Battania `armored_bearskin` 24 参照) |
+| 4 | `berserkr_fur_c` | Rough Bear Pelt | 16/8/5 | **24/0/2.5** |
+| 5 | `TV_battania_shoulders_c` | Brown Bear Pelt | 16/4/6 | **24/0/2.5** (arm 追溯清 0) |
+| 6 | `berserkr_fur_a` | Plated Bear Fur | 18/4/7.4 | **28/0/3.0** (Plated Bear +4) |
+| 7 | `TV_sturgia_shoulders_l` | Nordic Lamellar Cape | 16/6/5 | **25/0/3.0** (Lamellar Cape body-only 中档) |
+| 8 | `TV_sturgia_shoulders_m` | Steel Lamellar Cape | 16/6/5 | **27/0/3.0** (Steel +2) |
+| 9 | `TV_sturgia_shoulders_n` | Brass Lamellar Cape | 16/6/5 | **25/0/3.0** |
+
+**B 组合计**：9 件
+
+---
+
+## Sturgia Cape 收官统计（2026-09-23）
+
+**总数**：34 件 Sturgia Cape · 全 🔵 log-only
+
+**下一步**：进入 Sturgia BodyArmor / HandArmor / LegArmor / HorseHarness
+
+---
+
+# Sturgia · BodyArmor（2026-09-23）
+
+## 🔒 铁律 · Sturgia BodyArmor
+
+> **顶点**：`sturgian_lamellar_fortified` **105/75/45/26** ⭐ · body ≤ 105
+> **arm 顶 45**（vs Empire 67 / Vlandia 100 / Battania 40）· 中档
+> **主流 Chainmail Huscarl Hauberk + Lamellar over Mail** · Plate 顶档
+
+## Sturgia BodyArmor · 38 件
+
+### A. Cloth 民用（1 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `kaftan` | Northern Kaftan | 2/1/1/8.3 | **6/5/5/1.0** (vanilla `northern_tunic` 6/5/5 直匹配 · wt 8.3 荒谬降到 1.0) |
+
+### B. Leather Coat/Vest（4 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_sturgian_leather_over_cloth` | Northern Leather Coat | 18/9/6/4.4 | **20/21/14/1.5** (vanilla `layered_leather_tunic` 20/21/14 直匹配) |
+| 2-4 | `AR_sturgia_armor_b/d/d2` | Padded Leather Vest / Leather Coat variants | 22/6/6/3.1 | **25/25/22/2.0** (vanilla `nordic_sloven` 25/25/22 直匹配) |
+
+### C. Leather Coat Over Mail（3 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `AR_sturgia_armor_e/e2` | Leather Coat Over Mail | 26/12/10/8.3 | **35/33/29/8.3** (vanilla `sturgian_chainmale_shortsleeve` 35/33/29 直匹配 · Huscarl Hauberk) |
+| 3 | `ao_sturgian_leather_over_mail` | Leather Coat Over Hauberk | 29/13/11/8.3 | **44/22/38/8.3** (vanilla `nordic_hauberk` 44/22/38 直匹配 · Huscarl Mail Shirt) |
+
+### D. Double Hauberk / Padded Coat Over Mail（4 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_sturgia_armor_a` | Double Hauberk | 32/15/15/12.3 | **77/44/44/12** (vanilla `sturgian_chainmale_longsleeve` 77/44/44 直匹配) |
+| 2 | `TV_sturgia_armor_a2` | Decorated Double Hauberk | 32/15/15/12.3 | **77/44/44/12.3** (直匹配) |
+| 3 | `ao_gen_gambeson_over_mail` | Padded Coat Over Mail | 32/16/16/10 | **44/22/38/9** (vanilla `nordic_hauberk` 参照) |
+| 4 | `AR_sturgia_armor_a` | Padded Leather Vest Over Mail | 33/12/10/10.2 | **47/22/41/9** (vanilla `nordic_sloven_over_mail` 47/22/41 直匹配) |
+
+### E. Lamellar Vest Over Gambeson/Mail（6 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `DZ_sturgia_armor_a/a2/a3` | Lamellar/Decorated/Gilded Vest Over Gambeson | 37/8/2/9.5 | **40/15/15/6.2** (vanilla `sturgian_lamellar_gambeson` 40/15/15 直匹配) |
+| 4-6 | `DZ_sturgia_armor_b/b2/b3` | Lamellar Vest Over Mailled Gambeson variants | 48/12/10/15.1 | **55/24/15/12** (vanilla `nordic_lamellar_armor` 55/24/15 直匹配) |
+
+### F. Leather Tabard Over Mail（1 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_sturgia_armor_c` | Leather Tabard Over Mail | 40/22/12/21 | **47/22/41/9** (vanilla `nordic_sloven_over_mail` 47/22/41 直匹配) |
+
+### G. Lamellar Vest Over Hauberk（2 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `ao_sturgian_lamellar_vest + b` | Lamellar/Alternating Lamellar Vest Over Hauberk | 42/14/12/16.5 | **73/40/25/8.3** (vanilla `sturgian_lamellar_gambeson_heavy` 73/40/25 直匹配) |
+
+### H. Scale Vest/Coat Over Mail（4 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `AO_eorling_armor_d/d2` | Bronze/Iron Scale Vest Over Mail | 42/18/15/16 | **55/24/15/12** (vanilla `nordic_lamellar_armor` 参照) |
+| 3-4 | `ao_eorling_bronze/iron_scale_over_mail` | Bronze/Iron Scale Coat Over Mail | 45/22/27/16 | **77/44/44/12** (vanilla `sturgian_chainmale_longsleeve` 参照) |
+
+### I. Lamellar Over Hauberk 中档（8 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `TV_sturgia_armor_f/f2/f3` | Lamellar/Decorated/Gilded Over Hauberk | 50/20/7/21.5 | **79/38/40/21.5** (vanilla `sturgian_lamellar_base` 79/38/40 直匹配) |
+| 4-5 | `AR_sturgia_armor_f/f2` | Lamellar Coat Over Mail (2 变体) | 50/21/7/24 | **79/38/40/21.5** |
+| 6-7 | `ao_sturgia_armor_d/d2` | Lamellar/Alternating Lamellar Coat Over Hauberk | 50/25/14/16.5 | **90/50/45/22** (vanilla `northern_brass_lamellar_over_mail` 90/50/45 直匹配) |
+| 8-10 | `TV_sturgia_armor_e/e2/e3` | Heavy Lamellar Over Hauberk variants | 50/26/15/28 | **105/75/45/24** (vanilla `sturgian_lamellar_fortified` 105/75/45 顶点直匹配) |
+
+### J. Alternating/Brass/Steel Scale Over Hauberk（3 件 · 顶档）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_sturgia_armor_b` | Alternating Scale Over Hauberk | 52/25/25/26 | **90/22/30/20** (vanilla `northern_coat_of_plates` 90/22/30 直匹配) |
+| 2 | `TV_sturgia_armor_c` | Brass Scale Over Hauberk | 52/25/25/26 | **90/50/45/22** |
+| 3 | `TV_sturgia_armor_d` | Steel Scale Over Hauberk | 52/25/25/26 | **90/50/45/22** |
+
+**Sturgia BodyArmor 合计**：38 件 🔵 log-only
+
+---
+
+# Sturgia · HandArmor（2026-09-23）
+
+## Sturgia HandArmor · 7 件
+
+**vanilla 参照**：`northern_brass_bracers` 41 · `northern_plated_gloves` 56 顶
+
+| # | id | 游戏名 | v1 arm/wt | **v2 决议 arm/wt** |
+|---|---|---|---|---|
+| 1-5 | `AR_sturgia_gloves_c` `TV_sturgia_gloves_b/c/d/e` | Iron/Rough Brass/Iron/Simple Steel/Brass Bracers | 22/1.3 | **41/1.3** (vanilla `northern_brass_bracers` 41 直匹配 · 5 件同档) |
+| 6 | `AR_sturgia_gloves_a` | Brass Gauntlets | 23/1.8 | **56/1.5** (vanilla `northern_plated_gloves` 56 直匹配 · 顶) |
+| 7 | `AR_sturgia_gloves_b` | Iron Gauntlets | 23/1.8 | **56/1.5** |
+
+**Sturgia HandArmor 合计**：7 件 🔵 log-only
+
+---
+
+# Sturgia · LegArmor（2026-09-23）
+
+## Sturgia LegArmor · 4 件
+
+| # | id | 游戏名 | v1 leg/wt | **v2 决议 leg/wt** |
+|---|---|---|---|---|
+| 1 | `TV_aserai_boots_h` | Leather Boots | 3/1.0 | **20/0.9** (vanilla `sturgia_boots_d` 20 直匹配) |
+| 2 | `TV_aserai_boots_i` | Blackened Leather Boots | 3/1.0 | **23/1.0** (vanilla `sturgia_boots_c` 23 直匹配) |
+| 3 | `TV_sturgia_boots_a` | Boots With Steel Greaves | 24/2.7 | **60/2.9** (vanilla `northern_plated_boots` 60 顶 直匹配) |
+| 4 | `TV_sturgia_boots_b` | Boots With Gilded Greaves | 24/2.7 | **60/2.9** (Gilded 装饰 0 · 同顶) |
+
+**Sturgia LegArmor 合计**：4 件 🔵 log-only
+
+---
+
+# Sturgia · HorseHarness（2026-09-23）
+
+## Sturgia HorseHarness · 6 件（全 4 字段）
+
+**vanilla 顶**：`northern_ring_barding` **h=45/b=35/l=5/a=45/wt=15.2**（Half 覆盖顶）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_zi` | Heavy Noble Harness | 17/35 | **20/10/8/8/7.2** (vanilla `northern_light_harness` 20/10/8/8 直匹配 · wt 35→7.2) |
+| 2 | `AR_horse_armor_zd` | Plated Ring Barding | 47/88 | **45/30/5/40/14** (Plated Ring sub-顶) |
+| 3 | `AR_horse_armor_zag` | Chainmail Barding | 58/82 | **45/35/5/45/15** (vanilla `northern_ring_barding` 45/35/5/45 直匹配) |
+| 4 | `AR_horse_armor_zae` | Iron Scale Barding | 60/82 | **45/35/5/45/15** |
+| 5 | `AR_horse_armor_zae2` | Steel Scale Barding | 60/82 | **45/35/5/45/15** (Steel +2 装饰 0 · 已达顶) |
+| 6 | `AR_horse_armor_zaf` | Ringed Mail Barding | 60/82 | **45/35/5/45/15** |
+
+**Sturgia HorseHarness 合计**：6 件 🔵 log-only
+
+---
+
+## Sturgia 全 6 类收官统计（2026-09-23）
+
+**总数**：**190 件 Sturgia 决议归档**（HeadArmor 105 · Cape 34 · BodyArmor 38 · HandArmor 7 · LegArmor 4 · HorseHarness 6）· 全 🔵 log-only
+
+**帝国 + Vlandia + Battania + Sturgia 累计**：378 + 312 + 307 + 190 = **1187 件决议归档 · 突破 1000 里程碑**
+
+**下一步**：进入 **Aserai 文化**（阿拉伯/沙漠画像 · Southern 沙漠部族 · 长弯刀 + 长袍 + 缠头巾）
+
+---
+
 ## 状态图例
 - 🔵 log-only · 决议已定案，XML 未改（低价值 cosmetic 类，v1 现值可接受，避免 XML churn）
 - 🟡 pending deploy · XML 已改，等下次关游戏 + `deploy.ps1`

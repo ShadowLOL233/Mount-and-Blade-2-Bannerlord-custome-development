@@ -878,3 +878,291 @@ Plate Brigandine over Hauberk (顶) ⭐                  body 100
 - **无民用 Harness**（Vlandia 无 stripped_leather_harness / imperial_riding_harness 等值）· 只有 Barding 中高档
 - **Half vs Full 差异**：Half `halfchain_barding` **l=25** vs Full `chain_barding` **l=40** · Vlandia 半覆盖 leg 25（比 Empire Half 5 高很多）
 - **Vlandia 特色**：全 Chainmail 材质 · 无 Plate/Scale 顶档 · 反映 Vlandia Knight Mail 传统
+
+---
+
+# Battania 文化
+
+## Battania · HeadArmor · 27 件（2026-09-23 归档）
+
+**关键设计观察**：Battania 顶点 **121**（`battanian_crowned_helmet`）· 低于 Empire/Vlandia 但仍高档 · 无 Full Helm/Cataphract 顶级 aventail · 主流是 **Cheek Guards Cap**（护颊帽 · Battania 标志）+ Ridge Helmet + Bear/Wolf Head 部落装饰
+
+### 🧣 Cloth 民用（2 件 · h 9-11）
+
+| id | mat | wt | h | 名称 |
+|---|---|---:|---:|---|
+| `wrapped_headcloth` | Cloth | 0.2 | 9 | Wrapped Headcloth |
+| `battania_civil_hood` | Cloth | 0.5 | 11 | Cloth Hood |
+
+### 👑 Highland Ceremonial Crown（1 件 · h 15）
+
+| id | mat | wt | h | 名称 |
+|---|---|---:|---:|---|
+| `battania_crown` | Plate | 0.5 | 15 | Highland Ceremonial Crown |
+
+### 🦌 Leather Coif / Studded Helm（5 件 · h 18-27）
+
+| id | mat | wt | h | 名称 |
+|---|---|---:|---:|---|
+| `thinhide_coif` | Leather | 0.5 | 18 | Thinhide Coif |
+| `leather_studdedhelm` | Leather | 0.5 | 23 | Leather Studded Helm |
+| `leather_studdedhelm_over_headcloth` | Leather | 1.1 | 24 | Leather Studded Helm over Headcloth |
+| `leather_studdedhelm_over_thinhide` | Leather | 1.2 | 25 | Leather Studded Helm over Thinhide |
+| `leather_studdedhelm_over_roughscale` | Leather | 3.6 | 27 | Leather Studded Helm over Roughscale |
+
+### 🐺 Wolf/Bear Head + Fur（3 件 · h 25-34 · 部落装饰）
+
+| id | mat | wt | h | 名称 |
+|---|---|---:|---:|---|
+| `wolfhead` | Leather | 1.3 | 25 | Wolf Head |
+| `battania_fur_helmet` | Leather | 1.3 | 34 | Cap with Fur Coif |
+| `bearhead` | Leather | 1.4 | 34 | Bear Head |
+
+### ⛑ Bronze/Steel Cap with Cheek Guards（Battania 标志性 · 8 件 · h 61-89）
+
+| id | wt | h | 名称 |
+|---|---:|---:|---|
+| `battania_earmuff_helmet_b_brnz` | 3.0 | 61 | Bronze Cap With Cheek Guards |
+| `battania_earmuff_helmet_c_cpr` | 3.3 | 63 | Decorated Bronze with Cheek Guards |
+| `battania_earmuff_helmet_a_brnz` | 3.2 | 65 | Fringed Bronze Cap With Cheek Guards |
+| `battania_earmuff_helmet_d_brnz` | 3.3 | 71 | Ridged Decorated Bronze Cap |
+| `battania_earmuff_helmet_c_brnz` | 3.3 | 73 | Fringed Decorated Bronze Cap |
+| `battania_earmuff_helmet_b` | 2.9 | 74 | Steel Cap With Cheek Guards |
+| `battania_earmuff_helmet_a` | 3.0 | 79 | Fringed Steel Cap |
+| `battania_earmuff_helmet_c` | 3.1 | 89 | Fringed Decorated Steel Cap |
+
+### 🏛 Old Guard / Battle Crown（2 件 · h 63-66）
+
+| id | wt | h | 名称 |
+|---|---:|---:|---|
+| `celtic_helmet` | 2.5 | 63 | Old Guard Helmet |
+| `battania_battle_crown` | 2.3 | 66 | Two Pronged Bronze Crown |
+
+### ⛑ Roughscale Helmet（1 件 · h 88 · body 0 · **arm 20** 首个带 arm）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `roughscale_helmet` | 3.2 | 88/0/20 | Roughscale Helmet |
+
+### ⛑ Ridged Decorated Steel Cap / Ridged Helm（2 件 · h 92-94 · body 12）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `battania_earmuff_helmet_d` | 3.2 | 92/12/0 | Ridged Decorated Steel Cap |
+| `ridged_northernhelm` | 3.4 | 94/12/0 | Ridged Helm |
+
+### 👑 Warlord Helmet + Highland Crowned Helmet 顶档（3 件 · h 95-121）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `battanian_plated_noble_helmet` | 2.9 | 95/16/15 | Warlord Helmet with Feathers |
+| `battanian_noble_helmet_with_feather` | 3.1 | 102/12/25 | Warlord Helmet |
+| `battanian_crowned_helmet` | 3.2 | **121/16/15** ⭐ | Highland Crowned Helmet ⭐ 顶点 |
+
+### Battania HeadArmor 家族梯度
+
+```
+Cloth Headcloth / Hood                             h 9-11
+Highland Ceremonial Crown                          h 15
+Thinhide Coif / Leather Studded Helm               h 18-27
+Fur Helmet / Wolf/Bear Head 部落装饰                h 25-34
+Bronze/Steel Cap with Cheek Guards（标志性）        h 61-89
+Old Guard / Battle Crown                           h 63-66
+Roughscale Helmet（首个 arm 20）                    h 88
+Ridged Decorated / Ridged Helm                     h 92-94
+Warlord Helmet / Highland Crowned 顶 ⭐             h 95-121
+```
+
+### Battania HeadArmor 关键约束
+
+- **顶点**：`battanian_crowned_helmet` **121/16/15/3.2** ⭐ · h ≤ 121（比 Empire 155+ 低 · 比 Vlandia 140 低）
+- **无 Full Helm / Cataphract 顶级 aventail 顶档**——Battania 无金属全罩式 · 顶档是"高冠+羽饰"的 Warlord Helmet
+- **body/arm 顶极低**：body 顶 16 · arm 顶 25 · 反映 Battania 无 aventail 传统
+- **Battania 特色 base_type**：
+  - **Cap with Cheek Guards**（护颊帽）· Battania 标志性主流兵种装备
+  - **Ridge Helmet**（凸脊盔）· Highland 装饰性
+  - **Wolf/Bear Head + Fur Coif**（部落图腾装饰）
+  - **Warlord Helmet with Feathers**（羽饰战王盔 · 顶档）
+  - **Highland Crowned Helmet**（王冠盔 · 绝对顶点）
+- **材质分档**：Cloth ≤ 11 · Leather ≤ 34（部落装饰含 Fur/Bear/Wolf）· Plate 15-121（跨极大范围 · Ceremonial Crown 15 最低 · Highland Crowned 121 最高）
+
+---
+
+## Battania · Cape · 22 件（2026-09-23 归档）
+
+**关键设计观察**：Battania Cape 顶 **45** · **比 Empire 55/Vlandia 88 都低**——Battania Cape 主流是 Leather/Fur/Bear/Wolf 部落装饰，非重装 Plate 板甲 · **arm 全 0**（vanilla 全 22 件同 Empire/Vlandia）
+
+### 🧣 Cloth 民用（4 件 · body 6-7）
+
+| id | mat | wt | body | 名称 |
+|---|---|---:|---:|---|
+| `a_battania_cloak_a` | Cloth | 0.5 | 6 | Simple Cape |
+| `battania_civil_cloak` | Cloth | 1.0 | 6 | Fringed Cape |
+| `battania_cloak` | Cloth | 0.5 | 6 | Tartan Cloak |
+| `battania_civil_cape` | Cloth | 1.5 | 7 | Woodland Fur Cloak |
+
+### 🦌 Leather Cape / Shoulder（8 件 · body 7-16）
+
+| id | mat | wt | body | 名称 |
+|---|---|---:|---:|---|
+| `fur_cloak_b` | Leather | 2.7 | 7 | Fur Cloak |
+| `battanian_leather_shoulder_a` | Leather | 1.2 | 12 | Cured Leather Shoulder Pieces |
+| `battania_scarf_a` | Cloth | 0.55 | 13 | Heavy Tartan Scarf |
+| `battania_cloak_b` | Cloth | 3.2 | 14 | Tartan Cape |
+| `battania_shoulder_strap` | Leather | 1.0 | 14 | Shoulder Harness |
+| `battania_shoulder_furr` | Leather | 1.6 | 15 | Reinforced Harness with Cape |
+| `battania_woodland_cloak` | Leather | 1.4 | 15 | Woodland Cape |
+| `battania_shoulder_strap_cloak` | Leather | 1.3 | 16 | Tartan Shoulder Harness |
+
+### 🐺 Fur/Wolf/Bear Cape 部落（6 件 · body 20-26）
+
+| id | mat | wt | body | 名称 |
+|---|---|---:|---:|---|
+| `fur_cloak_a` | Leather | 7.6 | 20 | Fur Cloak With Round Plate |
+| `battania_cloak_furr` | Leather | 1.5 | 22 | Chained Fur Cloak |
+| `wolf_shoulder` | Leather | 1.8 | 22 | Wolf Pelt Cape |
+| `armored_bearskin` | Leather | 7.0 | 24 | Armored Bearskin |
+| `fur_cloak_c` | Leather | 8.3 | 25 | Large Fur Cloak With Round Plate |
+| `bearskin` | Leather | 2.3 | 26 | Bear Pelt |
+| `rough_bearskin` | Leather | 2.3 | 26 | Rough Bearskin |
+
+### 🔗 Chainmail Mail Shoulders（2 件 · body 27-32）
+
+| id | mat | wt | body | 名称 |
+|---|---|---:|---:|---|
+| `battanian_chainmail_shoulder_a` | Chainmail | 4.5 | 27 | Mail Shoulder Pieces |
+| `battanian_chainmail_shoulder_b` | Chainmail | 4.5 | 32 | Mail Shoulder Reinforcements |
+
+### 🛡 Plate Warlord Pauldrons（1 件 · body 45 ⭐）
+
+| id | mat | wt | body | 名称 |
+|---|---|---:|---:|---|
+| `battania_warlord_pauldrons` | Plate | 4.0 | **45** ⭐ | Heavy Warlord Pauldrons ⭐ 顶点 |
+
+### Battania Cape 家族关键约束
+
+- **顶点**：`battania_warlord_pauldrons` **45/0/4.0** ⭐（Heavy Warlord Pauldrons · 唯一 Plate Cape）
+- **Battania Cape 顶 45**（对比 Empire 55 / Vlandia 88）——**Battania 无重装 Plate Cape 传统**
+- **主流 Leather/Fur 部落装饰**：Wolf Pelt Cape / Bear Pelt / Chained Fur Cloak 主导 body 22-26 范围
+- **Chainmail Shoulder 有限**：仅 2 件（27, 32）· Chainmail 材质稀少
+- **三部分律沿用**：命名二分律 + arm mesh-tiered + 视觉判断律 · Battania OSA arm ≤ 20（Warlord Pauldrons Elite 档 · sub Empire 25）
+
+---
+
+## Battania · BodyArmor · 38 件（2026-09-23 归档）
+
+**关键设计观察**：Battania BodyArmor 顶 **96**（`battania_warlord_armor` Scale Warlord · Plate）· 与 Vlandia 100 接近 · **arm 顶 40**（vs Empire 67 / Vlandia 100）· Battania 无 Full Sleeve 传统 · **主流 Chainmail Hauberk**（顶 55-66）· Plate 稀少（仅 5 件 60-96）
+
+### 👕 Cloth 民用（8 件 · body 4-10）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `battanian_savage_armor` | 0.8 | 4/32/2 | Wildling Armor（leg 32 高） |
+| `battania_civil_a` | 0.6 | 7/7/5 | Tartan Tunic |
+| `burlap_waistcoat` | 0.4 | 7/7/5 | Burlap Waistcoat |
+| `battania_dress_a/b/c` `battania_female_civil_a/b` | 0.7-0.9 | 8/8/6 | Various Dresses |
+| `battania_light_armor_e` | 0.7 | 10/15/0 | Tartan Toga |
+
+### 🦌 Leather Vest/Coat（8 件 · body 9-20）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `battania_civil_c` | 0.6 | 9/9/7 | Townsman Luxury Coat |
+| `sleeveless_studded_fur_armor` | 0.4 | 10/10/0 | Sleeveless Studded Fur Armor |
+| `battania_civil_b` | 0.4 | 13/11/7 | Villager Leather Tunic |
+| `fur_armor_with_strap` | 1.6 | 14/12/9 | Fur Armor With Strap |
+| `long_fur_coat` | 2.6 | 16/16/10 | Long Fur Coat |
+| `fur_armor` | 13.6 | 19/19/11 | Fur Armor |
+| `battania_woodland_outfit` | 1.2 | 20/22/14 | Woodland Garments |
+
+### 🧥 Chainmail Tartan/Kilt（3 件 · body 15-25 · Chainmail mat 但民用 Kilt/Tartan）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `battania_light_armor_d` | 0.8 | 0/15/0 | Highland Kilt over Tartan Trousers |
+| `battania_light_armor_c` | 2.4 | 15/15/0 | Highland Long Tartan |
+| `battania_light_armor_b` | 3.2 | 20/17/10 | Highland Tartan |
+| `battania_light_armor_a` | 6.5 | 25/17/10 | Highland Tartan with Chest Plate |
+
+### 🔗 Chainmail Mail Shirt/Hauberk（7 件 · body 36-66）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `battanian_chainmail_armor_b` | 10.7 | 36/22/16 | Highland Mail Shirt |
+| `battanian_chainmail_armor_a` | 10.7 | 40/25/16 | Heavy Mail Vest |
+| `battania_woodland_chainmail` | 10.3 | 45/27/38 | Heavy Mail Shirt with Wide Belt |
+| `ranger_mail` | 12 | 47/15/18 | Ranger Mail |
+| `battanian_chainmail_armor_c` | 14.7 | 49/22/16 | Highland Reinforced Mail Over Tartan |
+| `battanian_chainmail_armor_d` | 16.6 | 51/22/16 | Highland Reinforced Mail |
+| `battania_mercenary_armor` | 10.6 | 55/27/33 | Luxury Brigandine |
+| `battania_noble_armor` | 13.6 | 66/33/33 | Highborn Mail Armor |
+
+### 🛡 Plate 顶档（5 件 · body 34-96）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `scale_armor` | 10.7 | 34/20/0 | Rugged Scale Armor |
+| `kilt_over_plated_leather` | 10.8 | 48/48/12 | Kilt Over Plated Leather |
+| `western_scale_mail` | 14 | 50/38/38 | Rough Scale Mail |
+| `battanian_scale_armor_b` | 14.5 | 60/30/15 | Highland Scale Armor Over Cloth |
+| `battania_brass_plate_armor` | 10 | 70/20/20 | Bronze Breastplate |
+| `battanian_scale_armor_a` | 26 | 79/35/25 | Highland Scale Armor over Mail |
+| `battania_warlord_armor` | 25 | **96/50/40** ⭐ | Scale Warlord Armor ⭐ 顶点 |
+
+### Battania BodyArmor 关键约束
+
+- **顶点**：`battania_warlord_armor` **96/50/40/25**（Scale Warlord Armor · Plate 顶）· body ≤ 96
+- **arm 顶 40**（vs Empire 67 · Vlandia 100）——Battania 无 Full Sleeve 传统
+- **主流 Chainmail Hauberk**（顶 55-66 · 高频档）· Plate 稀少（仅 5 件）
+- **Battania 特色**：Fur Armor / Woodland Garments 部落装扮 · Kilt over Trousers / Highland Tartan / Wildling Armor（Kilt 高档 leg 32）
+
+---
+
+## Battania · HandArmor · 10 件（2026-09-23 归档）
+
+| id | mat | wt | arm | 名称 |
+|---|---|---:|---:|---|
+| `rough_tied_bracers` | Cloth | 0.6 | 21 | Rough Tied Bracers |
+| `armwraps` | Cloth | 0.2 | 22 | Armwraps |
+| `ragged_armwraps` | Cloth | 0.4 | 22 | Ragged Armwraps |
+| `buttoned_leather_bracers` | Leather | 0.5 | 24 | Buttoned Leather Bracers |
+| `roughtied_leather_bracers` | Leather | 0.5 | 24 | Roughtied Leather Bracers |
+| `guarded_armwraps` | Cloth | 0.4 | 25 | Guarded Armwraps |
+| `strapped_leather_bracers` | Leather | 0.5 | 25 | Strapped Leather Bracers |
+| `highland_gloves` | Leather | 0.8 | 30 | Fur Rimmed Leather Gloves |
+| `battania_noble_bracers` | Leather | 0.6 | 39 | Fian Bracers |
+| `battania_warlord_bracers` | Plate | 1.5 | **50** ⭐ | Scale Warlord Bracers ⭐ 顶点 |
+
+**Battania HandArmor 特色**：Bracers/Armwraps 部落主流 · Fian Bracers 39（弓手贵族档）· Warlord Bracers 50 顶（vs Empire 63 / Vlandia 60 略低）
+
+---
+
+## Battania · LegArmor · 10 件（2026-09-23 归档）
+
+| id | mat | wt | leg | 名称 |
+|---|---|---:|---:|---|
+| `turndown_leather_boots` | Leather | 0.9 | 25 | Folded Leather Boots |
+| `highland_boots` | Leather | 1.0 | 26 | Forester Boots |
+| `battania_woodland_boots` | Leather | 1.0 | 28 | Woodland Boots |
+| `belted_leather_boots` | Leather | 1.1 | 29 | Belted Leather Boots |
+| `highland_leg_wrappings` | Cloth | 1.0 | 30 | Woodland Leg Wrappings |
+| `rough_tied_boots` | Leather | 0.9 | 30 | Rough Tied Boots |
+| `battania_leather_boots` | Leather | 1.0 | 32 | Highborn Leather Boots |
+| `wrapped_leather_boots` | Leather | 1.0 | 33 | Wrapped Leather Boots |
+| `battania_fur_boots` | Leather | 1.5 | 35 | Fur Boots |
+| `battania_warlord_boots` | Plate | 2.6 | **46** ⭐ | Scaled Boots ⭐ 顶点 |
+
+**Battania LegArmor 特色**：Leather Boots 主流 · Fur Boots 35 部落顶级 Leather · Warlord Boots 46 Plate 顶（vs Empire 62 / Vlandia 43 · 介于两者）
+
+---
+
+## Battania · HorseHarness · 4 件（2026-09-23 归档 · 全 4 字段）
+
+| id | mat | wt | h/b/l/a | 名称 |
+|---|---|---:|---|---|
+| `bandit_saddle_highland` | Cloth | 8 | 5/5/0/5 | Rugged Fur Saddle |
+| `battania_horse_harness` | Leather | 10.3 | 10/15/10/10 | Battania Horse Harness |
+| `battania_horse_harness_halfscaled` | Chainmail | 15 | 50/35/20/45 | Half Scaled Barding |
+| `battania_horse_harness_scaled` | Chainmail | 20.6 | **50/35/30/45** ⭐ | Scale Barding ⭐ 顶点 |
+
+**Battania HorseHarness 特色**：极简 4 档 · 顶点 `battania_horse_harness_scaled` h=50/b=35/l=30/a=45 · **比 Empire/Vlandia 顶低**（Empire 90/50/50/60）· Battania 无重装骑兵传统 · **⚠ 引擎只读 body_armor**（回忆 HorseHarness 引擎机制）

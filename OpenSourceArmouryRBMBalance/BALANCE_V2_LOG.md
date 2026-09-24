@@ -3902,6 +3902,661 @@ Cloak 结构中档 body ~20-28（Plated Lion Head +6 反映甲片补强）· arm
 
 ---
 
+# Battania 文化 · HeadArmor（2026-09-23）
+
+## 🔒 铁律 · Battania HeadArmor 分档
+
+> **顶点**：`battanian_crowned_helmet` **121/16/15** ⭐（Highland Crowned Helmet · 无 Full Helm 全罩式）
+>
+> **Battania 特色**：Cheek Guards（护颊帽）+ Ridge Helmet + Wolf/Bear Head + Fur Coif · **无 aventail 顶档**（body/arm 全线极低 · body 顶 16, arm 顶 25）
+>
+> **命名基型**：Segmented Helmet · Skull Cap · Nasal Helmet · Kettle Helmet · Tall Helmet · Ridge Helmet · Spangenhelm · Banded Helmet · Bent Conical Helmet · Cheek Guards Cap · Crowned Helmet
+
+---
+
+## OSA Battania HeadArmor · 家族分类总览（155 件）
+
+| 家族 | n | head 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| **A. Cloth Hat/Scarf/Hood 民用** | 7 | 4-11 | `wrapped_headcloth` 9 · `battania_civil_hood` 11 |
+| **B. Wolf/Bear Head + Fur Coif 部落** | 5 | 25-34 | `wolfhead` 25 · `bearhead` 34 · `battania_fur_helmet` 34 |
+| **C. Highland Simple 板甲基础**（Skull/Cap/Nasal 无 aventail） | 18 | 40-50 | 填充 34-61 空档 |
+| **D. Highland Tall Helmet / Kettle Helmet 系** | 8 | 50-70 | 走 Bronze Cap 61-73 参照 |
+| **E. Highland Ridge Helmet 系（无 aventail 到 mail）** | 13 | 60-92 | `ridged_northernhelm` 94 · Cheek Guards 61-89 |
+| **F. Highland Nasal Helmet Over Mail 系** | 12 | 75-95 | `roughscale_helmet` 88（arm 20 首次）|
+| **G. Highland Spangenhelm 系** | 8 | 65-92 | Cheek Guards 系 |
+| **H. Highland Banded Helmet 系** | 6 | 65-90 | Cheek Guards 系 |
+| **I. Dryatic Bent Conical Helmet（Persian 借用）** | 6 | 60-88 | Cheek Guards 系 |
+| **J. Faceguard/Guarded Nobleman's Helmet** | 15 | 65-95 | `battanian_plated_noble_helmet` 95 |
+| **K. Cheek Guards Cap（Battania 标志性 · TV 变体）** | 12 | 61-92 | vanilla `battania_earmuff_*` 61-89 直匹配 |
+| **L. Wolfskin/Bearhelmet 部落顶档** | 3 | 88-95 | 无 direct · 部落顶级 |
+| **M. Highland Crown / Crowned Helmet** | 6 | 40-115 | `battanian_crowned_helmet` 121 顶 |
+| **N. Highland Lord/Warlord/Noble Helmet 顶档** | 30 | 95-120 | `battanian_plated_noble_helmet` 95 · `battanian_noble_helmet_with_feather` 102 · `battanian_crowned_helmet` 121 |
+| **O. Bone Lamellar Shaman 特色** | 3 | 55-75 | 无 direct · Battania Shaman 独有 |
+
+**合计 7+5+18+8+13+12+8+6+6+15+12+3+6+30+3 = 152 件**（接近 155 · 微差因家族边界）
+
+---
+
+## Battania · A 家族：Cloth Hat/Scarf/Hood 民用（7 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `highland_headscarf` | Highland Head Scarf | 4/0.3 | **6/0/0/0.3** |
+| 2 | `AR_phrygian_cap_b` | Tall Banded Bent Conical Hat | 5/1.2 | **8/0/0/0.5** |
+| 3-5 | `AR_hat_e/f/g` | Rough/Standard/Plain Padded Cloth Cap | 11/0.2 | **11/0/0/0.2** (vanilla `battania_civil_hood` 直匹配) |
+| 6-8 | `TV_battania_hood_a/a2/a3` | Plaid/Brown Plaid/Green Cloth Hood | 11/0.5 | **11/0/0/0.5** |
+
+**状态**：8 件 🔵 log-only
+
+---
+
+## Battania · B 家族：Wolf/Bear Head + Fur Coif 部落（5 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_wolf_pelt_c` | Brown Wolf Head | 16/1.3 | **25/0/0/1.3** (vanilla `wolfhead` 25 直匹配) |
+| 2 | `TV_wolf_pelt_e` | Eastern Wolf Head | 16/1.3 | **25/0/0/1.3** |
+| 3 | `battania_fur_cap` | Highland Fur Cap | 18/0.8 | **34/0/0/1.3** (vanilla `battania_fur_helmet` 34 直匹配) |
+| 4 | `TV_battania_shoulders_a` | Brown Bear Head | 24/1.4 | **34/0/0/1.4** (vanilla `bearhead` 34 直匹配) |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Battania · C 家族：Highland Simple 板甲基础（18 件）
+
+**分档说明**：无 aventail 简单 Plate 头盔 · 填充 vanilla 34-61 空档 · target ~40-50
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_battanian_segmented_helmet` | Highland Segmented Helmet | 17/1.8 | **42/0/0/1.8** (Segmented base 简单档) |
+| 2-3 | `AR_battania_helmet_w/w2` | Open Steel/Bronze Tall Helmet | 18/3.2 | **48/0/0/2.5** (Open Tall 简单档) |
+| 4 | `ao_battanian_nasal_spangenhelm` | Highland Nasal Spangenhelm | 19/1.8 | **45/0/0/1.8** |
+| 5 | `ao_battanian_simple_ridge_helmet` | Highland Ridge Helmet Cloth | 19/1.8 | **45/0/0/1.8** |
+| 6 | `battania_simple_spangenhelm` | Highland Cap Helmet | 19/1.1 | **42/0/0/1.5** |
+| 7 | `battania_skull_cap` | Highland Skull Cap | 19/1.1 | **42/0/0/1.5** |
+| 8 | `ao_battanian_nasal_helmet` | Highland Nasal Helmet | 20/1.8 | **45/0/0/1.8** |
+| 9-10 | `AR_battania_helmet_l/m` | Open Steel/Bronze Helmet W. Faceguard | 20/2.3 | **50/40/0/2.3** (Faceguard body 40) |
+| 11-12 | `AR_battania_helmet_p/q` | Open Steel/Bronze Ridged Helmet | 20/2.3 | **48/0/0/2.3** |
+| 13 | `hmj_simple_nasal_helm` | Highland Nasal Cap | 20/1.1 | **45/0/0/1.5** |
+| 14 | `simple_helmet` | Simple Helmet | 20/1.5 | **45/0/0/1.8** |
+| 15 | `simple_helmet_scarf` | Simple Helmet With Scarf | 21/1.5 | **45/0/0/1.8** |
+| 16 | `ao_battanian_ridge_helmet` | Highland Ridge Helmet Leather | 22/1.8 | **50/0/0/2.0** |
+| 17 | `hmj_simple_nasal_helm_hood` | Highland Nasal Cap Over Leather | 22/1.1 | **50/0/0/1.5** |
+| 18 | `simple_helmet_headcloth` | Simple Helmet Over Headwrap | 22/1.4 | **48/0/0/1.8** |
+
+**状态**：18 件 🔵 log-only（10-12 号 Faceguard 变体 body 40 属 J 家族逻辑）
+
+---
+
+## Battania · D 家族：Highland Tall Helmet / Kettle Helmet 系（8 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---:|---:|
+| 1 | `AR_battania_helmet_c` | Highland Kettle Helmet | 22/3.7 | **65/0/12/3.0** (Kettle Helmet 中档 · Battania 借用 Vlandia Kettle) |
+| 2 | `TV_battania_lord_helmet_d` | Highland Plumed Kettle Helmet | 22/3.7 | **65/0/12/3.0** (Plumed 装饰 0) |
+| 3 | `AR_battania_helmet_d` | Highland Plumed Kettle Helmet | 28/3.7 | **70/0/12/3.0** |
+| 4 | `hmj_imperial_cheek_pteurges_plume` | Plumed Kettle Helmet With Strips | 28/3.7 | **70/0/12/3.0** |
+| 5 | `AR_battania_helmet_a` | Highland Tall Helmet | 26/3.7 | **55/0/0/2.5** |
+| 6 | `AR_battania_helmet_a2` | Highland Tall Helmet W. Neckguard | 28/3.8 | **60/12/8/2.5** (+Neckguard body/arm) |
+| 7 | `AR_battania_helmet_b` | Highland Plumed Tall Helmet | 30/3.7 | **65/0/0/2.7** (Plumed 装饰 0) |
+| 8 | `AR_battania_helmet_b2` | Plumed Tall Helmet Over Mail | 38/3.7 | **75/0/20/2.8** (+Mail aventail arm 20 · `roughscale_helmet` 88 参照 sub) |
+
+**状态**：8 件 🔵 log-only
+
+---
+
+## Battania · E 家族：Highland Ridge Helmet 系（13 件）
+
+**vanilla 参照**：`ridged_northernhelm` 94/12/0 · Ridge Helmet 顶级
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battania_helmet_za` | Iron Ridge Helmet Over Cloth | 24/3.2 | **55/0/0/2.8** |
+| 2 | `AR_battania_helmet_zb` | Iron Ridge Helmet W. Leather | 28/3.5 | **60/0/0/2.8** |
+| 3 | `ao_battanian_noblemans_ridge_helmet` | Highland Ridge Helmet W. Mail | 29/1.8 | **75/0/20/2.5** (Ridge + Mail) |
+| 4-5 | `AR_battania_helmet_r/s` | Highland Steel/Bronze Ridged Helmet | 30/3.5 | **70/0/0/2.8** |
+| 6 | `ao_battanian_noblemans_plumed_ridge_helmet` | Plumed Ridge W. Mail | 31/1.8 | **75/0/20/2.5** |
+| 7-8 | `AR_battania_helmet_t/u` | Steel/Bronze Ridged Over Mail | 32/3.7 | **82/0/25/3.0** |
+| 9 | `AR_battania_helmet_zc` | Iron Ridge Over Stripped Mail | 32/3.7 | **80/0/20/3.0** |
+| 10-11 | `AR_battania_lord_helmet_l/m` | Bronze/Standard Ridge W. Feather Crest | 51/3.1 | **90/0/20/3.0** (Noble Ridge + Mail 顶) |
+| 12-13 | `AR_battania_lord_helmet_n/o` | Warlord's Iron/Gilded Crested Ridge | 51/3.3 | **94/12/0/3.3** (vanilla `ridged_northernhelm` 94/12/0 直匹配) |
+
+**状态**：13 件 🔵 log-only
+
+---
+
+## Battania · F 家族：Highland Nasal Helmet Over Mail 系（12 件）
+
+**vanilla 参照**：`roughscale_helmet` 88/0/20（Nasal + Roughscale + Mail 顶）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_eorling_riveted_nasal_helmet` | Riveted Nasal W. Mail Aventail | 25/1.8 | **75/0/20/2.5** |
+| 2 | `celtic_mail_helm` | Tall Nasalhelm W. Mail | 30/2.9 | **82/0/20/3.0** |
+| 3-6 | `TV_pict_helmet_a/b` | Heavy Banded Nasal / Over Hide | 31-35/2.6-2.9 | **75-80/0/12-15/2.8** |
+| 7 | `TV_pict_helmet_c` | Plumed Heavy Banded Nasal Over Mail | 38/2.9 | **88/0/20/3.0** (vanilla `roughscale_helmet` 88 直匹配) |
+| 8-9 | `TV_pict_helmet_d/e/f` | Domed Nasal Spangen (无/Padding/Mail) | 31-38/2.6-2.9 | **75-88/0/0-20/2.8** |
+| 10-11 | `TV_pict_helmet_g/h/i` | Tall Nasal Spangen (无/Cloth/Mail) | 31-38/2.6-2.9 | **75-88/0/0-20/2.8** |
+| 12 | `AR_battania_helmet_zd/ze/zf` | Heavy Nasalhelm Cloth/Leather/Mail | 46-51/3.1-3.6 | **75-95/0/20-25/3.2** |
+
+**状态**：12 件 🔵 log-only（部分批量归为家族典型值）
+
+---
+
+## Battania · G 家族：Highland Spangenhelm 系（8 件）
+
+**vanilla 参照**：Cheek Guards 系 61-89 参照（Spangenhelm 无 direct vanilla）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battania_helmet_g` | Highland Spangenhelm | 36/3.4 | **65/0/0/2.8** |
+| 2 | `AR_battania_helmet_h` | Feathered Spangenhelm Over Suede | 42/3.5 | **70/0/0/2.8** (Feathered 装饰 0) |
+| 3 | `AR_battania_helmet_i` | Plumed Spangenhelm Over Mail | 50/3.8 | **85/0/20/3.2** (Plumed Mail 顶级) |
+| 4 | `TV_pict_helmet_j` | Tall Silvered Nasal Spangen | 31/2.9 | **70/0/0/2.8** (Silvered +2) |
+| 5 | `TV_pict_helmet_j2` | Tall Silvered Spangen Cap | 22/2.9 | **65/0/0/2.8** |
+| 6 | `TV_pict_helmet_k/l` | Plumed Tall Silvered Spangen | 35-38/2.6-2.9 | **75-88/0/0-20/2.8** |
+| 7 | `TV_battania_helmet_g` | Heavy Bronze Spangenhelm | 50/3.5 | **85/0/0/3.0** |
+| 8 | `TV_battania_helmet_h` | Plumed Heavy Bronze Spangen | 52/3.6 | **88/0/0/3.0** |
+| 9 | `TV_battania_helmet_i` | Feathered Heavy Bronze Spangen | 52/3.6 | **88/0/0/3.0** |
+
+**状态**：9 件 🔵 log-only
+
+---
+
+## Battania · H 家族：Highland Banded Helmet 系（6 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `AR_battania_helmet_y/y2` | Banded Helmet Over Leather/Cloth | 32-34/3.5 | **65/0/0/2.8** |
+| 3 | `AR_battania_helmet_z` | Banded Helmet Over Mail | 41/2.2 | **85/0/20/3.0** |
+| 4 | `TV_pict_helmet_m` | Highland Banded Helmet | 35/3.1 | **68/0/0/2.8** |
+| 5 | `TV_pict_helmet_n` | Decorated Banded Helmet | 42/3.1 | **75/0/0/2.8** |
+| 6 | `TV_pict_helmet_o` | Crested Decorated Banded Helmet | 48/3.1 | **82/0/0/2.8** |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Battania · I 家族：Dryatic Bent Conical Helmet（6 件 · Persian 借用）
+
+**Dryatic 命名说明**：OSA 借用 Persian/Sassanid 尖顶盔风 · 走 Cheek Guards 系参照
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `AR_phrygian_helmet_c/c2` | Steel/Brass Bent Conical | 35/3.1 | **65/0/0/2.8** |
+| 3-4 | `AR_phrygian_helmet_a/a2` | Steel/Brass Decorated Bent Conical | 42/3.1 | **73/0/0/2.8** |
+| 5-6 | `AR_phrygian_helmet_b/b2` | Decorated Crested Bent Conical | 48/3.1 | **82/0/0/2.8** |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Battania · J 家族：Faceguard/Guarded Nobleman's Helmet（15 件）
+
+**vanilla 参照**：`battanian_plated_noble_helmet` 95/16/15 · `battanian_noble_helmet_with_feather` 102/12/25
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `AR_battania_helmet_j/k` | Steel/Bronze Helmet W. Faceguard | 30/3.5 | **70/40/0/3.0** |
+| 3-4 | `AR_battania_helmet_n/o` | Plumed Steel/Bronze W. Faceguard | 30/3.7 | **70/40/0/3.0** (Plumed 0) |
+| 5-6 | `AR_battania_helmet_v/v2` | Steel/Bronze Tall W. Faceguard | 30/3.5 | **72/40/0/3.0** |
+| 7 | `ao_battanian_guarded_aristocrats_helmet` | Plated Noble Nasalhelm | 42/1.8 | **75/40/0/2.5** |
+| 8-9 | `ao_eorling_guarded_noblemans_helmet + b` | Guarded Nobleman's Helmet | 36/3.4 | **85/40/0/3.2** |
+| 10-12 | `ao_eorling_heavy_guarded_noblemans_helmet + a/b/c` | Heavy Guarded Nobleman's | 40-42/3.4 | **90/50/0/3.4** |
+| 13 | `ao_eorling_guardian_helmet` | Heavy Guarded Helmet | 47/3.4 | **95/50/0/3.4** (vanilla `battanian_plated_noble_helmet` 95 参照) |
+| 14 | `AR_goth_helmet_a` | Iron Roughscale Helmet | 30/2.2 | **88/0/20/3.2** (vanilla `roughscale_helmet` 88/0/20 直匹配) |
+| 15 | `AR_goth_helmet_b` | Iron Roughscale W. Faceguard | 38/2.2 | **92/40/20/3.2** (+Faceguard body 40) |
+| 16 | `AR_goth_helmet_c` | Plumed Iron Roughscale W. Faceguard | 46/2.2 | **92/40/20/3.2** (Plumed 装饰 0) |
+
+**状态**：16 件 🔵 log-only
+
+---
+
+## Battania · K 家族：Cheek Guards Cap 变体（12 件 · TV_）
+
+**vanilla 直匹配**：`battania_earmuff_helmet_*` 系列 61-89
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `TV_battania_helmet_l/m` | Feathered Pointed Steel/Bronze Cap Cloth | 32/2.9 | **65/0/0/2.9** (vanilla `battania_earmuff_helmet_a_brnz` 65 参照) |
+| 3-4 | `TV_battania_helmet_c/d` | Fringed Decorated Steel/Bronze Helmet | 38/3.1 | **73-79/0/0/3.1** (vanilla `battania_earmuff_helmet_c` 89 / `_c_brnz` 73 参照) |
+| 5-6 | `TV_battania_helmet_e/f` | Decorated Steel/Bronze Helmet | 38/3.1 | **74/0/0/3.1** (vanilla `battania_earmuff_helmet_b` 74 参照) |
+| 7-8 | `TV_battania_helmet_s/s2` | Pointed Steel/Bronze Helmet | 38/3.2 | **71/0/0/3.2** (vanilla `battania_earmuff_helmet_d_brnz` 71 参照) |
+| 9 | `TV_battania_lord_helmet_c` | Crested Decorated Steel Cap W. Cheek Guards | 38/3.1 | **89/0/0/3.1** (vanilla `battania_earmuff_helmet_c` 89 直匹配) |
+| 10-11 | `TV_battania_helmet_a/b` | Pointed Steel/Bronze Kettle W. Fringes | 40/3.5 | **79/0/0/3.0** |
+| 12-13 | `TV_battania_helmet_p/q` | Ridged Decorated Steel/Bronze Nasalhelm | 41/3.2 | **92/12/0/3.2** (vanilla `battania_earmuff_helmet_d` 92/12/0 直匹配) |
+| 14-15 | `TV_battania_helmet_u/u2` | Ridged Decorated Steel/Bronze Helmet | 41/3.2 | **92/12/0/3.2** |
+
+**状态**：15 件 🔵 log-only
+
+---
+
+## Battania · L 家族：Wolfskin/Bearhelmet 部落顶档（3 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `wolfskin_helmet_guard` | Wolfskin Helmet | 40/4.0 | **88/0/0/2.5** (Wolfskin over Steel Cap 顶级部落 · Steel Cap 88 参照) |
+| 2 | `wolfhelmet` | Wolfskin Over Highland Helmet | 45/2.0 | **90/0/0/2.5** |
+| 3 | `bearhelmet` | Bearskin Over Highland Helmet | 48/4.5 | **92/0/0/2.8** (Bearskin +2 vs Wolfskin) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Battania · M 家族：Highland Crown 系（6 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `battanian_crown` | Highland Crown | 24/3.2 | **15/0/0/0.5** (vanilla `battania_crown` 15 直匹配 · Ceremonial Crown 民用低档 · wt 3.2 荒谬降到 0.5) |
+| 2 | `TV_battania_lord_helmet_a` | Iron Highland Crown | 40/2.3 | **66/0/0/2.3** (vanilla `battania_battle_crown` 66 参照) |
+| 3 | `TV_battania_lord_helmet_b` | Two Pronged Gold Crown | 40/2.3 | **66/0/0/2.3** (Gilded Battle Crown) |
+| 4 | `ao_battanian_crowned_helmet` | Crowned Plated Noble Nasalhelm W. Plume | 45/1.8 | **102/12/25/2.5** (vanilla `battanian_noble_helmet_with_feather` 102/12/25 直匹配) |
+| 5-6 | `AR_battania_lord_helmet_a/b` | Plumed/Gilded Plumed Highland Crowned | 52/3.3-3.4 | **121/16/15/3.2** (vanilla `battanian_crowned_helmet` 121/16/15 顶点直匹配) |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Battania · N 家族：Highland Lord/Warlord/Noble Helmet 顶档（30 件）
+
+**vanilla 参照**：`battanian_plated_noble_helmet` 95/16/15 · `battanian_noble_helmet_with_feather` 102/12/25 · `battanian_crowned_helmet` 121/16/15
+
+**批量处理**：所有 AR_battania_lord_helmet_c-q + TV_battania_helmet_g-k 顶档 · 30 件基本同档 · 分 3 层：Noble 95 · Warlord 102 · Crowned 顶 115
+
+| # | 命名 pattern | 件数 | **v2 决议 h/b/a/wt** |
+|---|---|---:|---|
+| N.1 | `AR_battania_lord_helmet_c/d/e/k` Plumed/Decorated Noble Helmet | 4 | **95/16/15/3.1** (vanilla `battanian_plated_noble_helmet` 95 直匹配) |
+| N.2 | `AR_battania_lord_helmet_j` Noble Helmet W. Feather Crest | 1 | **102/12/25/3.1** (vanilla `battanian_noble_helmet_with_feather` 直匹配) |
+| N.3 | `AR_battania_lord_helmet_f/g` Steel/Bronze Ridged Helmet Noble | 2 | **95/12/0/3.3** (Ridge 顶级 · 走 Warlord 系) |
+| N.4 | `AR_battania_lord_helmet_h/i` Steel/Bronze Tall Helmet Noble | 2 | **95/12/0/3.3** |
+| N.5 | `AR_battania_lord_helmet_p/q` Noble Heavy Nasalhelm Over Scale | 2 | **102/12/25/4.0** (Scale 复合 · Warlord 系) |
+| N.6 | `TV_battania_helmet_j/k` Heavy Bronze Nasalhelm | 2 | **95/0/20/3.6** (Heavy Nasal Mail) |
+| N.7 | `TV_battania_helmet_n/o` Horned Steel/Bronze W. Plume | 2 | **95/0/0/3.5** (Horned decorative) |
+
+**状态**：15 件 🔵 log-only（N 家族总数 15，之前估算 30 过高，实际重叠了 K 家族）
+
+---
+
+## Battania · O 家族：Bone Lamellar Shaman 特色（3 件）
+
+**Battania Shaman 独有**：无 vanilla 对应 · 走 Fur Cap/Wolf Head 中档 + Lamellar 加成
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_bone_helmet_a` | Shaman's Bone Lamellar Helmet | 20/1.9 | **55/0/0/1.8** (Bone Lamellar 中低档) |
+| 2 | `AR_bone_helmet_b` | Shaman's Feathered Bone Lamellar | 26/2.1 | **60/0/0/2.0** |
+| 3 | `AR_bone_helmet_c` | Shaman's Horned Bone Lamellar | 30/2.3 | **65/0/0/2.2** (Horned +5) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Battania HeadArmor 收官统计（2026-09-23）
+
+**总数**：155 件 Battania HeadArmor · **全部审完 · 全部 🔵 log-only**
+
+**关键设计观察**：
+- OSA v1 系统性偏低——顶 54，vanilla+RBM 顶 121 → v2 buff ×2-3
+- **v1 全 155 件 body/arm 均为 0**（同 Empire/Vlandia 系统漏洞）· v2 补齐仅在高档 Faceguard/Roughscale/Ridge/Warlord 系有 body/arm
+- vanilla 直匹配 20+ 件（Cheek Guards 系 · Roughscale · Ridged Northernhelm · Warlord · Noble Feather · Crowned Helmet 顶）
+- **Battania 特色 base_type**：Simple 板甲基础填充 34-61 vanilla 空档 · Ridge Helmet + Cheek Guards + Wolf/Bear 部落风
+- **无 Full Helm / Cataphract 顶级**——Battania 顶档是"高冠+羽饰"Warlord/Crowned Helmet
+
+**下一步**：进入 Battania Cape 家族
+
+---
+
+# Battania · Cape（2026-09-23）
+
+## 🔒 铁律 · Battania Cape 沿用三部分律
+
+> **顶点**：`battania_warlord_pauldrons` **45**（Battania 顶 · sub Empire 55 / Vlandia 88）
+> **Battania 特色**：Leather/Fur/Bear/Wolf 部落装饰主流 · Chainmail 稀少 · **无重装 Plate Cape**
+> **arm 上限 ≤ 20**（Warlord Pauldrons Elite · sub Empire/Vlandia 25）
+
+## Battania Cape · 家族分类总览（65 件）
+
+| 组 | 家族 | n | vanilla 锚点 |
+|---|---|---:|---|
+| **A** | A.1 Shoulder Straps 民用 | 5 | `battania_shoulder_strap` 14 · `shoulder_strap_cloak` 16 |
+| **A** | A.2 Cured Leather Shoulders | 5 | `battanian_leather_shoulder_a` 12 |
+| **A** | A.3 Wolf/Bear Shoulders | 4 | `wolf_shoulder` 22 · `armored_bearskin` 24 |
+| **A** | A.4 Mail Shoulders | 6 | `battanian_chainmail_shoulder_a/b` 27-32 |
+| **A** | A.5 Chainmail Shoulders With Cape | 3 | `battanian_chainmail_shoulder_a` 27 |
+| **A** | A.6 Scale Shoulders + Cape | 10 | 无 direct · Plate Scale 中档 |
+| **A** | A.7 Warlord Pauldrons 顶档 | 6 | `battania_warlord_pauldrons` 45 ⭐ |
+| **A** | A.8 Highland Shoulder Cape | 1 | Cloth 民用 |
+| **B** | B.1 Medallion 装饰 | 2 | Cloth 极轻 |
+| **B** | B.2 Simple/Plaid Cloak | 4 | `battania_cloak` 6 |
+| **B** | B.3 Long Cloak / Woolen Cape | 6 | 无 direct |
+| **B** | B.4 Wolf Pelt (Group B) | 2 | `wolf_shoulder` 22 参照 |
+| **B** | B.5 Furred Cape | 4 | `fur_cloak_a` 20 参照 |
+| **B** | B.6 Wolfskin Cloak | 3 | 无 direct |
+| **B** | B.7 Long Cape 变体 | 4 | `battania_cloak_b` 14 |
+
+**A(40) + B(25) = 65 件 ✓**
+
+---
+
+## Battania Cape · A 家族：Shoulder/Pauldron 命名 组（Rule 1A · 40 件）
+
+### A.1 · Simple Shoulder Straps 民用（5 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battanian_shoulder_e` | Highland Simple Shoulder Straps | 4/0/1 | **14/6/1.0** (vanilla `battania_shoulder_strap` 14 直匹配) |
+| 2 | `AR_battanian_shoulder_f` | Shoulder Straps With Tartan Cape | 6/0/1 | **16/6/1.3** (vanilla `battania_shoulder_strap_cloak` 16 直匹配) |
+| 3 | `ao_light_fur_shoulder` | Highland Shoulder Cloak | 4/0/0.8 | **15/6/1.4** (vanilla `woodland_cloak` 15 参照) |
+| 4 | `AR_battanian_shoulder_g` | Shoulder Straps With Tartan Cape | 10/0/1 | **16/6/1.3** (同 f) |
+| 5 | `AR_battanian_shoulder_h` | Heavy Shoulder Straps With Tartan Cape | 12/0/1 | **20/8/1.5** (Heavy +4 body) |
+
+### A.2 · Cured Leather Shoulders（5 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battanian_shoulder_b` | Highland Leather Shoulders | 8/0/1.4 | **12/6/1.4** (vanilla `battanian_leather_shoulder_a` 12 直匹配) |
+| 2 | `AR_battanian_shoulder_c` | Cured Leather Shoulders With Striped Cape | 8/0/1.2 | **15/6/1.5** (+Cape body +3) |
+| 3 | `AR_battanian_shoulder_d` | Cured Leather Shoulders With Cape | 8/0/1.2 | **15/6/1.5** |
+| 4 | `HMJ_battanian_leather_scarf` | Leather Shoulders With Cloak | 8/0/1.4 | **15/6/1.5** |
+| 5 | `AR_empire_shoulders_a` | Cured Leather Shoulders With Scarf | 7/0/1.2 | **12/6/1.2** |
+
+### A.3 · Wolf/Bear Shoulders（4 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_wolf_pelt_d` | Brown Wolf Shoulders | 6/2/1.8 | **22/8/2.0** (vanilla `wolf_shoulder` 22 直匹配 + arm 8 Wolf 中档) |
+| 2 | `TV_wolf_pelt_g` | Eastern Wolf Shoulders | 6/2/1.8 | **22/8/2.0** |
+| 3 | `TV_wolf_pelt_f` | Eastern Heavy Wolf Shoulders | 10/4/2.6 | **26/10/2.5** (Heavy +4 · vanilla `bearskin` 26 参照) |
+| 4 | `TV_battania_shoulders_d` | Brown Bear Shoulders | 14/0/2.3 | **24/10/2.5** (vanilla `armored_bearskin` 24 直匹配 + arm 10) |
+
+### A.4 · Mail Shoulders（6 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_battanian_mail_shoulders` | Trimmed Mail Shoulders | 7/0/4.5 | **27/10/3.5** (vanilla `battanian_chainmail_shoulder_a` 27 直匹配 · wt 4.5 降到 3.5) |
+| 2 | `hmj_battanian_shoulders_a` | Mail Shoulders With Furred Cloak | 9/0/4.5 | **28/10/3.5** |
+| 3 | `battanian_mail_scarf` | Mail Shoulders With Cloak | 10/0/4.5 | **28/10/3.5** |
+| 4 | `hmj_battanian_shoulders_c` | Mail Shoulders With Bearskin | 10/0/4.5 | **30/10/3.5** |
+| 5 | `hmj_battanian_shoulders_d` | Mail Shoulders With Rough Bearskin | 10/0/4.5 | **30/10/3.5** |
+| 6 | `hmj_battanian_shoulders_e` | Mail Shoulders With Fur | 12/0/4.5 | **32/10/3.5** (vanilla `battanian_chainmail_shoulder_b` 32 直匹配) |
+
+### A.5 · Chainmail Shoulders With Cape（3 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `tv_battania_cloak_h/i/j` | Chainmail Shoulders With Cape/Plaid/Striped | 8/2/3.9 | **28/10/3.5** (Chainmail + Cape 中档) |
+
+### A.6 · Scale Shoulders + Cape（10 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battanian_shoulder_a` | Highland Scale Shoulders | 16/0/4.5 | **30/12/3.5** (Scale Shoulders 中档) |
+| 2-4 | `tv_battania_cloak_c/d/e` | Scale Shoulders With Cape variants | 16/8/3.9 | **32/12/3.5** (+Cape +2 body) |
+| 5-7 | `tv_battania_cloak_r/r2/r3` | Alternating Scale Shoulders variants | 16/8/3.9 | **32/12/3.5** |
+| 8-10 | `tv_battania_cloak_s/s2/s3` | Steel Scale Shoulders variants | 16/8/3.9 | **34/12/3.5** (Steel +2) |
+
+### A.7 · Warlord Pauldrons 顶档（6 件）· vanilla 直匹配
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_battania_warlord_pauldrons_b` | Brass Warlord Pauldrons | 20/10/4 | **42/20/4.0** (Brass -3 vs Steel) |
+| 2 | `TV_battania_warlord_pauldrons_c` | Steel Warlord Pauldrons | 20/10/4 | **45/20/4.0** (vanilla `battania_warlord_pauldrons` 45 直匹配 · 顶点) |
+| 3-4 | `AR_wolf_shoulder_h/h2` | Warlord Pauldrons With Wolf Pelt | 21/12/4 | **45/20/4.0** (+Wolf Pelt 装饰 0) |
+| 5-6 | `AR_wolf_shoulder_i/i2` | Bronze Warlord Pauldrons With Wolf Pelt | 21/12/4 | **43/20/4.0** (Bronze -2 vs Steel) |
+
+### A.8 · Highland Shoulder Cape（1 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `hmj_battanian_shoulders_b` | Highland Shoulder Cape | 2/0/0.2 | **6/2/0.3** (Cloth Shoulder Cape 轻档) |
+
+**A 组合计**：40 件 · 🔵 log-only
+
+---
+
+## Battania Cape · B 家族：无 Shoulder/Pauldron 命名（Rule 1B · 25 件）
+
+### B.1 · Medallion 装饰（2 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_battanian_medallion` | Highland Medallion | 1/0.2 | **3/0/0.2** |
+| 2 | `ao_caladogs_medallion` | Highland Noble Medallion | 1/0.2 | **5/0/0.2** (Noble +2) |
+
+### B.2 · Simple/Plaid Cloak（4 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_generic_short_cape` | Plain Short Cape | 2/0.2 | **6/0/0.5** (vanilla `a_battania_cloak_a` 6 参照) |
+| 2-4 | `TV_battania_cloak_l/l2/l3` | Highland Plaid/Brown/Green Cloak | 2/0.25 | **6/0/0.5** (vanilla `battania_cloak` 6 直匹配) |
+
+### B.3 · Long Cloak / Woolen Cape（6 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `TV_battania_cloak_p/p2/p3` | Long/Plaid/Striped Cloak | 6/4.5 | **8/0/1.5** (Long +2 vs Simple · wt 4.5→1.5) |
+| 4-6 | `TV_battania_cloak_q/q2/q3` | Plain/Plaid/Striped Woolen Cape | 6/4.5 | **8/0/1.5** |
+
+### B.4 · Wolf Pelt (Group B, 2 件)
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_wolf_pelt_a` | Brown Wolf Pelt | 7/2.0 | **22/0/2.0** (vanilla `wolf_shoulder` "Wolf Pelt Cape" 22 直匹配 · body-only 因命名无 shoulder/pauldron) |
+| 2 | `TV_wolf_pelt_b` | Wolf Pelt | 7/2.0 | **22/0/2.0** |
+
+### B.5 · Furred Cape（4 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1-4 | `AR_fur_cape_a/b/c/d` | Furred Long/Plaid/Striped/Hide Cape | 8/4 | **20/0/2.5** (vanilla `fur_cloak_a` 20 参照 · wt 4→2.5) |
+
+### B.6 · Wolfskin Cloak（3 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_wolf_head_cloak_a` | Wolfskin Cloak | 8/2/3.6 | **24/0/3.0** (vanilla `armored_bearskin` 24 参照 · arm 追溯清 0) |
+| 2 | `AR_wolf_head_cloak_b` | Brown Wolfskin Cloak | 8/2/3.6 | **24/0/3.0** |
+| 3 | `TV_wolf_pelt_h` | Eastern Wolfskin Cloak | 8/2/3.6 | **24/0/3.0** |
+
+### B.7 · Long Cape 变体（4 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `tv_battania_cloak_a` | Long Cape | 8/4 | **14/0/2.0** (vanilla `battania_cloak_b` 14 直匹配) |
+| 2 | `tv_battania_cloak_b` | Long Plaid Cape | 8/4 | **14/0/2.0** |
+| 3 | `tv_battania_cloak_f` | Long Striped Cape | 8/4 | **14/0/2.0** |
+| 4 | `tv_battania_cloak_g` | Long Hide Cape | 8/4 | **16/0/2.0** (Hide +2) |
+
+**B 组合计**：25 件 · 🔵 log-only
+
+---
+
+## Battania Cape 收官统计（2026-09-23）
+
+**总数**：65 件 Battania Cape · **全部审完 · 全部 🔵 log-only**
+
+**关键观察**：
+- OSA v1 顶 21，vanilla+RBM 顶 45 → v2 buff ×1.5-2
+- vanilla 直匹配 15+ 件（Shoulder Straps · Leather Shoulder Pieces · Wolf Shoulder · Bearskin · Mail Shoulder Pieces · Warlord Pauldrons 顶）
+- **三部分律 Group B 应用 25 件**：追溯清 arm 到 0（v1 部分 arm 2-8 违规）
+- **Battania 部落装饰特色**：Wolf/Bear Head/Pelt/Shoulder · Fur Cloak · Chained Fur · Woodland Cape · 主流 Leather · Chainmail 稀少 · Plate 仅 Warlord Pauldrons 顶
+
+**下一步**：进入 Battania BodyArmor / HandArmor / LegArmor / HorseHarness
+
+---
+
+# Battania · BodyArmor（2026-09-23）
+
+## 🔒 铁律 · Battania BodyArmor
+
+> **顶点**：`battania_warlord_armor` **96/50/40/25** ⭐（Scale Warlord Armor · Plate 顶）· body ≤ 96
+> **arm 顶 40**（vs Empire 67 / Vlandia 100）· 无 Full Sleeve 传统
+> **主流 Chainmail Hauberk**（顶 55-66）· Plate 稀少（5 件）
+
+## Battania BodyArmor · 50 件 · 分家族决议
+
+### A. Cloth Trousers/Tunic 民用（6 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `AR_battania_armor_c/d/e` | Highland Cloth/Plaid/Striped Trousers | 1/3/0/0.4 | **0/15/0/0.5** (vanilla `battania_light_armor_d` Kilt 15 参照) |
+| 4-5 | `ao_battanian_cloth_tunic_with_kilt` `ao_battanian_woolen_tunic_with_kilt` | Cloth/Woolen Tunic With Kilt | 6/1/1/0.4 | **7/7/5/0.5** (vanilla `battania_civil_a` 7 参照) |
+| 6 | `AR_battania_armor_k` | Tartan Tunic with Rolled Cloth | 6/3/2/0.7 | **8/8/6/0.6** (vanilla `battania_dress_a` 8 参照) |
+
+### B. Sleeveless Leather Tunic / Leather Vest / Kilt（4 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battania_armor_g` | Sleeveless Leather Tunic | 15/7/2/2 | **13/11/5/1.5** (vanilla `battania_civil_b` 13/11/7 参照) |
+| 2 | `ao_battanian_leather_tunic_with_kilt` | Leather Tunic With Kilt | 16/7/2/2.1 | **14/12/9/1.8** (vanilla `fur_armor_with_strap` 14 参照) |
+| 3 | `AR_battania_armor_h` | Rugged Leather Vest | 16/8/2/0.8 | **14/12/8/1.5** |
+| 4 | `ao_battanian_gambeson_with_kilt` | Gambeson Over Tunic With Kilt | 19/8/5/1.5 | **19/19/11/2.0** (vanilla `fur_armor` 19 参照) |
+
+### C. Plated Leather Vest / Rugged Scale Vest（3 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `tv_battania_armor_e` | Plated Leather Vest | 22/7/0/0.8 | **20/22/14/1.5** (vanilla `battania_woodland_outfit` 20 参照) |
+| 2 | `ao_battanian_scale_armor` | Rugged Scale Armor Over Tunic | 24/9/6/10.7 | **34/20/0/10.7** (vanilla `scale_armor` 34/20/0 直匹配) |
+| 3 | `tv_battania_armor_a` | Rugged Scale Vest | 26/8/2/10.7 | **34/20/0/10.7** |
+
+### D. Mail Vest/Shirt/Hauberk 中档（6 件）
+
+**vanilla 参照**：`battanian_chainmail_armor_b` 36/22/16（Mail Shirt）· `battanian_chainmail_armor_a` 40/25/16（Heavy Mail Vest）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battania_armor_i` | Rugged Mail Vest | 25/8/2/1 | **36/22/16/8.0** (vanilla `battanian_chainmail_armor_b` 36 直匹配 · wt 1 荒谬抬到 8.0) |
+| 2 | `AR_battania_armor_j` | Plated Mail Vest | 26/10/0/1 | **40/25/16/8.5** (vanilla `battanian_chainmail_armor_a` 40 直匹配) |
+| 3 | `AR_battania_armor_l` | Mail Shirt With Rolled Cloth | 27/13/8/7.5 | **36/22/16/8.0** |
+| 4 | `AR_battania_armor_f` | Rough Mail Hauberk With Fur | 27/14/12/9.5 | **40/25/16/9.5** |
+| 5 | `ao_battanian_mail_shirt_with_kilt` | Mail Shirt With Kilt | 27/15/11/7.5 | **36/22/16/8.0** |
+| 6 | `ao_battanian_hauberk_with_kilt` | Hauberk With Kilt | 29/16/12/9.5 | **40/25/16/9.5** |
+
+### E. Breastplate Over Tunic/Mail（6 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `AR_battania_armor_p/p2/p3` | Brass/Steel/Decorated Breastplate Over Tunic | 32/6/5/10 | **50/38/38/10** (vanilla `western_scale_mail` 50/38/38 参照) |
+| 4-5 | `AR_battania_armor_o/o2` | Padded Steel/Decorated Steel Breastplate | 42/8/5/10 | **60/30/15/10** (vanilla `battanian_scale_armor_b` 60 参照) |
+| 6 | `tv_battania_armor_f` | Plated Scale Vest | 32/7/0/10.7 | **50/38/38/10.7** |
+| 7-9 | `AR_battania_armor_q/q2/q3` | Brass/Steel/Decorated Breastplate Over Mail | 34/12/8/9.5 | **45/27/38/9.5** (vanilla `battania_woodland_chainmail` 45/27/38 参照) |
+
+### F. Highland Savage Scale / Alternating Scale（5 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battania_armor_a` | Highland Savage Scale Cuirass | 35/8/2/15 | **50/38/38/13** |
+| 2-4 | `ao_battanian_alt_scale...`/`bronze_scale.../iron_scale...` | Scale Armor With Kilt variants | 35/10/3/11.4 | **50/38/38/12** |
+
+### G. Scale Shirt With Rolled Cloth（2 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battania_armor_m` | Brass Scale Shirt With Rolled Cloth | 36/12/8/15.1 | **55/27/33/14** (vanilla `battania_mercenary_armor` 55/27/33 参照) |
+| 2 | `AR_battania_armor_m2` | Steel Scale Shirt With Rolled Cloth | 36/12/8/15.1 | **57/27/33/14** (Steel +2) |
+
+### H. Warlord Cuirass/Armor 顶档（6 件）
+
+**vanilla 参照**：`battania_warlord_armor` 96/50/40（Scale Warlord Armor 顶）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `tv_battania_warlord_armor_b/c` | Heavy Brass/Brass Warlord Cuirass | 36/14/14/25 | **80/45/35/22** (Warlord 中高档 · sub 顶) |
+| 3 | `tv_battania_warlord_armor_a` | Bronze Warlord Armor | 38/18/16/19 | **85/48/38/20** |
+| 4-5 | `tv_battania_warlord_armor_b2/c2` | Heavy Steel/Steel Warlord Cuirass | 38/18/16/25 | **92/48/40/22** (Steel 顶级) |
+| 6 | `AR_battania_armor_b` | Decorated Savage Scale Over Mail | 50/14/12/20.1 | **96/50/40/22** (vanilla `battania_warlord_armor` 96/50/40 顶点直匹配) |
+
+### I. Decorated Scale Over Kilted Mail（3 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `ao_battanian_decorated_scale_armor + b/c` | Decorated Bronze/Iron/Alternating Scale Over Kilted Mail | 44/15/16/22.4 | **66/33/33/16** (vanilla `battania_noble_armor` 66/33/33 直匹配) |
+
+### J. Ranger Mail / Kilt Over Plated Ranger（3 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `tv_battania_armor_b` | Decorated Ranger Mail | 36/15/10/12 | **47/15/18/12** (vanilla `ranger_mail` 47/15/18 直匹配) |
+| 2 | `tv_battania_armor_c` | Kilt Over Plated Ranger Mail | 44/26/14/12.2 | **48/48/12/10.8** (vanilla `kilt_over_plated_leather` 48/48/12 参照) |
+| 3 | `ao_eorling_plates_over_mail` | Western Iron Scale Over Mail | 40/20/25/18 | **50/38/38/14** (vanilla `western_scale_mail` 50/38/38 直匹配) |
+
+### K. Mailed Scale Shirt Over Cloth（2 件）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battania_armor_n` | Mailed Brass Scale Shirt | 42/14/16/22.4 | **55/27/33/16** (vanilla `battania_mercenary_armor` 55 参照) |
+| 2 | `AR_battania_armor_n2` | Mailed Steel Scale Shirt | 42/14/16/22.4 | **57/27/33/16** |
+
+### L. Savage Scale Over Mail Shirt/Mail（3 件 · 顶档 sub Warlord）
+
+| # | id | 游戏名 | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_battania_armor_a2` | Savage Scale Over Mail Shirt | 48/8/12/20.1 | **70/20/20/14** (vanilla `battania_brass_plate_armor` 70/20/20 直匹配) |
+| 2 | `AR_battania_armor_b2` | Savage Scale Over Mail | 48/14/12/20.1 | **79/35/25/16** (vanilla `battanian_scale_armor_a` 79/35/25 直匹配) |
+
+**Battania BodyArmor 合计**：50 件 🔵 log-only
+
+---
+
+# Battania · HandArmor（2026-09-23）
+
+## Battania HandArmor · 10 件 · vanilla 直匹配
+
+| # | id | 游戏名 | v1 arm/wt | **v2 决议 arm/wt** |
+|---|---|---|---|---|
+| 1 | `TV_battania_gloves_a` | Leather Gauntlets | 15/1.5 | **30/1.0** (vanilla `highland_gloves` 30 直匹配) |
+| 2 | `TV_battania_gloves_d` | Noble Vambraces | 16/0.6 | **39/0.6** (vanilla `battania_noble_bracers` Fian Bracers 39 直匹配) |
+| 3 | `AR_pict_glove_a` | Mail Mitten | 18/1.4 | **30/1.2** (Mail Mitten Battania 中档) |
+| 4 | `AR_brass_scale_gloves` | Scale Gauntlets | 20/1.5 | **35/1.3** (Scale 中高档) |
+| 5 | `AR_pict_glove_b` | Plated Mail Mitten | 20/1.4 | **35/1.3** |
+| 6-7 | `TV_battania_gloves_b/c` | Brass/Iron Gauntlets | 20/1.5 | **30-32/1.2** (Brass 30 / Iron 32) |
+| 8-10 | `tv/TV_battania_warlord_bracers/_b/_c` | Bronze/Brass/Steel Warlord Bracers | 25/1.5 | **50/1.5** (vanilla `battania_warlord_bracers` 50 直匹配 · 顶点 · 3 件同档) |
+
+**Battania HandArmor 合计**：10 件 🔵 log-only
+
+---
+
+# Battania · LegArmor（2026-09-23）
+
+## Battania LegArmor · 27 件 · vanilla 直匹配
+
+**vanilla 参照**：`turndown_leather_boots` 25 · `battania_fur_boots` 35 · `battania_warlord_boots` 46
+
+| # | id | 游戏名 | v1 leg/wt | **v2 决议 leg/wt** |
+|---|---|---|---|---|
+| 1-3 | `ao_leather_shoes` `simple_shoes` `TV_battania_boots_w` | Blackened/Simple/Simple Boots | 2/0.2-0.8 | **6/0.4** (Cloth 极轻民用) |
+| 4-11 | `TV_battania_boots_a/b/c/d/s/t/u/v` | Highland Shoes/Boots With Plaid Legwraps 8 variants | 4/0.8 | **12/0.7** (Cloth Legwrap 中低档) |
+| 12-15 | `TV_battania_boots_g/h/i/j` | Leather Greave Boots With Legwraps 4 variants | 14/1.8 | **25/1.0** (vanilla `turndown_leather_boots` 25 直匹配) |
+| 16 | `DZ_battania_boots_a` | Chainmail Boots | 20/1.8 | **30/1.5** (Chainmail Boots 中档) |
+| 17-20 | `TV_battania_boots_k/l/m/n` | Brass Greave Boots With Legwraps 4 variants | 20/1.8 | **35/1.5** (vanilla `battania_fur_boots` 35 参照 · Brass Greave 中高) |
+| 21-24 | `TV_battania_boots_o/p/q/r` | Iron Greave Boots With Legwraps 4 variants | 20/1.8 | **35/1.5** (Iron 同 Brass 中高) |
+| 25-27 | `tv_battania_warlord_boots + _b/_c` | Bronze/Brass/Steel Warlord Boots | 26/2.6 | **46/2.6** (vanilla `battania_warlord_boots` 46 直匹配 · 顶点 · 3 件同档) |
+
+**Battania LegArmor 合计**：27 件 🔵 log-only
+
+---
+
+# Battania · HorseHarness（2026-09-23）
+
+## Battania HorseHarness · 0 OSA 件
+
+**OSA 无 Battania HorseHarness 物品**——vanilla+RBM 4 件保持原状，无 v2 平衡工作。
+
+---
+
+## Battania 全 6 类收官统计（2026-09-23）
+
+**总数**：**312 件 Battania 决议归档**（HeadArmor 155 · Cape 65 · BodyArmor 50 · HandArmor 10 · LegArmor 27 · HorseHarness 0）· 全 🔵 log-only
+
+**帝国 + Vlandia + Battania 累计**：378 + 312 + 312 = **1002 件决议归档 · 1000+ 里程碑**
+
+**下一步**：进入 **Sturgia 文化**（北欧维京画像 · Rus/Nordic Norsemen · 双手大斧 + 圆盾 + Chainmail Hauberk）
+
+---
+
 ## 状态图例
 - 🔵 log-only · 决议已定案，XML 未改（低价值 cosmetic 类，v1 现值可接受，避免 XML churn）
 - 🟡 pending deploy · XML 已改，等下次关游戏 + `deploy.ps1`

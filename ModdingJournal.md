@@ -2378,6 +2378,14 @@ public static void SetBound(this Village village, Settlement boundTarget) {
     - **Vlandia LegArmor 7 件**：顶 `mail_cavalier_boots` 43 · 无 Plate 顶档 · 极简 2 档
     - **Vlandia HorseHarness 34 件**：顶 `chain_barding` h=90/b=40/l=40/a=50 · 全 Chainmail · Half vs Full 差异 leg 25 vs 40（比 Empire 5 vs 50 收窄）
   - **累计 帝国 378 + Vlandia 312 = 690 件决议归档**
+  - **Battania 全 6 类完成（2026-09-23）**：HeadArmor 155 · Cape 65 · BodyArmor 50 · HandArmor 10 · LegArmor 27 · HorseHarness 0 = **307 件决议**
+    - **Battania HeadArmor 155 件**（15 家族 A-O）：顶 `battanian_crowned_helmet` 121/16/15 · Battania 特色 Cheek Guards（护颊帽）+ Ridge Helmet + Wolf/Bear Head + Bone Lamellar Shaman · 无 Full Helm/Cataphract
+    - **Battania Cape 65 件**（8+7 家族 A/B）：顶 `battania_warlord_pauldrons` 45 · 主流 Leather/Fur/Bear/Wolf 部落装饰 · 无重装 Plate Cape 传统
+    - **Battania BodyArmor 50 件**（12 家族 A-L）：顶 `battania_warlord_armor` 96/50/40 · arm 40 sub Vlandia 100 · 主流 Chainmail Hauberk · Plate 稀少
+    - **Battania HandArmor 10 件**：顶 `battania_warlord_bracers` 50 · Bracers/Armwraps 部落主流 · Fian Bracers 39 弓手贵族档
+    - **Battania LegArmor 27 件**：顶 `battania_warlord_boots` 46 · Highland Legwraps 部落主流 · Fur Boots 35
+    - **Battania HorseHarness 0 件**：OSA 无 Battania 马甲 · 无 v2 工作
+  - **累计 帝国 378 + Vlandia 312 + Battania 307 = 997 件决议归档 · 逼近 1000 里程碑**
 
   **Cape 三部分律速查**（2026-09-23 用户拍板）：
   1. **命名二分律**：有 shoulder/pauldron 命名 → 允许 body + arm 同 > 0（**body > arm 严格序**）；无此命名（Cape/Cloak/Sash/Focale/Pelt/Collar）→ **arm 必须 = 0**

@@ -2301,6 +2301,53 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ## 待办 / 开放问题
 
+### 🔴 P0 · 最新最高优先度开发方案（2026-09-24 立项）
+
+- [ ] **🔴 OSW（Open Source Weaponry）v2 武器平衡**（2026-09-24 立项 · 上一次对话末尾用户批准）
+
+  **背景**：OSA armor v2 已 2026-09-24 收官（1835 件决议 + 323 件 XML deploy · 7 文化含 Nord NavalDLC）· 但装备生态存在"重甲飘刀"隐患——铁浮屠头盔 148 + Heavy Lamellar body 138 顶配的玩家 · 武器可能欠强 · 整套装备手感不匹配。OSW workshop 内容尚未纳入 v2 手工审。
+
+  **OSW 数据侦查（2026-09-24 一次扫描）**：
+  - **总量**：**124 Items + 50 CraftingPieces = 174 件**
+  - **Item 类型分布**：Shield 114（92% · 主体）· Thrown 7 · Crossbow 1 · Bolts 1 · **完整近战武器 Item = 0**
+  - **Culture 分布**：Empire 35 · Aserai 15 · Battania 13 · Khuzait 12 · Sturgia 8 · Vlandia 2（Nord 未查 · 可能 NavalDLC 加）
+  - **近战武器实现**：通过 50 件 CraftingPieces（Blade/Guard/Handle/Pommel）让玩家 craft · 不是完整 Item
+  - **v1 处理状态**：`generate.ps1` 只处理 18/50 Blade CraftingPieces（damage_factor）· 剩 32 件 CraftingPieces + 114 件 Shield + 9 件 Thrown/Crossbow/Bolts 完全未处理
+
+  **立项范围**（分 6 阶段）：
+  1. **侦查阶段（P0 · 下一对话首件事）**：扫 OSW 全数据 + RBM_WS baseline · 判断 imbalance 严重程度 · 出报告 · 决定是否投入全量平衡
+  2. **盾牌 v2 全审**：114 件按 6 文化 + Nord 分档 · hit_points / body_armor / speed / weight 平衡 · 类比 armor 的按文化+类型推进
+  3. **CraftingPieces 深化**：Blade v1 18 件回顾 + Guard/Handle/Pommel 完整审 (32 件)
+  4. **边缘武器**：Thrown 7 + Crossbow 1 + Bolts 1
+  5. **世界观联动**：华夏中原（Khuzait 弯刀/长矛）· 波斯萨珊（Aserai 弯刀/矛）· 精英维京（Nord 战斧/剑/掷矛）· 各精工线武器同步升级
+  6. **Deploy**：加入 `manual_override.ps1` pipeline · 复用 armor 的 XML override 机制
+
+  **工作量估计**：174 件 · 类似 armor v2 规模的 ~10%（远小于 1835 armor 决议）· 预计 **3-5 session**（每 session 处理 1 类型 或 1 文化）
+
+  **主要难点**：
+  - 盾牌 subtype 分档（Round/Kite/Large/Buckler/Heater）
+  - CraftingPieces 字段深度（damage_factor / speed_factor / handling / length / weight / weapon_class）
+  - 武器 damage_type（cut/pierce/blunt）交叉决定实战效果
+
+  **技术复用**（armor v2 遗产）：
+  - `manual_override.ps1` pipeline：$decisions hashtable 只需加 id → 数值 map · 生成器不用改
+  - 铁律复用：vanilla+RBM 唯一权威 · 用户特批 override 机制 · 精工线世界观扩展
+  - 归档格式复用：BALANCE_V2_LOG.md 继续追加武器章节
+
+  **世界观联动机会**（3 条精英线的武器侧映射）：
+
+  | 精英线 | 装甲侧（已完成） | 武器侧（待做） |
+  |---|---|---|
+  | Khuzait 华夏中原 | Heavy Lamellar 138 · 铁浮屠 148 | 华夏弯刀（斩马刀）/ 长矛 / 复合弓 / 铁浮屠长矛 |
+  | Aserai 波斯萨珊 | Mastercrafted Hauberk 138 · Immortal's 135 | 波斯弯刀（scimitar）/ Darshi 长矛 / 波斯复合弓 |
+  | Nord 精英维京 | Berserker Reinforced 155 · Nord King 115 | Berserker 战斧 / Huscarl 剑 / 维京长斧 / 掷矛 |
+
+  **下一步（下一对话首件事）**：**侦查阶段** · 扫 OSW 全数据 · 对比 RBM_WS baseline · 生成 imbalance 报告 · 用户决策是否走全量平衡 or 只补关键件
+
+  **不做侦查前的先决判断**：如果 RBM_WS 已经充分覆盖 OSW 盾牌 · 那本项目可能只需处理 CraftingPieces 32 件深化 + 9 件边缘武器（工作量大幅缩小）；反之则走全 174 件。**侦查决定项目实际规模**。
+
+---
+
 ### 🔴 P0 · 待调查项目（policy: 调查 > 落地实施）
 
 **用户 policy（2026-09-21）**：需要"花大量实施时间但技术路径清楚"的项目从 P0 降下去（比如 OSA v2 / CastleEliteRecruitment，已有渠道落实），P0 位置让给**需要研究**的项目。

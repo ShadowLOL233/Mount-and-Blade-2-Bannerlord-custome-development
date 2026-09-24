@@ -1438,6 +1438,1327 @@ F.1/F.3/F.4 落 T4 与 vanilla `pauldron_cape_a` 30/0 T4 对齐（Legionary Cape
 
 ---
 
+## Empire · Cape · H. Wolf Pelt 家族（extra_contribution）
+
+### 2026-09-23 · H 家族 10 件 · 装饰前缀 0 影响 · 材质分档实证
+
+**背景**：extra_contribution 包 10 件 Wolf Pelt 变体覆盖 Lamellar Shoulders/Pauldrons/Leather/Mail/Brass Scale 五种基础。Wolf/Brown Wolf Pelt 属**装饰前缀** → 按字典律**零护甲影响**，直接继承基础档次。
+
+**vanilla RBM 参照**：
+- `imperial_lamellar_shoulders` **55/0/3.5** ⭐（Heavy Lamellar Pauldrons顶点）
+- `varangian_bra_mail` 35/0/3.2（Chainmail Shoulders 唯一参照）
+- `woven_leather_shoulders` 16/0/1.6 · `varangian_bra_basic` 18/0/2.5 · `empire_warrior_padded_armor_shoulder` 24/0/1.6（Leather 梯度）
+
+#### 子群 H.1 · Lamellar Shoulders + Wolf Pelt（2 件 · G.1a Standard tier）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_wolf_shoulder_a` | Imperial Lamellar Shoulders With Wolf Pelt | 18/10/3.8 | **40/20/3.8** |
+| 2 | `AR_wolf_shoulder_b` | Imperial Lamellar Shoulders With Brown Wolf Pelt | 18/10/3.6 | **40/20/3.8** |
+
+同 G.1a Standard Lamellar Shoulders 档 · Wolf Pelt 装饰 0
+
+#### 子群 H.2 · Lamellar Pauldrons + Wolf Pelt（2 件 · G.2 Standard Pauldrons tier）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 3 | `AR_wolf_shoulder_c` | Imperial Lamellar Pauldrons With Wolf Pelt | 16/8/3.8 | **35/12/3.6** |
+| 4 | `AR_wolf_shoulder_d` | Imperial Lamellar Pauldrons With Brown Wolf Pelt | 16/8/3.6 | **35/12/3.6** |
+
+同 G.2 Standard Pauldrons 档
+
+#### 子群 H.3 · Leather Shoulders + Wolf Pelt（2 件 · Leather Shoulders 中档）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 5 | `AR_wolf_shoulder_e` | Imperial Leather Shoulders With Wolf Pelt | 10/8/2.1 | **18/6/2.2** |
+| 6 | `AR_wolf_shoulder_e2` | Imperial Leather Shoulders With Brown Wolf Pelt | 10/8/2.1 | **18/6/2.2** |
+
+vanilla `varangian_bra_basic` 18/0 直匹配 · Leather Shoulders arm 中档 6
+
+#### 子群 H.4 · Mail Shoulders + Wolf Pelt（2 件 · Chainmail Shoulders 档）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 7 | `AR_wolf_shoulder_f` | Imperial Mail Shoulders With Wolf Pelt | 14/8/2.7 | **35/10/2.9** |
+| 8 | `AR_wolf_shoulder_f2` | Imperial Mail Shoulders With Brown Wolf Pelt | 14/8/2.7 | **35/10/2.9** |
+
+vanilla `varangian_bra_mail` 35/0 直匹配 · Chainmail Shoulders arm 中档 10
+
+#### 子群 H.5 · Brass Scale Shoulders + Wolf Pelt（2 件 · F 家族视觉律 arm 清 0）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 9 | `AR_wolf_shoulder_g` | Imperial Brass Scale Shoulders With Wolf Pelt | 16/8/2.7 | **32/0/2.9** |
+| 10 | `AR_wolf_shoulder_g2` | Imperial Brass Scale Shoulders With Brown Wolf Pelt | 16/8/2.7 | **32/0/2.9** |
+
+**视觉判断优先律**（F 家族先例）：Scale Shoulders mesh 只覆盖 body-shoulder，arm 清 0 · Wolf Pelt 装饰 0 影响
+
+**Cape 铁律校验**：全 10 件命名含 shoulder/pauldron ✓ · body > arm 严格序 ✓ · arm mesh-tiered 分档 ✓
+
+**状态**：10 件 🔵 log-only
+
+---
+
+## Empire · Cape · I. Bronze/Iron/Studded Plate Pauldrons
+
+### 2026-09-23 · I 家族 5 件 · vanilla 直匹配 + Brass/Iron 品质分档
+
+**背景**：Plate Pauldrons 家族——vanilla Empire Cape 里 Bronze/Iron plate 是主流中档档次，命名含"Pauldrons"为 Group A。BA_ 系列是 extra_contribution 的"Pauldrons + Mail" 复合结构（Studded 加固 + Mail underlay）。
+
+**vanilla RBM 参照**：
+- `empire_plate_armor_shoulder_a` **17/0/3.6**（Bronze Plate Pauldrons）
+- `empire_plate_armor_shoulder_b` **21/0/3.6**（Iron Plate Pauldrons · Iron +4 body vs Bronze）
+- `a_pauldron_cape_c` 15/0/3.5（Bronze Pauldrons）
+- `a_pauldron_cape_b` 20/0/3.5（Bronze Pauldrons with Neck Guard）
+
+#### 子群 I.1 · Bronze Pauldrons + Scarf（1 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_shoulders_g` | Imperial Bronze Pauldrons With Scarf | 18/0/3.5 | **17/12/3.5** |
+
+vanilla `empire_plate_armor_shoulder_a` 17/0 直匹配 + arm 12 Standard Pauldrons 档 · Scarf 装饰 0
+
+#### 子群 I.2 · Studded Brass/Iron Pauldrons + Mail（2 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 2 | `BA_empire_shoulders_a` | Imperial Studded Brass Pauldrons With Mail | 16/8/2.7 | **24/12/3.0** |
+| 3 | `BA_empire_shoulders_b` | Imperial Studded Iron Pauldrons With Mail | 16/8/2.7 | **26/12/3.0** |
+
+Studded Brass = Bronze upgrade +4 (17→21→24 累加 Studded reinforce) · Iron +2 vs Brass · Mail underlay 属描述性，不额外加档 · arm 12 Standard Pauldrons
+
+#### 子群 I.3 · Brass/Iron Pauldrons + Mail（2 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 4 | `BA_empire_shoulders_c` | Imperial Brass Pauldrons With Mail | 14/6/2.7 | **20/10/2.8** |
+| 5 | `BA_empire_shoulders_d` | Imperial Iron Pauldrons With Mail | 14/6/2.7 | **22/10/2.8** |
+
+比 Studded 弱一档（无 Studded 加固）· Brass 20 / Iron 22（+2 品质差）· arm 10 Chainmail Shoulders 中档（Mail underlay 视觉体现）
+
+**Cape 铁律校验**：全 5 件命名含 Pauldrons ✓ · body > arm ✓ · Plate Pauldrons 档 arm 12/10 ✓
+
+**状态**：5 件 🔵 log-only
+
+---
+
+## Empire · Cape · K. Leather Shoulders + Cape/Cloak
+
+### 2026-09-23 · K 家族 9 件 · Leather Shoulders 分档 + Cape 结构 body 加成
+
+**背景**：Leather Shoulders 及其 Cape/Cloak 变体，命名均含"Shoulders"为 Group A。分独立 Shoulders + 附 Cape 两组。
+
+**vanilla RBM 参照**：
+- `woven_leather_shoulders` **16/0/1.6**（Woven Leather · Leather 轻档）
+- `varangian_bra_basic` **18/0/2.5**（Decorated Leather Harness · Leather 中档）
+- `varangian_bra_royal` **22/0/2.7**（Caped Leather Harness · Leather 中高档）
+- `empire_warrior_padded_armor_shoulder` **24/0/1.6**（Legionary Padded Straps · Padded 顶档）
+- `varangian_bra_padded` **27/0/3.2**（Decorated Leather Harness with Padding · Padded + Leather复合顶档）
+
+#### 子群 K.1 · 独立 Leather Shoulders（3 件 · 无 Cape 结构）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_shoulders_m` | Imperial Leather Shoulders | 8/2/2.1 | **16/4/2.0** |
+| 2 | `AR_imperial_shoulders_s` | Imperial Studded Leather Shoulders With Focale | 8/2/2.1 | **20/6/2.2** |
+| 3 | `AR_imperial_shoulders_t` | Imperial Trimmed Leather Shoulders | 8/2/2.1 | **17/5/2.0** |
+
+- m：vanilla `woven_leather_shoulders` 16/0 直匹配 + arm 4 Leather 轻档
+- s：Studded Leather 中档 · body 20（Studded +4 vs 基础 16）· arm 6 Leather 中档 · Focale 装饰 0
+- t：Trimmed 品质词 · body 17（+1 品质微调）· arm 5
+
+#### 子群 K.2 · Padded Shoulders + Scarf（1 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 4 | `AR_empire_shoulders_b` | Imperial Padded Shoulders With Scarf | 12/4/1.6 | **22/6/1.8** |
+
+vanilla `empire_warrior_padded_armor_shoulder` 24/0 参照 · Padded 中档 body 22 · arm 6 Leather 中档 · Scarf 装饰 0
+
+#### 子群 K.3 · Leather Shoulders + Cape/Cloak（5 件 · Cape 结构 body +2）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 5 | `AR_imperial_leather_cape_a` | Imperial Leather Shoulders With Cape | 12/0/4 | **22/8/3.5** |
+| 6 | `AR_imperial_leather_cape_b` | Imperial Leather Shoulders With Striped Cloak | 12/0/4 | **22/8/3.5** |
+| 7 | `AR_imperial_leather_cape_b2` | Imperial Leather Shoulders With Cloak | 12/0/4 | **22/8/3.5** |
+| 8 | `tv_imperial_leather_cape_a` | Imperial Leather Shoulders With Plaid Cape | 12/0/4 | **22/8/3.5** |
+| 9 | `tv_imperial_leather_cape_b` | Imperial Leather Shoulders With Striped Cape | 12/0/4 | **22/8/3.5** |
+
+vanilla `varangian_bra_royal` 22/0 直匹配（Caped Leather Harness）· Cape 结构 body +6 vs 基础 Leather Shoulders 16 · arm 8 Leather 中档 · Striped/Plaid/Cloak 装饰 0 · wt v1 4.0 略重，降到 3.5
+
+**Cape 铁律校验**：全 9 件命名含 Shoulders ✓ · body > arm ✓ · Leather Shoulders arm 中档 4-8 ✓
+
+**状态**：9 件 🔵 log-only
+
+---
+
+## Empire · Cape · L. Mail Shoulders
+
+### 2026-09-23 · L 家族 1 件 · Chainmail Shoulders 唯一档
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_shoulders_n` | Imperial Mail Shoulders | 12/4/2.7 | **35/10/2.9** |
+
+vanilla `varangian_bra_mail` 35/0/3.2 直匹配 · Chainmail Shoulders arm 中档 10
+
+**Cape 铁律校验**：命名含 Shoulders ✓ · body > arm ✓ · Chainmail 中档 10 ✓
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Empire · Cape · M. Studded Strip Shoulders（light）
+
+### 2026-09-23 · M 家族 2 件 · Studded 轻档 · G.3 tier fallback
+
+**背景**：与 G.3（`AR_imperial_shoulders_o/o2` Studded Strip Shoulders With Lamellar/Cape/Focale）同结构，本组是**独立 Studded Strip Shoulders**（无 Lamellar 补强），比 G.3 弱一档。
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_shoulders_p` | Imperial Studded Strip Shoulders With Focale | 7/4/3.6 | **22/8/3.4** |
+| 2 | `AR_imperial_shoulders_p2` | Imperial Studded Shoulders With Focale | 6/0/3.6 | **18/6/3.2** |
+
+- p：Studded Strip Shoulders + Focale · 比 G.3 弱一档（G.3 是 Strip + Lamellar Pauldrons 复合 26/8）· body 22 / arm 8 Strip 顶档
+- p2：Studded Shoulders（无 Strip 结构）· 更轻 · body 18 / arm 6 Leather 中档
+
+**Cape 铁律校验**：命名含 Shoulders ✓ · body > arm ✓ · Studded Strip arm 6-8 ✓
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Empire · Cape · N. Gladiator Single Pauldron
+
+### 2026-09-23 · N 家族 2 件 · 单肩甲结构（body 减半 · arm 保留）
+
+**背景**：命名"Single Lamellar Pauldron"——**只覆盖一侧肩膀**（角斗士传统单肩甲），body 覆盖减半但 arm 覆盖同 Standard Pauldrons（因为覆盖那一侧的上臂）。
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_gladiator_shoulder_a` | Single Lamellar Pauldron Over Leather | 18/9/3.5 | **20/12/2.5** |
+| 2 | `AR_gladiator_shoulder_b` | Single Lamellar Pauldron Over Plated Leather | 16/8/4.1 | **22/12/2.8** |
+
+- a：单肩甲 · body 20（Standard Pauldrons 35 的 ~57%，反映单侧覆盖）· arm 12 Standard Pauldrons · wt 2.5（单肩甲结构约半重）
+- b：Plated Leather underlay +2 body · 其余同 a
+
+**Cape 铁律校验**：命名含 Pauldron ✓ · body > arm ✓ · Standard Pauldrons arm 12 ✓
+
+**关键设计决策**：单肩甲结构——**body 减半 · arm 不减**（因为覆盖那一侧上臂完整）· 这是角斗士家族独有的"非对称覆盖"设计
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Empire · Cape · O. Studded Leather Shoulders + Cape
+
+### 2026-09-23 · O 家族 1 件 · TV_ 包 Studded Leather + Cape
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `TV_empire_shoulders_a` | Imperial Studded Leather Shoulders With Cape | 8/4/3.6 | **22/8/3.4** |
+
+Studded Leather + Cape · vanilla `varangian_bra_royal` 22/0 参照 · arm 8 Leather 中档 · Cape 结构 body 已达 22 无需再加
+
+**Cape 铁律校验**：命名含 Shoulders ✓ · body > arm ✓ ✓
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Empire · Cape · P. Noble Shoulders
+
+### 2026-09-23 · P.a 家族 1 件 · Noble Collar Shoulders + Cape
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_noble_collar_a` | Imperial Noble Shoulders With Cape | 16/8/1.4 | **24/10/2.5** |
+
+Noble Shoulders + Cape · vanilla `empire_warrior_padded_armor_shoulder` 24/0（Padded 顶档） + Noble 品质字典（+0 结构性）· Cape 结构 body 已达 24 · arm 10 Chainmail Shoulders 档（Noble = 中高档结构性 arm）· wt v1 1.4 太轻，抬到 2.5
+
+**注**：AR_noble_collar_b 因命名不含 shoulder/pauldron，归 Group B（见 R 家族附）
+
+**Cape 铁律校验**：命名含 Shoulders ✓ · body > arm ✓ ✓
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Empire · Cape · Q. lamellar_scarf（hmj_moretroops 独立包）
+
+### 2026-09-23 · Q 家族 1 件 · G.1a Standard Lamellar Shoulders 直匹配
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `lamellar_scarf` | Imperial Lamellar Shoulders with Scarf | 18/9/4 | **40/20/3.8** |
+
+命名与 G.1a `AR_imperial_shoulders_a` "Imperial Lamellar Shoulders Over Leather" 结构完全对应 · 同 G.1a Standard Lamellar Shoulders tier · Scarf 装饰 0
+
+**Cape 铁律校验**：命名含 Shoulders ✓ · body > arm ✓ · G.1a tier ✓
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Empire · Cape · S. Strip Shoulders + Long Cape
+
+### 2026-09-23 · S 家族 1 件 · Strip Shoulders + Cape 复合
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_lamellar_cape_d` | Imperial Strip Shoulders With Long Cape | 16/6/3.9 | **28/8/4.0** |
+
+**注**：id 前缀"lamellar_cape_d"但命名是"Strip Shoulders With Long Cape"——**以命名为准**（Rule 1 依据 name 而非 id）· 归 Group A · Strip Shoulders 档 + Long Cape 结构 body +2 vs G.3 Strip base 26
+
+**Cape 铁律校验**：命名含 Shoulders ✓ · body > arm ✓ · Strip arm 8 ✓
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Empire · Cape · J. Studded Neckguard 家族（Group B · arm 追溯清 0）
+
+### 2026-09-23 · J 家族 8 件 · Group B 应用 · Neckguard 命名非 Shoulder/Pauldron
+
+**背景**：全 8 件命名含"Neckguard"（护颈甲）**不含** shoulder/pauldron → **Group B 强制 arm = 0**。v1 脚本给 j/j2/k/k2/z/za/zb 加了 6-8 arm，追溯清零。
+
+**vanilla RBM 参照**：
+- `studded_imperial_neckguard` **31/0/3.6**（Neckguard with Bronze Plate Pauldrons · Studded Neckguard 唯一 vanilla 参照）
+- `a_pauldron_cape_b` 20/0/3.5（Bronze Pauldrons with Neck Guard · Neck Guard 变体参照）
+
+#### 子群 J.1 · Studded Imperial Neckguard 系列（1 件 · 无品质词）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_shoulders_i` | Studded Imperial Neckguard With Scarf | 16/0/3.6 | **28/0/3.6** |
+
+Studded Neckguard 基础档 · body 28（比 vanilla `studded_imperial_neckguard` 31 稍弱，因为无 Bronze Plate Pauldrons 复合结构）· Scarf 装饰 0
+
+#### 子群 J.2 · Studded Brass/Iron Neckguard + Leopard Pelt（4 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 2 | `AR_imperial_shoulders_j` | Studded Brass Imperial Neckguard With Leopard Pelt | 16/8/3.8 | **31/0/3.8** |
+| 3 | `AR_imperial_shoulders_j2` | Studded Brass Imperial Neckguard With Snow Leopard Pelt | 16/8/3.8 | **31/0/3.8** |
+| 4 | `AR_imperial_shoulders_k` | Studded Iron Imperial Neckguard With Leopard Pelt | 16/8/3.8 | **33/0/3.8** |
+| 5 | `AR_imperial_shoulders_k2` | Studded Iron Imperial Neckguard With Snow Leopard Pelt | 16/8/3.8 | **33/0/3.8** |
+
+- Brass Neckguard：vanilla `studded_imperial_neckguard` 31/0 直匹配 · Leopard/Snow Leopard 装饰 0
+- Iron Neckguard：Brass +2 品质档
+
+#### 子群 J.3 · 独立 Studded Neckguard（3 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 6 | `AR_imperial_shoulders_z` | Imperial Studded Iron Neckguard | 14/7/3.6 | **33/0/3.6** |
+| 7 | `AR_imperial_shoulders_za` | Imperial Studded Brass Neckguard With Long Cape | 15/8/3.6 | **33/0/3.6** |
+| 8 | `AR_imperial_shoulders_zb` | Imperial Studded Iron Neckguard With Long Cape | 15/8/3.6 | **35/0/3.6** |
+
+- z：Studded Iron 单件 · body 33 = k 值
+- za：Brass + Long Cape 结构 body +2 → 33
+- zb：Iron + Long Cape → 35
+
+**Cape 铁律校验**：全 8 件命名不含 shoulder/pauldron ✓ · **Group B 应用 arm = 0** ✓ · v1 违规的 6/8/7/8/8/8 arm 全部追溯清零
+
+**状态**：8 件 🔵 log-only（Group B 首次批量追溯）
+
+---
+
+## Empire · Cape · R. Lamellar 单/Cape 组合（Group B · 命名无 shoulder/pauldron）
+
+### 2026-09-23 · R 家族 8 件 · 严格 Rule 1B 应用
+
+**背景**：命名格式"Imperial [Gilded] Lamellar With [Long/Fur/Plaid/Striped] Cape [+ Bear Pelt]"——**不含** shoulder/pauldron → **Group B 强制 arm = 0**。v1 给了 8-9 arm 违反 Rule 1B，追溯清零。用户可基于 vanilla+RBM 参照决定是否需要 override 到 Group A。
+
+**vanilla RBM 参照**：
+- `pauldron_cape_a` 30/0/3.5（Legionary Cape）
+- `imperial_lamellar_shoulders` 55/0/3.5 ⭐（Empire Cape body-only 顶点）
+
+#### 子群 R.1 · Standard Lamellar + Cape（4 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_imperial_lamellar_cape_a` | Imperial Lamellar With Long Cape | 18/9/3.9 | **45/0/4.0** |
+| 2 | `AR_imperial_lamellar_cape_b` | Imperial Lamellar With Cape | 17/9/3.9 | **45/0/4.0** |
+| 3 | `AR_imperial_lamellar_cape_c` | Imperial Lamellar With Fur Cape | 18/9/3.9 | **45/0/4.0** |
+| 4 | `AR_imperial_lamellar_cape_e` | Imperial Lamellar With Long Plaid Cape | 16/8/3.9 | **45/0/4.0** |
+
+body 45（介于 vanilla `pauldron_cape_a` 30 与 `imperial_lamellar_shoulders` 55 之间 · Lamellar + Cape 复合中高档）· Long/Fur/Plaid 装饰 0
+
+#### 子群 R.2 · Standard Lamellar + Cape 变体（2 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 5 | `AR_imperial_lamellar_cape_f` | Imperial Lamellar With Long Striped Cape | 16/8/3.9 | **45/0/4.0** |
+| 6 | `AR_imperial_lamellar_cape_g` | Imperial Lamellar With Bear Pelt | 16/8/3.9 | **45/0/4.0** |
+
+Striped/Bear Pelt 装饰 0
+
+#### 子群 R.3 · Gilded Lamellar + Cape（2 件 · Gilded +2 body）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 7 | `AR_imperial_lamellar_cape_a2` | Imperial Gilded Lamellar With Long Cape | 18/9/3.9 | **47/0/4.0** |
+| 8 | `AR_imperial_lamellar_cape_b2` | Imperial Gilded Lamellar With Cape | 17/9/3.9 | **47/0/4.0** |
+
+Gilded 品质词 +2 body（跨类型统一）
+
+### R 附 · P.b Noble Lamellar + Long Cape（1 件 · 同 Group B 逻辑）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| R+ | `AR_noble_collar_b` | Imperial Noble Lamellar With Long Cape | 18/9/3.9 | **50/0/4.0** |
+
+命名不含 shoulder/pauldron → Group B · Noble 品质字典 +3 body vs Standard Lamellar+Cape 45 → 48-50 · 顶档接近 vanilla `imperial_lamellar_shoulders` 55 但不逾
+
+**Cape 铁律校验**：全 9 件命名不含 shoulder/pauldron ✓ · **Group B 应用 arm = 0** ✓ · body ≤ 50 < vanilla 顶点 55 ✓
+
+**状态**：8 + 1 = 9 件 🔵 log-only
+
+---
+
+## Empire · Cape · T. 无肩甲结构 Cape/Cloak/Sash/Focale/Pelt（Group B · arm 追溯清 0）
+
+### 2026-09-23 · T 家族 12 件 · Group B 应用 · 无肩甲命名批量追溯
+
+**背景**：命名为 Cape/Cloak/Sash/Focale/Pelt/无肩甲词——**Group B 强制 arm = 0**。v1 部分给了 2-4 arm，追溯清零。装饰类物品用户可能一直不装备，属于**低价值 cosmetic 类**，主要目的：符合 Cape 铁律避免与其他 arm 加成叠加异常。
+
+**vanilla 参照**：Empire Cape 无严格 Focale/Pelt 参照 · 用轻装 Cloth 档 fallback（body ≤ 8）
+
+#### 子群 T.1 · Focale/Sash/Pelt（3 件 · 极轻装饰）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_focale` | Imperial Focale | 1/0/0.1 | **1/0/0.1** |
+| 2 | `ao_imperial_noblemans_sash` | Imperial Noble Sash | 3/2/0.5 | **5/0/0.5** |
+| 3 | `AR_leopard_pelt_a` | Snow Leopard Pelt | 4/0/2 | **6/0/1.5** |
+
+- ao_focale：保持 v1（已符合 Rule 1B）
+- Sash：Noble 品质 +2 body 5，arm 追溯清 0
+- Pelt：轻装饰 body 6，wt 从 2 降到 1.5
+
+#### 子群 T.2 · Lion Head Cloak 系列（3 件 · 装饰+防御中档）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 4 | `AR_lion_head_a` | Decorated Lion Head Cloak | 16/4/6 | **22/0/5.0** |
+| 5 | `AR_lion_head_b` | Plated Lion Head Cloak | 18/4/7.4 | **28/0/5.0** |
+| 6 | `AR_lion_head_d` | Lion Head Cloak | 16/4/6 | **20/0/5.0** |
+
+Cloak 结构中档 body ~20-28（Plated Lion Head +6 反映甲片补强）· arm 追溯清 0 · wt 5.0（Cloak 重装）
+
+#### 子群 T.3 · Battania Cape/Cloth Cape（6 件 · TV_ 包轻装 Cape）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 7 | `TV_battania_cloak_m` | Long Cape | 3/2/0.5 | **5/0/0.5** |
+| 8 | `TV_battania_cloak_m2` | Long Plaid Cape | 3/2/0.5 | **5/0/0.5** |
+| 9 | `TV_battania_cloak_m3` | Long Striped Cape | 3/2/0.5 | **5/0/0.5** |
+| 10 | `TV_battania_cloak_o` | Cloth Cape | 2/0/0.2 | **2/0/0.2** |
+| 11 | `TV_battania_cloak_o2` | Plaid Cloth Cape | 6/0/4.5 | **8/0/1.5** |
+| 12 | `TV_battania_cloak_o3` | Striped Cloth Cape | 6/0/4.5 | **8/0/1.5** |
+
+- m/m2/m3：Long Cape 轻装 body 5，arm 清 0
+- o：保持 v1（已 0 arm 且极轻）
+- o2/o3：Cloth Cape 中档 body 8，wt v1 4.5 显然是 bug（轻布 cape 不可能 4.5 kg），降到 1.5
+
+**Cape 铁律校验**：全 12 件命名不含 shoulder/pauldron ✓ · **Group B 应用 arm = 0** ✓ · v1 违规的 sash/lion_head/cloak_m 系列 arm 全部追溯清零
+
+**状态**：12 件 🔵 log-only（Group B 无肩甲收尾批）
+
+---
+
+## Empire Cape 收官统计（2026-09-23）
+
+**总数**：89 件 Empire Cape · **全部审完**
+
+**Group A（命名含 shoulder/pauldron，arm > 0）**：
+- G. Plate Lamellar Shoulders/Pauldrons：19 件
+- F. Scale Shoulders：8 件（视觉判断优先律 6 件 arm=0）
+- H. Wolf Pelt 变体：10 件
+- I. Bronze/Iron Plate Pauldrons：5 件
+- K. Leather Shoulders + Cape：9 件
+- L. Mail Shoulders：1 件
+- M. Studded Strip Shoulders 轻档：2 件
+- N. Gladiator Single Pauldron：2 件
+- O. Studded Leather + Cape (TV_)：1 件
+- P.a. Noble Shoulders + Cape：1 件
+- Q. lamellar_scarf (hmj)：1 件
+- S. Strip Shoulders + Long Cape：1 件
+- **Group A 合计：60 件**
+
+**Group B（命名不含 shoulder/pauldron，arm=0 追溯）**：
+- J. Studded Neckguard：8 件
+- R. Lamellar + Cape combo：8 件
+- R+. Noble Lamellar + Cape (P.b)：1 件
+- T. Cape/Cloak/Sash/Focale/Pelt：12 件
+- **Group B 合计：29 件**
+
+**60 + 29 = 89 件 ✓**（枚举核实一致）
+
+**下一步（用户 2026-09-23 决定）**：
+1. 用户直读本 log 对照 vanilla+RBM 参照，标记任何需 override 的物品
+2. 用户批准后 `deploy.ps1` 全部落地 XML override
+3. 进入 Vlandia Cape 家族（同律沿用）
+
+---
+
+# Empire · BodyArmor（2026-09-23 起）
+
+## 🔒 铁律 · BodyArmor 设计基调（2026-09-23 用户拍板 · 已写入 VANILLA_REFERENCE.md）
+
+> BodyArmor 无 head_armor 字段，取代"头 > 身 > 臂"的是：`body_armor ≥ leg_armor > arm_armor` 三档序（vanilla 全 39 件遵守，仅 Scale Skirt 结构 leg 略超 body 1-4 点）。
+>
+> **材质硬约束**：Cloth ≤ 28（Padded 顶）· Leather ≤ 32 · Chainmail 45-55 · Plate 37-135
+>
+> **顶点参照**：`imperial_scale_armor` 135/122/67（Heavy Scale over Double Mail）— OSA body ≤ 135 严格上限
+>
+> **结构描述子分档**：`Over Padded/Leather` 中档 · `Over Mail` 高档 · `Over Scale/Double Mail` 顶档 · `Scale Skirt` leg 强化
+>
+> **Cataphract 定义（body ≥ 79 + leg ≥ 45 + arm ≥ 20）**：Empire 重装骑兵顶级三档全上
+
+---
+
+## Empire · BodyArmor · 家族分类总览（75 件）
+
+| 家族 | n | body 档 | vanilla 锚点 | 结构描述 |
+|---|---:|---|---|---|
+| **A. Cloth 民用** | 16 | 1-8 | `hemp_tunic` 5 · `imperial_robes` 8 · `footmans_tunic` 8 | Tunic/Dress/Toga/Skirt/Robes |
+| **B. Cloth 中档 Subarmalis** | 4 | 14-16 | `patched_gambeson` 14 · `imperial_padded_cloth` 16 | Cavalry Tunic / Cloth Subarmalis |
+| **C. Leather Vest/Cuirass** | 6 | 16-22 | `leather_tunic` 18 · `khuzait_leather_stitched` 22 | Leather Vest/Cuirass Over Tunic |
+| **D. Plate 轻档 · Over Padded/Leather** | 13 | 18-30 | `empire_warrior_padded_armor_b` 28 · `empire_plate_vest_armor` 37 | Breastplate/Lamellar Over Padded/Leather |
+| **E. Chainmail 独立** | 6 | 27-46 | `imperial_mail_vest` 45 · `imperial_mail_over_leather` 47 · `empire_legion_a` 55 | Mail Shirt/Vest/Over Cloth/Leather |
+| **F. Plate 中档 · Scale/Lamellar Over Leather/Mail** | 15 | 33-42 | `imperial_mail_over_stripped_leather` 46 · `empire_horseman_armor` 55 | Scale/Lamellar Cuirass Over Mail |
+| **G. Plate 高档 · Heavy Scale/Lamellar Over Mail** | 13 | 47-52 | `imperial_lamellar` 79 · `empire_legion_b` 85 · `imperial_lamellar_over_leather` 88 | Heavy Scale/Lamellar Over Mail |
+| **H. Cataphract 顶档 · Lamellar Over Scale** | 2 | 55 | `lamellar_with_scale_skirt` 118 · `imperial_scale_armor` 135 | Lamellar Over Scale (Cataphract) |
+
+**合计**：16+4+6+13+6+15+13+2 = **75 件 ✓**
+
+---
+
+## Empire · BodyArmor · A 家族：Cloth 民用（16 件）
+
+### 2026-09-23 · A 家族 16 件 · vanilla 民用档直匹配
+
+**vanilla 参照**：`hemp_tunic` 5/5/5 · `empire_dress` 6/5/6 · `imperial_robes` 8/8/6 · `footmans_tunic` 8/8/8 · `tunic_with_rolled_cloth` 11/11/7
+
+#### 子群 A.1 · Skirts/Trousers/Dresses（4 件 · 极轻档 · 装饰）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_armor_f` | Imperial Skirted Trousers | 1/3/0/0.4 | **3/3/2/0.4** |
+| 2 | `AR_empire_armor_g` | Imperial Belted Skirt | 1/2/0/0.4 | **3/3/2/0.4** |
+| 3 | `AR_noble_dress_a` | Decorated Rich Dress | 3/1/1/0.5 | **7/5/5/0.5** (vanilla `vlandian_dress` 直匹配) |
+| 4 | `AR_noble_dress_a2` | Patterned Rich Dress | 3/1/1/0.5 | **7/5/5/0.5** |
+
+#### 子群 A.2 · Simple Tunics（7 件 · 民用轻档）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 5 | `AR_vlandia_armor_g` | Western Tunic With Clavi | 4/2/1/0.4 | **6/5/5/0.4** (vanilla `fine_town_tunic` 直匹配) |
+| 6 | `plain_hemp_tunic` | Plain Hemp Tunic | 4/2/1/0.4 | **5/5/5/0.4** (vanilla `hemp_tunic` 直匹配) |
+| 7 | `AR_empire_armor_p` | Palaic Chiton | 4/9/0/0.7 | **6/6/4/0.5** |
+| 8 | `AO_imperial_scouts_tunic` | Imperial Explorator's Tunic | 5/1/1/0.4 | **7/5/5/0.4** |
+| 9 | `AR_empire_armor_k` | Tunic With Shoulder Pads And Pteruges | 6/3/2/0.6 | **8/7/7/0.6** (vanilla `tunic_with_shoulder_pads` 7/7/7 参照) |
+| 10 | `AR_empire_armor_q` | Imperial Decorated Explorator's Tunic | 6/1/1/0.4 | **7/5/5/0.4** |
+| 11 | `TV_empire_armor_k` | Imperial Decorated Short Tunic | 6/0/0/1.0 | **8/3/2/1.0** (vanilla `empire_short_dress` 8/3/0 参照) |
+
+#### 子群 A.3 · Robes/Toga/Merchant Coat（5 件 · 民用中档）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 12 | `AR_empire_armor_b` | Imperial Toga With Tunic | 8/3/4/1.9 | **8/8/6/1.5** (vanilla `imperial_robes` 直匹配) |
+| 13 | `AR_empire_armor_m` | Imperial Robes | 8/3/4/0.9 | **8/8/6/0.9** |
+| 14 | `AR_empire_armor_n` | Imperial White Robes | 8/3/4/0.9 | **8/8/6/0.9** |
+| 15 | `AR_empire_armor_t` | Imperial Noble Robes | 8/3/4/0.9 | **10/8/6/0.9** (Noble +2 body) |
+| 16 | `AR_merchants_coat_a` | Merchant's Coat | 8/3/4/0.9 | **8/8/6/1.0** |
+
+**BodyArmor 铁律校验**：全 16 件 body ≥ leg > arm ✓ · Cloth ≤ 28 ✓
+
+**状态**：16 件 🔵 log-only
+
+---
+
+## Empire · BodyArmor · B 家族：Cloth 中档 Subarmalis + Cavalry Tunic（4 件）
+
+### 2026-09-23 · B 家族 4 件 · Padded/Subarmalis 中档
+
+**vanilla 参照**：`patched_gambeson` 14/14/12 · `imperial_padded_cloth` 16/16/15 · `empire_warrior_padded_armor_a/e` 18/18/14-15
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_scout_armor_c` | Imperial Cavalry Tunic | 14/3/3/1.9 | **14/14/12/1.9** (vanilla `patched_gambeson` 直匹配) |
+| 2 | `AR_huntress_armor_a` | Huntress' Leather Breastplate With Skirt | 14/2/3/1.9 | **14/14/12/1.9** |
+| 3 | `AR_empire_armor_e` | Imperial Cloth Subarmalis Over Tunic | 15/12/6/2.1 | **15/15/13/2.1** |
+| 4 | `AR_empire_armor_d` | Imperial Decorated Cloth Subarmalis | 16/12/6/2.1 | **16/16/14/2.1** (vanilla `imperial_padded_cloth` 直匹配) |
+
+**BodyArmor 铁律校验**：全 4 件 body ≥ leg > arm ✓ · Cloth 中档 14-16 ✓
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Empire · BodyArmor · C 家族：Leather Vest/Cuirass（6 件）
+
+### 2026-09-23 · C 家族 6 件 · Leather Vest/Cuirass 分档
+
+**vanilla 参照**：`leather_tunic` 18/23/15 · `khuzait_leather_stitched` 22/22/10 · `basic_imperial_leather_armor` 28/22/25
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_dress_armor_a` | Imperial Dress With Leather Vest | 16/2/2/1.9 | **18/18/12/2.0** (Leather Vest 轻档) |
+| 2 | `AR_huntress_armor_c` | Huntress' Open Leather Vest With Skirt | 16/2/3/1.9 | **18/18/12/2.0** |
+| 3 | `ao_imperial_light_leather` | Imperial Rugged Leather Armor | 18/5/6/3.1 | **18/23/15/2.1** (vanilla `leather_tunic` 直匹配) |
+| 4 | `AR_empire_armor_o` | Imperial Leather Cuirass Over Tunic With Pteruges | 18/4/3/0.6 | **20/22/13/2.5** (wt v1 0.6 太轻，抬到 2.5) |
+| 5 | `AR_empire_scout_armor_a` | Imperial Cavalry Padded Cloth | 20/8/6/6.2 | **22/22/13/3.0** (Cavalry Padded Leather 中档 · wt v1 6.2 过重降到 3.0) |
+| 6 | `AR_empire_armor_a` | Imperial Leather Subarmalis Over Tunic | 22/6/6/3.1 | **22/22/14/3.1** (vanilla `khuzait_leather_stitched` 22 直匹配) |
+
+**BodyArmor 铁律校验**：全 6 件 body ≥ leg > arm（除 leather_tunic 家族 leg 23 > body 18 参照 vanilla 特色 · 3-4 号 leg 22 = body 22 齐）✓ · Leather ≤ 32 ✓
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Empire · BodyArmor · D 家族：Plate 轻档 · Over Padded/Leather（13 件）
+
+### 2026-09-23 · D 家族 13 件 · Breastplate/Lamellar Over Padded 中低档
+
+**vanilla 参照**：`empire_warrior_padded_armor_f/g/b` 25-28（Padded 顶）· `empire_plate_vest_armor` 37/30/12（Scale Vest 唯一）
+
+#### 子群 D.1 · Southern Lamellar/Leather Over Padded（3 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_aserai_leather_a` | Southern Leather Cuirass Over Padded Cloth | 18/8/6/6.2 | **28/22/15/5.0** (Padded 顶 + Leather Cuirass) |
+| 2 | `AR_empire_brass_lamellar_b` | Southern Brass Lamellar Over Padded Cloth | 24/8/6/6.2 | **32/25/15/6.0** (Brass Lamellar 中档) |
+| 3 | `AR_empire_brass_lamellar_d` | Southern White Brass Lamellar Over Padded Cloth | 24/8/6/6.2 | **34/25/15/6.0** (White Brass +2) |
+
+#### 子群 D.2 · Explorator's Mail（2 件 · 侦查兵 Chainmail 变体命名）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 4 | `AR_empire_armor_r` | Imperial Explorator's Mail | 26/16/16/9.5 | **32/22/25/9.0** (Explorator 中档) |
+| 5 | `AR_empire_armor_s` | Imperial Decorated Explorator's Mail | 26/16/16/9.5 | **32/22/25/9.0** |
+
+#### 子群 D.3 · Lamellar Vest Over Padded（4 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 6 | `ao_imperial_lamellar_vest` | Imperial Steel Lamellar Over Padded Cloth | 28/9/6/7 | **37/25/15/7.0** (Steel Lamellar over Padded · vanilla `empire_plate_vest_armor` 37 参照) |
+| 7 | `ao_imperial_lamellar_vest_b` | Imperial Brass Lamellar Over Padded Cloth | 28/9/6/7 | **35/25/15/7.0** (Brass -2 vs Steel) |
+| 8 | `TV_empire_armor_l` | Imperial Steel Lamellar Over Padded Coat | 28/8/4/7 | **37/25/12/7.0** |
+| 9 | `TV_empire_armor_l2` | Imperial Brass Lamellar Over Padded Coat | 28/8/4/7 | **35/25/12/7.0** |
+
+#### 子群 D.4 · Iron Breastplate Over Cloth/Leather（4 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 10 | `AR_empire_scout_armor_d` | Imperial Breastplate Over Tunic | 28/3/3/1.9 | **33/15/10/6.0** (breastplate 中档 + Tunic 底层 · wt v1 1.9 过轻抬到 6.0) |
+| 11 | `AR_huntress_armor_b` | Huntress' Iron Breastplate With Skirt | 28/2/3/1.9 | **32/15/10/6.0** |
+| 12 | `AR_empire_horseman_armor_d` | Imperial Breastplate Over Leather | 30/6/6/8.3 | **37/22/15/8.0** (Breastplate + Leather 底层) |
+| 13 | `AR_empire_scout_armor_b` | Imperial Breastplate Over Padded Cloth | 30/8/6/6.2 | **37/25/15/7.0** |
+
+**BodyArmor 铁律校验**：全 13 件 body ≥ leg > arm ✓ · Plate 轻档 28-37 ✓ · body 顶 37 = vanilla `empire_plate_vest_armor` 顶 ✓
+
+**状态**：13 件 🔵 log-only
+
+---
+
+## Empire · BodyArmor · E 家族：Chainmail 独立（6 件）
+
+### 2026-09-23 · E 家族 6 件 · vanilla Chainmail 分档直匹配
+
+**vanilla 参照**：
+- `imperial_mail_vest` 45/34/39（Infantryman Mail Vest 中档）
+- `imperial_mail_over_stripped_leather` 46/27/30
+- `imperial_mail_over_leather` 47/22/33
+- `empire_horseman_armor` 55/27/38（Cavalryman Mail Shirt 高档）
+- `empire_legion_a` 55/44/18（Decorated Legionary Mail）
+- `legionary_mail` 55/49/44（Legionary Mail 顶）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_horseman_armor_c` | Imperial Cavalry Leather Armor | 27/6/6/8.3 | **47/22/33/8.6** (vanilla `imperial_mail_over_leather` 直匹配) |
+| 2 | `TV_empire_armor_p` | Imperial Studded Leather Over Mail Shirt | 30/12/10/3 | **45/22/30/9.0** (Studded Leather Over Mail · wt v1 3 过轻抬到 9.0) |
+| 3 | `AR_empire_armor_c` | Imperial Decorated Mail Over Stripped Cloth | 33/12/10/10.2 | **46/27/30/10.2** (vanilla `imperial_mail_over_stripped_leather` 直匹配) |
+| 4 | `AR_empire_armor_j` | Imperial Legionary Mail With Strips | 35/18/15/19 | **55/44/18/22** (vanilla `empire_legion_a` Decorated Legionary Mail 直匹配) |
+| 5 | `ao_imperial_lamellar_vest_over_mail` | Imperial White Brass Lamellar Over Mail | 46/12/12/14 | **55/34/38/12** (Lamellar Vest Over Mail 高档 · body 达 55 顶 chainmail) |
+| 6 | `ao_imperial_lamellar_vest_over_mail_b` | Imperial Brass Lamellar Over Mail | 46/12/12/14 | **53/34/38/12** (Brass -2 vs White Brass) |
+
+**BodyArmor 铁律校验**：全 6 件 body ≥ leg > arm 参照 vanilla 特色 ✓ · Chainmail 45-55 ✓ · 3 件 vanilla 直匹配
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Empire · BodyArmor · F 家族：Plate 中档 · Scale/Lamellar Over Leather/Mail（15 件）
+
+### 2026-09-23 · F 家族 15 件 · Plate 中档 Cavalry/Scale/Lamellar
+
+**vanilla 参照**：
+- `imperial_mail_over_leather` 47/22/33 · `empire_horseman_armor` 55/27/38（中高档 chainmail-scale 过渡）
+- 无严格 Plate 中档 (55-79) vanilla anchor · 走 chainmail 顶 55 到 Plate 高档 79 之间的插值
+
+#### 子群 F.1 · Gilded/Auxiliary Lamellar（2 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `tv_empire_armor_b` | Imperial Gilded Lamellar Over Boiled Leather | 33/7/6/15 | **60/30/25/15** (Gilded 中高档 body 60) |
+| 2 | `TV_empire_armor_i` | Imperial Auxiliary Lamellar Armor With Straps | 33/8/4/2 | **45/22/15/5.0** (Auxiliary 中档 · wt v1 2 过轻抬到 5.0) |
+
+#### 子群 F.2 · Breastplate Over Mail（2 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 3 | `AR_empire_horseman_armor` | Imperial Breastplate Over Mail | 34/12/8/9.5 | **55/27/38/9.5** (vanilla `empire_horseman_armor` 直匹配) |
+| 4 | `AR_empire_horseman_armor_b` | Imperial Gilded Breastplate Over Mail | 34/12/8/9.5 | **57/27/38/9.5** (Gilded +2 body) |
+
+#### 子群 F.3 · Scale Cuirass Over Stripped Cloth/Leather（5 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 5 | `TV_empire_armor_f` | Imperial Alternating Scale Cuirass Over Red Stripped Cloth | 34/6/6/16.5 | **47/22/33/14** (Alternating Scale 中档 · vanilla `imperial_mail_over_leather` 参照 · wt 从 16.5 略降到 14) |
+| 6 | `TV_empire_armor_g` | Imperial Brass Scale Cuirass Over White Stripped Cloth | 34/6/6/16.5 | **47/22/33/14** |
+| 7 | `TV_empire_armor_h` | Imperial Steel Scale Cuirass Over Stripped Leather | 34/6/6/16.5 | **49/22/33/14** (Steel +2 vs Brass) |
+| 8 | `AR_empire_scale_armor_a` | Imperial Brass Scale Cuirass Over Stripped Leather | 36/12/8/15.1 | **50/25/33/15** |
+| 9 | `AR_empire_scale_armor_b` | Imperial Steel Scale Cuirass Over Stripped Leather | 36/12/8/15.1 | **52/25/33/15** (Steel +2) |
+
+#### 子群 F.4 · Lamellar Vest/Cavalry Lamellar Over Leather/Mail（4 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 10 | `tv_empire_armor_a` | Imperial Lamellar Vest Over Stripped Mail | 36/10/6/15 | **55/30/38/13** (Lamellar Vest Over Mail 高档) |
+| 11 | `AR_empire_brass_lamellar_a` | Imperial Brass Lamellar Over Leather | 38/12/10/12 | **55/27/38/12** (Brass Lamellar Over Leather 高档) |
+| 12 | `AR_empire_brass_lamellar_c` | Imperial White Brass Lamellar Over Leather | 38/12/10/12 | **57/27/38/12** (White Brass +2) |
+| 13 | `TV_empire_armor_j` | Imperial Cavalry Lamellar Armor | 40/11/10/8.3 | **55/27/38/10** (Cavalry Lamellar 中高档) |
+
+#### 子群 F.5 · Breastplate Over Steel/Brass Scale（2 件 · F 顶档）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 14 | `AR_empire_horseman_armor_a` | Imperial Breastplate Over Steel Scale | 42/20/12/14 | **62/40/25/13** (Breastplate + Scale 顶级中档) |
+| 15 | `AR_empire_horseman_armor_a2` | Imperial Gilded Breastplate Over Brass Scale | 42/20/12/14 | **65/40/25/13** (Gilded +3 body) |
+
+**BodyArmor 铁律校验**：全 15 件 body ≥ leg > arm ✓ · Plate 中档 45-65 ✓ · 走 chainmail 顶 55 与 Plate 高档 79 之间的插值
+
+**状态**：15 件 🔵 log-only
+
+---
+
+## Empire · BodyArmor · G 家族：Plate 高档 · Heavy Scale/Lamellar Over Mail（13 件）
+
+### 2026-09-23 · G 家族 13 件 · vanilla Plate 高档直匹配
+
+**vanilla 参照**：
+- `imperial_lamellar` **79/78/45**（Light Lamellar over Mail ⭐ Plate 高档 anchor）
+- `empire_legion_b` 85/30/20（Ornate Legionary Scale Mail）
+- `imperial_lamellar_over_leather` **88/30/35**（Luxury Lamellar Vest over Leather）
+
+#### 子群 G.1 · Heavy Scale/Lamellar Over Mail（AO 系列）（2 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_imperial_southern_scale_armor_over_mail` | Imperial Heavy Scale Armor Over Mail | 47/23/14/20 | **79/78/45/25** (vanilla `imperial_lamellar` 直匹配) |
+| 2 | `ao_imperial_southern_scale_armor_over_mail_b` | Imperial Heavy Brass Scale Armor Over Mail | 47/23/14/20 | **82/78/45/25** (Brass +3 body) |
+
+#### 子群 G.2 · Steel/Brass Scale Armor（DZ 系列）（2 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 3 | `DZ_empire_armor_d` | Imperial Steel Scale Armor | 47/12/12/20 | **80/45/30/20** (Steel Scale 独立高档) |
+| 4 | `DZ_empire_armor_d2` | Imperial Brass Scale Armor | 47/12/12/20 | **78/45/30/20** (Brass -2 vs Steel) |
+
+#### 子群 G.3 · Lamellar/Scale Cuirass Over Stripped Cloth（4 件）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 5 | `AR_empire_armor_h` | Imperial Lamellar Cuirass Over Stripped Cloth | 48/12/10/15.1 | **79/45/30/16** (Lamellar Cuirass Over Cloth) |
+| 6 | `AR_empire_scale_armor_f` | Imperial Decorated Scale Cuirass Over Stripped Cloth | 50/12/10/15.1 | **82/45/30/16** (Decorated +3) |
+| 7 | `AR_empire_scale_armor_g` | Imperial Decorated Brass Scale Cuirass Over Stripped Cloth | 50/12/10/15.1 | **82/45/30/16** |
+| 8 | `AR_empire_scale_armor_h` | Imperial Decorated Alternating Scale Cuirass Over Stripped Cloth | 50/12/10/15.1 | **82/45/30/16** |
+
+#### 子群 G.4 · Long Scale/Lamellar Cuirass Over Mail（5 件 · 顶档 anchor `imperial_lamellar_over_leather` 88）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 9 | `AR_empire_armor_i` | Imperial Lamellar Cuirass Over Mailed Leather | 52/18/10/20.1 | **88/45/35/20** (vanilla `imperial_lamellar_over_leather` 直匹配) |
+| 10 | `AR_empire_scale_armor_c` | Imperial Long Steel Scale Cuirass Over Mail | 52/20/10/20.1 | **85/55/35/20** (Long +10 leg) |
+| 11 | `AR_empire_scale_armor_d` | Imperial Long Brass Scale Cuirass Over Mail | 52/20/10/20.1 | **83/55/35/20** (Brass -2 vs Steel) |
+| 12 | `TV_empire_armor_d` | Imperial Decorated Brass Heavy Scale Armour | 52/23/16/24.1 | **85/78/45/24** (Heavy Scale approaching Cataphract) |
+| 13 | `TV_empire_armor_m` | Imperial Long Scale Cuirass Over Mail | 52/23/10/34 | **85/55/35/22** (wt v1 34 过重降到 22) |
+
+**BodyArmor 铁律校验**：全 13 件 body ≥ leg > arm（除 G.1 参照 vanilla `imperial_lamellar` 78 leg ≈ 79 body）✓ · Plate 高档 78-88 ✓
+
+**状态**：13 件 🔵 log-only
+
+---
+
+## Empire · BodyArmor · H 家族：Cataphract 顶档 · Lamellar Over Scale（2 件）
+
+### 2026-09-23 · H 家族 2 件 · Cataphract 三层结构（Lamellar + Scale + Mail）
+
+**vanilla 参照**：
+- `lamellar_with_scale_skirt` **118/122/45**（Heavy Lamellar over Mail with Scale Skirt · Cataphract 亚顶）
+- `imperial_scale_armor` **135/122/67** ⭐（Heavy Scale Armor over Double Mail · vanilla Empire BodyArmor 顶点）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `ao_imperial_cataphracts_lamellar` | Imperial White Brass Lamellar Over Scale | 55/18/16/23 | **118/78/45/28** (Cataphract 顶档 · `lamellar_with_scale_skirt` 118 匹配 · leg 78 从 122 略降因 OSA 无 Scale Skirt 结构) |
+| 2 | `ao_imperial_cataphracts_lamellar_b` | Imperial Brass Lamellar Over Scale | 55/18/16/23 | **115/78/45/28** (Brass -3 vs White Brass) |
+
+**BodyArmor 铁律校验**：全 2 件 body ≥ leg > arm ✓ · body ≤ 135 顶点 ✓ · Cataphract 定义（body ≥ 79 + leg ≥ 45 + arm ≥ 20）✓
+
+**关键设计决策**：OSA Cataphract 命名"Lamellar Over Scale"——vanilla anchor `lamellar_with_scale_skirt` 118 是"Lamellar Over Mail + Scale Skirt"，两者结构近似（三层），但 OSA 版无独立 Scale Skirt → leg 78 从 vanilla 122 略降，反映"腿部无独立护甲、由 Scale 底层延伸"。arm 45 保持 vanilla `imperial_lamellar` 参照。
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Empire BodyArmor 收官统计（2026-09-23）
+
+**总数**：75 件 Empire BodyArmor · **全部审完 · 全部 🔵 log-only**
+
+| 家族 | n | body 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| A. Cloth 民用 | 16 | 3-10 | `hemp_tunic` 5 / `imperial_robes` 8 |
+| B. Cloth 中档 Subarmalis | 4 | 14-16 | `patched_gambeson` 14 / `imperial_padded_cloth` 16 |
+| C. Leather Vest/Cuirass | 6 | 18-22 | `leather_tunic` 18 / `khuzait_leather_stitched` 22 |
+| D. Plate 轻档 Over Padded/Leather | 13 | 28-37 | `empire_warrior_padded_armor_b` 28 / `empire_plate_vest_armor` 37 |
+| E. Chainmail 独立 | 6 | 45-55 | `imperial_mail_over_leather` 47 / `empire_legion_a` 55 |
+| F. Plate 中档 Scale/Lamellar Over Mail | 15 | 45-65 | `empire_horseman_armor` 55 （中高档过渡）|
+| G. Plate 高档 Heavy Scale/Lamellar | 13 | 78-88 | `imperial_lamellar` 79 / `imperial_lamellar_over_leather` 88 |
+| H. Cataphract 顶档 Lamellar Over Scale | 2 | 115-118 | `lamellar_with_scale_skirt` 118 |
+
+**16+4+6+13+6+15+13+2 = 75 ✓**
+
+**关键设计观察**：
+- OSA v1 值系统性偏低——Plate 顶档物品 v1 body 47-55，vanilla+RBM 高档档已到 79-88，Cataphract 顶到 118-135。v2 buff ×1.5-2.5 让 OSA 与 vanilla+RBM 尺度对齐
+- Weight 平衡：13 件 wt 从 v1 过轻（1.9-8.3）抬到合理值；4 件 wt 从 v1 过重（16.5-34）降到合理值
+- vanilla 直匹配 8 件（B.4, C.3, C.6, E.1, E.3, E.4, F.3, G.1, G.9）——OSA 命名与 vanilla anchor 结构完全对应
+- Cataphract 定义在 OSA 侧唯一 2 件——vs 帝国头盔 Cataphract 家族 10 件、Cape G.1b Gilded 5 件，Empire BodyArmor Cataphract 数量最少
+
+**下一步**：
+1. 用户直读本 log 对照 vanilla+RBM 参照，标记任何需 override 的物品
+2. 用户批准后 `deploy.ps1` 全部落地 XML override
+3. 进入 Empire HandArmor / LegArmor / HorseHarness（推荐 HorseHarness 因优先度高 · Saddlery 需 ×0.5 反向下调）
+
+---
+
+# Empire · HandArmor（2026-09-23）
+
+## 🔒 铁律 · HandArmor 设计基调
+
+> HandArmor **body_armor 恒为 0**（字段无效），所有护甲值集中在 arm_armor。分档硬约束：
+>
+> **材质硬约束**：Cloth Padded ≤ 37 · Leather ≤ 26 · Plate 42-63
+> **顶点参照**：`lamellar_plate_gauntlets` 63/1.8
+> **命名子结构**：Vambraces（前臂）< Gauntlets（全手）· Bracers 轻档 · Mittens 布软档 · Splint/Mail 复合结构档
+
+---
+
+## Empire · HandArmor · 家族分类总览（12 件）
+
+| 家族 | n | arm 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| **A. Cloth Armwrap/Vambrace 轻档** | 2 | 8-20 | 无 vanilla anchor · Cloth 民用 |
+| **B. Plate Vambraces 中低档** | 2 | 32-37 | `reinforced_padded_mitten` 37 |
+| **C. Lamellar Vambraces 中档** | 2 | 42-45 | `plated_strip_gauntlets` 42 |
+| **D. Lamellar Plate Gloves 中高档** | 2 | 50-53 | `decorated_imperial_gauntlets` 50 |
+| **E. Plate/Mail Gauntlets 顶档** | 4 | 42-63 | `lamellar_plate_gauntlets` 63 ⭐ |
+
+**2+2+2+2+4 = 12 件 ✓**
+
+---
+
+## Empire · HandArmor · A 家族：Cloth Armwrap/Vambrace 轻档（2 件）
+
+### 2026-09-23 · A 家族 2 件 · Cloth 民用轻装
+
+| # | id | 游戏名 | v1 XML | **v2 决议 arm/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_gloves_e` | Bound Armwraps | 3/0.4 | **8/0.5** (Cloth 民用极轻档) |
+| 2 | `AR_empire_gloves_a` | Lordly Vambrace | 10/0.6 | **20/0.6** (Cloth 民用中档 · Lordly 品质) |
+
+**HandArmor 铁律校验**：body = 0 ✓ · arm ≤ 63 ✓ · Cloth ≤ 37 ✓
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Empire · HandArmor · B 家族：Plate Vambraces 中低档（2 件）
+
+### 2026-09-23 · B 家族 2 件 · Plate 装饰 Vambraces
+
+| # | id | 游戏名 | v1 XML | **v2 决议 arm/wt** |
+|---|---|---|---|---|
+| 1 | `ao_imperial_decorated_bracers` | Plate Vambraces | 14/0.5 | **32/0.8** (Plate Vambraces 中低档) |
+| 2 | `ao_imperial_decorated_bracers_b` | Heavy Plate Vambraces | 17/0.5 | **37/0.9** (Heavy +5 · vanilla `reinforced_padded_mitten` 37 参照) |
+
+**HandArmor 铁律校验**：body = 0 ✓ · arm 32-37 属 Plate 中低档合理 ✓
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Empire · HandArmor · C 家族：Lamellar Vambraces 中档（2 件）
+
+### 2026-09-23 · C 家族 2 件 · Durkhan Lamellar Vambraces
+
+| # | id | 游戏名 | v1 XML | **v2 决议 arm/wt** |
+|---|---|---|---|---|
+| 1 | `AO_durkhan_gauntlets_a` | Lamellar Vambraces | 20/0.5 | **42/1.0** (vanilla `plated_strip_gauntlets` 42 直匹配) |
+| 2 | `AO_durkhan_gauntlets_b` | Gilded Lamellar Vambraces | 20/0.5 | **45/1.0** (Gilded +3 body vs Standard) |
+
+**HandArmor 铁律校验**：body = 0 ✓ · Plate Vambraces 42-45 中档 ✓
+
+**关键设计决策**：命名"Vambraces"（前臂护）弱于命名"Gauntlets"（全手护）· 即使 v1 file id 是 gauntlets 但游戏名 Vambraces → 按 Vambraces 中档定位
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Empire · HandArmor · D 家族：Lamellar Plate Gloves 中高档（2 件）
+
+### 2026-09-23 · D 家族 2 件 · Lamellar Plate Gloves
+
+**Gloves vs Gauntlets 差异**：Gloves = 灵活手套（比 Gauntlets 略灵活稍轻），target 比 Gauntlets 顶档 63 略低
+
+| # | id | 游戏名 | v1 XML | **v2 决议 arm/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_gloves_b` | Lamellar Plate Gloves | 20/1.8 | **50/1.5** (vanilla `decorated_imperial_gauntlets` 50 参照) |
+| 2 | `AR_empire_gloves_c` | Gilded Lamellar Plate Gloves | 20/1.8 | **53/1.5** (Gilded +3) |
+
+**HandArmor 铁律校验**：body = 0 ✓ · Plate 中高档 50-53 ✓ · ≤ vanilla 顶 63 ✓
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Empire · HandArmor · E 家族：Plate/Mail Gauntlets 顶档（4 件）
+
+### 2026-09-23 · E 家族 4 件 · Plate Gauntlets 顶档 · vanilla 直匹配
+
+**vanilla 参照**：
+- `plated_strip_gauntlets` 42/1.4（Plated Striped Vambraces）
+- `decorated_imperial_gauntlets` 50/1.5（Decorated Imperial Gauntlets）
+- `lamellar_plate_gauntlets` **63/1.8** ⭐（Lamellar Plate Gauntlets 顶点）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 arm/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_gloves_d` | Gilded Lamellar Plate Gauntlets | 23/1.8 | **63/1.8** (vanilla `lamellar_plate_gauntlets` 直匹配 · Gilded 装饰 0 影响，因已达 vanilla 顶) |
+| 2 | `tv_empire_plate_b` | Imperial Decorated Mail Gauntlets | 23/1.8 | **50/1.6** (vanilla `decorated_imperial_gauntlets` 直匹配) |
+| 3 | `hmj_plated_mail_mittens` | Plated Splint Gauntlets With Mail | 23/1.4 | **50/1.6** (Plated Splint + Mail 顶档 · vanilla `decorated_imperial_gauntlets` 50 参照) |
+| 4 | `TV_sturgia_gloves_a` | Reinforced Leather Vambraces With Mail | 23/1.4 | **42/1.4** (Vambraces + Mail 中档 · vanilla `plated_strip_gauntlets` 42 参照 · 命名 Vambraces 不是 Gauntlets) |
+
+**HandArmor 铁律校验**：body = 0 ✓ · arm 42-63 ≤ vanilla 顶 63 ✓
+
+**关键设计决策**：
+- **顶点保留 Lamellar Plate Gauntlets 命名**：v1 id "AR_empire_gloves_d" 游戏名"Gilded Lamellar Plate Gauntlets"与 vanilla 顶 `lamellar_plate_gauntlets` 结构对应 → 直匹配 63
+- **命名 Vambraces vs Gauntlets 分档**：TV_sturgia_gloves_a 尽管带 Mail 复合结构，但命名 Vambraces → 42（Plate Vambraces 顶）不 upgrade 到 Gauntlets 中高 50
+- **Splint + Mail 结构 = Gauntlets 中高档**：hmj_plated_mail_mittens 命名"Splint Gauntlets With Mail"结构上是 Gauntlets 顶级复合，直匹配 vanilla `decorated_imperial_gauntlets` 50
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Empire HandArmor 收官统计（2026-09-23）
+
+**总数**：12 件 Empire HandArmor · **全部审完 · 全部 🔵 log-only**
+
+| 家族 | n | arm 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| A. Cloth Armwrap/Vambrace 轻档 | 2 | 8-20 | 无 anchor · Cloth 民用 |
+| B. Plate Vambraces 中低档 | 2 | 32-37 | `reinforced_padded_mitten` 37 |
+| C. Lamellar Vambraces 中档 | 2 | 42-45 | `plated_strip_gauntlets` 42 |
+| D. Lamellar Plate Gloves 中高档 | 2 | 50-53 | `decorated_imperial_gauntlets` 50 |
+| E. Plate/Mail Gauntlets 顶档 | 4 | 42-63 | `lamellar_plate_gauntlets` 63 ⭐ |
+
+**2+2+2+2+4 = 12 ✓**
+
+**关键设计观察**：
+- OSA v1 值系统性偏低——顶档 v1 arm 23，vanilla+RBM 顶 63 → v2 buff ×2-3
+- vanilla 直匹配 3 件（C.1, D.1 via 50 anchor, E.1, E.2）
+- 命名子结构分档严格：Vambraces（前臂）< Gloves（灵活手套）< Gauntlets（全手）· 命名同的 v2 数值同档
+
+**下一步**：进入 Empire LegArmor（预估 vanilla 6-10 件 anchor + OSA 20-40 件）
+
+---
+
+# Empire · LegArmor（2026-09-23）
+
+## 🔒 铁律 · LegArmor 设计基调
+
+> LegArmor **body_armor 恒为 0**（字段无效），所有护甲值集中在 leg_armor。分档硬约束：
+>
+> **材质硬约束**：Cloth Slippers ≤ 30 · Leather ≤ 28 · Plate 42-62
+> **顶点参照**：`lamellar_plate_boots` 62/3.5
+> **命名子结构**：Slippers/Shoes（极轻）< Boots（标准）< Boots With Greaves（+ 金属护胫）< Lamellar Plate Boots（顶档全 lamellar 覆盖）
+
+---
+
+## Empire · LegArmor · 家族分类总览（11 件）
+
+| 家族 | n | leg 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| **A. Cloth/Leather Slippers/Shoes 极轻** | 3 | 3-12 | 无 anchor · 民用 |
+| **B. Leather Boots With Greaves 中档** | 1 | 24 | `folded_town_boots` 24 |
+| **C. Light Lamellar Plate Boots 中低档** | 2 | 32-35 | 无 direct · Plate 中低档 |
+| **D. Suede Splint Boots 中档** | 1 | 42 | `plated_strip_boots` 42 |
+| **E. Plate Boots 高档** | 4 | 42-62 | `decorated_imperial_boots` 44 · `lamellar_plate_boots` 62 |
+
+**3+1+2+1+4 = 11 件 ✓**
+
+---
+
+## Empire · LegArmor · A 家族：Cloth/Leather Slippers/Shoes 极轻档（3 件）
+
+### 2026-09-23 · A 家族 3 件 · 民用极轻档
+
+| # | id | 游戏名 | v1 XML | **v2 决议 leg/wt** |
+|---|---|---|---|---|
+| 1 | `TV_moccasins_a` | Leather Slippers | 1/0.6 | **3/0.4** (Slippers 极轻) |
+| 2 | `DZ_empire_boots_b` | Tied Leather Shoes | 3/0.7 | **8/0.5** (Leather Shoes 轻档) |
+| 3 | `DZ_empire_boots_a` | Wrapped Leather Boots | 5/0.9 | **12/0.7** (Wrapped Cloth 中低档) |
+
+**LegArmor 铁律校验**：body = 0 ✓ · leg ≤ 62 ✓ · 极轻档 ≤ Leather 顶 28 ✓
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Empire · LegArmor · B 家族：Leather Boots With Greaves（1 件）
+
+### 2026-09-23 · B 家族 1 件 · Boots + Greaves 中档
+
+| # | id | 游戏名 | v1 XML | **v2 决议 leg/wt** |
+|---|---|---|---|---|
+| 1 | `TV_empire_boots_c` | Imperial Boots With Leather Greaves | 14/2.7 | **24/1.5** (vanilla `folded_town_boots` 24 参照 + Greaves 结构 · wt v1 2.7 过重降到 1.5) |
+
+**LegArmor 铁律校验**：body = 0 ✓ · Leather Boots + Greaves = Leather 中档 ✓
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Empire · LegArmor · C 家族：Light Lamellar Plate Boots 中低档（2 件）
+
+### 2026-09-23 · C 家族 2 件 · Light Lamellar 中低档
+
+**Light vs Standard Lamellar 差异**：命名"Light Lamellar"（轻 Lamellar）比"Lamellar Plate"（全 Lamellar Plate）低一档
+
+| # | id | 游戏名 | v1 XML | **v2 决议 leg/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_boots_a` | Light Lamellar Plate Boots | 18/3.5 | **32/2.5** (Light Lamellar 中低档 · 介于 Cloth Strapped 30 与 Plate Splint 42 之间) |
+| 2 | `AR_empire_boots_b` | Light Gilded Lamellar Plate Boots | 18/3.5 | **35/2.5** (Gilded +3) |
+
+**LegArmor 铁律校验**：body = 0 ✓ · Plate 中低档 32-35 ≤ vanilla 顶 62 ✓
+
+**状态**：2 件 🔵 log-only
+
+---
+
+## Empire · LegArmor · D 家族：Suede Splint Boots 中档（1 件）
+
+### 2026-09-23 · D 家族 1 件 · Splint 中档 vanilla 直匹配
+
+| # | id | 游戏名 | v1 XML | **v2 决议 leg/wt** |
+|---|---|---|---|---|
+| 1 | `tv_empire_plate_c` | Suede Splint Boots | 22/2.7 | **42/2.7** (vanilla `plated_strip_boots` 42 直匹配 · Splint = Plated Strip 结构对应) |
+
+**LegArmor 铁律校验**：body = 0 ✓ · Splint Boots 中档 42 vanilla 直匹配 ✓
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Empire · LegArmor · E 家族：Plate Boots 高档（4 件）
+
+### 2026-09-23 · E 家族 4 件 · Plate Boots 高档 · vanilla 直匹配
+
+**vanilla 参照**：
+- `plated_strip_boots` 42/2.7（Splint Boots · 中档）
+- `decorated_imperial_boots` 44/2.3（Decorated Plate Boots · 中高档）
+- `lamellar_plate_boots` **62/3.5** ⭐（Lamellar Plate Boots 顶点）
+
+| # | id | 游戏名 | v1 XML | **v2 决议 leg/wt** |
+|---|---|---|---|---|
+| 1 | `AR_empire_boots_c` | Gilded Lamellar Plate Boots | 24/3.5 | **62/3.5** (vanilla `lamellar_plate_boots` 62 直匹配 · Gilded 装饰 0 影响，因已达 vanilla 顶) |
+| 2 | `TV_empire_boots_a` | Imperial Boots With Gilded Greaves | 24/2.7 | **44/2.7** (vanilla `decorated_imperial_boots` 44 直匹配 · Gilded Greaves = Decorated 装饰) |
+| 3 | `TV_empire_boots_b` | Imperial Boots With Iron Greaves | 24/2.7 | **42/2.7** (Iron -2 vs Gilded · vanilla `plated_strip_boots` 42 参照) |
+| 4 | `tv_empire_plate_a` | Imperial Mail Boots With Decorated Greaves | 24/2.3 | **50/2.5** (Mail + Greaves 中高档 · 介于 44 和 62 之间 · Mail 层加成) |
+
+**LegArmor 铁律校验**：body = 0 ✓ · leg 42-62 ≤ vanilla 顶 62 ✓
+
+**关键设计决策**：
+- **顶点 vanilla 直匹配 lamellar_plate_boots**：AR_empire_boots_c "Gilded Lamellar Plate Boots" 命名与 vanilla 顶 `lamellar_plate_boots` 直接对应，Gilded 装饰不额外加档（已顶）
+- **命名子结构 With Greaves 中高档**：Imperial Boots With [Gilded/Iron] Greaves 是"Boots + Greaves 装饰层"结构 → 中高档 42-44，直匹配 vanilla `decorated_imperial_boots` / `plated_strip_boots`
+- **Mail 层加成**：tv_empire_plate_a "Imperial Mail Boots With Decorated Greaves" 双重结构（Mail 层 + Greaves 装饰）→ 介于 Greaves 顶 44 与 Lamellar Plate 62 之间的 50
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Empire LegArmor 收官统计（2026-09-23）
+
+**总数**：11 件 Empire LegArmor · **全部审完 · 全部 🔵 log-only**
+
+| 家族 | n | leg 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| A. Cloth/Leather Slippers/Shoes 极轻 | 3 | 3-12 | 无 anchor · 民用 |
+| B. Leather Boots With Greaves 中档 | 1 | 24 | `folded_town_boots` 24 |
+| C. Light Lamellar Plate Boots 中低档 | 2 | 32-35 | 无 direct · 中低档插值 |
+| D. Suede Splint Boots 中档 | 1 | 42 | `plated_strip_boots` 42 |
+| E. Plate Boots 高档 | 4 | 42-62 | `decorated_imperial_boots` 44 · `lamellar_plate_boots` 62 |
+
+**3+1+2+1+4 = 11 ✓**
+
+**关键设计观察**：
+- OSA v1 值系统性偏低——顶档 v1 leg 24，vanilla+RBM 顶 62 → v2 buff ×2.5
+- vanilla 直匹配 4 件（B.1, D.1, E.1, E.2）
+- 命名子结构分档严格：Slippers < Shoes < Wrapped Boots < Boots With Greaves < Lamellar Plate Boots
+
+**下一步**：进入 Empire HorseHarness（当前 backlog 高优先度 · 反向 ×0.5 下调 · 预估 vanilla 10-15 件 + OSA 20-40 件）
+
+---
+
+# Empire · HorseHarness（2026-09-23 · 全 4 字段修订版）
+
+## 🔒 铁律 · HorseHarness 设计基调
+
+> **⚠ 重要更正（2026-09-23 用户指出）**：HorseHarness 使用**全 4 armor 字段**（head/body/arm/leg），OSA v1 只用 body 一字段是**系统性漏洞**。v2 补齐全 4 字段。
+>
+> **4 字段对应马部位**：
+> - `head_armor` = 马头（chamfron 面甲）· 顶档 **90** ⭐
+> - `body_armor` = 马身/胸腹（main barding）· 顶档 50
+> - `arm_armor` = 马颈/前腿（crinet + peytral）· 顶档 60（比 body 高，反映马颈+前胸表面积大）
+> - `leg_armor` = 马后腿/臀（crupper）· 顶档 50 · **Half vs Full 差异关键点**（Half=5，Full=50）
+>
+> **顶点参照**：`imperial_scale_barding` **h=90/b=50/l=50/a=60/wt=30** ⭐（Cataphract Scale Barding Full）· `half_scale_barding` **h=90/b=50/l=5/a=60/wt=17**（Half 覆盖）
+>
+> **硬约束**：h ≤ 90 · b ≤ 50 · l ≤ 50 · a ≤ 60 · wt ≤ 30
+>
+> **命名子结构**：
+> - Harness（马饰）= 极轻档 · Leather mat · 全字段 5-10
+> - Half Barding（半覆盖）= leg 特别低（5）· 其余接近顶
+> - Full/Heavy Barding（全覆盖顶档）= 顶档全字段 · leg 50
+
+## ⚠ 修订背景
+
+**用户 2026-09-23 指出**："RBM 修改后的马甲同时有头甲、马甲、臂甲和腿甲，但我却没有在你的马甲平衡中看到四个数据"
+
+**根因**：初次抽取 OSA XML 只查了 body_armor 字段，忽略了 HorseHarness 全 4 armor 字段。OSA v1 全部 26 件确实只有 body 值——但 vanilla+RBM 全 4 件都有全字段。
+
+**修正**：v2 补齐 head/arm/leg 三字段，按 vanilla 4 字段顶点（90/50/50/60）分档。
+
+---
+
+## Empire · HorseHarness · 家族分类总览（26 件）
+
+| 家族 | n | h/b/l/a 目标 | wt 目标 | vanilla 锚点 |
+|---|---:|---|---|---|
+| **A. 民用 Harness** | 3 | 5-10/5-10/3-5/5-10 | 6-8 | `imperial_riding_harness` 5/8/3/5 |
+| **B. Half Padded Barding** | 3 | 30-35/18-22/3/20-22 | 12-14 | 无 · Half Padded 中低插值 |
+| **C+. Full Studded Leather Barding** | 1 | 55/30/35/35 | 18 | 无 · Studded Leather Full |
+| **C. Half Leather Barding** | 1 | 50/26/3/30 | 14 | 无 · Half Leather 中档 |
+| **D. Half Lamellar Barding** | 4 | 65-75/35-40/5/40-45 | 20-22 | 无 · Lamellar 中高档 |
+| **E. Half Mail Barding** | 4 | 80-82/40-42/5/50-52 | 18 | 无 · Mail 中高档 |
+| **F. Half Plate/Scale 顶级半覆盖** | 3 | 88/48/5/58 | 20-22 | `half_scale_barding` 90/50/5/60 |
+| **G. Full/Heavy Plate/Scale/Lamellar 顶点** | 7 | 85-90/45-50/45-50/55-60 | 25-30 | `imperial_scale_barding` 90/50/50/60 ⭐ |
+
+**3+3+1+1+4+4+3+7 = 26 件 ✓**
+
+**Half vs Full 分类依据**：**命名含"Half" → Half 家族（leg 5）· 命名无"Half" → Full 家族（leg 45-50）**。此规则与 vanilla `half_scale_barding` vs `imperial_scale_barding` 命名一致。
+
+---
+
+## Empire · HorseHarness · A 家族：民用 Harness（3 件）
+
+### 2026-09-23 · A 家族 3 件 · Leather 民用 · 全 4 字段
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_zg` | Imperial Light Harness | 0/9/0/0/22 | **5/5/3/5/6** (vanilla `imperial_riding_harness` 参照 · Light 品质 -3 body) |
+| 2 | `AR_horse_armor_zc` | Imperial Noble Harness | 0/12/0/0/26 | **5/8/3/5/6** (vanilla `imperial_riding_harness` 5/8/3/5 直匹配) |
+| 3 | `AR_horse_armor_zb` | Imperial Stripped Noble Harness | 0/18/0/0/30 | **10/10/5/10/8** (vanilla `stripped_leather_harness` 10/5/5/10 参照 + Noble +2 body) |
+
+**HorseHarness 铁律校验**：全字段 ≤ vanilla 顶 ✓ · wt ≤ 30 ✓ · 全 4 字段补齐 ✓
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Empire · HorseHarness · B 家族：Half Padded Barding（3 件）
+
+### 2026-09-23 · B 家族 3 件 · Padded 半覆盖中低档 · 全 4 字段
+
+**中档插值**（介于民用 h=10 与 Half 顶 h=90 之间）：Padded 属早期防护，head 30-35 / body 18-22 / leg 3（Half）/ arm 20-22
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_n3` | Imperial Half Plain Padded Barding | 0/30/0/0/60 | **30/18/3/20/12** (Plain Padded 轻中档) |
+| 2 | `AR_horse_armor_n` | Imperial Half Padded Barding | 0/36/0/0/60 | **35/22/3/22/14** (Standard Padded 中档) |
+| 3 | `AR_horse_armor_n2` | Imperial Half Plain Padded Barding | 0/36/0/0/60 | **30/18/3/20/12** (Plain 同 #1) |
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Empire · HorseHarness · C 家族：Half Leather Barding（1 件）
+
+### 2026-09-23 · C 家族 1 件 · Half Leather 中档
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_i` | Imperial Half Leather Barding | 0/42/0/0/70 | **50/26/3/30/14** (Half Leather 中档 · head 50 / arm 30 反映马头马颈 leather 覆盖) |
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Empire · HorseHarness · C+ 家族：Full Studded Leather Barding（1 件）
+
+### 2026-09-23 · C+ 家族 1 件 · Full Leather 中档
+
+**分类修正**：AR_horse_armor_h 命名"Studded Leather Barding"**无"Half"** → Full 家族 · leg 从 3 提到 35
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_h` | Imperial Studded Leather Barding | 0/46/0/0/85 | **55/30/35/35/18** (Full Leather · Studded +5 vs Standard Leather · leg 35 反映 Full 覆盖但 Leather 材质有限) |
+
+**状态**：1 件 🔵 log-only
+
+---
+
+## Empire · HorseHarness · D 家族：Half Lamellar Barding（4 件）
+
+### 2026-09-23 · D 家族 4 件 · Half Lamellar 中高档 · 全 4 字段
+
+**Silvered vs Standard**：Silvered 品质字典 +3 body 通用（跨类型统一）· Heavy 描述性字，+2
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `DZ_horse_armor_e` | Imperial Half Silvered Lamellar Heavy Barding | 0/50/0/0/80 | **75/40/5/45/22** (Silvered +3 · Heavy +2 · 中高顶) |
+| 2 | `DZ_horse_armor_f` | Imperial Half Silvered Lamellar Barding | 0/50/0/0/70 | **70/38/5/42/20** (Silvered Standard) |
+| 3 | `DZ_horse_armor_g` | Imperial Half Lamellar Heavy Barding | 0/50/0/0/80 | **72/38/5/42/22** (Heavy -3 品质 vs Silvered) |
+| 4 | `DZ_horse_armor_h` | Imperial Half Lamellar Barding | 0/50/0/0/70 | **65/35/5/40/20** (Standard 基础档) |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Empire · HorseHarness · E 家族：Half Mail Barding（4 件）
+
+### 2026-09-23 · E 家族 4 件 · Half Mail 中高档 · 全 4 字段
+
+**Mail 材质 = Chainmail 半覆盖顶级前一档**（vanilla `half_scale_barding` 是 Chainmail 材质顶）
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_b` | Imperial Half Mail Barding | 0/58/0/0/65 | **80/40/5/50/18** (Half Mail 中高档) |
+| 2 | `AR_horse_armor_b2` | Imperial Half Mail Barding | 0/58/0/0/65 | **80/40/5/50/18** (同 #1 变体) |
+| 3 | `AR_horse_armor_a` | Imperial Decorated Half Mail Barding | 0/60/0/0/65 | **82/42/5/52/18** (Decorated +2 body/arm) |
+| 4 | `AR_horse_armor_a2` | Imperial Decorated Half Mail Barding | 0/60/0/0/65 | **82/42/5/52/18** (同 #3 变体) |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Empire · HorseHarness · F 家族：Half Plate/Scale 顶级半覆盖（3 件）
+
+### 2026-09-23 · F 家族 3 件 · Half 顶级 · 严格 sub-vanilla-顶
+
+**vanilla 参照**：`half_scale_barding` **h=90/b=50/l=5/a=60/wt=17** ⭐
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_f` | Imperial Half Plate Barding | 0/60/0/0/90 | **88/48/5/58/22** (Half Plate 顶级半覆盖 · 严格 sub-vanilla-顶) |
+| 2 | `AR_horse_armor_zaa` | Imperial Gilded Half Scale Barding | 0/60/0/0/80 | **88/48/5/58/20** (Gilded Half Scale 顶级) |
+| 3 | `AR_horse_armor_zac` | Imperial Silvered Half Scale Barding | 0/60/0/0/80 | **88/48/5/58/20** (Silvered 同 Gilded 装饰级) |
+
+**关键设计决策**：Half 顶级全字段 sub-vanilla-顶 2（88 vs 90 · 48 vs 50 · 58 vs 60）· 保留 Full 家族的顶点独占性 · leg 保持 5 反映 Half 覆盖
+
+**状态**：3 件 🔵 log-only
+
+---
+
+## Empire · HorseHarness · G 家族：Full/Heavy Plate/Scale/Lamellar 顶点（7 件）
+
+### 2026-09-23 · G 家族 7 件 · Cataphract Full 顶点 · vanilla 直匹配
+
+**vanilla 参照**：`imperial_scale_barding` **h=90/b=50/l=50/a=60/wt=30** ⭐（Cataphract Scale Barding · Full 覆盖顶点）
+
+**Full 家族全部命名无"Half"** → leg 补齐到 45-50（vanilla Full 顶 50）
+
+| # | id | 游戏名 | v1 (h/b/l/a/wt) | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `DZ_horse_armor_b` | Imperial Silvered Lamellar Barding | 0/60/0/0/110 | **88/48/48/58/28** (Full Silvered Lamellar · sub-顶 2) |
+| 2 | `DZ_horse_armor_d` | Imperial Lamellar Barding | 0/60/0/0/110 | **85/45/45/55/25** (Full Standard Lamellar -3 品质) |
+| 3 | `AR_horse_armor_e` | Imperial Plate Barding | 0/70/0/0/145 | **90/50/50/60/30** (vanilla `imperial_scale_barding` 直匹配 · Plate Full 顶点) |
+| 4 | `AR_horse_armor_zab` | Imperial Gilded Scale Barding | 0/75/0/0/135 | **90/50/50/60/30** (vanilla `imperial_scale_barding` 直匹配 · Gilded 已顶) |
+| 5 | `AR_horse_armor_zad` | Imperial Silvered Scale Barding | 0/75/0/0/135 | **90/50/50/60/30** (Silvered 同 Gilded) |
+| 6 | `DZ_horse_armor_a` | Imperial Silvered Lamellar Heavy Barding | 0/75/0/0/135 | **90/50/50/60/30** (Heavy 顶级 Silvered Lamellar) |
+| 7 | `DZ_horse_armor_c` | Imperial Lamellar Heavy Barding | 0/75/0/0/135 | **88/48/48/58/28** (Heavy Standard -2 vs Silvered) |
+
+**HorseHarness 铁律校验**：h ≤ 90 ✓ · b ≤ 50 ✓ · l ≤ 50 ✓ · a ≤ 60 ✓ · wt ≤ 30 ✓ · **Cataphract 顶点 5 件全字段 90/50/50/60** ✓
+
+**关键设计决策**：
+- **顶级 5 件全字段 90/50/50/60**——vanilla 只有 1 件顶（`imperial_scale_barding`），OSA 有 5 件 Cataphract Barding 都合理归到 vanilla 顶点全字段
+- **Standard 品质档 sub-顶 2**：DZ_b/d/c 三件（Silvered Standard / Lamellar Standard / Lamellar Heavy Standard）落 88/48/48/58 · 严格 sub-顶
+- **wt 从 145 kg 暴降到 28-30 kg**：马甲重量恢复合理
+
+**状态**：7 件 🔵 log-only
+
+---
+
+## Empire HorseHarness 收官统计（2026-09-23 修订版）
+
+**总数**：26 件 Empire HorseHarness · **全部审完 · 全 4 字段补齐 · 全部 🔵 log-only**
+
+| 家族 | n | h 目标 | b 目标 | l 目标 | a 目标 | wt 目标 |
+|---|---:|---:|---:|---:|---:|---:|
+| A. 民用 Harness | 3 | 5-10 | 5-10 | 3-5 | 5-10 | 6-8 |
+| B. Half Padded Barding | 3 | 30-35 | 18-22 | 3 | 20-22 | 12-14 |
+| C. Half Leather Barding | 1 | 50 | 26 | 3 | 30 | 14 |
+| C+. Full Studded Leather | 1 | 55 | 30 | 35 | 35 | 18 |
+| D. Half Lamellar Barding | 4 | 65-75 | 35-40 | 5 | 40-45 | 20-22 |
+| E. Half Mail Barding | 4 | 80-82 | 40-42 | 5 | 50-52 | 18 |
+| F. Half Plate/Scale 顶级半覆盖 | 3 | 88 | 48 | 5 | 58 | 20-22 |
+| G. Full/Heavy 顶点 | 7 | 85-90 | 45-50 | 45-50 | 55-60 | 25-30 |
+
+**3+3+1+1+4+4+3+7 = 26 ✓**
+
+**关键设计观察**：
+- **⚠ 修正 OSA v1 系统性漏洞**：v1 只用 body 字段（head/arm/leg 全 0），v2 补齐全 4 字段 · 总护甲量提升 3-4×
+- **head 主导设计**：顶档 head=90（第一大字段）> arm=60 > body=50 = leg=50 · 反映 chamfron（马面甲）在 Cataphract 中是最重防护
+- **Half vs Full 差异集中在 leg**：Half 5 leg vs Full 45-50 leg · 命名判断（含"Half" → Half 家族）严格执行
+- **arm > body 合理**：马颈+前胸+前腿表面积大，arm 60 > body 50 vanilla 特色 · OSA 沿用
+- **vanilla 直匹配 5 件**（A.2, G.3, G.4, G.5, G.6）· 4 件全字段 90/50/50/60 顶点
+- **wt 从 145 kg 暴降到 28-30 kg**（v1 ×0.19-0.22 系数）· 马甲不再"比马重"
+
+**下一步**：**帝国全 6 类 100% 完成** 共 378 件决议（HeadArmor 165 + Cape 89 + BodyArmor 75 + HandArmor 12 + LegArmor 11 + HorseHarness 26）· 用户复核 → deploy → 进入 Vlandia 文化循环
+
+## 🔍 HorseHarness 引擎机制核实（2026-09-23 dnSpy 反编译）
+
+**核心结论**：**vanilla + RBM 引擎对马的 armor 计算硬 code 只用 body_armor 字段**——head/arm/leg 三字段引擎完全忽略。
+
+**证据**：
+- `SandboxAgentStatCalculateModel.UpdateHorseStats`：马只累加 `GetModifiedMountBodyArmor()` → `ArmorTorso`
+- `Agent.GetBaseArmorEffectivenessForBodyPart`：对非人类硬 code 只返回 `ArmorTorso`
+- RBM `ArmorRework.ApplyDrivenArmorBonus`：`if (!agent.IsHuman) driven = props.ArmorTorso`——RBM 自己也只用 body_armor
+
+**RBM XML 加 head/arm/leg 的推测原因**：XML 结构与 human armor 一致 · 未来引擎兼容性预留 · 文档表意 · UI mod 可能消费
+
+**v2 决议保留全 4 字段的理由**：
+- 与 RBM XML pattern 一致（符合 user policy："数值与 RBM 参照相近"）
+- **实际决定防护的仍是 body_armor**（真正生效的字段我在 body 分档时已做对：民用 5-10 · Half 顶级 48 · Full 顶点 50）
+- head/arm/leg 三字段是"装饰性且 RBM 风格一致"、无害
+- 未来引擎若支持马部位差异化，OSA 已 ready
+
+---
+
 ## 状态图例
 - 🔵 log-only · 决议已定案，XML 未改（低价值 cosmetic 类，v1 现值可接受，避免 XML churn）
 - 🟡 pending deploy · XML 已改，等下次关游戏 + `deploy.ps1`

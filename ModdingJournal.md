@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-09-22
+**最后更新**：2026-09-23
 
 ## 目录
 - [环境与路径](#环境与路径)
@@ -2360,7 +2360,32 @@ public static void SetBound(this Village village, Settlement boundTarget) {
 
 ### 调查与开发项目（backlog）
 
-- [ ] **🔴 OSA 物品平衡 v2**（2026-09-21 立项 → **2026-09-22 升为最高优先度开发项目**）：利用 `OSA_Reference/` + `RBM_Reference/` 数据包对 `OpenSourceArmouryRBMBalance` 做精细化二轮调整。**工作细节 + 逐件改动记录见 [`OpenSourceArmouryRBMBalance/BALANCE_V2_LOG.md`](./OpenSourceArmouryRBMBalance/BALANCE_V2_LOG.md) + 权威字典 [`MATERIAL_QUALITY_DICT.md`](./OpenSourceArmouryRBMBalance/MATERIAL_QUALITY_DICT.md) + Vanilla 参照 [`VANILLA_REFERENCE.md`](./OpenSourceArmouryRBMBalance/VANILLA_REFERENCE.md)**。**帝国头盔已完成 68 件**（2026-09-22 → 2026-09-23）：Provocator 4 · Spangenhelm 29 · Crested 8 · Secutor 6 · Sagittarius 8 · Cataphract 10 · 杂项 3 · 全部 pending deploy。**字典 v8 就位**（Lord / Face Plate/Closed/Visored / Metal Stripes/Ridge/Face Guard / Cataphracts / Heavy 全档 + 品质词 Gilded/Noble/Jeweled/Silvered/Iron/Bronze）。**下一步**：帝国 BodyArmor / 其他文化头盔 / HorseHarness 三选一。可展开点：(1) **HorseHarness 平衡**（v1/v1.1 未处理，Saddlery avg 58.5 vs RBM 28.9，需反向下调 ×0.5）；(2) **Cape.arm slot 校准**（v1.0 flat=12 是猜的）；(3) outlier 物品逐个审（Excel 按 head_armor 降序看 top-30）；(4) **Blade damage_factor 按 tier+wclass 分层校准**；(5) **CraftedItem 覆盖分析**（OSA 140 CraftedItem 引用 vanilla piece，join `osa_crafted_items_pieces.csv` + `rbm_crafting_pieces.csv`）；(6) `OpenSourceArmouryRBMBalance/src/generate.ps1` 重构为 `Import-Csv Reference/*.csv` 消费
+- [ ] **🔴 OSA 物品平衡 v2**（2026-09-21 立项 → **2026-09-22 升为最高优先度开发项目**）：利用 `OSA_Reference/` + `RBM_Reference/` 数据包对 `OpenSourceArmouryRBMBalance` 做精细化二轮调整。**工作细节 + 逐件改动记录见 [`OpenSourceArmouryRBMBalance/BALANCE_V2_LOG.md`](./OpenSourceArmouryRBMBalance/BALANCE_V2_LOG.md) + 权威字典 [`MATERIAL_QUALITY_DICT.md`](./OpenSourceArmouryRBMBalance/MATERIAL_QUALITY_DICT.md) + Vanilla 参照 [`VANILLA_REFERENCE.md`](./OpenSourceArmouryRBMBalance/VANILLA_REFERENCE.md) + 宪法 [`DESIGN_PHILOSOPHY.md`](./OpenSourceArmouryRBMBalance/DESIGN_PHILOSOPHY.md)**。
+
+  **进度快照（2026-09-23 收 · 帝国全 6 类完成）**：
+  - **帝国 HeadArmor · 165 件**（Provocator 4 · Spangenhelm 29 · Crested 8 · Secutor 6 · Sagittarius 8 · Cataphract 10 · 杂项 3 · Scale Coif 2 · Roman Helmet 12 · Lord/Guarded Lord 10 · Nasalhelm 3 · Elite 4 · Kettle 11 · Crowned/Palatine 5 · 特殊顶档 4 · Ridge/Intercisa/Lion 6 · Legatus 3 · Conical/Pointed 8 · TV/AR 混合尾单 14 · 追溯修正 若干）· **字典 v8 就位**
+  - **帝国 Cape · 89 件**（G. Lamellar 19 · F. Scale 8 · H. Wolf Pelt 10 · I. Bronze/Iron Pauldrons 5 · J. Neckguard 8 · K. Leather+Cape 9 · L. Mail 1 · M. Strip 轻 2 · N. Gladiator 2 · O. Studded+Cape 1 · P. Noble 1+1 · Q. lamellar_scarf 1 · R. Lamellar+Cape combo 8 · S. Strip+Long Cape 1 · T. Cape/Cloak/Sash/Focale/Pelt 12）· **Cape 三部分律定案**（命名二分律 + arm mesh-tiered 分档律 + 视觉判断优先律）
+  - **帝国 BodyArmor · 75 件**（A. Cloth 民用 16 · B. Cloth 中档 Subarmalis 4 · C. Leather 6 · D. Plate 轻档 13 · E. Chainmail 独立 6 · F. Plate 中档 15 · G. Plate 高档 13 · H. Cataphract 顶档 2）· **BodyArmor 铁律定案**（body ≥ leg > arm · 材质硬约束 Cloth≤28/Leather≤32/Chainmail 45-55/Plate 37-135）· `imperial_scale_armor` 135/122/67 顶点
+  - **帝国 HandArmor · 12 件**（A. Cloth Armwrap/Vambrace 2 · B. Plate Vambraces 中低 2 · C. Durkhan Lamellar 2 · D. Plate Gloves 中高 2 · E. Gauntlets 顶档 4）· **body 恒 0 · arm 上限 63**（`lamellar_plate_gauntlets`）· Vambraces < Gloves < Gauntlets 命名子结构分档
+  - **帝国 LegArmor · 11 件**（A. Slippers/Shoes 3 · B. Boots+Greaves 中档 1 · C. Light Lamellar 中低 2 · D. Suede Splint 中档 1 · E. Plate Boots 高档 4）· **body 恒 0 · leg 上限 62**（`lamellar_plate_boots`）· Slippers < Shoes < Boots < Boots With Greaves < Lamellar Plate Boots
+  - **帝国 HorseHarness · 26 件**（A. 民用 Harness 3 · B. Half Padded 3 · C. Half Leather 1 · C+. Full Studded Leather 1 · D. Half Lamellar 4 · E. Half Mail 4 · F. Half 顶级半覆盖 3 · G. Full/Heavy 顶点 7）· **⚠ 反向下调批 + 全 4 字段修订**（body ×0.5-0.7 · wt ×0.15-0.30 · 补齐 head/arm/leg）· 顶点参照 vanilla `imperial_scale_barding` h=90/b=50/l=50/a=60/wt=30 · **⚠ 引擎机制核实**：dnSpy 反编译确认 vanilla+RBM 引擎硬 code 对马只用 body_armor 字段（`Agent.GetBaseArmorEffectivenessForBodyPart` 对非人类返回 ArmorTorso · RBM `ArmorRework` 同分支）· head/arm/leg 三字段是"XML pattern 一致 + 未来兼容"装饰性填充，真正决定防护的是 body_armor · v2 保留全 4 字段与 RBM 风格一致
+  - **合计 165+89+75+12+11+26 = 378 件决议归档 · 全部 🔵 log-only 状态**——决议归档，XML 未动，避免 churn，累积一批再 deploy
+
+  **Cape 三部分律速查**（2026-09-23 用户拍板）：
+  1. **命名二分律**：有 shoulder/pauldron 命名 → 允许 body + arm 同 > 0（**body > arm 严格序**）；无此命名（Cape/Cloak/Sash/Focale/Pelt/Collar）→ **arm 必须 = 0**
+  2. **arm mesh-tiered 分档律**：25 Elite Heavy（Gilded）/ 20 Standard Shoulders / **15 部分覆盖**（Harness Over Scale）/ 12 Standard Pauldrons / 6–8 Studded Strip / 10–12 Chainmail / 4–8 Leather
+  3. **视觉判断优先律**：命名允许 ≠ 数值强制；mesh 视觉不覆盖上臂 → arm 清 0
+  - **关键取舍**：Bannerlord 引擎 arm 加法制（HeadArmor + BodyArmor + Cape + HandArmor），OSA 精英 arm 总值比 RBM 高 ~25 点/26%，故意换取"Cape 特色"忠实反映 mesh 物理覆盖度
+  - **Vanilla 顶点**：`imperial_lamellar_shoulders` 55/0/3.5（body-only 顶点），OSA 允许 body ≤ 55 + arm 加成不算越权
+
+  **推进顺序（下一次开工时按此进）**：
+  1. **[待用户复核 + deploy]** 帝国全 6 类共 **378 件决议归档**，用户直读 log 对照 vanilla+RBM 参照标注需 override 的物品 → 关游戏 → `deploy.ps1` 全部落地
+  2. **其他文化推进（按同框架、同顺序）**：Vlandia → Battania → Sturgia → Aserai → Khuzait → Nord（每文化按 **HeadArmor → Cape → BodyArmor → HandArmor → LegArmor → HorseHarness** 六类循环）
+     - 每类走同流程：抽 vanilla+RBM 锚点 → 写入 VANILLA_REFERENCE.md → 抽 OSA → 按材质+结构分家族 → vanilla 直匹配优先 → 归档 BALANCE_V2_LOG.md
+     - 每文化 Cape 沿用**三部分律**（命名二分律 + arm mesh-tiered + 视觉判断优先律）· Nord 需实证 vanilla arm ≤ 8 是否有 shoulder mesh
+  3. **Blade damage_factor 分层校准**：按 tier + wclass · 独立于 armor 平衡
+
+  **待深化点**（后台等收官）：outlier 物品逐个审（Excel 按 head_armor 降序看 top-30）· CraftedItem 覆盖分析（OSA 140 CraftedItem 引用 vanilla piece，join `osa_crafted_items_pieces.csv` + `rbm_crafting_pieces.csv`）· `generate.ps1` 重构为 `Import-Csv Reference/*.csv` 消费
 - [ ] **自研 `CastleEliteRecruitment` mod**（2026-09-20 立项，机制已核实 · P2 落地类）：让城堡能招募 + 大量产精英新兵，1.4.7 兼容 / RBM-proof / Retinues 友好。设计详见上方"★ 城堡精英招募"节（A 城堡加 notable + B 放行志愿兵填充 + C postfix GetBasicVolunteer 强制精英免疫 RBM + D 城堡招募菜单）。**下一步：在 repo 搭工程骨架 → 主力机 build+测**（2026-09-21 从"🔴 最高优先"降为常规 backlog——用户 policy：确定性实施项目让位给待调查项目）
 - [x] ~~**Retinues · House 单位 tier 上限**~~ ← **2026-09-18 结案**：作者早已在 MCM 里预留 `MaxTroopTier` 到 10，改配置即可；改后需玩家手动 rank up 已有兵种。详见"Retinues 机制备忘"小节 + 修改 #6
 - [x] ~~**Retinues · Clan Traditions 跳过**~~ ← **2026-09-22 结案**：用户确认已生效（见 P0 章节同项）

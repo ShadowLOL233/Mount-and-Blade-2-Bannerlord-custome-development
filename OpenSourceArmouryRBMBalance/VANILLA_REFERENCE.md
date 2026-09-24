@@ -212,3 +212,266 @@ Plate Heavy Lamellar (imperial_lamellar_shoulders) body 55 ⭐ 顶点
 - **OSA arm 特色可保留**：OSA 明确添加 arm_armor（0-12）反映 pauldron mesh 的物理外形，vanilla 侧无对应设计
 - **头 > 身 > 臂原则不适用**（Cape 无 head_armor 字段）
 - **拟议 Cape 铁律**（待用户确认）：`body_armor ≥ arm_armor`（斗篷主体 > 肩甲延伸）
+
+---
+
+## Empire · BodyArmor · 39 件（2026-09-23 归档）
+
+**关键设计观察**：vanilla+RBM 帝国 BodyArmor 全线走**材质档次 + 结构层叠**双维度：材质决定基础档（Cloth < Leather < Chainmail < Plate），结构描述（Over Padded / Over Mail / Over Leather / Scale Skirt / Double Mail）决定同材质内部细分。分档**极其规整**：Cloth 5-28、Leather 18-32、Chainmail 45-55、Plate 37-135。**顶点** `imperial_scale_armor` 135/122/67 ⭐
+
+### 👕 Cloth 民用（16 件 · body 5-14 · 无 subarmalis）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `hemp_tunic` | 0.4 | 5/5/5 | Hemp Tunic |
+| `empire_dress` | 0.7 | 6/5/6 | Ladies Dress |
+| `fine_town_tunic` | 0.4 | 6/5/5 | Rich Tunic |
+| `empire_dress_b` | 0.6 | 7/7/6 | Red Dress |
+| `peasant_costume` | 0.5 | 7/7/5 | Commoner Clothes |
+| `tunic_with_shoulder_pads` | 0.6 | 7/7/7 | Tunic with Shoulder Pads |
+| `vlandian_dress` | 0.5 | 7/7/5 | Rich Dress |
+| `empire_short_dress` | 1.0 | 8/3/0 | Short Tunic |
+| `footmans_tunic` | 0.6 | 8/8/8 | Military Tunic |
+| `imperial_robes` | 0.9 | 8/8/6 | Toga |
+| `tied_cloth_tunic` | 0.4 | 8/8/5 | Tied Cloth Tunic |
+| `tunic_with_rolled_cloth` | 0.7 | 11/11/7 | Tunic with Rolled Cloth |
+
+### 🧥 Padded Gambeson/Cloth（8 件 · body 14-28 · Cloth mat + gambeson 结构）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `patched_gambeson` | 2.4 | 14/14/12 | Patched Gambeson |
+| `imperial_padded_cloth` | 2.8 | 16/16/15 | Infantryman Rough Gambeson |
+| `empire_warrior_padded_armor_a` | 2.1 | 18/18/14 | Infantryman Gambeson |
+| `empire_warrior_padded_armor_e` | 1.5 | 18/18/15 | Infantryman Long Gambeson |
+| `empire_warrior_padded_armor_c` | 2.0 | 22/23/13 | Infantryman Gambeson with Skirts |
+| `empire_warrior_padded_armor_d` | 1.6 | 22/19/11 | Infantryman Gambeson with Straps |
+| `padded_cloth_with_strips` | 2.2 | 22/25/13 | Padded Cloth With Strips |
+| `empire_warrior_padded_armor_f` | 1.9 | 25/23/18 | Auxiliary Armor |
+| `empire_warrior_padded_armor_g` | 2.0 | 26/25/19 | Auxiliary Armor with Straps |
+| `empire_warrior_padded_armor_b` | 1.8 | 28/27/16 | Infantryman Gambeson over Leather Jacket ⭐ Padded 顶 |
+
+### 🦌 Leather（5 件 · body 18-32 · Leather mat）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `leather_tunic` | 2.1 | 18/23/15 | Leather Tunic |
+| `khuzait_leather_stitched` | 2.5 | 22/22/10 | Thick Brigandine Vest（帝国可用）|
+| `basic_imperial_leather_armor` | 3.1 | 28/22/25 | Leather Armor |
+| `woven_leather_coat` | 5.1 | 30/30/30 | Boarskin Leather Coat |
+| `eastern_studded_leather` | 3.0 | 32/24/27 | Cured Studded Leather Armor ⭐ Leather 顶 |
+
+### 🛡 Plate 轻档 · Scale Vest（1 件 · body 37）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `empire_plate_vest_armor` | 16 | 37/30/12 | Ornate Scale Armor |
+
+### 🔗 Chainmail Vest / Over Leather（6 件 · body 45-55 · Chainmail mat）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `imperial_mail_vest` | 9.8 | 45/34/39 | Infantryman Mail Vest |
+| `imperial_mail_over_stripped_leather` | 10.2 | 46/27/30 | Infantryman Mail over Striped Leather |
+| `imperial_mail_over_leather` | 8.6 | 47/22/33 | Infantryman Mail over Leather |
+| `empire_horseman_armor` | 8.3 | 55/27/38 | Cavalryman Mail Shirt |
+| `empire_legion_a` | 22 | 55/44/18 | Decorated Legionary Mail |
+| `legionary_mail` | 10.5 | 55/49/44 | Legionary Mail ⭐ Chainmail 顶 |
+
+### 🛡 Plate 顶档 · Lamellar/Scale over Mail（5 件 · body 79-135）
+
+| id | wt | b/l/a | 名称 |
+|---|---:|---|---|
+| `imperial_lamellar` | 28.5 | 79/78/45 | Light Lamellar over Mail Armor |
+| `empire_legion_b` | 28 | 85/30/20 | Ornate Legionary Scale Mail |
+| `imperial_lamellar_over_leather` | 15 | 88/30/35 | Luxury Lamellar Vest over Leather |
+| `lamellar_with_scale_skirt` | 34 | 118/122/45 | Heavy Lamellar over Mail with Scale Skirt |
+| `imperial_scale_armor` | 35.5 | **135/122/67** | Heavy Scale Armor over Double Mail ⭐ **顶点** |
+
+### BodyArmor 家族梯度 · Empire
+
+```
+Cloth 民用（tunic/dress/toga）                     body 5-11
+Padded Gambeson                                    body 14-28 ⭐ Padded 顶
+Leather Tunic/Coat/Studded                         body 18-32 ⭐ Leather 顶
+Plate 轻档（Scale Vest）                            body 37（arm 12 唯一）
+Chainmail Vest/Over Leather                        body 45-47
+Chainmail Legion（Cavalryman/Legionary）            body 55 ⭐ Chainmail 顶
+Plate 中高档（Lamellar over Mail）                  body 79-88
+Plate 顶点（Heavy Lamellar/Scale over Mail）        body 118-135 ⭐ 顶点
+```
+
+### BodyArmor 家族关键约束
+
+- **vanilla Empire BodyArmor 顶点**：`imperial_scale_armor` **135/122/67**（Heavy Scale over Double Mail）· raw scaled with BodyArmor mult 1.0
+- **OSA Empire BodyArmor 需在此顶点内**：body ≤ 135
+- **序**：`body_armor ≥ leg_armor > arm_armor`（vanilla 全 39 件遵守，仅 `lamellar_with_scale_skirt` 118/122 leg 略高——因 Scale Skirt 结构强调腿部）
+- **arm 上限**：Chainmail 顶档 44（`legionary_mail`），Plate 顶档 67（`imperial_scale_armor`）
+- **leg 上限**：Plate 顶档 122（`lamellar_with_scale_skirt` / `imperial_scale_armor`）
+- **material_type 分档硬约束**：Cloth ≤ 28（Padded 顶）· Leather ≤ 32 · Chainmail 45-55 · Plate 37-135
+- **结构描述子分档**：`Over Padded/Leather` 中档 · `Over Mail` 高档 · `Over Scale/Double Mail` 顶档 · `Scale Skirt` leg 强化
+- **Cataphract 定义**：body ≥ 79（Lamellar over Mail 起）+ leg ≥ 45 + arm ≥ 20 = 三档全上 → Empire Cataphract 顶级重装
+
+---
+
+## Empire · HandArmor · 7 件（2026-09-23 归档）
+
+**关键设计观察**：vanilla+RBM 帝国 HandArmor 全 7 件 body_armor 均为 0（HandArmor 只有 arm_armor 字段有效——这类物品覆盖手部，护甲值全走 arm）。分档极简：**Leather 26 → Cloth Padded 31-37 → Plate 42-63**。顶点 `lamellar_plate_gauntlets` 63 ⭐
+
+### 🦌 Leather（1 件 · arm 26）
+
+| id | wt | arm | 名称 |
+|---|---:|---:|---|
+| `woven_leather_bracers` | 0.8 | 26 | Woven Leather Bracers |
+
+### 🧥 Cloth Padded Mittens（3 件 · arm 31-37）
+
+| id | wt | arm | 名称 |
+|---|---:|---:|---|
+| `padded_mitten` | 0.6 | 31 | Padded Mittens |
+| `lordly_padded_mitten` | 1.3 | 32 | Lordly Padded Mittens |
+| `reinforced_padded_mitten` | 0.9 | 37 | Reinforced Padded Mittens |
+
+### 🛡 Plate（3 件 · arm 42-63）
+
+| id | wt | arm | 名称 |
+|---|---:|---:|---|
+| `plated_strip_gauntlets` | 1.4 | 42 | Plated Striped Vambraces |
+| `decorated_imperial_gauntlets` | 1.5 | 50 | Decorated Imperial Gauntlets |
+| `lamellar_plate_gauntlets` | 1.8 | **63** | Lamellar Plate Gauntlets ⭐ 顶点 |
+
+### HandArmor 家族梯度 · Empire
+
+```
+Leather Bracers                                arm 26
+Cloth Padded Mittens (Padded/Lordly)           arm 31-32
+Cloth Padded Mittens (Reinforced)              arm 37
+Plate Vambraces (Plated Strip)                 arm 42
+Plate Imperial Gauntlets (Decorated)           arm 50
+Plate Lamellar Gauntlets                       arm 63 ⭐ 顶点
+```
+
+### HandArmor 家族关键约束
+
+- **body_armor 恒为 0**：HandArmor 类 body_armor 字段无效——所有护甲值集中在 arm_armor
+- **arm 上限 63**（`lamellar_plate_gauntlets`）· OSA arm ≤ 63
+- **wt 分档**：Cloth 轻档 0.4-0.9 · Leather 0.8 · Plate 中档 1.4-1.8
+- **材质分档**：Cloth Padded ≤ 37 · Leather ≤ 26 · Plate 42-63
+- **命名子结构**：Vambraces（前臂）< Gauntlets（全手）· Bracers 轻档 · Mittens 布软档 · Splint/Mail 复合结构档
+
+---
+
+## Empire · LegArmor · 7 件（2026-09-23 归档）
+
+**关键设计观察**：vanilla+RBM 帝国 LegArmor 全 7 件 body_armor 均为 0（LegArmor 只有 leg_armor 字段）。分档梯度**极其规整**：Leather 20-28 → Cloth 30 → Plate 42-62。顶点 `lamellar_plate_boots` 62 ⭐
+
+### 🦌 Leather（3 件 · leg 20-28）
+
+| id | wt | leg | 名称 |
+|---|---:|---:|---|
+| `fine_town_boots` | 0.5 | 20 | Fine Town Boots |
+| `folded_town_boots` | 1.0 | 24 | Folded Town Boots |
+| `empire_horseman_boots` | 0.8 | 28 | Horseman Boots |
+
+### 👕 Cloth Strapped（1 件 · leg 30）
+
+| id | wt | leg | 名称 |
+|---|---:|---:|---|
+| `strapped_leather_boots` | 0.9 | 30 | Strapped Leather Boots |
+
+### 🛡 Plate（3 件 · leg 42-62）
+
+| id | wt | leg | 名称 |
+|---|---:|---:|---|
+| `plated_strip_boots` | 2.7 | 42 | Splint Boots |
+| `decorated_imperial_boots` | 2.3 | 44 | Decorated Plate Boots |
+| `lamellar_plate_boots` | 3.5 | **62** | Lamellar Plate Boots ⭐ 顶点 |
+
+### LegArmor 家族梯度 · Empire
+
+```
+Leather Boots (Fine Town / Folded / Horseman)         leg 20-28
+Cloth Strapped Leather Boots                          leg 30
+Plate Splint Boots (Plated Strip)                     leg 42
+Plate Decorated Boots                                 leg 44
+Plate Lamellar Boots                                  leg 62 ⭐ 顶点
+```
+
+### LegArmor 家族关键约束
+
+- **body_armor 恒为 0**：LegArmor 类 body_armor 字段无效——所有护甲值集中在 leg_armor
+- **leg 上限 62**（`lamellar_plate_boots`）· OSA leg ≤ 62
+- **wt 分档**：Leather 轻档 0.5-1.0 · Cloth 0.9 · Plate 中档 2.3-3.5
+- **材质分档**：Cloth Slippers ≤ 30 · Leather ≤ 28 · Plate 42-62
+- **命名子结构**：Slippers/Shoes（极轻）< Boots（标准）< Boots With Greaves（+ 金属护胫）< Lamellar Plate Boots（顶档全 lamellar 覆盖）
+
+---
+
+## Empire · HorseHarness · 4 件（2026-09-23 归档 · 全 4 字段修订）
+
+**关键设计观察**：vanilla+RBM 帝国 HorseHarness 仅 **4 件**——但**每件都用全 4 armor 字段**（head/body/arm/leg），OSA v1 只用了 body 一字段是漏洞。分档结构：民用 Leather 5-10 → Cataphract 顶档（Chainmail Scale）h=90/b=50/l=50/a=60。**顶点实际是 head 90 而非 body 50**。
+
+### HorseHarness 4 字段对应马部位
+
+| 字段 | 马部位 | vanilla 顶点 | 说明 |
+|---|---|---:|---|
+| **head_armor** | 马头（chamfron 面甲）| **90** ⭐ | 顶档 Cataphract 硬约束 · 民用 5-10 |
+| **body_armor** | 马身/胸腹（main barding） | 50 | 民用 5-8 |
+| **arm_armor** | 马颈/前腿（crinet + peytral）| 60 | 民用 5-10 · 顶档比 body 高 |
+| **leg_armor** | 马后腿/臀（crupper）| 50 | Half 只 5 · Full 50 · Half vs Full 差异关键点 |
+
+### 🐴 全 4 件详细数据
+
+| id | mat | wt | h/b/l/a | 名称 |
+|---|---|---:|---|---|
+| `stripped_leather_harness` | Leather | 8 | **10/5/5/10** | Striped Leather Harness（民用）|
+| `imperial_riding_harness` | Leather | 6 | **5/8/3/5** | Imperial Riding Harness（民用）|
+| `half_scale_barding` | Chainmail | 17 | **90/50/5/60** | Cataphract Half Scale Barding（半覆盖 · **leg 只 5**）|
+| `imperial_scale_barding` | Chainmail | 30 | **90/50/50/60** ⭐ | Cataphract Scale Barding（全覆盖顶点）|
+
+### HorseHarness 家族梯度 · Empire
+
+```
+民用 Leather Harness                              h=5-10  b=5-8   l=3-5  a=5-10   wt=6-8
+──────────── 跨档断裂 ────────────
+Cataphract Half Coverage (Chainmail)              h=90    b=50    l=5    a=60     wt=17
+Cataphract Full Coverage (Chainmail) ⭐            h=90    b=50    l=50   a=60     wt=30
+```
+
+### HorseHarness 家族关键约束
+
+- **无中间档**：vanilla+RBM 帝国 HorseHarness 从民用直接跳到顶档 Cataphract——中间无中档（OSA 侧填补 4 层中间过渡）
+- **顶点硬约束**：h ≤ 90 · b ≤ 50 · l ≤ 50 · a ≤ 60 · wt ≤ 30
+- **arm > body 反常合理**：马颈+前胸+前腿表面积其实比躯干还大，护甲值 arm 60 > body 50 合理
+- **Half vs Full 差异**：在 **leg** 字段（Half=5，Full=50）——"半覆盖"= 只覆盖马前半段（头/胸/前腿），不含后腿臀部
+- **head 主导**：顶档 head=90（第一大字段）> arm=60 > body=50 = leg=50 · 反映 chamfron（面甲）是马甲最重要部分
+- **wt 分档**：民用 6-8 · Half 覆盖 17 · Full 覆盖 30 · OSA wt 不应超 30
+- **wt-body 比**：0.6-1.7 · OSA 应遵守避免"马甲比马重"荒谬
+- **material_type**：仅两档 · **Leather**（民用）· **Chainmail**（Cataphract 顶）· Plate/Lamellar 全部划归 Chainmail mat
+- **命名子结构**：
+  - **Harness**（马鞍/马饰）= 极轻档 · Leather mat
+  - **Half Barding**（半覆盖甲）= leg 特别低（5）· 其余接近顶
+  - **Full Barding / Heavy Barding**（全覆盖甲）= 顶档全字段 · leg 50
+- **⚠ OSA v1 系统性错误**：**只用 body 字段**、head/arm/leg 全 0 · v1 body 最高 75 超 vanilla 50 表面 50%，但实际总护甲量（h+b+l+a）远低于 vanilla 顶（250）· v2 需**补齐 4 字段**且各字段严格 ≤ vanilla 顶点
+
+### 🔍 引擎机制核实（2026-09-23 dnSpy 反编译）
+
+**核心发现**：**vanilla native 引擎 + RBM 补丁对马的 armor 计算硬 code 只用 body_armor 字段**——head/arm/leg 三字段引擎完全忽略。
+
+**证据链**：
+1. `SandBox.GameComponents.SandboxAgentStatCalculateModel.UpdateHorseStats`（L1041-1057）——马只累加 `spawnEquipment[i].GetModifiedMountBodyArmor()` → `agentDrivenProperties.ArmorTorso`（一字段）
+2. `TaleWorlds.MountAndBlade.Agent.GetBaseArmorEffectivenessForBodyPart`（L3385）——对非人类硬 code `return this.GetAgentDrivenPropertyValue(DrivenProperty.ArmorTorso)`（无论哪个部位）
+3. RBM `ArmorRework.ApplyDrivenArmorBonus`（L679-736）——`if (!agent.IsHuman) { driven = props.ArmorTorso; vanillaBase += GetModifiedMountBodyArmor(); }` 明确按 IsHuman 分支，非人类只用 body_armor
+
+**RBM 为什么还在 XML 加 head/arm/leg？**（推测，无源码注释）：
+- XML 结构一致性（与 human armor 保持字段 pattern 统一）
+- 未来兼容性（预留字段，等 TW 升级引擎支持马部位差异化）
+- 文档表意（告诉 modder Cataphract 马甲设计上覆盖头/颈/胸/腿的意图）
+- 可能被 UI mod 消费（PlayerArmorStatus 等 armor status mod）
+
+**对 OSA balance 的影响**：
+- 补齐全 4 字段符合"数值与 RBM 参照相近"的 user policy · RBM 风格一致
+- **真正生效的仅 body_armor**——真正决定马甲防护力的是这一字段
+- 保留全 4 字段无害，且未来引擎若真支持马部位差异化，OSA 已经 ready
+
+**用户 quote 记录**："RBM模组修改后的马甲同时有头甲、马甲、臂甲和腿甲，但我却没有在你的马甲平衡中看到四个数据" → 引发本节反编译核实

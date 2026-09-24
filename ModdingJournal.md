@@ -2394,6 +2394,14 @@ public static void SetBound(this Village village, Settlement boundTarget) {
     - **Sturgia LegArmor 4 件**：顶 `northern_plated_boots` 60（跨文化最高 leg）· Huscarl Plated Boots
     - **Sturgia HorseHarness 6 件**：顶 `northern_ring_barding` h=45/b=35/l=5/a=45 · Ring Mail Barding
   - **累计 帝国 378 + Vlandia 312 + Battania 307 + Sturgia 194 = 1191 件决议归档 · 突破 1000 里程碑**
+  - **Aserai 全 6 类完成（2026-09-23）**：HeadArmor 148 · Cape 46 · BodyArmor 88 · HandArmor 4 · LegArmor 6 · HorseHarness 31 = **323 件决议**
+    - **Aserai HeadArmor 148 件**（11 家族 A-K）：顶 `southern_lord_helmet` 100/22/0 · 沙漠轻装骑士 · Turban/Keffiyeh + Brass Southern Helmet + Emir + Battle Crown + Immortal's 顶
+    - **Aserai Cape 46 件**（8+2 家族）：顶 `desert_scale_shoulders` 45 · Scale Pauldrons 主流 · Leopard/Zebra/Lion Pelt 沙漠动物毛皮特色
+    - **Aserai BodyArmor 88 件**（10 家族 A-J）：顶 `desert_lamellar` 105/35/45 · 与 Sturgia 顶同 105 · Kaftan/Robe 民用 + Aserai Mail + Lamellar/Scale over Mail 顶
+    - **Aserai HandArmor 4 件**：顶 `guarded_padded_vambrace` 29（Cloth · 跨文化最低）· Bracers 极简 2 档
+    - **Aserai LegArmor 6 件**：顶 `wrapped_shoes` 35（Cloth · 无 Plate 顶档）· Moccasins/Boots With Greaves
+    - **Aserai HorseHarness 31 件**：顶 `mail_and_plate_barding` h=90/b=47/l=47/a=57 · Camel Saddle 特色（骆驼鞍独有类别）
+  - **累计 帝国 378 + Vlandia 312 + Battania 307 + Sturgia 194 + Aserai 323 = 1514 件决议归档**
 
   **Cape 三部分律速查**（2026-09-23 用户拍板）：
   1. **命名二分律**：有 shoulder/pauldron 命名 → 允许 body + arm 同 > 0（**body > arm 严格序**）；无此命名（Cape/Cloak/Sash/Focale/Pelt/Collar）→ **arm 必须 = 0**

@@ -5097,6 +5097,534 @@ Cloak 结构中档 body ~20-28（Plated Lion Head +6 反映甲片补强）· arm
 
 ---
 
+# Aserai 文化 · HeadArmor（2026-09-23）
+
+## 🔒 铁律 · Aserai HeadArmor
+
+> **顶点**：`southern_lord_helmet` **100/22/0**（Lordly Steel Cap）· 沙漠轻装传统
+> **Aserai 特色**：Turban/Keffiyeh + Wrapped Desert Helmet + Pointed Skullcap + Brass Southern Helmet + Emir + Battle Crown
+> **命名基型**：Southern/Wrapped/Fluted/Spangenhelm/Pointed/Nasal/Cataphract/Darshi
+
+## OSA Aserai HeadArmor · 家族分类总览（148 件）
+
+| 家族 | n | head 目标 | vanilla 锚点 |
+|---|---:|---|---|
+| A. Cloth Hat/Keffiyeh 民用 | 6 | 6-14 | `turban` 9 · `desert_cap` 14 |
+| B. Southern Wrapped Cap 基础 | 15 | 44-50 | `desert_helmet` 46 |
+| C. Fluted Steel Cap 系（Guard） | 15 | 46-60 | `desert_helmet` 参照 |
+| D. Southern Spangenhelm / Darshi 变体 | 25 | 45-88 | `pointed_skullcap_over_*` 系 |
+| E. Pointed Skullcap 系 | 15 | 57-88 | `pointed_skullcap_over_*` 直匹配 |
+| F. Wrapped Nasal Helmet 系 | 12 | 45-73 | `pointed_skullcap_with_mail` 73 |
+| G. Tuareg 变体 | 4 | 75-83 | `brass_aserai_helmet_leather` 75 |
+| H. Iron Helmet + Turban/Flaps 系 | 15 | 65-90 | `brass_aserai_helmet_*` 75-90 |
+| I. Cavalry / Cataphract's Helmet | 12 | 85-97 | `southern_noble_helmet` 97 |
+| J. Lord/Noble Helmet 顶档 | 15 | 91-100 | `aserai_lord_helmet_a` 91 · `southern_lord_helmet` 100 |
+| K. Darshi Immortal's 顶点 | 5 | 100 | `southern_lord_helmet` 100 直匹配 |
+
+---
+
+## Aserai · A 家族：Cloth Hat/Keffiyeh 民用（6 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/wt** |
+|---|---|---|---|---|
+| 1-2 | `ao_mabili_feathered_headband/_leather_headband` | Feathered/Leather Headband | 3/1 | **6/0.5** (vanilla `head_scarf` 6 参照) |
+| 3-4 | `AR_hat_c/d` | Rough/Standard Cloth Hat | 6/1.2 | **9/0.5** (vanilla `turban` 9 参照) |
+| 5 | `AR_hat_h` | Bedouin Straw Cap | 6/1.2 | **10/0.5** |
+| 6 | `AR_hat_i` | Bedouin Wrapped Straw Cap | 11/1.2 | **14/0.5** (vanilla `desert_cap` 14 参照) |
+
+**状态**：6 件 🔵 log-only
+
+---
+
+## Aserai · B 家族：Southern Wrapped Cap 基础（15 件 · h 17-22）
+
+**vanilla 参照**：`desert_helmet` 46/12/0（Steel Cap · Aserai base）· `loose_wrapped_desert_helmet` 44/0/12（Open Turban）
+
+| # | 命名 pattern | 件数 | v1 h | **v2 决议 h/b/a/wt** |
+|---|---|---:|---:|---|
+| B.1 | Southern Wrapped Helmet base（AR_a/s/s2, aserai_nasalhelm_cloth, TV_v2, 5 件） | 5 | 17-18 | **44/0/12/1.5** (vanilla `loose_wrapped_desert_helmet` 44 直匹配) |
+| B.2 | Southern Cap Helmet With Headscarf（AR_b, hmj_southern, TV_b/c, 4 件） | 4 | 19-22 | **46/12/0/1.5** (vanilla `desert_helmet` 46 直匹配) |
+| B.3 | Fluted Steel Cap base（TV_guard_a/a2/b/d, 4 件） | 4 | 17-19 | **46/12/0/1.8** |
+| B.4 | Southern Cone Helmet（ao_subuwari_a/a2, southern_cone, saracen_c/d_ii, 5 件） | 5 | 20-23 | **50/0/6/1.3** (Cone Helmet 轻档) |
+| B.5 | Southern Archer Helmet (Open/Closed, AR_archer_a/e/b/f) | 4 | 20-21 | **50/0/6/1.5** (Archer 中低档) |
+
+**状态**：22 件 🔵 log-only
+
+---
+
+## Aserai · C 家族：Fluted Steel Cap + aventail 系（15 件）
+
+**vanilla 参照**：`desert_helmet_with_mail` 65 · `desert_mail_coif` 90/10/40
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `TV_aserai_guard_helmet_d2/d3` | Fluted Steel Over Open/Wrapped Cloth | 21/1.3 | **50/0/12/1.5** |
+| 3-4 | `TV_aserai_guard_helmet_e/e2/e3` | Fluted Steel Cap Over Closed Mail (variants) | 42-43/2.55 | **80/12/25/2.8** |
+| 5-9 | `TV_aserai_guard_helmet_c/c2/c3/c4/c5` | Fluted Steel Nasal Cap Over Mail (variants) | 45/2.9 | **85/12/25/2.9** (vanilla `pointed_skullcap_over_mail` 85 参照) |
+| 10-12 | `TV_aserai_guard_helmet_f/f2/f3` | Fluted Steel Helmet Over Closed Mail | 47-48/2.55 | **88/24/40/2.8** (vanilla `pointed_skullcap_over_mail_coif` 88 参照) |
+
+**状态**：12 件 🔵 log-only
+
+---
+
+## Aserai · D 家族：Southern Spangenhelm / Darshi Spangenhelm 系（25 件）
+
+**vanilla 参照**：Pointed Skullcap 系（57-88）
+
+| # | 命名 pattern | 件数 | v1 h | **v2 决议 h/b/a/wt** |
+|---|---|---:|---:|---|
+| D.1 | Spangenhelm Over Cloth/Trailed Cloth（AR_c/o/w/za, TV_v/m/o, 7 件） | 7 | 20-22 | **57/12/15/1.3** (vanilla `pointed_skullcap_over_laced_coif` 57 直匹配) |
+| D.2 | Open/Closed Spangenhelm（AR_d, TV_n, saracen_c, southern_light_a, 4 件） | 4 | 21-23 | **62/16/10/1.5** (vanilla `pointed_skullcap_over_cloth_headwrap` 62 直匹配) |
+| D.3 | Spangenhelm Over Leather（AR_c2, TV_aserai_w, 2 件） | 2 | 34 | **65/12/20/1.5** |
+| D.4 | Spangenhelm With Mail（TV_p, r/t/x, AR_e/f, 6 件） | 6 | 45-46 | **85/12/25/2.9** (vanilla `pointed_skullcap_over_mail` 85 参照) |
+| D.5 | Spangenhelm With Heavy Mail / Closed Mail（TV_q/s/u, TV_i/l, 5 件） | 5 | 46-52 | **88/24/40/3.0** (vanilla `pointed_skullcap_over_mail_coif` 88 直匹配) |
+| D.6 | Darshi Plumed Spangenhelm Over Mail（AR_zc, 1 件） | 1 | 52 | **90/24/40/2.5** |
+
+**状态**：25 件 🔵 log-only
+
+---
+
+## Aserai · E 家族：Pointed Skullcap / Cone Helmet 系（15 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `saracen_helmet_d_ii` `southern_helmet_IIII` `southern_light_helmet_a` | Wrapped/Tailed/Closed Pointed Skullcap | 22/1 | **57/12/15/1.2** (vanilla `pointed_skullcap_over_laced_coif` 57 参照) |
+| 4-5 | `southern_helmet_with_band` `AR_aserai_helmet_j` | Southern Helmet With Band / Darshi Tailed Tall | 28-30 | **62/16/10/1.5** |
+| 6-8 | Pointed Iron/Bronze Helmet variants (AR_k/k2/l/l2, 4 件) | 34-35 | **75/4/0/1.8** (vanilla `brass_aserai_helmet_leather` 75 参照) |
+| 9-10 | `AR_aserai_helmet_m/m2` | Southern Open Pointed Iron/Bronze Helmet | 37/2.2 | **77/4/0/2.0** (Bronze -2) |
+| 11-12 | `ao_subuwari_noblemans_helmet + b` | Bronze/Iron Cone Helmet Over Mail | 38/1.8 | **85/12/25/2.5** (vanilla `pointed_skullcap_over_mail` 85 参照) |
+| 13-14 | `AR_aserai_helmet_n/n2` | Southern Pointed Iron/Bronze Helmet With Mail | 46/3.9 | **88/24/40/3.5** (vanilla `pointed_skullcap_over_mail_coif` 88 直匹配) |
+| 15 | `hmj_aserai_helmet_a` | Wrapped Pointed Skullcap Over Mail Coif | 39/2.8 | **88/24/40/3.0** |
+
+**状态**：15 件 🔵 log-only
+
+---
+
+## Aserai · F 家族：Wrapped Nasal Helmet 系（12 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `aserai_nasalhelm_cloth` (already B) `TV_aserai_helmet_f` | Loose Wrapped Southern Nasalhelm | 27/2.1 | **57/12/15/2.0** |
+| 3 | `aserai_nasalhelm_mailcoif` | Nasalhelm With Mail Coif | 28/3.1 | **73/12/20/2.8** (vanilla `pointed_skullcap_with_mail` 73 参照) |
+| 4-5 | `aserai_nasalhelm_mail_veil` `southern_mail_helm_band` | Nasalhelm With Closed Mail / Banded Over Mail | 30/3.2 | **85/12/25/3.0** |
+| 6 | `TV_aserai_helmet_a` | Mailed Nasal Helmet With Headscarf | 36/2.1 | **75/4/0/2.0** |
+| 7-9 | `AR_aserai_helmet_p/q/y/x/z/zb/zd` Ridge / Lamellar / Spangenhelm Over Mail (7 件) | 46-54 | **88/24/40/3.0** (vanilla `pointed_skullcap_over_mail_coif` 88 参照) |
+
+**状态**：12 件 🔵 log-only
+
+---
+
+## Aserai · G 家族：Tuareg 变体（4 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `southern_heavy_tuareg` `TV_aserai_helmet_k` | Southern Skullcap/Cap With Tuareg | 32/1.3 | **75/4/0/1.8** (vanilla `brass_aserai_helmet_leather` 75 参照) |
+| 3 | `saracen_helmet_d` | Vendel Helmet With Tuareg | 33/1.6 | **83/14/20/2.0** (vanilla `brass_aserai_helmet_open` 83 参照) |
+| 4 | `southern_heavy_helmet` | Southern Heavy Helmet | 33/1.2 | **77/4/0/2.0** |
+
+**状态**：4 件 🔵 log-only
+
+---
+
+## Aserai · H 家族：Iron Helmet + Turban/Flaps 系（10 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `southern_heavy_helmet_with_feather` | Feathered Lord Helmet Over Mail | 34/1.8 | **85/12/25/2.5** |
+| 2 | `AR_aserai_helmet_t` | Iron Helmet with Leather Flaps | 36/1.8 | **75/4/0/2.0** (vanilla `brass_aserai_helmet_leather` 75 直匹配) |
+| 3 | `AR_aserai_helmet_t2` | Iron Turbaned Helmet with Leather Flaps | 37/1.9 | **77/4/0/2.0** (vanilla `brass_aserai_helmet_b_leather` 77 直匹配) |
+| 4 | `AR_aserai_helmet_u` | Iron Helmet | 38/2.2 | **83/14/20/2.2** (vanilla `brass_aserai_helmet_open` 83 直匹配) |
+| 5 | `AR_aserai_helmet_u2` | Iron Helmet with Turban | 39/2.3 | **85/14/20/2.3** (vanilla `brass_aserai_helmet_b_open` 85 直匹配) |
+| 6-8 | `AR_aserai_helmet_v/v2` | Iron Closed Helmet (variants) | 42-43/2.5 | **88/64/40/2.5** (vanilla `brass_aserai_helmet_closed` 88 直匹配) |
+| 9 | `southern_lord_helmet_b` | Spiked Lord Helmet Over Mail | 38/1.5 | **90/22/0/2.5** (vanilla `aserai_battle_crown` 90 参照) |
+| 10 | `southern_lord_helmet_a` | Spiked Lord Helmet Over Guarded Mail | 40/1.5 | **90/70/30/2.5** (vanilla `brass_aserai_helmet_b_closed` 90/70/30 直匹配) |
+
+**状态**：10 件 🔵 log-only
+
+---
+
+## Aserai · I 家族：Cavalry / Cataphract's Helmet（12 件）
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-4 | `AR_aserai_cataphract_helmet_a/b/c/d` | Cataphract's Helmet variants | 52/3.4-4.2 | **91/12/25/3.5** (vanilla `aserai_lord_helmet_a` 91/12/25 直匹配) |
+| 5-6 | `tv_aserai_lord_helmet_h/i` | Gilded/Standard Cataphract's Helmet/Spangenhelm | 52/3.7 | **94/10/40/3.5** (vanilla `emirs_helmet` 94 参照) |
+| 7-8 | `tv_aserai_lord_helmet_e/f` | Lord's Pointed Cap / Domed Cevelliere | 40/3.8 | **91/12/25/3.5** |
+| 9-10 | `AR_aserai_archer_helmet_c/g` | Archer Helmet Over Mail (variants) | 46/3 | **85/12/25/2.8** |
+| 11-12 | `AR_aserai_archer_helmet_d/h` | Noble Archer Helmet (variants) | 42/3.9 | **91/12/25/3.5** |
+
+**状态**：12 件 🔵 log-only
+
+---
+
+## Aserai · J 家族：Lord/Noble Helmet 顶档（15 件）
+
+**vanilla 参照**：`aserai_lord_helmet_a` 91/12/25 · `emirs_helmet` 94/10/40 · `southern_noble_helmet` 97/12/25 · `southern_lord_helmet` **100/22/0** 顶
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `AR_aserai_lord_helmet_a/b` | Desert Lord Helmet / With Faceplate | 44-46/3.7 | **91/12/25/3.5** (vanilla `aserai_lord_helmet_a` 直匹配) |
+| 3-4 | `TV_aserai_lord_helmet_b/c` | Ornate Southern Battle Crown (Silvered/Standard) | 44/2.8 | **90/22/0/2.5** (vanilla `aserai_battle_crown` 90 直匹配) |
+| 5 | `TV_aserai_lord_helmet_d` | Decorated Cap Over Turban | 42/2.8 | **90/22/0/2.5** |
+| 6 | `DZ_aserai_helmet_f` | Desert Noble Pointed Helmet | 44/2.8 | **91/12/25/3.0** |
+| 7-8 | `AR_aserai_lord_helmet_c/d` | Gilded/Standard Tall Helmet With Clothed Mail | 50/3.9 | **94/10/40/3.5** (vanilla `emirs_helmet` 94 参照) |
+| 9-10 | `AR_aserai_lord_helmet_f/f2` | Darshi Closed/Open Noble Cavalry Helmet | 50-52/4.2 | **94/10/40/3.5** |
+| 11 | `DZ_aserai_helmet_d` | Desert Decorated Closed Cap Helmet | 51/4.0 | **97/12/25/3.5** (vanilla `southern_noble_helmet` 97 直匹配) |
+| 12 | `southern_vendel_helmet` | Southern Vendel Helmet | 51/4.2 | **97/12/25/3.5** |
+| 13-14 | `AR_aserai_lord_helmet_g/g2` | Noble Pointed Iron/Bronze Helmet | 52/4.2 | **97/12/25/3.5** |
+| 15 | `tv_aserai_lord_helmet_g` | Lord's Spangenhelm | 46/2.9 | **97/12/25/2.9** |
+
+**状态**：15 件 🔵 log-only
+
+---
+
+## Aserai · K 家族：Darshi Immortal's / Noble Lamellar 顶点（5 件）
+
+**vanilla 参照**：`southern_lord_helmet` **100/22/0** 顶
+
+| # | id | 游戏名 | v1 h/wt | **v2 决议 h/b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_aserai_lord_helmet_e` | Southern Immortal's Helmet | 52/4.2 | **100/22/0/4.0** (vanilla `southern_lord_helmet` 100 顶 直匹配) |
+| 2 | `AR_aserai_lord_helmet_i` | Darshi Crowned Noble Lamellar Helmet | 52/4.2 | **100/22/0/4.0** |
+| 3-5 | `AR_aserai_helmet_r/z/zd` | Darshi Immortal's Plumed Ridge/Lamellar/Spangen | 54/4.2 | **100/22/0/4.0** (Immortal's 顶点) |
+| 6 | `AR_aserai_lord_helmet_h` | Noble Lamellar Helmet With Faceplate | 54/4.2 | **100/50/20/4.0** (Faceplate body 50) |
+| 7 | `AR_aserai_lord_helmet_j` | Darshi Tall Helmet With Feathers | 47/2.9 | **97/12/25/3.0** |
+| 8 | `AR_aserai_helmet_g/h` | Darshi Tall Helmet Over Mail/Closed Mail | 52/1.8 | **95/12/40/2.5** |
+| 9 | `AR_aserai_helmet_i` | Darshi Open Tall Helmet | 32/1.8 | **73/12/20/2.0** |
+| 10 | `AR_aserai_crown_a` | Darshi Jeweled Crown | 22/3.1 | **60/3/0/2.5** (vanilla `aserai_crown` 60 直匹配) |
+| 11 | `aserai_mubarizun_helmet` | Southern Champion's Helmet | 46/3.5 | **97/12/25/3.5** |
+| 12-13 | `TV_aserai_helmet_y/y2` | Darshi Decorated Spangenhelm With Iron/Brass Scale | 50/2.9 | **95/12/25/2.9** |
+
+**状态**：13 件 🔵 log-only
+
+---
+
+## Aserai HeadArmor 收官统计（2026-09-23）
+
+**总数**：148 件 Aserai HeadArmor · **全部审完 · 全部 🔵 log-only**
+
+**关键设计观察**：
+- OSA v1 顶 54，vanilla+RBM 顶 100 → v2 buff ×2
+- vanilla 直匹配 20+ 件（Southern Wrapped Helmet · Steel Cap · Pointed Skullcap 系 · Brass Southern Helmet · Battle Crown · Emir · Lord Helmet · Immortal's 顶）
+- **Aserai 特色**：Turban/Keffiyeh + Wrapped Desert Helmet 沙漠传统 · Brass Southern Helmet 青铜盔 · Immortal's Helmet 顶级弓手骑士
+- **无 Full Helm/Cataphract 顶级**——Aserai 顶 100 sub Sturgia 150 · 沙漠轻装骑士
+
+**下一步**：进入 Aserai Cape
+
+---
+
+# Aserai · Cape（2026-09-23）
+
+## 🔒 铁律 · Aserai Cape
+
+> **顶点**：`desert_scale_shoulders` **45**（Reinforced Scale Pauldrons）· 全 arm=0
+> **Aserai 特色**：Scale Pauldrons 主流 · Leopard/Zebra/Lion Pelt 沙漠动物毛皮
+> **arm 上限 ≤ 12**（Scale Pauldrons Elite · sub Empire/Vlandia 25）
+
+## Aserai Cape · 46 件 · 分家族决议
+
+### A 组 · 有 shoulder/pauldron 命名（38 件）
+
+#### A.1 · Cloth/Leather Pauldrons/Shoulders 轻档（8 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_aserai_shoulder_g` | Southern Leather Pauldrons | 2/8/2 | **12/8/1.5** (vanilla `a_aserai_scale_b_shoulder_d` 12 参照) |
+| 2-3 | `AR_aserai_shoulder_v/v2` | Patterned/Standard Cloth Pauldrons | 2/8/2 | **12/8/1.5** |
+| 4 | `AR_aserai_shoulder_f` | Southern Leather Shoulders | 5/7/4 | **13/6/1.8** (vanilla `leopard_pelt` 13 参照) |
+| 5 | `AR_aserai_shoulder_x` | Stitched Cloth Shoulders | 5/0/1.5 | **13/6/1.5** |
+| 6-7 | `AR_aserai_shoulder_e/u/u2` | Reinforced Leather Shoulders (variants) | 10/8/4.2 | **15/8/2.5** (vanilla `aserai_horseman_shoulder` 15 参照) |
+
+#### A.2 · Southern Nomad Sash Series 民用（5 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_aserai_shoulder_h` | Southern Nomad Sash | 4/0/0.5 | **8/4/0.5** |
+| 2-4 | `AR_aserai_shoulder_i/j/p` | Nomad Sash With Leopard/Zebra/Lion Pelt | 5/0/0.5 | **12/6/1.0** |
+| 5-7 | `AR_aserai_shoulder_k/q` | Zebra Skin / Lion Pelt (Group B - 无 shoulder/pauldron 命名) | 4/0/2 | **13/0/1.5** (vanilla `leopard_pelt` 13 参照 · Group B arm=0) |
+
+Wait - Zebra Skin/Lion Pelt 命名无 shoulder/pauldron → 归 B 组
+
+#### A.3 · Iron/Brass Scale Pauldrons + Cape（14 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_aserai_scale_shoulder_d` | Decorated Iron Scale Pauldrons | 6/8/2.4 | **16/8/2.4** (vanilla `aserai_scale_shoulder_d` 16 直匹配) |
+| 2-3 | `AR_aserai_scale_cape_c/c2` | Decorated Long Sleeve Brass/Iron Scale Pauldrons W. Cape | 6/10/2.8 | **20/10/2.5** (中高档) |
+| 4 | `AR_aserai_scale_shoulder_e` | Decorated Long Sleeve Iron Scale Pauldrons | 6/10/2.8 | **20/10/2.5** |
+| 5 | `AR_aserai_scale_shoulder_c` | Iron Scale Pauldrons | 8/10/1.9 | **15/8/2.0** (vanilla `a_aserai_scale_b_shoulder_b` 15 参照) |
+| 6 | `AR_aserai_scale_shoulder_a` | Iron Scale Shoulder Guards | 16/4/1.8 | **24/8/2.5** (vanilla `a_aserai_scale_b_shoulder_c` 24 参照) |
+| 7-8 | `AR_aserai_scale_cape_a/a2` | Desert Scale Shoulders With Cape (Iron/Brass) | 16/8/3.9 | **30/10/3.5** (vanilla `a_aserai_scale_b_shoulder_a` 30 参照) |
+| 9-10 | `AR_aserai_scale_cape_b/b2` | Long Sleeved Brass/Iron Scale Shoulder Guards W. Cape | 16/8/2.2 | **36/10/2.5** (vanilla `a_aserai_scale_b_shoulder_e` 36 参照) |
+| 11 | `AR_aserai_scale_shoulder_b` | Long Sleeved Iron Scale Shoulder Guards | 16/8/2.2 | **37/10/2.0** (vanilla `aserai_scale_shoulder_a` 37 直匹配) |
+| 12-13 | `AO_aserai_shoulders_a/a2` | Brass/Iron Scale Shoulders | 18/8/4.2 | **39/10/2.5** (vanilla `aserai_scale_shoulder_e` 39 直匹配) |
+
+#### A.4 · Desert Scale Shoulders With Pelt（6 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1-6 | `AR_aserai_shoulder_a/a2/o/o2/t/t2` | Desert Scale Shoulders W. Leopard/Zebra/Lion Pelt (Iron/Brass 变体) | 16/8/4.3 | **43/12/3.0** (vanilla `aserai_scale_shoulder_b` 43 参照 · 6 件同档) |
+
+#### A.5 · Southern Mail Shoulders With Pelt（3 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `AR_aserai_shoulder_y/y2/y3` | Mail Shoulders W. Leopard/Zebra/Lion Pelt | 14/7/4 | **30/10/3.0** (Chainmail 中档 · Empire chainmail 30 参照) |
+
+#### A.6 · Studded Brass/Iron Neckguard（4 件 · Group B 因命名 Neckguard 不含 shoulder/pauldron）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1-4 | `AR_aserai_shoulder_l/m/r/s` | Studded Brass/Iron Neckguard W. Zebra/Lion Pelt | 16/0/3.8 | **28/0/3.0** (Neckguard = Group B · arm 保持 0) |
+
+#### A.7 · Gilded Lamellar With Cape（2 件 · Group B 因命名无 shoulder/pauldron）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_aserai_lamellar_cape_a` | Gilded Lamellar With Long Cape | 18/9/3.9 | **40/0/4.0** (Group B · Lamellar+Cape body-only sub-顶 · arm 追溯清 0) |
+| 2 | `AR_aserai_lamellar_cape_b` | Gilded Lamellar With Cape | 18/9/3.9 | **40/0/4.0** |
+
+#### A.8 · Southern Plated Brass Shoulder Straps With Cape/Tassels（2 件）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `tv_aserai_cloak_b/c` | Plated Brass Shoulder Straps W. Cape/Tassels | 17/0/3.5 | **32/10/3.0** (Plate Shoulder Straps 中高档) |
+
+**A 组合计**：28 件（A.6 4 件 + A.7 2 件因命名归 B）→ 实际 A 组 28 - 6 = 22 件
+
+### B 组 · 无 shoulder/pauldron 命名（16 件 · arm=0）
+
+| # | id | 游戏名 | v1 b/a/wt | **v2 决议 b/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_aserai_scarf_a` | Southern Cloth Cape | 2/0/0.5 | **6/0/0.5** (Cloth 轻档) |
+| 2-3 | `AR_aserai_shoulder_k/q` | Zebra Skin / Lion Pelt | 4/0/2 | **13/0/1.5** (vanilla `leopard_pelt` 13 直匹配 · Pelt 中档) |
+| 4 | `tv_aserai_cloak_a` | Southern Long Cape | 8/0/4 | **12/0/2.0** (Long Cape 中档) |
+| 5-8 | `AR_aserai_shoulder_l/m/r/s` | Studded Neckguard (variants) | 16/0/3.8 | **28/0/3.0** (Neckguard 中档) |
+| 9-10 | `AR_aserai_lamellar_cape_a/b` | Gilded Lamellar With Long Cape (variants) | 18/9/3.9 | **40/0/4.0** (Lamellar+Cape body-only 顶级 sub 45 顶) |
+
+**B 组合计**：10 件
+
+**Aserai Cape 合计**：46 件 🔵 log-only
+
+---
+
+# Aserai · BodyArmor（2026-09-23）
+
+## 🔒 铁律 · Aserai BodyArmor
+
+> **顶点**：`desert_lamellar` **105/35/45/23**（Lamellar Armor over Mail）· 与 Sturgia 顶同 105
+> **主流 Kaftan/Robe 民用**（Aserai 独特文化标志）+ Aserai Mail Hauberk + Lamellar/Scale over Mail 顶
+> **arm 顶 55**（`aserai_archer_armor` Gambeson over Mail Armor）· 弓手长袖传统
+
+## Aserai BodyArmor · 88 件 · 分家族决议（简批）
+
+### A. Cloth/Leather Kaftan/Robe 民用（10 件）
+
+| # | 代表 id | 游戏名 pattern | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_aserai_armor_n` | Wrapped Tunic | 4/2/2/0.3 | **6/5/5/0.5** (vanilla `long_desert_robe` 6/5/5 参照) |
+| 2-4 | `AR_aserai_armor_zc/zd/zd2` | Silk/Standard/Decorated Noble Robes (3 件) | 8/3/4/0.9 | **7/7/6/1.0** (vanilla `aserai_civil_d` 7/7/6 参照) |
+| 5 | `AR_aserai_armor_o` | Fur Coat Over Tunic | 12/5/2/2.1 | **13/13/6/1.0** (vanilla `layered_robe` 13/13/6 参照) |
+| 6-10 | `ao_mabili_hide_skirt/leopard_skirt/zebra_skirt` + Hide Armor variants (5+) | 1-16/3/0-1/0.1 | **18/18/16/1.3** (vanilla `desert_padded_cloth` 18/18/16 参照 · Skirt 系轻档) |
+
+### B. Aserai Aketon / Padded Gambeson（10 件）
+
+| # | 代表 id | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|
+| 1 | `AR_aserai_armor_h` Southern Aketon | 14/3/3/3.4 | **18/18/16/2.0** (vanilla `desert_padded_cloth` 直匹配) |
+| 2-3 | `AR_aserai_armor_s/za` Cloth Subarmalis Over Tunic (2件) | 15/6/6/2.1 | **18/18/11/2.0** (vanilla `short_padded_robe` 18/18/11 参照) |
+| 4 | `AR_aserai_armor_p` Southern Gambeson | 18/9/9/2 | **20/20/10/2.0** (vanilla `long_padded_robe` 20/20/10 直匹配) |
+| 5-6 | `tv_aserai_lamellar_i/j` Leather Cuirass Over Padded (2件) | 18/7/2/7 | **21/20/13/2.0** (vanilla `studded_leather_coat` 21/20/13 参照) |
+| 7 | `AR_aserai_armor_a` Southern Leather Coat | 20/10/6/8.4 | **25/24/15/4.0** (vanilla `leather_strips_over_padded_robe` 25/24/15 参照) |
+| 8-10 | `AR_aserai_armor_k/l/q/zb` Leather Vest Over Kaftan (4件) | 22-23/6/6/3.1 | **26/10/12/3.0** (vanilla `aserai_horseman_armor` 26/10/12 参照) |
+
+### C. Darshi Stripped Leather / Cloth With Gambeson（4 件）
+
+| # | id | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|
+| 1-2 | `tv_empire_armor_q/t` Stripped Leather/Cloth With Gambeson | 23/8/8/10.2 | **26/10/12/4.0** |
+| 3-4 | `AR_aserai_armor_r` `tv_empire_armor_c` Mail Over Stripped Cloth/Leather | 31-32/6-8/6-8/10.2 | **38/31/33/7.5** (vanilla `ringed_desert_armor` 38/31/33 参照) |
+
+### D. Scale Armor Over Cloth/Leather（8 件）
+
+| # | id | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|
+| 1-2 | `AR_aserai_armor_e/e2` Scale Armor Over Cloth (Steel/Brass) | 25/14/10/12.5 | **47/23/14/12** (vanilla `aserai_armor_c` 47/23/14 参照 · Southern Brass Scale) |
+| 3-4 | `AR_aserai_armor_d/d2` Scale Armor Over Leather | 32/17/12/12.5 | **50/25/15/11** (vanilla `southern_lamellar_armor` 50/25/15 参照) |
+| 5-6 | `AR_aserai_armor_g/g2` Decorated Scale Cuirass With Chain Mail | 32/14/15/18 | **55/37/46/15** (vanilla `aserai_brass_plate_a` 55/37/46 参照) |
+| 7-8 | `AR_aserai_armor_c` Southern Brass Scale Armor | 47/23/14/20 | **47/23/14/12** (直匹配 vanilla `aserai_armor_c`) |
+
+### E. Double Hauberk / Mail Over Cloth（6 件）
+
+| # | id | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|
+| 1 | `AR_aserai_armor_b` Double Hauberk | 27/14/12/9.5 | **38/31/33/7.5** (vanilla `ringed_desert_armor` 直匹配) |
+| 2 | `TV_aserai_robe_a` Decorated Robe With Double Mail | 28/14/14/8.2 | **49/49/49/9** (vanilla `desert_robe_over_mail` 49/49/49 直匹配) |
+| 3 | `AR_aserai_armor_m` Mailed Heavy Leather Vest Over Kaftan | 31/8/8/8.6 | **47/55/44/11** (vanilla `stitched_leather_over_mail` 47/55/44 参照) |
+| 4-6 | `AR_aserai_armor_i/j` Kaftan Over Mail (variants) | 35-37/12/6/15 | **49/44/49/17** (vanilla `aserai_armor_02` 49/44/49 参照) |
+
+### F. Southern Lamellar / Steel Lamellar Over Padded（8 件）
+
+| # | id | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|
+| 1-2 | `tv_aserai_lamellar_g/g2` Brass/Steel Lamellar Over Padded Cloth | 28/7/2/7 | **50/25/15/11** (vanilla `southern_lamellar_armor` 直匹配) |
+| 3-4 | `tv_aserai_lamellar_c/c2` Bronze/Steel Lamellar Over Long Kaftan | 28/4/4/6.2 | **50/25/15/8** |
+| 5-6 | `tv_aserai_lamellar_a2/d2` Lamellar Vest Over Padded Silk (Brass/Steel) | 28/14/16/6.2 | **55/37/46/8** |
+| 7-8 | `tv_aserai_lamellar_h/h2` Bronze/Steel Lamellar Over Mailed Kaftan | 42/6/10/6.2 | **60/44/55/8** (vanilla `aserai_archer_armor` 60/44/55 参照) |
+
+### G. Lamellar Vest Over Mail 中高档（10 件）
+
+| # | id | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|
+| 1-2 | `tv_aserai_lamellar_b/b2` Brass/Steel Lamellar Vest Over Mail | 46/14/14/22 | **66/13/44/14** (vanilla `aserai_chain_plate_armor_d` 66/13/44 参照) |
+| 3-4 | `tv_aserai_lamellar_e/e2` Heavy Steel/Brass Lamellar Over Mail | 46/25/14/23 | **66/38/44/18** (vanilla `aserai_chain_plate_armor_a` 66/38/44 参照) |
+| 5-6 | `tv_aserai_lamellar_f/f2` Steel/Brass Lamellar Over Mail | 46/12/14/23 | **66/13/44/18** |
+| 7-8 | `AR_aserai_armor_x` `AR_aserai_armor_w/w2` Eastern Lamellar variants (Light/Alt/Over Mail) | 36-46/0-16/8-14/16.5 | **60/44/55/13** (vanilla `aserai_archer_armor` 参照) |
+| 9-10 | `tv_aserai_lamellar_a/d` Lamellar Vest Over Mailed Silk (Brass/Steel) | 48/14/16/6.2 | **66/38/16/8** |
+
+### H. Darshi Stripped Lamellar / Long Kaftan Lamellar 顶档（8 件）
+
+| # | id | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|
+| 1-2 | `AR_aserai_armor_t/t2` Darshi Lamellar Over Stripped Cloth | 48/8/8/2.1 | **70/20/15/8** (vanilla `aserai_scale_armor_on_cloth` 70/20/15 参照) |
+| 3-4 | `tv_empire_armor_r/r2` Darshi Stripped Lamellar With Gambeson | 48/8/8/7 | **70/20/15/8** |
+| 5-6 | `AR_aserai_lamellar_a/b` Brass/Iron Lamellar Over Padded Mail | 48/12/10/15.1 | **85/43/45/17** (vanilla `sturgia_cavalry_armor` 85/43/45 参照 · Cavalry Lamellar) |
+| 7-8 | `AR_aserai_armor_f/f2` Steel/Brass Scale Over Mail | 48/14/14/22.1 | **90/65/35/22** (vanilla `aserai_full_scale_armor_on_chain` 90/65/35 参照) |
+
+### I. Southern Scale Mail / Mastercrafted 顶档（6 件）
+
+| # | id | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|
+| 1 | `AR_aserai_scale_armor_a` Mastercrafted Steel Scale Mail | 35/6/7/18 | **93/33/38/18** (vanilla `aserai_scale_armor_on_chain` 93/33/38 直匹配) |
+| 2 | `mirror_armor` Mirrored Plated Mail Shirt | 35/14/13/7.5 | **70/20/15/8** |
+| 3-4 | `AR_aserai_scale_armor_b/c` Mastercrafted Steel Scale Over Chain (2件) | 51/16-25/16/22-28 | **95/68/45/22** (vanilla `desert_scale_armor` 95/68/45 直匹配 · sub 顶) |
+| 5-6 | `AR_aserai_armor_u/u2` Darshi Lamellar Over Stripped Mail | 50/20/20/7 | **90/65/35/12** |
+| 7 | `AR_aserai_armor_y` Eastern Alternating Lamellar Over Heavy Mail | 50/16/14/18 | **90/65/35/16** |
+
+### J. Scale Coat Over Padded Mail 顶档（4 件）
+
+| # | id | v1 b/l/a/wt | **v2 决议 b/l/a/wt** |
+|---|---|---|---|
+| 1-2 | `ao_imperial_brass_scale_armor + b` Brass/Iron Scale Coat Over Padded Mail | 50/15/12/24 | **95/68/45/22** (vanilla `desert_scale_armor` 参照) |
+| 3-4 | `AR_aserai_armor_v/v2` Darshi Mailed Lamellar Vest (Alt) | 50/10/10/8.6 | **105/35/45/12** (vanilla `desert_lamellar` 105/35/45 顶点直匹配) |
+| 5-6 | `AO_aserai_armor_a-d` Brass/Iron Scale Armor/Vest Over Long Tunic (4件) | 38/10-17/12/12.5 | **60/44/55/12** (vanilla `aserai_archer_armor` 参照) |
+
+**Aserai BodyArmor 合计**：88 件 🔵 log-only
+
+---
+
+# Aserai · HandArmor（2026-09-23）
+
+## Aserai HandArmor · 4 件
+
+**vanilla 唯一 anchor**：`guarded_padded_vambrace` 29（Cloth · 跨文化最低顶）
+
+| # | id | 游戏名 | v1 arm/wt | **v2 决议 arm/wt** |
+|---|---|---|---|---|
+| 1-2 | `TV_aserai_gloves_c/d` | Southern/Blackened Leather Bracers | 9/0.6 | **20/0.6** (Leather Bracers 中档) |
+| 3-4 | `TV_aserai_gloves_a/b` | Engraved Brass/Steel Bracers | 22/1.3 | **29/1.3** (vanilla `guarded_padded_vambrace` 29 直匹配 · 顶) |
+
+**Aserai HandArmor 合计**：4 件 🔵 log-only
+
+---
+
+# Aserai · LegArmor（2026-09-23）
+
+## Aserai LegArmor · 6 件
+
+**vanilla 参照**：`southern_moccasins` 16 · `wrapped_shoes` **35** 顶（Cloth · 无 Plate 顶档）
+
+| # | id | 游戏名 | v1 leg/wt | **v2 决议 leg/wt** |
+|---|---|---|---|---|
+| 1-2 | `TV_moccasins_b/c` | Decorated/Noble Moccasins | 2/0.5 | **16/0.5** (vanilla `southern_moccasins` 16 直匹配) |
+| 3-4 | `TV_aserai_boots_e/e2` | Boots W. Leather Greaves (Standard/Blackened) | 14/2.7 | **25/1.5** (Leather Greave 中档) |
+| 5-6 | `TV_aserai_boots_c/d` | Boots W. Gilded/Iron Greaves | 24/2.7 | **35/2.5** (vanilla `wrapped_shoes` 35 顶 直匹配) |
+
+**Aserai LegArmor 合计**：6 件 🔵 log-only
+
+---
+
+# Aserai · HorseHarness（2026-09-23）
+
+## 🔒 铁律 · Aserai HorseHarness
+
+> **顶点**：`mail_and_plate_barding` **h=90/b=47/l=47/a=57/wt=26.8** ⭐
+> **Aserai 特色**：Camel Saddle（骆驼鞍 · 独有类别）+ Half Mail/Plate Barding
+
+## Aserai HorseHarness · 31 件（全 4 字段）
+
+### A. 民用/Camel Saddle（4 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_ze` | Southern Heavy Harness | 12/27 | **5/8/5/5/7** (vanilla `desert_cloth_harness` 5/8/5/5 直匹配) |
+| 2 | `tv_camel_armor_i` | Half Wicker Dromedary Barding | 30/60 | **10/25/5/25/14** (vanilla `camel_saddle` 10 参照 + Half Barding 中档) |
+| 3 | `tv_camel_armor_j` | Wicker Dromedary Barding | 35/70 | **10/30/12/30/16** |
+| 4 | `tv_camel_armor_h` | Padded Leather Dromedary Barding | 40/85 | **10/32/12/32/17** |
+
+### B. Half Padded/Wicker Barding（6 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `AR_horse_armor_q/q2/q3` | Half Padded / Decorated Padded Barding (3 件) | 35/60 | **50/22/5/32/14** (Half Padded 中低) |
+| 4 | `tv_camel_armor_g` | Half Padded Leather Dromedary | 35/70 | **50/22/5/32/15** |
+| 5-6 | `tv_camel_armor_a/b` | Brass/Steel Half Scale Dromedary Barding | 60/80 | **60/32/5/40/16** |
+
+### C. Full Padded / Studded Leather（5 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1-3 | `AR_horse_armor_r/r2/r3` | Padded / Decorated Padded Barding | 40/60 | **60/32/32/40/17** (Full Padded 中档) |
+| 4 | `tv_camel_armor_e` | Half Studded Leather Dromedary | 50/70 | **55/28/5/38/16** |
+| 5 | `tv_camel_armor_f` | Studded Leather Dromedary | 60/85 | **65/38/38/42/18** |
+
+### D. Half Mail Barding（4 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1-2 | `AR_horse_armor_u/u2` | Half Mail Barding | 58/65 | **80/42/5/50/18** |
+| 3-4 | `AR_horse_armor_t/t2` | Decorated Half Mail Barding | 60/65 | **82/42/5/52/18** |
+
+### E. Half Scale/Lamellar Barding（3 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_d` | Half Scale Barding | 60/80 | **88/45/5/55/20** |
+| 2 | `AR_horse_armor_d2` | Half Lamellar Barding | 60/80 | **88/45/5/55/20** |
+| 3 | `AR_horse_armor_d3` | Gilded Half Lamellar Barding | 60/80 | **90/45/5/55/20** |
+
+### F. Half Plate Barding（2 件）
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_zap` | Half Plate Barding | 60/90 | **90/47/5/57/16** (vanilla `half_mail_and_plate_barding` 90/47/5/57 直匹配) |
+| 2 | `AR_horse_armor_zaq` | Half Mail And Plate Barding | 60/90 | **90/47/5/57/16** |
+
+### G. Full Barding 顶档（7 件）
+
+**vanilla 参照**：`mail_and_plate_barding` **h=90/b=47/l=47/a=57/wt=26.8** ⭐ 顶点
+
+| # | id | 游戏名 | v1 b/wt | **v2 决议 h/b/l/a/wt** |
+|---|---|---|---|---|
+| 1 | `AR_horse_armor_zap2` | Southern Plate Barding | 70/145 | **90/47/47/57/26** (vanilla `mail_and_plate_barding` 直匹配 · 顶) |
+| 2 | `AR_horse_armor_zaq2` | Mail And Plate Barding | 70/145 | **90/47/47/57/26** |
+| 3-5 | `AR_horse_armor_c/c2/c3` | Scale/Lamellar/Gilded Lamellar Barding | 75/135 | **90/45/45/55/25** (顶级 sub 顶 2) |
+| 6-7 | `tv_camel_armor_c/d` | Brass/Steel Scale Dromedary | 75/140 | **90/45/45/55/25** |
+
+**Aserai HorseHarness 合计**：31 件 🔵 log-only
+
+---
+
+## Aserai 全 6 类收官统计（2026-09-23）
+
+**总数**：**323 件 Aserai 决议归档**（HeadArmor 148 · Cape 46 · BodyArmor 88 · HandArmor 4 · LegArmor 6 · HorseHarness 31）· 全 🔵 log-only
+
+**累计**：帝国 378 + Vlandia 312 + Battania 307 + Sturgia 194 + Aserai 323 = **1514 件决议归档**
+
+**下一步**：进入 **Khuzait 文化**（东方蒙古画像 · 草原游牧 · 骑射 + 弯弓 + 皮革轻装）
+
+---
+
 ## 状态图例
 - 🔵 log-only · 决议已定案，XML 未改（低价值 cosmetic 类，v1 现值可接受，避免 XML churn）
 - 🟡 pending deploy · XML 已改，等下次关游戏 + `deploy.ps1`

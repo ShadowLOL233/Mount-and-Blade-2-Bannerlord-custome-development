@@ -1329,3 +1329,99 @@ Warlord Helmet / Highland Crowned 顶 ⭐             h 95-121
 | `northern_ring_barding` | Chainmail | 15.2 | **45/35/5/45** ⭐ | Ring Mail Barding ⭐ 顶点 |
 
 **Sturgia HorseHarness 顶 h=45/b=35/l=5/a=45** · 极简 3 档 · Half 结构（leg 5）· 无 Full 全覆盖顶（vs Empire 90/50/50/60）
+
+---
+
+# Aserai 文化
+
+## Aserai · HeadArmor · 47 件（2026-09-23 归档 · 简表）
+
+**关键设计观察**：Aserai HeadArmor 顶 `southern_lord_helmet` **100/22/0**（Lordly Steel Cap）· 沙漠部族画像 · 主流 Turban/Keffiyeh（缠头巾）+ Aserai Wrapped Helmet + Southern Helmet + Emir Helmet + Battle Crown
+
+### 🧣 Cloth Keffiyeh/Turban 民用（19 件 · h 6-14 · Aserai 民用最多）
+
+**代表 anchor**：`turban` 9 · `desert_headdress` 9 · `desert_cap` 14 · `closed_head_scarf` 14/14/0（body 14 突出）· `tight_head_scarf` 14/14/0
+
+### ⛑ Aserai Wrapped/Desert Helmet 无 aventail（4 件 · h 44-47）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `loose_wrapped_desert_helmet` | 1.2 | 44/0/12 | Helmet with Open Turban |
+| `open_desert_helmet` | 1.3 | 45/5/6 | Spiked Helmet with Open Turban |
+| `desert_helmet` | 1.2 | 46/12/0 | Steel Cap |
+| `closed_desert_helmet` | 1.4 | 47/6/6 | Spiked Helmet with Closed Turban |
+
+### ⛑ Pointed Skullcap 系 + aventail（5 件 · h 57-88）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `pointed_skullcap_over_laced_coif` | 1.2 | 57/12/15 | Pointed Skullcap over Laced Coif |
+| `pointed_skullcap_over_cloth_headwrap` | 1.1 | 62/16/10 | Pointed Skullcap over Cloth Headwrap |
+| `pointed_skullcap_with_mail` | 2.8 | 73/12/20 | Pointed Skullcap with Mail |
+| `pointed_skullcap_over_mail` | 1.3 | 85/12/25 | Pointed Skullcap over Gambeson |
+| `pointed_skullcap_over_mail_coif` | 3.0 | 88/24/40 | Pointed Skullcap over Mail Coif |
+
+### 👑 Aserai Crown / Battle Crown（2 件 · h 60-90）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `aserai_crown` | 2.8 | 60/3/0 | Luxury Turban Over Helmet |
+| `aserai_battle_crown` | 2.8 | 90/22/0 | Ornate Desert Battle Crown |
+
+### ⛑ Brass Southern Helmet 系（6 件 · h 75-90 · Aserai 标志性）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `brass_aserai_helmet_leather` | 1.8 | 75/4/0 | Brass Southern Helmet with Leather Flaps |
+| `brass_aserai_helmet_b_leather` | 1.9 | 77/4/0 | Brass Turbaned Helmet with Leather Flaps |
+| `brass_aserai_helmet_open` | 2.2 | 83/14/20 | Brass Southern Helmet |
+| `brass_aserai_helmet_b_open` | 2.3 | 85/14/20 | Brass Southern Helmet with Turban |
+| `brass_aserai_helmet_closed` | 2.5 | 88/64/40 | Brass Southern Closed Helmet |
+| `brass_aserai_helmet_b_closed` | 2.55 | 90/70/30 | Brass Southern Closed Helmet with Turban |
+
+### ⛑ Desert Mail Coif / Emir / Noble / Lord 顶档（10 件 · h 65-100）
+
+| id | wt | h/b/a | 名称 |
+|---|---:|---|---|
+| `desert_helmet_with_mail` | 1.9 | 65/0/0 | Mamluke Helmet with Mail |
+| `closed_desert_helmet_with_mail` | 3.2 | 67/35/35 | Closed Steel Cap |
+| `trailed_desert_helmet` | 1.1 | 57/0/10 | Helmet with Turban and Coif |
+| `desert_mail_coif` | 3.0 | 90/10/40 | Wrapped Helmet with Mail Coif |
+| `aserai_lord_helmet_a` | 3.7 | 91/12/25 | Noble Crowned Lord Helmet |
+| `emirs_helmet` | 3.0 | 94/10/40 | Emir Helmet |
+| `southern_noble_helmet` | 3.5 | 97/12/25 | Noble Steel Cap |
+| `southern_lord_helmet` | 3.9 | **100/22/0** ⭐ | Lordly Steel Cap ⭐ 顶点 |
+
+### Aserai HeadArmor 关键约束
+
+- **顶点**：`southern_lord_helmet` **100/22/0/3.9** ⭐ · h ≤ 100（sub Empire/Vlandia/Sturgia · 与 Battania 121 接近 · Aserai 沙漠轻装骑士传统）
+- **body 顶 70**（`brass_aserai_helmet_b_closed`）· 反映 Closed Helmet + Turban 结构
+- **arm 顶 40**（Mail Coif aventail · `desert_mail_coif` / `emirs_helmet` / `pointed_skullcap_over_mail_coif`）
+- **Aserai 特色 base_type**：
+  - **Turban/Keffiyeh** 缠头巾（Cloth 民用主流）
+  - **Aserai Wrapped Desert Helmet**（缠布沙漠盔）
+  - **Pointed Skullcap**（尖顶小盔）
+  - **Brass Southern Helmet**（青铜南方盔 · Aserai 标志性）
+  - **Emir Helmet**（酋长盔 · 94/10/40）
+  - **Battle Crown**（战王冠 90/22/0）
+  - **Mamluke Helmet**（马穆鲁克盔）
+- **无 Cataphract 顶级 重装**——Aserai 顶档 100 sub Sturgia 150
+
+---
+
+## Aserai · Cape · 13 件 · BodyArmor · 43 件 · HandArmor · 1 件 · LegArmor · 2 件 · HorseHarness · 7 件（2026-09-23 归档 · 简表）
+
+**Cape 顶点**：`desert_scale_shoulders` **45**（Reinforced Scale Pauldrons）· 全 arm=0
+
+**BodyArmor 顶点**：`desert_lamellar` **105/35/45/23**（Lamellar Armor over Mail）· 与 Sturgia 顶 105 同高
+
+**HandArmor 顶点**：`guarded_padded_vambrace` **29**（Cloth · 极简 1 档 · 跨文化最低）
+
+**LegArmor 顶点**：`wrapped_shoes` **35**（Cloth · 极简 2 档 · 无 Plate 顶档）
+
+**HorseHarness 顶点**：`mail_and_plate_barding` **h=90/b=47/l=47/a=57/wt=26.8** ⭐ · Aserai 有 Camel Saddle 特色
+
+**关键锚点**：
+- Cape: Plate Scale Shoulders 主流 12-45 · Chainmail 稀少
+- BodyArmor: Kaftan/Robe 民用 6-11 → Aserai Robe 中档 18-25 → Mail 顶 66-93 → Lamellar over Mail 顶 105
+- HorseHarness: Camel Saddle 特色 (h=0 b=10) · Ring Mail Barding + Plate Barding 顶

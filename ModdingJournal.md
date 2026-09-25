@@ -2218,6 +2218,61 @@ RideableElephant\
 
 ---
 
+## BetterPatrols × Xiangyong（村庄防御） 兼容核对（2026-09-24 D:第二设备 源码/反编译）
+
+**背景**：两 mod 都对 "村庄被袭击时的防御力量" 做事。BP v1.0.0 带完整源码在 workshop 目录 `Source/`；Xiangyong v1.1.11 只有 dll，`ilspycmd` 反编译到 `_scratch_xiangyong/` 得 2092 行 C#。
+
+**核心结论**：**技术零冲突 · 功能高度互补 · 效果叠加**。两者机制正交、patch 面不重叠、存档 id 不冲突；一次真实 raid 会有**双份**援军。
+
+### 机制对比
+
+| 维度 | BetterPatrols VillageDefender | Xiangyong 乡勇 |
+|---|---|---|
+| 部队组件 | vanilla `PatrolPartyComponent` · `IsPatrolParty=true` | 自定 `XiangyongPartyComponent : PartyComponent`（SaveableTypeDefiner id **2900000**）|
+| `Settlement.PatrolParty` slot | **占用**（每 village 一支 · castle 共享一支在 anchor village）| 不占 · 独立 `MobileParty.CreateParty` |
+| 触发 | **DailyTick** 定期扫 Settlement.All | **MapEventStarted** 事件监听 |
+| 常驻/战时 | **常驻** village gate · 不打仗也在 | 战时临时召 · 打完 disband |
+| 战斗介入 | 靠 patrol AI + `PatrolDefendVillagePatch` 就位 | 直接 `party.MapEventSide = villagerSide` 立刻进战场 |
+| 前置条件 | Guard House lv≥`MinGuardHouseLevelToUnlock=3` · OwnerClan 非反叛 | Village.Hearth ≥ MCM 阈值（默认 200）|
+| 规模 | 固定 `DefenderSize=75` / `CastleSharedDefenderSize=120` | Hearth 分档 60/80/100/150（低/中/高/传奇 · MCM 4 档兵力可调）|
+| 兵源 | `Culture.SettlementPatrolPartyTemplateStrong`（vanilla 混档模板）| 自建 `TroopResolver.Resolve(culture)` · **1:1:1 近战/远程/骑兵** 按 tier 分档挑 |
+| 失败惩罚 | 无 · 血量 < `ReplenishThresholdPercent=0.8` 自动补员 | 全歼 → **扣 hearth（数量 = 兵力）+ 5 天冷却** |
+| Hideout 清剿 | 无 | 1000+ hearth 村每 15 天派传奇乡勇 100% 清一次 |
+| 对 vanilla 的 Harmony patch | **3 个**：`PatrolPartiesCampaignBehavior.UpdateSettlementParties`（阻止 vanilla 每天清 village patrol）· `patrol_talk_on_condition_security`（对话空引用）· `CalculateVisitHomeSettlementScore`（防定点变游走）| **0 patch** · 纯 CampaignBehavior 事件监听 |
+| 覆盖 castle | ✅ castle 也发（anchor village 共享一支覆盖 castle+所有 bound villages）| ❌ 只管 village |
+| MCM 单独开关 | `EnableVillageDefenders`（关掉不影响 BP 其他增强）| 无 · 只能改阈值/规模 · 关整 mod 才能停 |
+| 存档 | 无 SyncData · 依赖 `Settlement.PatrolParty` slot 存档 · `VillageParent` 用 `ConcurrentDictionary` (线程安全 bug 修) | 有 SaveableTypeDefiner · 部队组件进存档；`_activeVillages / _parties / _battles / _returning` 等运行时表 |
+
+### 冲突分析
+
+- **patch 面**：BP 的 3 个 patch 全在 `PatrolPartiesCampaignBehavior` 上 · Xiangyong 完全不 patch vanilla → **零重叠**
+- **slot**：BP 用 vanilla `PatrolParty` slot · Xiangyong 用独立 party → **零重叠**
+- **存档 id**：Xiangyong SaveableTypeDefiner base id `2900000` 与 BP（无 definer）不冲突
+- **daily loop**：都遍历 Settlement.All 但操作对象不同 · 时序独立
+- **战场归属**：一场 village 战斗中两者都往村民一侧塞人 · 引擎允许多支友军 · 无引擎冲突
+
+### 效果叠加（观感）
+
+一次 village 被 raid 或村民 party 被劫匪打：
+- BP 的 75 人静态守卫已在 gate（若 Guard House ≥ lv3 且村庄可招）→ patrol AI 就位
+- Xiangyong 的 60-150 人乡勇在 `MapEventStarted` 瞬间被塞进战场
+- 双方**同时在村民一侧参战** → 玩家攻中立村难度大幅上升 · 玩家自己 fief 村庄几乎不失守
+
+### 选项
+
+1. **都留（现状）**：接受双重防御 · 村庄非常硬 · MNR 后 ~416 village 时 BP daily loop 是最重 tick 负担
+2. **只留 Xiangyong 的村庄防御 + 保留 BP 其他增强**：MCM Better Patrols → `EnableVillageDefenders=false`；BP 的 town/castle patrol 尺寸、naval patrol、crafting order guard 等增强照留（BP 真正的价值不是 village 守卫）
+3. **只留 BP（launcher 反选 Xiangyong）**：静态守卫覆盖 castle · 无 hideout 清剿 · 无 hearth 惩罚
+
+**倾向**：候选 2（关 BP 村庄守卫、保 Xiangyong）。Xiangyong 更"有故事"（小村弱/大村强/败有代价/传奇村主动扫巢穴）；BP 的 village 守卫更像是"补 vanilla 漏"的补丁 · 关掉不损 BP 主功能。
+
+### 反编译产物
+
+- Xiangyong: `C:\Users\situj\Downloads\_scratch_xiangyong\Xiangyong.decompiled.cs` (67 KB · 2092 行 · 可删)
+- BP 源码：`D:\SteamLibrary\steamapps\workshop\content\261550\3782054420\Source\` (workshop 自带 · 只读)
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

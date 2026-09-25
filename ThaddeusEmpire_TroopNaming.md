@@ -1,6 +1,6 @@
 # 萨迪厄斯帝国 · 兵种命名设计（Thaddeus Empire — Troop Naming）
 
-**状态**：**进行中 v0.4**（2026-09-24 命名基调决策定案）· 本文件**着重兵种命名**，背景设定仅作命名依据的骨架。**完成进度见下方 Status 节。**
+**状态**：**进行中 v0.5**（2026-09-24 归化 T6 cap + G/H/I/J 并入精锐）· 本文件**着重兵种命名**，背景设定仅作命名依据的骨架。**完成进度见下方 Status 节。**
 **世界观基座**：骑马与砍杀 II 卡拉迪亚（Calradia）。
 
 ---
@@ -13,27 +13,31 @@
 | **2** | **不重命名 vanilla 帝国兵** | 本工作**仅覆盖 Retinues 自定义兵**（+ 玩家 clan Champion/Guard）；vanilla 帝国兵原名不动 · 无需搞替换 mod |
 | **3** | **帝国形容词固定 `Thaddian`** | 弃用 `Thaddean / Sadian` 备选；全文所有 "萨迪厄斯…" 前缀统一 `Thaddian` |
 | **4** | **Tier 深度 T7 封顶** | 现有顶点（Basilikos Klibanophoros / Basilikos Vardariotes / Basilikos Mameloukos / Faris Prodromos / Athanatoi / Aristotoxos Oreinos）**就是 T7 定档**；不再向 T8-T10 铺 · 不占 `MaxTroopTier=10` 的上限 |
-| **5** | **帝国无外籍军团（Foederati 概念作废）** | 诺德/斯特吉亚/瓦兰迪亚/巴旦尼亚兵**归化为帝国建制**（军事体系一部分）· 命名不再走"族名 + 御从" foederati style · **§五 需重构**（保留族源风味但改走归化建制命名，模式类比现有 D/E/F 库扎伊特/阿塞莱融合）· 例外：**Varangian Guard 已经是史实中的帝国御林军建制**（拜占庭真实做法），继续作为皇家卫队保留 |
-
-**结构性 fallout（待用户拍板 · 见文末 §八）**：决定 #5 之后 §五 需要重新组织，最大的悬而未决是 "归化四族" 该**并入精锐线 Tagmata 作新分支**、还是**独立成树（常备军的归化辅助线）**、还是**塞进基础线做常备辅助**。
+| **5** | **帝国无外籍军团（Foederati 概念作废）** | 诺德/斯特吉亚/瓦兰迪亚/巴旦尼亚兵**归化为帝国建制**（军事体系一部分）· 命名不再走"族名 + 御从" foederati style · 例外：**Varangian Guard 已经是史实中的帝国御林军建制**（拜占庭真实做法），继续作为皇家卫队保留 |
+| **6** | **归化线 T6 封顶 · 无御用** | 「帝国需在人心军心上压制外族力量」—— 所有归化外族分支（**D 库扎伊特 / E 马穆鲁克 / F 法里斯 / G 诺德 / H 罗斯 / I 拉丁 / J 大刃**）**统一 cap T6 · 不设 Basilikos 御用等级**；T7 顶点专属纯帝国三顶（**A Basilikos Klibanophoros / B Athanatoi / C Aristotoxos Oreinos**）· 制度性天花板明确 · **溯及既往**：现有 D Basilikos Vardariotes / E Basilikos Mameloukos / F Faris Prodromos 三个 T7 顶点**移除** |
+| **7** | **归化四族并入精锐 Tagmata（§八 A 案）** | 决定 #5 的结构问题定案：诺德(**G**) / 斯特吉亚(**H**) / 瓦兰迪亚(**I**) / 巴旦尼亚(**J**) 各成一支归化分支并入精锐主线 · 每支 T5→T6（2 tier）· 从 A 骑兵 T3（I 拉丁）或 B 重步 T3（G/H/J）分出 · 沿用 D/E/F 的"族源身份词根"命名模式 · Varangian Guard 独立在皇家卫队节
 
 ---
 
 ## 完成进度 / 待办（Status · 2026-09-24）
 
 ### ✅ 已完成
-- **★ 精锐主线（Tagmata / 学院）**：7 分支，root T2 → 顶点 T7，命名完整（含 A 重骑/B 重步/C 步射/D 库扎伊特近卫/E 马穆鲁克/F 法里斯）
-- **★ 皇家卫队（Varangian Guard）**：Retinues House Champion/Guard = 瓦兰吉御林军（Pelekyphoros 御斧卫 / Varangos 卫兵）；诺德文化归宿；**决策 #5 例外保留**
+- **★ 精锐主线（Tagmata / 学院）v0.4 · 10 分支**：root T2 → 顶点 T7，命名完整
+  - 纯帝国 3 支：A 重骑（Basilikos Klibanophoros 御用 T7）· B 重步（Athanatoi T7）· C 步射（Aristotoxos Oreinos T7）
+  - 归化 4 阿塞莱/库扎伊特：D 库扎近卫（Vardariotai Skythikoi T7）· E 马穆鲁克（Mameloukos Furusi T7）· F 法里斯（Faris Prodromos T7）
+  - 归化 4 蛮族（v0.4 新增，取代旧 §五 Foederati 框架）：G 诺德斧步（Sekyriphoros Ulfhednar T7）· H 罗斯亲兵（Rhos Bogatyr T7）· I 拉丁重骑（Latinikoi Milites T7）· J 大刃兵（Rhomphaiaphoros Areios T7）
+  - T7 二分定案：3 纯帝国顶（御用/不朽/至强）+ 7 归化顶（各族独有精锐头衔 · 非-御用）
+- **★ 皇家卫队（Varangian Guard）**：Retinues House Champion/Guard = 瓦兰吉御林军（Pelekyphoros 御斧卫 / Varangos 卫兵）；诺德"雇佣式"皇帝私卫归宿；**决策 #5 例外保留**（史实上 Varangian Guard 本就是外族雇佣但为帝国御用建制）
 - **★ 基础主线（常备军 / Numeri）· 步兵部分**：枪盾 / 陷阵(步行铁浮屠) / 方阵 / **野战军（Legionarius→Palatinus、Menaulatos→Menaulatos Palatinos，T5→T6）** / 弓 / 弩 / 连弩——命名 + tier + 装备栏完整
 - **★ 命名基调 5 问 v0.4 定案（2026-09-24）** — 见上方决策表
 
 ### ⬜ 未完成 / 待办
 - ⬜ **基础线 · 骑兵线（常备军骑兵）**——等用户给出配置后命名
-- ⬜ **归化建制成树（决定 #5 后 §五 重构）**：诺德（除 Varangian Guard 外）/ 斯特吉亚 / 瓦兰迪亚 / 巴旦尼亚——原"外籍军团 Foederati"框架**作废**，需按"归化为帝国建制"的思路重命名 + 成树；结构位置待定（并入精锐线 / 独立归化线 / 基础线辅助）
-- ⬜ **蛮族 2H 冲击步兵是否并入 core**（falx / 罗斯斧 / 法兰克长柄，填 core 缺的 2H 打击手）——待定（决定 #5 后倾向"归化建制内消化"）
+- ⬜ **蛮族 2H 冲击步兵是否并入 core** —— G 诺德斧步/J 大刃已在精锐线归化 4 蛮族里覆盖；base 常备军是否也需要 2H 步兵支，待定
 - ⬜ **装备与技能数值配置**——用户明确暂缓（当前只做命名 + 分支）
-- ⬜ **精锐线融合/近卫分支的装备细化**（D/E/F 已有名，装备待定）
-- ⬜ **清理 / 对账 §三～§七 旧通用命名池**——部分已被 ★ 节取代；§五 现在也待重构（决定 #5）
+- ⬜ **精锐线归化 7 支的装备细化**（D/E/F/G/H/I/J 已有名，装备待定）
+- ⬜ **清理 / 对账 §三～§七 旧通用命名池**——大量已被 ★ 节取代；§五 Foederati 框架彻底作废，命名池仍作词根参考
+- ✅ ~~§六 命名速查更新~~ —— 2026-09-24 已加"现行速查（v0.4）"小节，旧池保留作词根参考
 - ⬜ **Retinues 御林军改名 blocker 实测**：玩家称帝后 Retinues `TroopBuilder.MakeRetinueName` 会自动改成 King's/Queen's Champion + Royal Guard——Pelekyphoros/Varangos 是否被覆盖需实测（doc §"皇家卫队"末 note）
 
 ---
@@ -65,20 +69,30 @@
 
 ---
 
-## ★ 精锐主线定稿（Thaddeus Elite Line v0.2 · 2026-09-20）
+## ★ 精锐主线定稿（Thaddeus Elite Line v0.4 · 2026-09-24 归化四族并入 + T7 二分定案）
 
-> 用户定稿的分支结构 + 拜占庭化命名。`*` = 分支节点。tier 为建议值（root **T2** → 顶级 **T7**；你 `MaxTroopTier=10` 可再上铺）。**此节为精锐线权威结构**，下方 §三～§七 的通用命名池作参考备选。对应原版帝国精锐线 `Vigla Recruit→Equite→Heavy Horseman→Cataphract→Elite Cataphract`。
+> **v0.4 结构性升级**：帝国不设外籍军团（决策 #5），4 归化族并入精锐 Tagmata 作 G/H/I/J 支，全部 T7 封顶（决策 #4）。**T7 二分**：3 支纯帝国走 Basilikos 御用/Athanatoi/Aristotoxos 顶（A/B/C）· 7 支归化用**族源特色非-御用精锐头衔**（"精锐 = 精英化偏离标准化" 原则）· 制度性天花板明确压制外族。
+>
+> `*` = 分支节点。tier 定值 root **T2** → 顶级 **T7**（决策 #4：T7 封顶，不铺 T8+）。**此节为精锐线权威结构**，下方 §三～§七 的通用命名池作参考备选；§五 Foederati 框架被 G/H/I/J 取代。对应原版帝国精锐线 `Vigla Recruit→Equite→Heavy Horseman→Cataphract→Elite Cataphract`。
 
-### 拓扑一览
+### 拓扑一览（10 分支）
 ```
 Thaddian Ephebos 军事学院新兵 (T2)*
-├─A 骑兵 Kavallarios(T3) → 重骑兵 Kataphraktos(T4)* → 具装骑兵 Klibanarios(T5)* → 重型具装 Klibanophoros(T6) → 御用 Basilikos Klibanophoros(T7)
-│        │(重骑兵*)└─F 法里斯 Faris(T5) → Faris Palaios(T6) → Faris Prodromos(T7)
-│        │(具装骑兵*)├─D 近卫 Vardariotes(T6) → 近卫铁浮屠 Basilikos Vardariotes(T7)
-│        │(具装骑兵*)└─E 马穆鲁克 Mameloukos(T6) → 精锐 Basilikos Mameloukos(T7)
-├─B 重步兵 Skoutatos(T3) → 精锐 Menaulatos(T4) → 具装步 Klibanophoros Pezos(T5) → 常胜军 Aniketoi(T6) → 不朽军 Athanatoi(T7)
-└─C 精锐弓 Toxotes Epilektos(T3)* → 长弓 Makrotoxotes(T4) → 神射 Eustochos(T5) → 冠军 Aristotoxos(T6) → 高地冠军 Aristotoxos Oreinos(T7)
+├─A 骑兵 Kavallarios(T3)* → 重骑 Kataphraktos(T4)* → 具装骑 Klibanarios(T5)* → 重型具装 Klibanophoros(T6) → 御用 Basilikos Klibanophoros(T7)
+│        │(骑兵*T3)   └─I 拉丁重骑 Frangos(T5) → Latinikos Kavallarios(T6) → Latinikoi Milites(T7)
+│        │(重骑*T4)   └─F 法里斯 Faris(T5) → Faris Palaios(T6) → Faris Prodromos(T7)
+│        │(具装*T5)   ├─D 库扎近卫 Vardariotes(T6) → Vardariotai Skythikoi(T7)
+│        │(具装*T5)   └─E 马穆鲁克 Mameloukos(T6) → Mameloukos Furusi(T7)
+├─B 重步 Skoutatos(T3)* → Hoplites(T4) → Klibanophoros Pezos(T5) → Aniketoi(T6) → Athanatoi(T7)
+│        │(重步*T3)   ├─G 诺德斧步 Sekyriphoros(T5) → Sekyriphoros Palaios(T6) → Sekyriphoros Ulfhednar(T7)
+│        │(重步*T3)   ├─H 罗斯亲兵 Rhos(T5) → Rhos Palaios(T6) → Rhos Bogatyr(T7)
+│        │(重步*T3)   └─J 大刃兵 Rhomphaiaphoros(T5) → Rhomphaiaphoros Epilektos(T6) → Rhomphaiaphoros Areios(T7)
+└─C 精锐弓 Toxotes Epilektos(T3)* → Makrotoxotes(T4) → Eustochos(T5) → Aristotoxos(T6) → Aristotoxos Oreinos(T7)
 ```
+
+### T7 顶点二分（v0.4 决策产物）
+- **纯帝国 3 顶**：A `Basilikos Klibanophoros`（御用）· B `Athanatoi`（不朽者）· C `Aristotoxos Oreinos`（至强弓手）
+- **归化 7 顶**（各族独有精锐头衔）：D Skythikoi · E Furusi · F Prodromos · G Ulfhednar · H Bogatyr · I Milites · J Areios
 
 ### 根节点
 - **Thaddian Ephebos** · 萨迪厄斯军事学院新兵 · T2 `*`
@@ -117,20 +131,48 @@ Thaddian Ephebos 军事学院新兵 (T2)*
 | In-game | 中文 | Tier | 典故 |
 |---|---|---|---|
 | Thaddian Vardariotes | 萨迪厄斯近卫骑军 | T6 | Βαρδαριῶται 拜占**真实存在**的突厥裔皇家近卫骑射，完美对应"草原贵族入近卫" |
-| **Basilikos Vardariotes** | 萨迪厄斯近卫铁浮屠 | T7 | 御用超重近卫骑（铁浮屠=极重甲骑）|
+| **Vardariotai Skythikoi** | 萨迪厄斯斯基泰式瓦尔达尔骑军 | T7 | Σκυθικόν 拜占庭对突厥系辅助军团的正式称号 · 非御用（决策 #5：外族不列御用） |
 
 ### E · 阿塞莱马穆鲁克弓骑（从 具装骑兵 分出）
 | In-game | 中文 | Tier | 典故 |
 |---|---|---|---|
 | Thaddian Mameloukos | 萨迪厄斯马穆鲁克骑兵 | T6 | 马穆鲁克弓骑 |
-| **Basilikos Mameloukos** | 萨迪厄斯精锐马穆鲁克骑兵 | T7 | 御用马穆鲁克 |
+| **Mameloukos Furusi** | 萨迪厄斯精锐马穆鲁克骑兵 | T7 | فروسية Furusiyya = Mamluk 骑士术传统 · 精英骑士素养 · 非御用（决策 #5） |
 
 ### F · 阿塞莱法里斯冲击/标枪骑（从 重骑兵`*` 分出 · 阿塞莱青年军）
 | In-game | 中文 | Tier | 典故 |
 |---|---|---|---|
 | Thaddian Faris | 萨迪厄斯法里斯 | T5 | 保留 Faris 身份词（同 Mameloukos 处理）|
 | Thaddian Faris Palaios | 萨迪厄斯法里斯老兵 | T6 | παλαιός 老练 |
-| **Thaddian Faris Prodromos** | 萨迪厄斯先锋法里斯 | T7 | Πρόδρομοι 拜占**真实**先锋轻枪骑，正合"先锋" |
+| **Thaddian Faris Prodromos** | 萨迪厄斯先锋法里斯 | T7 | Πρόδρομοι 拜占**真实**先锋轻枪骑，正合"先锋" · 非御用 |
+
+### G · 诺德归化 · 双手斧重步（从 重步`*T3` 分出 · v0.4 新增 · 决策 #5 归化四族）
+| In-game | 中文 | Tier | 典故 |
+|---|---|---|---|
+| Thaddian Sekyriphoros | 萨迪厄斯诺德斧步 | T5 | σεκυριφόρος 持斧者（与皇家卫队 Pelekyphoros 拉开：Pelek 大斧、Sekyr 单手斧/战斧）|
+| Thaddian Sekyriphoros Palaios | 萨迪厄斯诺德斧步老兵 | T6 | παλαιός 老练 |
+| **Thaddian Sekyriphoros Ulfhednar** | 萨迪厄斯诺德狼皮斧步 | T7 | Úlfhéðnar 北欧真实狼皮战士传统（狂战一支）· 族源精锐 · 非御用 |
+
+### H · 斯特吉亚归化 · 罗斯亲兵重步（从 重步`*T3` 分出 · v0.4 新增）
+| In-game | 中文 | Tier | 典故 |
+|---|---|---|---|
+| Thaddian Rhos | 萨迪厄斯罗斯武士 | T5 | Ῥῶς 拜占**真实存在**的罗斯佣兵词根 |
+| Thaddian Rhos Palaios | 萨迪厄斯罗斯亲兵 | T6 | παλαιός 老练 · 呼应 druzhina 亲兵传统 |
+| **Thaddian Rhos Bogatyr** | 萨迪厄斯罗斯勇士 | T7 | Богатырь 罗斯民间英雄传统（bogatyr 波加特尔勇士）· 族源精锐 · 非御用 |
+
+### I · 瓦兰迪亚归化 · 拉丁重骑（从 骑兵`*T3` 分出 · v0.4 新增 · 弩已在基础常备军 C 弩线覆盖，此支只做重骑）
+| In-game | 中文 | Tier | 典故 |
+|---|---|---|---|
+| Thaddian Frangos | 萨迪厄斯法兰克重骑 | T5 | Φράγγοι 拜占对法兰克/西欧人的称呼 |
+| Thaddian Latinikos Kavallarios | 萨迪厄斯拉丁重骑 | T6 | Λατινικόν 拜占**真实**拉丁尼康重骑军团 |
+| **Latinikoi Milites** | 萨迪厄斯拉丁精锐骑 | T7 | Milites 拉丁"精锐战士"（中世纪指骑士）· 呼应决策 #1 "偏希腊但拉丁可留" · 非御用 |
+
+### J · 巴旦尼亚归化 · 大刃兵（从 重步`*T3` 分出 · v0.4 新增 · 林弓已在 C 线 Aristotoxos Oreinos T7 覆盖，此支只做大刃）
+| In-game | 中文 | Tier | 典故 |
+|---|---|---|---|
+| Thaddian Rhomphaiaphoros | 萨迪厄斯大刃兵 | T5 | ῥομφαία 色雷斯大砍刀 = 巴旦 falx |
+| Thaddian Rhomphaiaphoros Epilektos | 萨迪厄斯大刃精锐 | T6 | ἐπίλεκτος 精选 |
+| **Thaddian Rhomphaiaphoros Areios** | 萨迪厄斯战神大刃 | T7 | Ἄρειος 战神阿瑞斯的形容词（"如战神般"）· 族源精锐 · 非御用 |
 
 ---
 
@@ -334,6 +376,14 @@ Neosyllektos 征召兵 (T1)*
 
 ## 六、命名速查（一句话记忆）
 
+> ⚠ **本节为旧通用命名池速查（v0.1 时代）· 已被 v0.4 精锐主线 10 分支 + 基础主线 + 皇家卫队取代**。查现行体系请以文首"★ 精锐主线定稿 v0.4" 拓扑图 + T7 二分表为准；此处保留仅作词根参考。
+
+### 现行速查（v0.4）
+- **精锐 10 支 T7 顶点**：Basilikos Klibanophoros / Athanatoi / Aristotoxos Oreinos / Vardariotai Skythikoi / Mameloukos Furusi / Faris Prodromos / Sekyriphoros Ulfhednar / Rhos Bogatyr / Latinikoi Milites / Rhomphaiaphoros Areios
+- **基础常备军步兵 T6 顶**：Palatinus（野战御营）/ Menaulatos Palatinos（野战御营长柄）
+- **皇家卫队**：Pelekyphoros（Champion）· Varangos（Guard）
+
+### 旧通用池速查（保留作词根参考）
 - **步兵**：Skoutatos → Hoplites → Menaulatos → **Scholarios**
 - **弓兵**：Psilos → Toxotes → Sagittarios → **Vigla Toxotes**
 - **重骑**：Kavallarios → Kataphraktos → Klibanophoros → **Hetairos**

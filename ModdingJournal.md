@@ -2273,6 +2273,109 @@ RideableElephant\
 
 ---
 
+## 萨迪厄斯帝国 · 同化路线（熔炉罗马）+ 自定义文化 mod 调研（2026-09-24 命名工作暂缓）
+
+**背景**：v0.4 命名工作在精锐 Tagmata 10 分支 + T7 二分（御用 vs 归化精英头衔）定案后，用户对军事体系框架做出更深的意识形态反思——从"归化"（外族保留身份 + 加入帝国建制）转向"**同化**"（外族溶解成为帝国公民 · 熔炉罗马 / Caracalla 212 AD 公民权模型）。**命名工作暂缓**，等同化框架决策落地后再重启，见 `ThaddeusEmpire_TroopNaming.md` 顶部 v0.4 pause 状态。
+
+### 意识形态选择 · 归化 vs 同化 对比
+
+| 维度 | 归化 (naturalize) | 同化 (assimilate · 熔炉罗马) |
+|---|---|---|
+| 外族身份 | 保留族源标识 · 归属帝国建制 | **溶解族源** · 全部成为帝国公民 |
+| 军事编制 | 独立辅助军 Symmachiarioi (5 分支) | **无辅助军** (4 分支) · 全走核心 |
+| T7 御用限制 | 外族血统不准 T7 御用 | **无限制** · 血统同化后不再是"外族" |
+| 命名机制 | 外族族名 + 建制前缀 (Vardariotai Skythikoi) | 传统军团继承名 · 位置由**职能**定 |
+| 历史类比 | 后期 Byzantine Symmachiarioi 制 | **罗马 Caracalla 212 AD 公民权敕令** |
+| 世界观味道 | 压制感明显 · 帝国核心 vs 归化外族 | 熔炉感明显 · 兼容并包 · "外族"消失 |
+
+**用户倾向**：**同化路线（熔炉罗马）**。理由：Thaddian = 承接旧罗马正统 → Caracalla 公民权模型比 Byzantine 辅助军模型更"罗马"；结构 5→4 分支简化；v0.4 已完成的命名工作 zero waste（作为传统军团继承名保留）；删掉"外族不列御用"的例外结构。
+
+### 自定义文化 mod 调研（Bannerlord v1.4.7 兼容性待实测）
+
+添加自定义 culture 在 Bannerlord 是成熟 mod 技术。Total conversion（Realm of Thrones / Old Realms / Anno Domini）都自建文化。工具选项：
+
+| Mod / 资源 | 类型 | 说明 |
+|---|---|---|
+| [Make Easy Custom Cultures](https://www.nexusmods.com/mountandblade2bannerlord/mods/10223)（Nexus 10223）| 工具 mod | 号称 1 分钟建自定义文化；版本兼容待实测 |
+| [Bannerlord Culture Creation App](https://www.nexusmods.com/mountandblade2bannerlord/mods/9012)（Nexus 9012）| Windows GUI 独立工具 | 生成 XML 可直接 drop 到自研 mod · 版本无关 |
+| [Kingdom and Culture of Eastria](https://www.nexusmods.com/mountandblade2bannerlord/mods/10152)（Nexus 10152）| 完整实现示例 | 参考实现 · 可拆解学习 |
+| [Owner Culture](https://www.nexusmods.com/mountandblade2bannerlord/mods/8684)（Nexus 8684）| 兼容工具 | 1.4.6+ 明确兼容自定义 culture · 领地系统正常 |
+| [Select All Kingdom Culture](https://www.nexusmods.com/mountandblade2bannerlord/mods/2258)（Nexus 2258）| 兼容工具 | 建 kingdom 时可选任何文化 |
+| [Settlements Change Culture](https://www.nexusmods.com/mountandblade2bannerlord/mods/10762)（Nexus 10762）| 玩法 mod | 慢速文化转化系统（呼应"同化"叙事）|
+| [BannerlordModding.LT · Custom Culture Guide](https://docs.bannerlordmodding.lt/guides/custom_culture/) | 官方文档 | 完整 XML 结构指南 |
+
+**你已有的兼容 mod**：**PlayerSettlement** 支持任意文化建 town/village（含自定义）；**Retinues** 支持自定义文化的兵种池。
+
+### 熔炉罗马的 XML 实现路径（关键片段）
+
+新自研 mod `ThaddeusCulture/ModuleData/sp_cultures.xml`：
+
+```xml
+<Culture id="thaddian"
+         name="{=thaddian}Thaddian Empire"
+         color="0xFFAA22FF" color2="0xFFDD44FF"
+         is_main_culture="true"                                <!-- 允许角色创建选择 -->
+         basic_troop="NPCCharacter.thaddian_recruit"           <!-- 常备军入门 -->
+         elite_basic_troop="NPCCharacter.thaddian_ephebos">    <!-- 精锐入门 (v0.4 Ephebos) -->
+  <basic_mercenary_troops>
+    <!-- 熔炉：混入各源文化传统军团作为雇佣池 -->
+    <template name="NPCCharacter.thaddian_sekyriphoros" />       <!-- 诺德斧步传统 -->
+    <template name="NPCCharacter.thaddian_rhos" />               <!-- 罗斯亲兵传统 -->
+    <template name="NPCCharacter.thaddian_frangos" />            <!-- 法兰克重骑传统 -->
+    <template name="NPCCharacter.thaddian_rhomphaiaphoros" />    <!-- 巴旦大刃传统 -->
+    <template name="NPCCharacter.thaddian_vardariotes" />        <!-- 突厥骑术传统 -->
+    <template name="NPCCharacter.thaddian_mameloukos" />         <!-- 阿拉伯骑士术传统 -->
+    <template name="NPCCharacter.thaddian_faris" />              <!-- 阿拉伯青年轻骑 -->
+  </basic_mercenary_troops>
+</Culture>
+```
+
+**熔炉的本质**：`basic_mercenary_troops` 池混入所有源文化传统军团命名——它们**都是 `thaddian` 文化的兵**（不是外族），但保留传统军团名作为荣誉/传承。**Caracalla 公民权模型的直接 XML 落地**。
+
+### v0.4 命名工作与新文化的融合
+
+**零浪费**。10 支精锐 + 步兵 6 支 + 野战军 2 支 + Varangian Guard 全部作为 `thaddian` 文化的兵种树：
+
+| v0.4 命名区块 | 同化路线的重新定位 |
+|---|---|
+| 精锐 A/B/C（Basilikos/Athanatoi/Aristotoxos）| 帝国核心传统军团 · 顶级 T7 御用/不朽/至强 |
+| 精锐 D-J（Vardariotai/Mameloukos/Faris/Sekyriphoros/Rhos/Frangos/Rhomphaiaphoros）| **熔炉传承军团** · 保留传统名 · T7 可开放御用（去除决策 #5 血统天花板）|
+| 常备军 Numeri 6 支（枪盾/陷阵/方阵/弓/弩/连弩）| 标准职业军 |
+| 野战军 G 段（Palatinus / Menaulatos Palatinos）| 拉丁传承军团 · 突击野战主力 |
+| Varangian Guard（Pelekyphoros / Varangos）| **荣誉传承军团**（现代类比 Gurkha Rifles / Coldstream Guards）· Retinues 御林军 · 招募任意帝国公民 |
+
+**"外族"这个类别在 XML 里彻底消失**——所有兵都是 `culture="Culture.thaddian"`。
+
+### 需额外处理的技术点
+
+- **GUI Sprites**：文化选择界面要 `GUI\SpriteParts\ui_charactercreation\CharacterCreation\Culture\` 里加图标（Nexus 10223 工具会代做）
+- **module_strings.xml**：`str_liege_title.thaddian` = "皇帝 / Basileus" 等头衔字符串
+- **Harmony patch**（可能）：character creation 时告诉 game 用哪个 parent menu（如 Empire）作为文化背景 fallback
+- **XML 敏感**：注释掉一个兵种就崩游戏，别用 `<!-- -->` 注释兵种条目
+- **Arena 兼容**：需要至少一个 T4/T5 兵种树（v0.4 已远超）
+- **版本兼容**：Nexus 10223 需实测 v1.4.7 兼容，若不行则手写 XML（更稳、且已有官方指南）
+
+### 待决问题（阻塞开工）
+
+1. **同化路线正式采纳？** —— 采纳则决策 #5 部分修订（"帝国压制外族" → "帝国吸收溶解外族"）· 精锐线 D-J 重新分配位置 · 辅助军 Symmachiarioi 5 分支方案作废
+2. **thaddian 文化范围？** —— 只 clan-level（Retinues + 自建 fiefs）还是**完整 AI kingdom**（AI lord 会建城、发兵、宣战的正统势力）
+3. **v0.4 精锐 D-J 的位置** —— 保留在精锐线（顶级传承军团）or 分散到 4 层不同职能位置
+4. **Kingdom-level entity 是否要做** —— 需要额外做 kingdom/faction/hero/lord 生成，工作量数倍
+
+### 影响 · 命名工作暂缓
+
+**v0.4 命名冻结** —— 待同化框架决策落地后：
+- 若采纳同化：精锐线 D-J 重定位 · T7 御用限制解除（Skythikoi/Furusi/Ulfhednar 等作为传承名保留、非"外族天花板"）· §五 Foederati 框架彻底删除（v0.4 已作废但未删）
+- 若坚持归化：v0.4 结构不变 · 继续 backlog（基础常备军骑兵线、装备栏细化、§三-§五 清理）
+
+### 下一步
+
+**用户决策 → 我行动**：
+- 采纳同化 → 建 `ThaddeusCulture` 自研 mod（sp_cultures.xml + spnpccharacters.xml 骨架，可选挂 Nexus 10223 或手写）
+- 保持归化 → 回归命名 backlog · 继续基础常备军骑兵线等命名
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

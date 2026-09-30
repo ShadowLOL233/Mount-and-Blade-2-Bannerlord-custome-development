@@ -1,8 +1,9 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-09-24
+**最后更新**：2026-09-30
 
 ## 目录
+- [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)
 - [环境与路径](#环境与路径)
 - [模组清单（最终状态）](#模组清单最终状态)
 - [已做的定制修改](#已做的定制修改)
@@ -14,6 +15,35 @@
 - [调试参考](#调试参考如何找信息)
 
 **相关文档**：`TroopDesignReference.md`（同目录，T1-T7 兵种技能模板与装备指南）
+
+---
+
+## 🔴 自研 mod 开发流程铁律
+
+### 铁律 1 · build 完必须立刻 deploy
+
+**规则**：任何自研 mod（UTM · EquipmentSpawnerMod · CheatsGuard 等）代码或 XML 改动 · `dotnet build` 完**必须**在同一响应里立即跑 `deploy.ps1` · 验证 deployed 文件时间戳新鲜 · **然后**才能报"部署完成 · 请测试"。
+
+**背景**：2026-09-29 到 2026-09-30 期间 · Claude 在 UTM Phase 2B 开发中至少 3 次犯了 "只 build 没 deploy 就让用户测试" 的错误。每次都造成用户在游戏里加载旧 DLL/XML · 反馈 "UI 没变化" · 白测一轮。
+
+**Why**：
+- Bannerlord launcher 载入的是 `E:\SteamLibrary\...\Modules\<mod>\bin\Win64_Shipping_Client\<mod>.dll`
+- 源文件 `<repo>\<mod>\src\bin\Release\<mod>.dll` build 后**不会自动同步**到 game modules
+- 只有 `deploy.ps1` 会做那次 copy · 不跑 = 用户永远加载旧版
+
+**明令禁止**：
+- ❌ 只 `dotnet build` 就报 "deploy 完成"
+- ❌ 只 build 就让用户测试
+- ❌ 同一消息里 "编译通过 · 请测试" —— 编译通过 ≠ 部署完成
+- ❌ 假设用户会自己跑 deploy
+
+**必须的验证步骤**：
+1. `dotnet build -c Release` → 确认 0 error / 0 warn
+2. **立刻**执行 `deploy.ps1`（launcher/game 关时自动跑 · 开时会 warn）
+3. Verify：`Get-Item <target>\bin\Win64_Shipping_Client\<mod>.dll` + XML 时间戳跟本地源文件对齐
+4. 才能报 "部署完成"
+
+**记忆条目**：[[bannerlord-build-deploy]] · Claude 记忆持久化 · 未来任何 session 都要遵守
 
 ---
 
@@ -556,6 +586,267 @@ if (loadFoodGatheringModule && ((npcFief && npcBonus) || (playerFief && playerBo
 2. 实机验证 hotkey filter 现在能正常工作
 3. 按 DESIGN_v1.1_UI §5 checklist 11 步实施 v1.1 dropdown UI（约 3-5h）
 4. journal 加 modification #17 记录 v1.1 落地
+
+### 53. BannerlordCheats v3.0.3.0 稳定化 · CheatsGuard v1.0→v1.3 4 轮诊断 · 元凶定位（2026-09-26）
+
+**背景**：用户放弃 WeMod（外部注入不稳定）· 想装 Cheats mod 做游戏内 cheat 面板。之前已订阅未启用（LauncherData IsSelected=false）。启用后 Campaign 崩。
+
+**BannerlordCheats v3.0.3.0 定性**（反编译核实）：
+- 198 types · 163 patch classes · 覆盖 150+ cheat 功能
+- 用 MCM v5 做设置面板（用户已装 MCM v5.12.3）
+- SubModule.OnGameInitializationFinished：`foreach type { new PatchClassProcessor(harmony, type).Patch(); } catch (HarmonyException)` —— **只 catch HarmonyException · 其他异常 propagate**
+- 编译时间戳 2026-09-15（11 天前活跃维护）
+
+**CheatsGuard 4 轮迭代**（自研 wrapper mod · 路径 `CheatsGuard/`）：
+
+| 版本 | 加了什么 | 发现 |
+|:---:|---|---|
+| **v1.0** | Prefix + Finalizer on `PatchClassProcessor.Patch()` · file log · skip-list | Log 停在 `OK Inventory.ExtraInventoryCapacity` · 崩点在下一 patch |
+| **v1.1** | + NativeItemSpawningReplacement（drop-in 替代 Cheats 坏的 NativeItemSpawning · TargetMethod 动态找 InventoryLogic.Initialize · OS 系兼容天生） · +11 条初始 skip list | 崩点仍在同处 · 需更早的诊断 |
+| **v1.2** | + 全类型 log（不只 Patches.*）· + `PatchClassProcessor` 构造器 Prefix+Finalizer（捕获 TypeLoadException 等 pre-Patch 阶段异常） | **关键突破**：抓到 21 个 patch FAIL + 1 CTOR FAIL；log 走到 500+ 条 SiegeExtensions+<>c；崩点在 loop 之后 |
+| **v1.3** | + `SkipAllCheatsPatches` 核选项 | **✅ Campaign 起来了** —— 确诊 = **Cheats 某个已成功安装的 patch 在运行时崩游戏** · 不是安装阶段 |
+
+**Cheats 崩溃机制精确定位**：
+- **安装阶段**（Patch loop）：能跑完 · 但 21+ patch 因签名不匹配失败（Ambiguous match / ExplainedNumber 返 int / TypeLoadException 等）· CheatsGuard 全捕获
+- **运行阶段**（patch 生效后）：某个 OK 的 patch 触发时崩 · 需二分定位
+
+**已确认 21 个 patch 签名失败**（Finalizer 抓住 · 非致命 · v1.3 也不生效 · 但作为参考）：
+- Workshops 全 6 个 · Smithing.CraftedWeaponModifierBonus · Settlements.DailyGarrisonBonus · Settlements.FreeTroopRecruitment · Party.FreeTroopUpgrades
+- Experience.CompanionLearningRateMultiplier · Experience.LearningLimitMultiplier · Experience.LearningRateMultiplier · Experience.TroopExperienceMultiplier
+- Combat.AlwaysWinBattleSimulation（Ambiguous match）· Combat.BanditHideoutTroopLimit · Combat.DamageMultiplier_Sandbox · Combat.DamageTakenPercentage_Sandbox · Combat.EnemyDamagePercentage_Sandbox · Combat.InfluenceRewardMultiplier · Combat.NoFriendlyFire_Sandbox · Combat.NoTroopSacrificeBreakIn · Combat.NoTroopSacrificeBreakOut · Combat.NoTroopSacrificeRunaway · Combat.OneHitKill_Sandbox · Combat.PartyDamageMultiplier_Sandbox · Combat.PartyDamageTakenPercentage_Default · Combat.PartyDamageTakenPercentage_Sandbox · Combat.PartyOneHitKill_Sandbox · Combat.RenownRewardMultiplierBattle · Combat.SliceThroughEveryoneWeapon
+
+**关键 API 变化线索**：
+- `TaleWorlds.CampaignSystem.Inventory.**InventoryManager**+InventoryCategoryType`（Cheats 用）→ 1.4.7 移到 `InventoryScreenHelper+InventoryCategoryType`
+- 大量 `int → ExplainedNumber` 返回值改动（Recruitment/TroopUpgrade/Renown/Influence/Learning 等 model 类）
+- 一批 `_Sandbox` 后缀 patch 全失败 · 可能是 Cheats 用来区分 Sandbox vs Campaign 的补丁 · 1.4.7 里目标可能已合并
+
+**当前未定位**：150 - 21 = **~129 个 patch 成功安装 · 其中某个（几个）在运行时崩游戏**。需要二分。
+
+**产物**：
+- `CheatsGuard/` v1.3 mod（`src/` 4 个 .cs · `ModuleData/config.xml` · deploy.ps1 · README.md）
+- 已装 game Modules · IsSelected=true
+- 当前配置：`SkipAllCheatsPatches=true`（游戏可正常起 · Cheats patch 全短路）
+- `Modules/CheatsGuard/Logs/cheats_guard.log` 每次启动 overwrite · 500+ 条诊断记录
+
+**下一步（P0 · 见待办章节）**：Cheats 稳定化项目正式立项 · 二分定位崩溃 patch · 归入 skip list · 最终恢复大部分 cheat 功能
+**📖 完整二分工作手册已就位**：[`CheatsGuard/CHEATS_STABILIZATION_PLAN.md`](./CheatsGuard/CHEATS_STABILIZATION_PLAN.md) · session-ready · 含 Round 1 copy-paste 配置
+
+**Round 1 config 已应用（2026-09-26 后续 session）**：
+- Game Modules 的 `CheatsGuard/ModuleData/config.xml` 已改成 PLAN §2 Round 1 状态：`SkipAllCheatsPatches=false` · SkipClasses 共 133 条（32 always-skip + 101 待测）
+- 启用 30 patch 安全批：Sieges 2 · Map 5 · Kingdom 6 · Smithing 6 · Inventory 1 · Army 3 · Clan 3 · Experience non-FAIL 4
+- 源码 repo 的 `CheatsGuard/ModuleData/config.xml` 同步（deploy.ps1 有"若已存在就 skip"保护，源码变更不会污染 game 那份）
+- XML 已通过 `[xml](Get-Content ...)` 解析验证 · SkipClass 元素数 133 ✓
+- **待用户实机**：启动 launcher · 进 Campaign · 玩 30 秒 · 反馈稳/崩
+
+**Cheats × 已装 mod 冲突面侦查（2026-09-26 · 用户询问）**：
+- 反编译产物：`C:\Users\situj\git\_cheats_decomp\`（Cheats v3.0.3.0 · 163 patch）· `_cheats_targets.txt`（每 patch target 方法一览）· `_psr_decomp\`（PSR v2.2.0 · 11 patch）
+- **PSR ↔ Cheats 冲突面**（Round 1 启用 30 patch 内）：
+  - `Clan.ExtraClanPartyLimit` × PSR `Patch_PartyRecruitment` → 都 Postfix on `DefaultClanTierModel.GetPartyLimitForTier` → **数值叠加 · 不崩**（Cheats MCM 默认 off · 相当于零加成）
+  - `Clan.ExtraCompanionLimit` × PSR `Patch_Companion` → 都 Postfix on `DefaultClanTierModel.GetCompanionLimit` → 同上
+  - `Clan.ExtraClanPartySize` → 独占 · PSR patch 的是 prisoner/garrison 变体
+  - `Map.MapSpeedMultiplier` / `NpcMapSpeedPercentage` → 独占 · PSR patch `CalculateLandBaseSpeed` 不同方法
+  - `Army.ArmyFoodConsumptionPercentage` target `CalculateDailyFoodConsumptionf`（末尾 f · 疑似 typo · 需看 log 确认是否 FAIL）
+- **RCF / EquipmentSpawnerMod / Equipment Stash 与 Cheats 主体无 patch 冲突**
+- 结论：Round 1 30 patch 里 Postfix 叠加不崩 · MCM 默认 off 时无副作用
+
+**NativeItemSpawning 危险性专项分析（2026-09-26 · 用户询问）**：
+- Cheats 原版 `Inventory.NativeItemSpawning` patch `InventoryLogic.Initialize` (Postfix) · 把 ObjectManager 全部 ItemObject 塞入 `leftItemRoster` × 10 份
+- **`leftItemRoster` 语义**：野外背包 = 空/临时（无害）· **城里 stash = `Settlement.Stash` 持久对象**（会写入存档）
+- 若 CheatsGuard `EnableNativeItemSpawning=true` 且在 town/castle 打开 stash：**每次打开都往存档塞几千种 item × count 份** · save 肿胀 · EquipmentSpawnerMod 的 OSA culture 生态被无差别倾倒污染 · UI 卡崩
+- 与 EquipmentSpawnerMod 撞点：两者共享 vanilla `Settlement.Stash` 池
+- 当前防护 3 层（都已就位）：Cheats 原版在 always-skip（签名 FAIL）· CheatsGuard 提供 replacement 但 `EnableNativeItemSpawning=false` 默认关 · config.xml 加显眼警告注释
+- **回答用户"是否必须建自己的城才能用装备生态"**：不需要 · vanilla 任何 town/castle 的 "Open stash" 菜单都能用 EquipmentSpawnerMod 的 culture 过滤 + inject 按钮（`EquipmentSpawnerSubModule.cs:63-66` 明确复用 vanilla `Settlement.Stash`）
+
+**Round 1.1 · EnableHotkeysMoney 精准启用（2026-09-26 用户决策）**：
+- 从 SkipClasses 里删除 `General.EnableHotkeysMoney` 一条 · 白名单 30 → **31** · SkipClasses 133 → **132**
+- 该 patch `GameManagerBase.OnTick` (Postfix) · 只在 `GauntletInventoryScreen` 顶层时激活 · 使用 vanilla API（`Keys.IsKeyPressed` / `Hero.MainHero.ChangeHeroGold`）
+- 使用方法：**打开背包 UI 后**按 **Ctrl+X** = +1000 denars · **Ctrl+Shift+X** = +100000 denars（InputKey 29+45 反编译验证 = LeftCtrl+X · 不是 M）
+- **需要 Cheats MCM → General → "Enable Hotkeys" 勾上**（`SettingsManager.cs` 默认 false）· 用户已开
+- 其余 12 EnableHotkey* 保持 skip · Round 3 时批量测
+
+**Round 1.1b · 金额提升 10M/100M + 游戏内 tip（2026-09-26 用户决策）**：
+- 用户嫌 Cheats 原版 1k/100k 太少 · 决策改成 10M/100M
+- 选择：**wrapper 方案** · 不改 workshop DLL（Steam 更新会覆盖）· 在 CheatsGuard 加 replacement
+- 加回 SkipClass `General.EnableHotkeysMoney`（skip Cheats 原版）· SkipClasses 132 → 133
+- CheatsGuard 新增：
+  - `src/ReplacementPatches/EnableHotkeysMoneyReplacement.cs` · Postfix on `GameManagerBase.OnTick` · Ctrl+X / Ctrl+Shift+X 检测 + Config 金额 · `Hero.MainHero.ChangeHeroGold`
+  - `src/ReplacementPatches/MoneyHotkeyTipsPatch.cs` · Postfix on `ScreenManager.PushScreen` · 打开 GauntletInventoryScreen 时弹 3 行黄字 tip · 金额从 Config 动态读 · 智能后缀（k/M/B）
+  - `Config.cs` 加 4 字段：`EnableMoneyHotkey` · `CheatsMoneySmall` (10M) · `CheatsMoneyLarge` (100M) · `ShowMoneyHotkeyTip`
+  - `csproj` 加 `TaleWorlds.InputSystem` + `TaleWorlds.ScreenSystem` 引用
+  - `config.xml` 加 4 个配置项 + 显眼注释
+- Build 0 warn 0 err · Deploy 完成 · 待用户实机验证
+
+**Round 5 · 全开剩余 50 项 skip + PassiveXpBehavior（2026-09-27 用户决策）**：
+- **全开剩余 50 项**：Characters 10 + Party 10 + Settlements 17 + General 13 (保留 EnableHotkeysMoney 走 wrapper) · SkipClasses 82 → **33** · 启用 patch 81 → **130**（Cheats 163 - 32 always-skip FAIL - 1 EnableHotkeysMoney = 130）
+- **新增 PassiveXpBehavior**：`src/CampaignBehaviors/PassiveXpBehavior.cs` · subscribe `CampaignEvents.DailyTickEvent` · 每日给 `MobileParty.MainParty` 里的 Hero 加 XP（每 skill 每 hero 每天）· 通过 `MBObjectManager.GetObjectTypeList<SkillObject>()` 拿全 skill 列表 · `Hero.HeroDeveloper.AddSkillXp(skill, amount)`
+- SubModule 加 `OnGameStart(Game, IGameStarter)` override · Campaign 类型时 `starter.AddBehavior(new PassiveXpBehavior())`
+- MCM 加 3 项（并入 "Money Hotkeys" group · order 4-6）：`EnablePassiveDailyXp` / `PassiveDailyXpAmount` (0-100k) / `PassiveDailyXpIncludeCompanions`
+- Config 加 3 mirror 字段 + config.xml fallback 段
+
+**Round 4 · Combat non-FAIL 50 项一次启用（2026-09-27 用户决策 · ✅ 已验证稳定）**：
+- 触发：用户发现 Invincible / DamageTakenPercentage / HealthRegeneration 在 Cheats MCM 里勾了但不生效 · 反查确认整个 Combat 大类 50 项都在 SkipList
+- 决策：绕过 log_2 二分 · 一次启用全 50 项 · 若崩再二分
+- 从 SkipClasses 删掉 50 行 · 133 → **82** · 启用 patch 31 → **81**
+- 剩余 17 Combat skip 全是 §53 已确认 signature FAIL 的 always-skip
+- **实机结果**：Campaign 起稳 · 战斗稳 · Invincible/DamageTakenPercentage/HealthRegeneration 数值 MCM 里调都生效
+- **推翻假设**：§53 "运行时崩" 预警未成真 —— 说明 21 (真实 32) FAIL 覆盖了全部致命 patch · Cheats v3.0.3.0 与 1.4.7 + RBM/PSR 生态兼容性比预期好
+
+**Round 1.2 · TroopWagesPercentage 精准启用（2026-09-26 用户决策）**：
+- 从 SkipClasses 里删除 `Party.TroopWagesPercentage` 一条 · Party 11 → 10 · SkipClasses 133 → **132**
+- Cheats 原版：Postfix on `DefaultPartyWageModel.GetTotalWage` · `if TroopWagesPercentage != 100: __result.AddPercentage(...)`
+- **无需新代码 · 无需新 MCM 面板** —— Cheats 自带 MCM 项（Party 分组 · "Troop Wages Percentage" 百分比滑块 · Global + PerCampaign 都有 · 默认 100%）
+- 冲突面：与 **PSR `Patch_PartyWage`** 都 Postfix on `GetTotalWage` · Postfix 叠加不崩 · 且 PSR 的 `psr_bonus_scope=0`（§2 用户已改）大概率禁用了 PSR wage 生效范围 · Cheats 实际独占
+- 使用方法：MCM → Cheats → Party → "Troop Wages Percentage" 滑块 · 100=保持不变 · 50=工资减半 · 0=免工资
+
+**教训归档**：
+- **AccessTools.GetTypesFromAssembly + PatchClassProcessor 的模式常见但有陷阱**：只 catch HarmonyException 时 · 非 Harmony 异常（TypeLoadException / 运行时 AVE）都会崩整个 loop
+- **诊断 mod 的正确层次**：Prefix on Patch() 只看到 Patch() 调用 · CTOR 阶段的失败需要单独 Prefix on 构造器 · 运行时崩溃需要 SkipAll 二分 · **三层缺一不可**
+- **CheatsGuard 的价值超预期**：不只修 Cheats · 是**通用 Harmony 诊断 wrapper 模板** · 未来遇 mod 崩溃可复用
+
+### 52. MapBlockade + BetterPatrols 残留清理（2026-09-26）
+
+**触发**：用户实机反馈战略地图仍有"MapBlockade 留下的行进箭头闪现"。侦查后发现：
+
+**MapBlockade 实际清理状态**（游戏运行层面 · **无问题**）：
+- Modules 目录 0 MapBlockade/Blockade
+- LauncherData.xml 0 引用
+- Configs\ModLogs\ 0 PSBridge/Blockade log
+- **save001.sav 二进制扫 0 MapBlockade 类型引用** → orphan MobileParty 不存在于当前存档
+- 唯一残留：`Logs\MapBlockade.log`（44.2 KB · 2026-09-20 03:19 卸载当天最后写入）· 纯日志文件 · 不影响运行 · #11 清理时漏了 `Logs\` 目录（只清了 `Configs\ModLogs\`）
+
+**真凶推断 · BetterPatrols orphan**（另一处不彻底的卸载）：
+- BetterPatrols.dll **磁盘已删** · 但 LauncherData.xml 还有 `<UserModData><Id>BetterPatrols</Id>` (line 201-203) 和 `<DLLCheckData><DLLName>BetterPatrols.dll</DLLName>` (line 507)
+- **save001.sav 有 2 处 BetterPatrols 类型引用** → orphan patrol MobileParty entities 序列化在存档
+- vanilla 引擎给所有 MobileParty 画 travel arrow · orphan party 无 owning behavior 更新 AI → **"闪现"就是无稳定 target 的 orphan 表现**
+
+**清理执行**（Plan A · 无风险）：
+- ✅ 备份 LauncherData.xml → `.bak_20260926_orphan_cleanup`
+- ✅ 删 `Logs\MapBlockade.log`（44.2 KB）· `Logs\` 目录现完全空
+- ✅ 删 LauncherData `<UserModData><Id>BetterPatrols</Id></UserModData>` 1 处
+- ✅ 删 LauncherData `<DLLCheckData><DLLName>BetterPatrols.dll</DLLName></DLLCheckData>` 1 处
+- ✅ `BetterPatrolsBrake`（自研 · 保留）验证完好
+
+**残留问题 · save 层面 orphan**：
+- 2 处 BetterPatrols save 引用**未动**（编辑 save 二进制风险高）
+- 备选：若箭头在启动 PFRB 后仍在 → Plan C 新开档（顺便干净测 PFRB 招募加速起手）
+- vanilla load 时未知类型可能被 drop（可能自愈 · 也可能保留 orphan · 需实机验证）
+
+**吸取教训**：
+- **卸载检查表需扩展**：`Logs\` 目录也在扫描范围（#11 漏了）· 存档二进制类型扫查（`[System.IO.File]::ReadAllBytes` + ASCII 提取）应加入卸载后 sanity check
+- BetterPatrols 卸载没走"彻底"流程 · 只删了 dll · LauncherData + save 都残留 → 后续 mod 卸载都走 CP2/MapBlockade 模板
+
+### 51. PlayerFiefRecruitBoost v1.0.0 自研落地 + CalradianPatrolsV2 卸载（2026-09-26）
+
+**触发**：用户反馈 PSR 5000 上限后的**非对称尺度失衡** ——
+- PSR 拉高天花板 → AI 早期即千人 · 玩家小封地 vanilla 招募速率不变
+- 结果："打不过大军 → 招不够兵 → 村被 raid → 更招不到"死循环
+- 用户明示**直接跳 DIY** · 走玩家 fief 非对称 buff + D 治本组合
+
+**侦查（反编译核实）**：
+- **RBM v4.5.0**：ilspycmd 扫全 6 dll（RBM/RBMCombat/RBMCampaign/RBMAI/RBMConfig/RBMTournament）· **0 volunteer/recruit 类型引用**
+  - 更正 #§ 之前 journal 记的"RBMCombat.CampaignChanges.DefaultVolunteerModelPatch"—— 那是**旧版 RBM 记录 · v4.5.0 已删**
+- **ImprovedGarrisons v4.2.0.7**：0 volunteer 相关 patch
+- **Retinues v1.4.14.31**：`VolunteerSwapForPlayer` 是**后置**换兵种（本 mod 前置改概率/tier · 正交）
+- **PlayerSettlement v7.5.0**：PS 建的村仍走 vanilla model
+- **vanilla DefaultVolunteerModel 3 关键方法签名** 反编译核实：
+  - `MaximumIndexHeroCanRecruitFromHero(Hero, Hero, int=-101) → int`（tier 上限 · 由 relation 决定 · cap 6）
+  - `GetDailyVolunteerProductionProbability(Hero, int, Settlement) → float`（每 slot 日填充概率）
+  - `MaximumIndexCanPartyRecruitFromHeroInternal(Hero, Hero) → int`（private 辅助）
+- 关键发现：**每 notable 6 slot 硬编码**（`VolunteerTypes[6]` 数组 · 不可 mod 加）· `MaximumIndex` 返回的是 **tier 上限 index** · **不是 slot 数** · 所以杠杆是**加速填充率**和**解锁 tier 上限**
+
+**Mod 设计**（`PlayerFiefRecruitBoost/` 新目录）：
+- **Patch A · `GetDailyVolunteerProductionProbability` postfix**：玩家氏族拥有的 town/castle + 其绑定 village · 概率 × `SlotRegenMultiplier`（默认 3.0 · clamp ≤ 1.0）· `[HarmonyAfter("RBM")]` 兜底
+- **Patch B · `MaximumIndexHeroCanRecruitFromHero` postfix**：玩家在自家 fief recruit → 无视 relation · 强制返回 6（vanilla 需 relation 100）
+- **非对称**：`buyerHero != Hero.MainHero` 直接 return · AI 完全不改
+- **配置**：`ModuleData/config.xml`（4 项 · fail-safe defaults · 无 MCM · v1.1 backlog）
+- **兼容性**：SubModule.xml 声明 LoadAfter RBM/PS/Retinues
+
+**代码结构**：
+```
+PlayerFiefRecruitBoost/
+├── SubModule.xml
+├── README.md
+├── deploy.ps1
+├── ModuleData/config.xml
+└── src/
+    ├── PlayerFiefRecruitBoost.csproj  (6 dll ref · net472 · +TaleWorlds.ObjectSystem)
+    ├── SubModule.cs                    (启动加载 + [PFRB] 日志)
+    ├── Config.cs                       (XML 加载 + fail-safe)
+    └── VolunteerModelPatches.cs        (2 postfix + PlayerFiefCheck helper)
+```
+
+**Build + Deploy 状态**：
+- ✅ dotnet build Release 通过 · 0 warning 0 error
+- ✅ deploy.ps1 已跑 · `Modules/PlayerFiefRecruitBoost/` 完整落地（SubModule.xml + config.xml + dll 8KB + pdb 3.5KB）
+- 🟡 pending in-game 测试 · 启动后应见 `[PFRB] loaded · SlotRegen×3.0 · UnlockMaxTier=True · IncludeBoundVillages=True`
+
+**CalradianPatrolsV2 同步卸载**（Bug #6 遗留 · v1.2.8 → v1.4.7 base-class 演化死 · IsSelected 已 false）：
+- ✅ 备份 LauncherData.xml → `.bak_20260926_pfrb`
+- ✅ 删 `Modules/Calradian-Patrols-V2/`（1.2 MB）
+- ✅ 删 LauncherData 2 处 CP2 引用（UserModData + DLLCheckData）
+- 现有 IG NPCSpawnGuards + BetterPatrolsBrake 覆盖 raid 抵御需求 · 无功能损失
+
+**配置微调路径**（`Modules/PlayerFiefRecruitBoost/ModuleData/config.xml` · 重启游戏生效 · 不用 rebuild）：
+- 起步默认 3.0 · 太慢 → 5.0 · 抢镇池 → 2.0
+- `UnlockMaxTierInOwnFiefs=false` 保留 relation 门槛（不觉得外挂）
+
+### 50. OSW Shield v2 · P1 首审 114 件全 deploy（2026-09-25）
+
+**背景**：OSA armor v2 收官后（#48 · 1835 决议 + 323 XML deploy · 铁浮屠 148 顶）· 用户提"重甲飘刀"隐忧 · OSW workshop 未纳入 v2 手工审 → 立项 OSW v2 · 用户决策分叉 **α · 只抬盾不动 blade**
+
+**侦查阶段的关键修正**（v1 报告基于错误 baseline · v2 baseline scan 修正 3 处）：
+1. **OSW 规模**：v1 说 173 件 · **实际 313 件**（v1 漏了 140 件 OSW CraftedItem · 41 TwoHandedPolearm + 31 OneHandedSword + ...）
+2. **RBM_WS 定性**：v1 假设是"通用武器 baseline" · **实际是 Nord/NavalDLC 内容包**（113 armor + 28 weapons · 只 9 shields · 全 nord）· 与 OSW 零 id 交集
+3. **Blade 是否过强**：v1 结论"3× 过强 vs RBM" · **修正为视哲学而定**——OSW blade 精准对齐 vanilla-unpatched 段（RBM 只 patch 55% blades · 剩余 45% vanilla 保留极烫值 2.3-5.2 factor · OSW 匹配其中）· nerf OSW blade = 让它比 vanilla 装备还弱
+
+**新建 `Vanilla_Reference/`**（本 session 首建 · 之前完全缺失）：
+- `scripts/extract_vanilla.ps1`（复用 OSA/RBM flatten 逻辑）
+- `data/vanilla_{items,crafted_items,crafted_items_pieces,crafting_pieces}.csv`
+- 覆盖：SandBoxCore/items/*.xml + Native/crafting_pieces.xml + Native/mpitems.xml + NavalDLC/{items,naval_weapons,naval_crafting_pieces}.xml
+- 1083 Items + 530 CraftedItems + 1665 CraftedPieces + 1390 CraftingPieces
+
+**Shield baseline 澄清**：
+- SP-effective LargeShield n=70 · hp median 570 / p10=380 p90=750 / ba median 5
+- OSW 114 件全 LargeShield · hp median 340 · ba median 2 · 分布位于 baseline 底部 8-30% 分位
+- **系统性欠强被数据证实** · 但幅度不如 v1 报告说的那么夸张（v1 用 RBM_WS Nord 9 件 mean 679 对比 · 现修正为 SP-effective mean 581）
+
+**P1 方案 v0.2 · 3 轴分类**（25 非空组）：
+- **Tier by hp bucket**：≤260=T1 · 280-320=T2 · 340-380=T3 · 400-440=T4 · 460-500=T5 · 520=T6
+- **WeightClass by weight**：Buckler ≤2.9 · RoundLight 2.9-4.2 · RoundStd 4.2-5.5 · HeavyScutum >5.5
+- **Material by ba**：Wood ≤2 · Reinforced ≥3
+
+**Tier HP 曲线**（贴 SP-effective 百分位 p10-p95+）：
+
+| Tier | HP | Wood ba | Reinforced ba |
+|:---:|---:|:---:|:---:|
+| T1 | 380 | 1 | 3 |
+| T2 | 480 | 2 | 4 |
+| T3 | 570 | 3 | 5 |
+| T4 | 700 | 3 | 6 |
+| T5 | 750 | 4 | 7 |
+| T6 | 800 | 4 | 8 |
+
+**Weight 修正**：Buckler ×0.85 (+2 spd · ba 硬顶 2) · RoundLight ×0.95 (+1) · RoundStd ×1.00 · HeavyScutum ×1.10 (ba+1 · -1 spd)
+
+**Speed**：`84 + weight_offset`（简化 · 不按 tier 递增）
+
+**Pipeline**（新脚本 · 独立于 armor 的 `manual_override.ps1`）：
+- `OpenSourceArmouryRBMBalance/src/manual_override_shield.ps1`：读 OSW CSV → 应用 3 轴规则 → 从 workshop XML clone Item 节点 → override Weapon 子元素 hit_points/body_armor/speed_rating → 输出 XML
+- **113 KB · 114 Item · 100% 覆盖 · 0 缺失**
+- 抽查 3 件（AR_shield_infantry_a/zc/zg）all match spec ✅
+
+**SubModule.xml**：新 XmlNode `<XmlName id="Items" path="OSABalance_shield_override" />`（第 4 个）
+
+**归档**：`BALANCE_V2_LOG.md > ## OSW Shield Balance` 章节（3 轴规则 + 114 件完整 before→after 表）
+
+**Deploy 状态**：🟡 pending deploy（用户等一并 deploy）· P2-P5 延后（blade/piece/edge/crafted 全不动）
+
+**产物文档**：
+- `OpenSourceArmouryRBMBalance/OSW_BASELINE_SCAN.md`（完整 vanilla+RBM 有效基线 · 修正 3 处 v1 错误）
+- `OpenSourceArmouryRBMBalance/OSW_BALANCE_PROPOSAL.md` v0.2（取代 v0.1 · v0.1 基于错误 baseline）
+- `OpenSourceArmouryRBMBalance/OSW_SCOUT_REPORT.md`（初版侦查 · 保留供追溯 · 但结论已被 v0.2 覆盖）
+
+**建议实测调优路径**：deploy 后打 1 场大会战 · 观察 T4-T6 顶盾（`AR_shield_infantry_zc/zzd*` 等 760hp）感受 · 若过强/过弱 · 微调 tier hp 表数字重跑 generator 即可（不改代码）
 
 ### 49. OSA v2 · HorseHarness T1-T9 跨文化统一体系全面重审（2026-09-24 晚）
 
@@ -2506,9 +2797,284 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ## 待办 / 开放问题
 
-### 🔴 P0 · 最新最高优先度开发方案（2026-09-24 立项）
+### 🔴 P0 · 最高优先度（2026-09-28 用户重排 · UnifiedTroopManager 立项上位）
 
-- [ ] **🔴 OSW（Open Source Weaponry）v2 武器平衡**（2026-09-24 立项 · 上一次对话末尾用户批准）
+- [ ] **🔴 UnifiedTroopManager · 全新自研 mod · 整合 CYT + SSYF 功能**（2026-09-28 立项 · **最高优先度**）
+
+  **📖 权威设计文档**：[`UnifiedTroopManager/DESIGN.md`](./UnifiedTroopManager/DESIGN.md)（v0.3 · 用户已定稿 · Phase 1 可启动）
+
+  **触发原因**：2026-09-28 用户 in-game 发现 SSYF（FormationManager）× CYT（ChooseYourTroops）严重冲突 —— 在 CYT UI 选定混合兵种上场后 · 进战斗只加载最近在 SSYF UI 里编辑过的**单一兵种**。反编译定位根因：**FM 的 `OrderOfBattleVMInitializePatch.Postfix`** 在 OoB 屏初始化时强制 `Classes[0].Class = <planned>` + `Classes[1].Class = NumberOfAllFormations` + `OobWeightDistributor.LockManagedSliders` 三连锁 · 挤掉未配 plan 的兵种。CYT 的 `MapEventSide.AllocateTroops` filter 生效不了因为 OoB 权重预处理阶段已经把它们排除。
+
+  **为什么整合成新 mod 而不打 patch 修 SSYF**：
+  - 两 mod 功能天然互补但**代码上互不知晓** · CYT 只管 roster · FM 只管 formation · 没有 API 让对方感知
+  - SSYF bug 不是"实现漏洞" · 是**语义假设错误**（假设自己是唯一 roster 层管理者） · 打 patch 治标不治本
+  - 整合后单一权威数据模型（roster + plan 一体化） · 无跨 mod 通信 · 语义一致 · **顺带修 bug**
+
+  **首版功能 scope**（用户 2026-09-28 拍板 · 29 项）：
+  - **MUST 16 项**：CYT roster 选择（A1-A7）· FM formation 分配（B1-B5）· Bug fix（C1-C4）
+  - **SHOULD 13 项**：UX/QoL（D1-D8 · 独立 log · MCM 总开关 · reflection 降级不 crash）· 情境适配（E1-E5 · Field/Siege/Hideout/Lord's Hall/Tournament skip）
+  - **COULD 10 项 backlog 留档**：Role Plans · 缺弹回撤 · 骑马下马切换 · 多 Preset · tier 一键选 · 招募黑名单 · 盟友管理 · Battle summary · debug overlay
+
+  **明确不做**：Archived plans · Custom Split 三模式 · PartyCharacterVM mixin · OoB slot lock · 复用原 mod 源码 · 数值 · 招募 · AI 推荐 · Custom Battle
+
+  **技术架构**（详见 DESIGN.md § 4）：
+  - **数据模型**：`PartyPlan` per-hero JSON · `RosterSelection` in-memory per-battle
+  - **UI**：Gauntlet full-screen · 2 tab（Roster + Formations）· encounter menu 触发
+  - **8 处 Harmony patch**：MapEventSide.AllocateTroops · SpawnLogic Init/AfterStart · OoB Initialize · Mission.SpawnTroop · PlayerEncounter Finish · Mission.OnBattleSideDeployed · LordsHallFight.OnCreated
+  - **Clean-room reimpl**：不复用任何 CYT/FM 源码 · 反编译只用来理解语义 · 独立命名空间 `UnifiedTroopManager.*`
+
+  **License 决策**：CYT / FM / TC 三 mod 均**无 LICENSE 文件** · 默认 All Rights Reserved · 采用 clean-room 策略 · README 致谢原作者但独立实现
+
+  **分 Phase 计划**（详见 DESIGN.md § 9 · 总 7-8 session · ~15-20 小时）：
+  1. ✅ **Phase 0 · Design**（已完成 · DESIGN.md v0.3）
+  2. ✅ **Phase 1 · Scaffold**（**2026-09-29 完成** · 0.5 session）：csproj + SubModule.xml + MCM 骨架 + Harmony bootstrap + 8 处空 patch 模板 + deploy.ps1 + README（clean-room attribution）· **dotnet build Release 0 warn / 0 err · DLL 已产出**
+  3. ⬜ **Phase 2 · Roster Picker**（1.5 + 0.3 = 1.8 session · +迁移工具）：Gauntlet Roster tab · MapEventSide filter · RosterSelection 生命周期
+  4. ⬜ **Phase 3 · Formation Assignment**（1.5 session）：Formations tab · PartyPlanStore JSON · SpawnTroop Postfix
+  5. ⬜ **Phase 4 · OoB Integration + Bug Fix**（1 session）：OoB VM Postfix · soft weight · 无 lock · **关键 · 复现原 bug 场景验证 fix**
+  6. ⬜ **Phase 7 · 全场景测试**（1 session）：Field/Siege/Hideout/Lord's Hall 全跑一遍
+
+  **Phase 5-6 · COULD backlog**：首版不做 · 实测后按需启动
+
+  ---
+
+  ### Phase 1 交付物清单（2026-09-29 完成）
+
+  仓库路径：`UnifiedTroopManager/`
+
+  | 文件 | 用途 |
+  |---|---|
+  | `SubModule.xml` | v0.1.0 · 8 依赖（Native/SandBoxCore/Sandbox/StoryMode/Harmony/ButterLib/UIExtenderEx/MCM）· 全部 LoadBeforeThis |
+  | `README.md` | Clean-room 声明 + CYT/FM/TC attribution + build/deploy 说明 |
+  | `deploy.ps1` | 复用 EquipmentSpawnerMod 模板 · build + copy SubModule.xml + GUI + ModuleData + DLL/PDB |
+  | `src/UnifiedTroopManager.csproj` | net472 · TW 13 个 DLL + 0Harmony + UIExtenderEx + MCMv5 + TaleWorlds.DotNet + TaleWorlds.MountAndBlade.ViewModelCollection |
+  | `src/UnifiedTroopManagerSubModule.cs` | MBSubModuleBase · Harmony PatchAll + UIExtender · MCM binding at InitialModuleScreen · DebugLogging mirror · OnGameStart 注册 encounter behavior |
+  | `src/Settings/UTMSettings.cs` | AttributeGlobalSettings\<UTMSettings\> · 4 分组（General/Roster/Formation/Advanced）· 8 布尔字段覆盖 DESIGN §7.1 |
+  | `src/Data/PartyPlan.cs` + `TroopFormationPlan.cs` + `RosterSelection.cs` + `PartyPlanStore.cs` | 数据模型骨架 · JSON 持久化留 Phase 3 |
+  | `src/Behaviors/UTMEncounterBehavior.cs` | Encounter menu "Manage Troops" 按钮注入 · click stub |
+  | `src/Patches/*` | 8 处 Harmony patch 骨架（全部 try/catch 单点降级 O-8） |
+  | `src/Util/UTMLog.cs` | 独立 log · `<ModRoot>/Logs/log.txt` · Info/Warn/Error/Debug · 4 级 |
+
+  **Harmony patch target 表**（Phase 2-4 填空）：
+
+  | 文件 | Target |
+  |---|---|
+  | `MapEventSideAllocateTroopsPatch` | `MapEventSide.AllocateTroops` Prefix |
+  | `SpawnLogicAfterStartPatch` | `DefaultBattleMissionAgentSpawnLogic.AfterStart` Postfix |
+  | `SpawnLogicInitPatch` | `DefaultBattleMissionAgentSpawnLogic.Init` Postfix |
+  | `MissionOnBattleSideDeployedPatch` | `Mission.OnBattleSideDeployed` Postfix |
+  | `LordsHallFightOnCreatedPatch` | `LordsHallFightMissionController.OnCreated` Prefix |
+  | `PlayerEncounterFinishPatch` | `PlayerEncounter.FinishEncounterInternal` Prefix |
+  | `OrderOfBattleInitializePatch` | `OrderOfBattleVM.Initialize` Postfix（**不 lock class 不 lock slider**） |
+  | `MissionSpawnTroopPatch` | `Mission.SpawnTroop` Postfix · TargetMethod 反射 |
+
+  **命名空间修正记录**（build 过程发现 · 供未来 Phase 2+ 反射引用）：
+  - `MapEventSide` 在 `TaleWorlds.CampaignSystem.MapEvents`（不是 TaleWorlds.CampaignSystem）
+  - `PlayerEncounter` 在 `TaleWorlds.CampaignSystem.Encounters`
+  - `LordsHallFightMissionController` 在 `TaleWorlds.MountAndBlade.Source.Missions.Handlers`
+  - `OrderOfBattleVM` 在 `TaleWorlds.MountAndBlade.ViewModelCollection.OrderOfBattle`（需要 `TaleWorlds.MountAndBlade.ViewModelCollection.dll` 引用）
+  - `BattleSideEnum` 在 `TaleWorlds.Core`
+  - `Mission.SpawnTroop` 反射需 `TaleWorlds.DotNet.dll` 引用（overload 参数含 `DotNetObject`）
+
+  **构建验证**：`dotnet build src\UnifiedTroopManager.csproj -c Release` → **Build succeeded · 0 Warning · 0 Error · Time 00:00:01.61**。DLL 产出：`src\bin\Release\UnifiedTroopManager.dll` + `.pdb`。
+
+  **Phase 1 验收（等用户实机验证）**：
+  1. 用户跑 `UnifiedTroopManager\deploy.ps1` → 复制到 `E:\SteamLibrary\...\Modules\UnifiedTroopManager\`
+  2. 启动 Bannerlord 原生 launcher · Mods tab 应出现 "Unified Troop Manager" 条目 · 可勾选
+  3. 载入后 in-game 应看到 `[UTM] v0.1.0 scaffold loaded` cyan 信息条
+  4. 打开 MCM (`Options → Mod Options`) 应见 "Unified Troop Manager" 页 · 4 分组 8 字段
+  5. 打开 encounter menu（遭遇任意敌人 · 战斗前）应见 "Manage Troops" 按钮 · 点击弹 stub 提示
+  6. 无 crash · 无 log 报错 · `Modules\UnifiedTroopManager\Logs\log.txt` 生成 · 内含 "log started" + MCM binding 行
+
+  **下一步**：Phase 1 实机 6 项验收全过 → 用户说"启动 Phase 2" → 开始建 Gauntlet Roster UI + MapEventSide filter 实装 + FM Assignments 简版迁移工具
+
+  ---
+
+  ### Phase 2A/2B UI 层日志（2026-09-29 到 2026-09-30 · 30+ 次 deploy · 高强度 UI 调试）
+
+  **✅ 已完成**（本轮 session 尾部状态）：
+
+  - **Phase 2A · UI shell 稳定**（MenuView 架构 · 非 ScreenBase）· Party 木框
+  - **Phase 2B Deploy 1** · 真兵种 + 真 CharacterCode portrait + +/- 按钮
+  - **Deploy A** · 顶部批量按钮 + 排序（Tier · Type Infantry/Skirmisher/Ranged/Cavalry）
+  - **Deploy A4** · `Standard.VerticalScrollbar` 加载成功
+  - **Deploy A5/A6** · 表格布局 · Title 居中 · All Zero/Max 移列头 · button brush
+  - **Deploy B1/B1a** · 右侧 Formation 面板 · 8 个 Formation slot 按钮
+  - **Deploy B2** · 真拖拽 `SliderWidget`（抄 FM `PartyTroopTupleCustomSplitEditor.xml` 3 层结构 · IsDiscrete + ValueInt 双向绑定 Bring）
+  - **Deploy B3** · Formation UX 重构 · 点行聚焦（去 Fmt 按钮）· Formation 标签去 Infantry/Ranged 后缀（误导 · slot 不是类别）· HashSet\<int\> PlannedFormations 支持多编组分裂
+  - **Deploy B4** · 每个 Formation slot 显示分配数 · 整除+余数分配 · PlanSummary "→ I(60) III(60)"
+  - **Deploy B5** · **兵种多选批量编辑模式** · _selectedTroops HashSet · Formation 批量 toggle (allHave→remove/否则→add)
+  - **Deploy B5a** · **手动金色 overlay 高亮** · `StdAssets\rounded_rectangle_9` + `#c7ac8577` + `Frame1Brush` outline · 参照 EquipmentSpawnerMod culture button 模式（`Clan.Members.Sort.1` 单 brush 视觉太弱）
+
+  **架构关键突破**（都存 [[bannerlord-menu-view]] 记忆）：
+  - **MenuView 挂载** · `SandBox.View.Menu.MenuView` + `MenuViewContext.AddMenuView<T>()` 替代 ScreenBase + PushScreen（后者延时 native crash）
+  - **CampaignEvents.OnAfterSessionLaunchedEvent** 才是 menu button 注册的正确时机（OnGameStart 太早 · button 注册成功但从不 poll OnCondition）
+  - **`LeaveType.TroopSelection`** · encounter pre-battle overlay 才渲染的按钮类型（Manage/Continue/Wait 被过滤）
+  - **DataSource + ItemTemplate** 数据绑定在 MenuView 架构下**能用**（CYT 证实 · 之前 ScreenBase 模式下"崩"是竞态错误 · 不是数据绑定问题）
+
+  **崩过的坑**（供未来避）：
+  - `FillBar MaxAmount="@X"` **绑动态属性** → native crash · vanilla 期望 MaxAmount=100 固定 + InitialAmount 传 percent
+  - `Standard.VerticalScrollbar` **包在 &lt;Widget Id="Scrollbar"&gt;** → Id 冲突（Standard prefab 内部已有 Scrollbar 子 widget）
+  - `Popup.OptionButton.Default` brush 的 selected 视觉太弱 · 用户看不出高亮 · 需手动 overlay
+
+  ---
+
+  ### 🐛 Phase 2B 收尾 · 已知未修 Bug（**下 session 首件事**）
+
+  **Bug 报告日期**：2026-09-30 · Deploy B5a 后
+
+  **Bug 1 · 兵种行高亮只作用于第一个（auto-focus 的那个）**
+  - 症状：UTM 界面打开时 auto-focus 第一个兵种 · 它显示金色高亮 ✓
+  - 点击其他兵种行 · **完全无反应** · 无高亮出现
+  - 无法把多个兵种加入 selection set
+
+  **Bug 2 · Formation 分配跟随 Bug 1 失效**
+  - 由于只能选中第一个兵种 · 修改 Formation 分配也只影响第一个
+  - 用户尝试点第二个兵种再改 Formation：要么第一个的 formation 状态还在 · 要么直接被覆盖（因为实际操作对象仍是第一个）
+
+  **可能根因（未验证）**：
+
+  1. **OnTroopFocused 未被调用** —— DataSource 数据绑定下 · 非第一个 entry 的 `Command.Click="ExecuteFocus"` 没路由到该 entry 的 ExecuteFocus。可能是 XML ButtonWidget 布局问题 · 或 Gauntlet 数据绑定的 click 路由 bug
+  2. **IsFocused 属性变化未通知 UI** —— OnTroopFocused 有调用 · entry.IsFocused = true 生效但 Gauntlet 没重新渲染
+  3. **HashSet<UTMTroopEntryVM> 相等比较** —— 默认引用相等应该 OK · 但需 verify
+  4. **AutoFocus 触发的 first troop 与后续 click 状态混淆** —— 可能 auto-focus 后 first troop 就被"stuck" 在 selected · 后续 toggle 逻辑失效
+
+  **下 session 首 30 秒诊断步骤**：
+
+  1. 在 `OnTroopFocused` 里加 UTMLog.Info · 打印 entry.TroopStringId · 确认是否被非第一个 entry 调用
+  2. 若日志没出现 → click 事件路由问题 · 检查 XML ButtonWidget 是否需要 `DoNotPassEventsToChildren` 或事件冒泡设置
+  3. 若日志出现但视觉无变化 → IsFocused 通知问题 · 检查 OnPropertyChanged 触发时机 · MBBindingList item 属性变化的 UI 刷新
+  4. 若两者都对但集合状态错 → 检查 HashSet 逻辑 · 打印 _selectedTroops.Count 变化
+  5. 也可能是 DataSource 每次重建导致 entry 实例变化 · 引用相等失效
+
+  **修复策略选项**：
+  - Option A: 简化为单选模式（去掉多选 · 每次点选一个）· 用户可再想别的多选交互
+  - Option B: 排查根因 · 修多选 · 保持当前 UX 设计
+  - Option C: 换 UX · 每行加显式 "Include in batch" checkbox · 明确区分"聚焦编辑"和"加入批量"
+
+  **代码位置**：
+  - `src/UI/UTMTroopManagerVM.cs` · `OnTroopFocused` 方法 · line ~140-170
+  - `src/UI/UTMTroopEntryVM.cs` · `ExecuteFocus` 方法 · IsFocused 属性
+  - `GUI/Prefabs/UTMTroopManager.xml` · row ButtonWidget 结构
+
+  **附带待做（下一批 UI 完成后）**：Deploy B6 · **真战局映射**（`MapEventSide.AllocateTroops` filter + `Mission.SpawnTroop` Postfix + `PlayerEncounter.Finish` reset）· 让 Save 真的影响战斗
+
+  ---
+
+- [x] ~~**🔴 OSA HeadArmor v2 决议 deploy 断层修复**~~ · **✅ 2026-09-28 收官**（1 session 完成 · manual_override.xml 420 → 843 · +423 件）
+
+  **实际执行**（2026-09-28）：全 3 文化 HeadArmor 一次 session 完成 append + rerun · manual_override.xml **420 → 843 件**（超原目标 800）· pipeline 0 missing 警告。
+
+  **收官分布**（4 批 Empire + 1 批 Vlandia + 1 批 Battania）：
+
+  | 批次 | 内容 | 件数 |
+  |---|---|---:|
+  | Empire A1 Pilot | Provocator 4 + Kettle 11（含 Iron Kettle 倒挂修复） | 15 |
+  | Empire A2 | Cataphract v3 12 + Roman Helmet 12（含头>身>臂追溯） | 24 |
+  | Empire A3 | Crowned/Palatine 5 + 特殊 4 + Ridge/Intercisa 6 + Legatus 3 + Conical/Pointed 8 + TV/AR 混合 14 | 40 |
+  | Empire A4 | Spangenhelm 27 + Crested 8 + Secutor 6 + Sagittarius 8 + 杂项 3 | 52 |
+  | Empire Lord/Nasal/Elite | Lord 12 + Nasalhelm 3 + Elite 4 | 19 |
+  | Vlandia B | 全 15 家族 A-O | 128 |
+  | Battania C | 全 15 家族 A-O | 145 |
+  | **总计** | | **423** |
+
+  **验证 Iron Kettle 修复**（`OSABalance_manual_override.xml` grep 确认）：
+  - `khuzait_ironlame_kettle` = 78/30/22 wt=3.8 ✓
+  - `khuzait_spiked_kettle` = 95/30/25 wt=3.9 ✓
+  - Iron Kettle (78 head) 现严格强于 Light Roundkettle vanilla (74/0/0/1.3) → 命名倒挂修复
+
+  **7 文化跨顶点分层不变**（设计层健康 · 执行层归位）：Nord 155 > Sturgia 150 > Khuzait 148 > Empire 144 > Vlandia 140 > Aserai 135 > Battania 121
+
+  **遗留 🔵 log-only**（合规保留 · 不属断层）：
+  - Empire 帽/头饰 19 件（铁律 11 cosmetic 低价值 · v1 现值可接受）
+  - `AR_empire_lord_helmet_c` 1 件（v1 script 跳过 · 用户 in-game 确认存在再补）
+  - Empire/Vlandia/Battania Cape/BodyArmor/HandArmor/LegArmor/HorseHarness 家族：本次 P0 仅覆盖 HeadArmor · 其他类别决议已归档但仍 log-only · 若实机发现类似断层再启动 Batch D+
+
+  **用户下一步（收尾 · 需用户手动）**：
+  1. 关游戏
+  2. 跑 `deploy.ps1` → 复制新 `OSABalance_manual_override.xml` (843 件) + `OSABalance_shield_override.xml` (OSW Shield P1 114 件) + `SubModule.xml v1.2.0` 到 game modules
+  3. 重启游戏
+  4. In-game 验证：Iron Kettle 显示应 78 head（原 43）· Empire Cataphract 精英各变体 head 110-140
+
+  **附带完成 · OSW Shield P1 114 件同步 deploy**（[[osw-v2-backlog]] P0 一并收官）：`OSABalance_shield_override.xml` 已在源码 `ModuleData/` · SubModule.xml 第 4 XmlNode 已注册 · `deploy.ps1` 会自动同步。
+
+  ---
+
+  ### 触发回顾（保留供未来 audit）
+
+  用户 in-game 观察到 `khuzait_ironlame_kettle` "Imperial Closed Iron Kettle" (Tier 3) 反而弱于 `roundkettle_over_imperial_leather` "Light Roundkettle over Leather" (Tier 4) —— 命名倒挂。侦查发现 Iron Kettle live 值 43/18/16 而 v2 决议 78/30/22，落差 head 35 点。
+
+  **规模判定（2026-09-27 spot audit 12 样本 · 7 命中）**：BALANCE_V2_LOG.md 里 **500-800 件 v2 决议标为 🔵 log-only 但从未 deploy 到 `manual_override.xml`**。这不是"归档 = v1 已接近 v2"（铁律 11）· 是**deploy 断层 · 手工审完但没跟进部署**。manual_override.xml 目前 420 件（memory 老数字 323 已过时）· 主要覆盖 Khuzait TV/AR/DZ 系 + Nord NavalDLC + AR_horse · **Empire / Vlandia / Battania HeadArmor 大面积漏 deploy**。
+
+  **数据流**：
+  - 生效 pipeline: `generate.ps1 (tier 系数) → OSABalance_armor_override.xml (742 KB, v1 auto-generated, 全 1500+ 件)`
+  - 手工 pipeline: `manual_override.ps1 $decisions hashtable → OSABalance_manual_override.xml (196 KB, 420 件, v2 覆盖 v1)`
+  - 加载顺序: armor_override → manual_override 后者覆盖前者
+  - **log-only 状态**: v2 决议只在 `BALANCE_V2_LOG.md` markdown 里 · **未进入 $decisions** · 未 rerun · **game 里跑的仍是 v1**
+
+  **具体问题案例**（Empire 部分）：
+  - Kettle 11 件：v1 head 43-88 · v2 head 78-97 · 全 log-only（Iron Kettle 是典型倒挂）
+  - Roman 12 件：v1 body 34 arm 29（arm > body 违反头>身>臂）· v2 body 12 arm 0（正解）· 全 log-only
+  - Lord/Cataphract ~25 件：v1 head 74-95 · v2 head 122-140 · **精英欠强 40-50 点**· 全 log-only
+  - Battania 155 件：v1 全 body/arm=0 只 head 有值 · v2 补 body/arm 12-25 · 全 log-only
+
+  **7 文化跨顶点分层（v2 决议目标 · 已成型）**：Nord 155 > Sturgia 150 > Khuzait 148 > Empire 144 > Vlandia 140 > Aserai 135 > Battania 121 · 世界观梯度合理 · 精工线 override 有据 · **设计层完全健康 · 只是执行层大规模断层**。
+
+  **下 session 首 30 秒操作**：
+  1. 打开 `OpenSourceArmouryRBMBalance/BALANCE_V2_LOG.md` · 定位 Empire HeadArmor 章节（line 159-1400 附近）
+  2. 打开 `OpenSourceArmouryRBMBalance/src/manual_override.ps1` · 定位 `$decisions` hashtable
+  3. 按 ROI 顺序开工：**A · Empire 165 件优先** → B · Vlandia 130 件 → C · Battania 155 件
+  4. 用 PowerShell 从 log markdown 表格提取每家族 v2 决议（regex 抓 `| id | ... | **h/b/a/wt** |`）· 转成 `$decisions['id'] = @{h=X; b=X; a=X; wt=X}` 追加到脚本
+  5. rerun `manual_override.ps1` · manual_override.xml 从 420 → ~500 (Empire 完) → ~630 (Vlandia 完) → ~800 (Battania 完)
+  6. 复制到 game modules · 重启测
+
+  **工作量估计**：
+  - Empire 165 件抽取 + append + regenerate + deploy: **~30 min**（半自动化脚本 + 少量 edge case 校验）
+  - Vlandia 130 件（分档最规整）: ~20 min
+  - Battania 155 件（v1 全 body/arm=0 · v2 补数）: ~25 min
+  - **总计 1.5 session** 可全部 deploy
+
+  **风险**：脚本从 markdown 表格抽取可能有 edge case（vanilla override / 追溯修正 / 特殊 v3 补丁 / cape 特殊字段）· 需人工校验少量条目
+
+  **顺便待做**：OSW Shield P1 (114 件) 已 2026-09-25 完成但也未 deploy · `OSABalance_shield_override.xml` (110 KB) 存在于源码但缺 game modules 副本 · SubModule.xml v1.2.0 已注册第 4 XmlNode 但未同步。**同步 deploy 顺便解决**。
+
+  ---
+
+- [ ] **~~🔴 BannerlordCheats v3.0.3.0 稳定化~~** · **✅ 2026-09-27 基本收官**（详见 §53 · Round 4 稳定 · 81/163 patch 启用 · 项目降为按需微调 · 剩 50 skip 可按需精准启用）
+
+  **📖 完整二分工作手册**：[`CheatsGuard/CHEATS_STABILIZATION_PLAN.md`](./CheatsGuard/CHEATS_STABILIZATION_PLAN.md)（session-ready · 含 163 patch 完整清单 + Round 1 copy-paste config + 决策树 + 中止条件）
+
+  **下 session 首 30 秒操作**：见 PLAN §7 · 直接编辑 `Modules/CheatsGuard/ModuleData/config.xml` · 用 PLAN §2 的 Round 1 块覆盖 SkipClasses · 启动游戏测试。
+
+  **当前状态（2026-09-27 更新 · Round 4 · ✅ 稳定 · 项目基本收官）**：**Round 1 + Money wrapper + TroopWages + Combat non-FAIL 50 项** · `SkipAllCheatsPatches=false` · **82 SkipClasses** = 15 always-skip non-Combat FAIL + 17 Combat always-skip FAIL + 50 remaining（Characters 10 / Party 10 / Settlements 17 / General 13）· **启用 81 patch**（Round 1 安全批 30 + `Party.TroopWagesPercentage` + Combat non-FAIL 50）· **用户 2026-09-27 实机确认：Combat 50 项全启用无崩 · Invincible / DamageTakenPercentage / HealthRegeneration 三项正常生效**。原 §53 "运行时崩" 预警**证伪** —— 32 always-skip FAIL 涵盖了所有真正致命的 signature 不匹配 patch · 剩下 131 全部安全可装。剩余 50 待测（Characters/Party/Settlements/General）可按需精准启用 · 但不是 P0 阻塞。
+
+  **目标**：二分定位崩游戏的少数 patch → 加入 skip list → 恢复剩余 ~120+ 功能。
+
+  **诊断层次已备**（CheatsGuard v1.3 现成能力）：
+  - Prefix + Finalizer on `PatchClassProcessor.Patch()`：捕获安装阶段异常
+  - Prefix + Finalizer on `PatchClassProcessor` 构造器：捕获 TypeLoadException 等 pre-Patch 异常
+  - 全类型 log · 精准记录每个 patch 状态
+  - `SkipAllCheatsPatches` 核选项 · 一键屏蔽所有 Cheats patch
+  - `SkipClasses` 精细列表 · 支持逐个屏蔽
+  - 已 skip 21 个签名 FAIL 的 patch（非致命 · 已 catch · 但 v1.3 也确认这批不生效即可）
+
+  **待做工作**（二分定位算法）：
+  1. **分类分批**（8 大类 · Cheats 类命名空间）：Combat / Party / Settlements / Kingdom / Map / Experience / General(hotkeys) / Characters / Clan / Army / Sieges / Smithing / Workshops / Inventory
+  2. **一次启用一批** · 其他全 skip · 观察是否崩
+     - 崩 = 该批含元凶 · 二分细化
+     - 稳 = 该批全安全 · 加入 whitelist · 转下批
+  3. **收敛到具体 patch class** · 加入 SkipList
+  4. **归档 skip list** 到 `CheatsGuard/README.md` · 未来 Cheats 版本升级可复用（虽然 v3.0.3.0 已是最新）
+
+  **工作量估计**：`log_2(163) × ~2 min per test = 8 rounds × 2 min = ~20 min gameplay 测试 + 10 min config 编辑 · 半个 session`。
+
+  **可能的元凶预测**（根据 §53 已知 FAIL patch 家族）：
+  - **General.EnableHotkey*** (13 patches)：注册 native input hooks · 若某 input API 变了 · 触发时崩
+  - **Combat.\_Sandbox** 后缀 patch：多个失败（已 skip）· 但**其他 Combat patch 可能也有隐患**
+  - **Party.PartyKnockoutOrKilled** 家族：改战斗结束 troop 处置 · 若与 RBM/Retinues 冲突可能崩
+
+  **决策工作流**：每轮我给用户"批准启用哪些 · skip 哪些" · 用户 launcher 内测 · 反馈崩没崩。
+
+- [x] ~~**🔴 OSW（Open Source Weaponry）v2 武器平衡**~~ · **P1 Shield 段 2026-09-25 完成**（🟡 pending deploy · 决策分叉 α "只抬盾" · blade/piece/edge/crafted 不动）· **↓ 降为 P1**（用户 2026-09-26 优先度重排）
 
   **背景**：OSA armor v2 已 2026-09-24 收官（1835 件决议 + 323 件 XML deploy · 7 文化含 Nord NavalDLC）· 但装备生态存在"重甲飘刀"隐患——铁浮屠头盔 148 + Heavy Lamellar body 138 顶配的玩家 · 武器可能欠强 · 整套装备手感不匹配。OSW workshop 内容尚未纳入 v2 手工审。
 
@@ -2547,9 +3113,39 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
   | Aserai 波斯萨珊 | Mastercrafted Hauberk 138 · Immortal's 135 | 波斯弯刀（scimitar）/ Darshi 长矛 / 波斯复合弓 |
   | Nord 精英维京 | Berserker Reinforced 155 · Nord King 115 | Berserker 战斧 / Huscarl 剑 / 维京长斧 / 掷矛 |
 
-  **下一步（下一对话首件事）**：**侦查阶段** · 扫 OSW 全数据 · 对比 RBM_WS baseline · 生成 imbalance 报告 · 用户决策是否走全量平衡 or 只补关键件
+  ---
 
-  **不做侦查前的先决判断**：如果 RBM_WS 已经充分覆盖 OSW 盾牌 · 那本项目可能只需处理 CraftingPieces 32 件深化 + 9 件边缘武器（工作量大幅缩小）；反之则走全 174 件。**侦查决定项目实际规模**。
+  **进度实况**（2026-09-25 结）：
+
+  **侦查阶段 ✅**（`OSW_SCOUT_REPORT.md` → `OSW_BASELINE_SCAN.md` 迭代修正版）
+  - RBM_WS 不是通用武器 baseline，是 Nord/NavalDLC 内容包（113 armor + 28 weapons · 只 9 shields · 全 nord）
+  - OSW ∩ RBM = 0：AR_*/AD_* 全新命名空间 · 零继承 RBM 平衡
+  - **v1 报告漏掉 140 件 OSW CraftedItem**（真实 OSW = 313 件 · 不是 173）
+  - 补建 `Vanilla_Reference/`（scripts/extract_vanilla.ps1 + 4 CSV · 1083 Items + 530 CraftedItems + 1665 CraftedPieces + 1390 CraftingPieces）
+  - 有效 baseline 澄清：Shield SP-effective LargeShield n=70 · hp median 570 / p10=380 p90=750 · OSW 现值 median 340 处于 p8-p30 · **系统性欠强** ✓
+  - Blade 现值贴合 vanilla-unpatched 段（RBM 只 patch 55% blades）· 不是 OSW 特有热值 · 决策分叉出现
+
+  **P1 Shield ✅**（2026-09-25 · 🟡 pending deploy）
+  - 用户决策 **分叉 α · "只抬盾不动 blade"**：blade 已对齐 vanilla 未 patch 段 · nerf 会破坏 OSW 原设计 · 抬盾单向修复系统性欠强
+  - 方案 v0.2 落地：3 轴分类（Tier by hp bucket / WeightClass by weight / Material by ba）· 25 非空组
+  - Tier hp 曲线：380/480/570/700/750/800（贴 SP-effective 百分位 p10-p95+）
+  - Weight 修正：Buckler×0.85 / RoundLight×0.95 / RoundStd×1.0 / HeavyScutum×1.10
+  - Wood/Reinforced ba 双曲线：wood 1/2/3/3/4/4 · reinforced 3/4/5/6/7/8
+  - Pipeline：新增 `src/manual_override_shield.ps1`（独立于 armor pipeline · 处理 Weapon sub-element）
+  - 输出：`ModuleData/OSABalance_shield_override.xml`（113 KB · 114 Item 100% 覆盖）
+  - SubModule.xml 已注册第 4 个 XmlNode
+  - 全部 ↑ 抬升 · 无一件下调 · 无越 vanilla p95 上限
+  - **详见 BALANCE_V2_LOG.md `## OSW Shield Balance` 章节**（114 件完整决议 + 分组规则）
+  - **待用户 deploy.ps1 后生效** · 建议先测 1 场大会战对比感受
+
+  **P2–P6 延后**（用户 α 决策明示不做）：
+  - P2 Blade 18：已对齐 vanilla-unpatched · 保 OSW 原设计
+  - P3 Guard/Handle/Pommel 32：RBM 未 patch · vanilla-scale
+  - P4 边缘武器 9：exotic · 独立
+  - P5 世界观联动：本次未做
+  - P6 已并入 P1 pipeline · 完成
+
+  **下一步**：用户 `deploy.ps1` → 主力机 · 实测 1 场大会战验证盾对箭/近战的抗性感受是否符合"生态一致"预期。若 T4-T6 盾感受过强/过弱 · 微调 tier hp 表即可（改数字重跑生成器）。
 
 ---
 

@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  UnifiedTroopManager · Phase 2B Deploy B1 · right-side Formation panel
+    · Row layout unchanged from A6 except: adds "Fmt" button after Max · focuses
+      the row for formation editing.
+    · Main data area now split horizontally: left = existing data + scrollbar,
+      right = 400px Formation editor panel.
+    · Formation panel: header text (focused troop name) + 8 buttons for
+      Formation I..VIII. Selecting a Formation stores it on the focused row's
+      PlannedFormationIndex; Save logs plans (persistence lands in Deploy B2).
+-->
+<Prefab>
+  <VisualDefinitions>
+  </VisualDefinitions>
+  <Window>
+
+    <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+            Sprite="BlankWhiteSquare_9" Color="#000000AA">
+      <Children>
+
+        <Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                SuggestedWidth="1720" SuggestedHeight="920"
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                Sprite="SPGeneral\GameMenu\troop_selection_panel">
+          <Children>
+
+            <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                       StackLayout.LayoutMethod="VerticalTopToBottom"
+                       MarginTop="70" MarginBottom="60" MarginLeft="90" MarginRight="90">
+              <Children>
+
+                <!-- ============ TITLE ============ -->
+                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                            SuggestedHeight="44"
+                            Text="Manage Troops"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Brush.FontSize="26" Color="#F4E1C4FF" />
+
+                <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                        SuggestedHeight="2"
+                        Sprite="BlankWhiteSquare_9" Color="#966D2Cff"
+                        MarginTop="6" MarginBottom="8" />
+
+                <!-- ============ TOOLBAR ============ -->
+                <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                           SuggestedHeight="46"
+                           StackLayout.LayoutMethod="HorizontalLeftToRight">
+                  <Children>
+                    <ButtonWidget DoNotPassEventsToChildren="true"
+                                  WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                  SuggestedWidth="140" SuggestedHeight="40"
+                                  Brush="Clan.Members.Sort.1"
+                                  Command.Click="ExecuteSortByTier" VerticalAlignment="Center">
+                      <Children>
+                        <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Brush.FontSize="18" Text="Sort: Tier" Color="#F4E1C4FF" />
+                      </Children>
+                    </ButtonWidget>
+
+                    <ButtonWidget DoNotPassEventsToChildren="true"
+                                  WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                  SuggestedWidth="140" SuggestedHeight="40"
+                                  Brush="Clan.Members.Sort.1"
+                                  Command.Click="ExecuteSortByType" VerticalAlignment="Center" MarginLeft="6">
+                      <Children>
+                        <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Brush.FontSize="18" Text="Sort: Type" Color="#F4E1C4FF" />
+                      </Children>
+                    </ButtonWidget>
+
+                    <ButtonWidget DoNotPassEventsToChildren="true"
+                                  WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                  SuggestedWidth="120" SuggestedHeight="40"
+                                  Brush="Clan.Members.Sort.1"
+                                  Command.Click="ExecuteReset" VerticalAlignment="Center" MarginLeft="6">
+                      <Children>
+                        <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Brush.FontSize="18" Text="Reset" Color="#F4E1C4FF" />
+                      </Children>
+                    </ButtonWidget>
+
+                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                Text="@SortLabel"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Brush.FontSize="16" Color="#C0A070FF" MarginRight="10" />
+                  </Children>
+                </ListPanel>
+
+                <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                        SuggestedHeight="2"
+                        Sprite="BlankWhiteSquare_9" Color="#966D2Cff"
+                        MarginTop="6" MarginBottom="8" />
+
+                <!-- ============ MAIN CONTENT: LEFT (data) + RIGHT (formation panel) ============ -->
+                <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                           StackLayout.LayoutMethod="HorizontalLeftToRight">
+                  <Children>
+
+                    <!-- ==== LEFT: column headers + data + scrollbar ==== -->
+                    <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                               StackLayout.LayoutMethod="VerticalTopToBottom">
+                      <Children>
+
+                        <!-- Column headers (aligned to data columns below) -->
+                        <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                   SuggestedHeight="40"
+                                   StackLayout.LayoutMethod="HorizontalLeftToRight">
+                          <Children>
+                            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                    SuggestedWidth="60" MarginLeft="4" />
+
+                            <TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                        SuggestedWidth="260" Text="Troop Name"
+                                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                                        Brush.FontSize="16" Color="#B08D5AFF" MarginLeft="14" />
+
+                            <TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                        SuggestedWidth="40" Text="Tier"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Brush.FontSize="16" Color="#B08D5AFF" />
+
+                            <TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                        SuggestedWidth="120" Text="Count"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Brush.FontSize="16" Color="#B08D5AFF" />
+
+                            <!-- Batch actions header · sits above per-row controls column -->
+                            <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                       StackLayout.LayoutMethod="HorizontalLeftToRight"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center">
+                              <Children>
+                                <ButtonWidget DoNotPassEventsToChildren="true"
+                                              WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                              SuggestedWidth="100" SuggestedHeight="36"
+                                              Brush="Clan.Members.Sort.1"
+                                              Command.Click="ExecuteAllZero" VerticalAlignment="Center">
+                                  <Children>
+                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                Brush.FontSize="16" Text="All Zero" Color="#F4E1C4FF" />
+                                  </Children>
+                                </ButtonWidget>
+
+                                <ButtonWidget DoNotPassEventsToChildren="true"
+                                              WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                              SuggestedWidth="100" SuggestedHeight="36"
+                                              Brush="Clan.Members.Sort.1"
+                                              Command.Click="ExecuteAllMax" VerticalAlignment="Center" MarginLeft="6">
+                                  <Children>
+                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                Brush.FontSize="16" Text="All Max" Color="#F4E1C4FF" />
+                                  </Children>
+                                </ButtonWidget>
+
+                                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                            Text="Count Controls + Fmt"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Brush.FontSize="16" Color="#B08D5AFF" MarginLeft="10" />
+                              </Children>
+                            </ListPanel>
+                          </Children>
+                        </ListPanel>
+
+                        <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                SuggestedHeight="1"
+                                Sprite="BlankWhiteSquare_9" Color="#7A5620FF"
+                                MarginTop="2" MarginBottom="6" />
+
+                        <!-- Data list + scrollbar -->
+                        <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                   StackLayout.LayoutMethod="HorizontalLeftToRight">
+                          <Children>
+                            <ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                             AutoHideScrollBars="false"
+                                             ClipRect="ClipRect"
+                                             InnerPanel="ClipRect\InnerContent"
+                                             VerticalScrollbar="..\UTMScrollbarHost\Scrollbar">
+                              <Children>
+                                <Widget Id="ClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                        ClipContents="true">
+                                  <Children>
+                                    <ListPanel Id="InnerContent"
+                                               WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                               HorizontalAlignment="Left"
+                                               StackLayout.LayoutMethod="VerticalTopToBottom"
+                                               DataSource="{Troops}">
+                                      <ItemTemplate>
+                                        <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                                   SuggestedHeight="100"
+                                                   StackLayout.LayoutMethod="HorizontalLeftToRight"
+                                                   MarginBottom="6">
+                                          <Children>
+
+                                            <!-- Whole left cluster is one clickable button that toggles the
+                                                 row into/out of the multi-select set. Manual highlight overlay
+                                                 (gold background + Frame1Brush outline) becomes visible on
+                                                 IsFocused so selection is obvious. Copy of the pattern used by
+                                                 EquipmentSpawnerMod culture buttons — Clan.Members.Sort.1
+                                                 alone renders too subtle for a wide row. -->
+                                            <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                                          SuggestedWidth="460" SuggestedHeight="90"
+                                                          Brush="Clan.Members.Sort.1"
+                                                          Command.Click="ExecuteFocus"
+                                                          IsSelected="@IsFocused"
+                                                          UpdateChildrenStates="true"
+                                                          VerticalAlignment="Center">
+                                              <Children>
+                                                <Widget IsVisible="@IsFocused"
+                                                        WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                        Sprite="StdAssets\rounded_rectangle_9" Color="#c7ac8577" />
+                                                <BrushWidget IsVisible="@IsFocused"
+                                                             WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                             Brush="Frame1Brush" />
+                                                <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                           StackLayout.LayoutMethod="HorizontalLeftToRight">
+                                                  <Children>
+                                                    <ImageIdentifierWidget DataSource="{Visual}"
+                                                                           WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                                                           SuggestedWidth="76" SuggestedHeight="76"
+                                                                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                                           ImageId="@Id"
+                                                                           TextureProviderName="@TextureProviderName"
+                                                                           AdditionalArgs="@AdditionalArgs"
+                                                                           DoNotAcceptEvents="true"
+                                                                           MarginLeft="4" />
+
+                                                    <TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                                                SuggestedWidth="240" Text="@TroopName"
+                                                                HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                                Brush.FontSize="18" Color="#F4E1C4FF" MarginLeft="14"
+                                                                DoNotAcceptEvents="true" />
+
+                                                    <TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                                                SuggestedWidth="40" Text="@TierLabel"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Brush.FontSize="18" Color="#C0A070FF"
+                                                                DoNotAcceptEvents="true" />
+
+                                                    <TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                                                SuggestedWidth="100" Text="@CountText"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Brush.FontSize="20" Color="#E4C888FF"
+                                                                DoNotAcceptEvents="true" />
+                                                  </Children>
+                                                </ListPanel>
+                                              </Children>
+                                            </ButtonWidget>
+
+                                            <!-- Controls column · vertical: 7 buttons on top row, SliderWidget below -->
+                                            <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                       StackLayout.LayoutMethod="VerticalTopToBottom"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center">
+                                              <Children>
+
+                                                <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                                           SuggestedHeight="40"
+                                                           StackLayout.LayoutMethod="HorizontalLeftToRight"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                  <Children>
+                                                <ButtonWidget DoNotPassEventsToChildren="true"
+                                                              WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                                              SuggestedWidth="46" SuggestedHeight="34"
+                                                              Brush="Clan.Members.Sort.1"
+                                                              UpdateChildrenStates="true"
+                                                              Command.Click="ExecuteZero" VerticalAlignment="Center" MarginLeft="4">
+                                                  <Children>
+                                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Brush.FontSize="16" Text="0" Color="#F4E1C4FF" />
+                                                  </Children>
+                                                </ButtonWidget>
+
+                                                <ButtonWidget DoNotPassEventsToChildren="true"
+                                                              WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                                              SuggestedWidth="46" SuggestedHeight="34"
+                                                              Brush="Clan.Members.Sort.1"
+                                                              Command.Click="ExecuteDecrementFive" VerticalAlignment="Center" MarginLeft="4">
+                                                  <Children>
+                                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Brush.FontSize="16" Text="-5" Color="#F4E1C4FF" />
+                                                  </Children>
+                                                </ButtonWidget>
+
+                                                <ButtonWidget DoNotPassEventsToChildren="true"
+                                                              WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                                              SuggestedWidth="40" SuggestedHeight="34"
+                                                              Brush="Clan.Members.Sort.1"
+                                                              Command.Click="ExecuteDecrement" VerticalAlignment="Center" MarginLeft="4">
+                                                  <Children>
+                                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Brush.FontSize="22" Text="-" Color="#F4E1C4FF" />
+                                                  </Children>
+                                                </ButtonWidget>
+
+                                                <ButtonWidget DoNotPassEventsToChildren="true"
+                                                              WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                                              SuggestedWidth="40" SuggestedHeight="34"
+                                                              Brush="Clan.Members.Sort.1"
+                                                              Command.Click="ExecuteIncrement" VerticalAlignment="Center" MarginLeft="4">
+                                                  <Children>
+                                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Brush.FontSize="22" Text="+" Color="#F4E1C4FF" />
+                                                  </Children>
+                                                </ButtonWidget>
+
+                                                <ButtonWidget DoNotPassEventsToChildren="true"
+                                                              WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                                              SuggestedWidth="46" SuggestedHeight="34"
+                                                              Brush="Clan.Members.Sort.1"
+                                                              Command.Click="ExecuteIncrementFive" VerticalAlignment="Center" MarginLeft="4">
+                                                  <Children>
+                                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Brush.FontSize="16" Text="+5" Color="#F4E1C4FF" />
+                                                  </Children>
+                                                </ButtonWidget>
+
+                                                <ButtonWidget DoNotPassEventsToChildren="true"
+                                                              WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                                              SuggestedWidth="52" SuggestedHeight="34"
+                                                              Brush="Clan.Members.Sort.1"
+                                                              Command.Click="ExecuteMax" VerticalAlignment="Center" MarginLeft="4">
+                                                  <Children>
+                                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Brush.FontSize="16" Text="Max" Color="#F4E1C4FF" />
+                                                  </Children>
+                                                </ButtonWidget>
+
+                                                <!-- Plan summary · shows current formation assignment at a glance -->
+                                                <TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                                            SuggestedWidth="110"
+                                                            Text="@PlanSummary"
+                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                            Brush.FontSize="16" Color="#B08040FF"
+                                                            MarginLeft="10" />
+                                                  </Children>
+                                                </ListPanel>
+
+                                                <!-- Draggable count slider · copied structure from FM
+                                                     PartyTroopTupleCustomSplitEditor.xml. IsDiscrete = int
+                                                     snap · ValueInt two-way binding writes to Bring on
+                                                     drag which fires onCountChanged (Total updates live). -->
+                                                <SliderWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                                              SuggestedHeight="22"
+                                                              VerticalAlignment="Center"
+                                                              MarginTop="6" MarginLeft="20" MarginRight="20"
+                                                              DoNotUpdateHandleSize="true"
+                                                              Filler="TargetFiller"
+                                                              Handle="TargetHandle"
+                                                              IsDiscrete="true"
+                                                              MinValueInt="0"
+                                                              MaxValueInt="@MaxAvailable"
+                                                              ValueInt="@Bring">
+                                                  <Children>
+                                                    <BrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                                                 SuggestedHeight="12" VerticalAlignment="Center"
+                                                                 Sprite="General\Slider\slider_inner_canvas" />
+                                                    <BrushWidget Id="TargetFiller"
+                                                                 WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                                                 SuggestedHeight="18" VerticalAlignment="Center"
+                                                                 Sprite="General\Slider\slider_fill" />
+                                                    <ImageWidget Id="TargetHandle"
+                                                                 WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                                                 SuggestedWidth="12" SuggestedHeight="22"
+                                                                 HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                                 Brush="SliderHandle" />
+                                                  </Children>
+                                                </SliderWidget>
+
+                                              </Children>
+                                            </ListPanel>
+
+                                          </Children>
+                                        </ListPanel>
+                                      </ItemTemplate>
+                                    </ListPanel>
+                                  </Children>
+                                </Widget>
+                              </Children>
+                            </ScrollablePanel>
+
+                            <Standard.VerticalScrollbar Id="UTMScrollbarHost"
+                                                        WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                                        SuggestedWidth="20"
+                                                        VerticalAlignment="Center" MarginLeft="6" />
+                          </Children>
+                        </ListPanel>
+
+                      </Children>
+                    </ListPanel>
+
+                    <!-- ==== RIGHT: Formation panel · fixed 400px ==== -->
+                    <ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                               SuggestedWidth="400"
+                               StackLayout.LayoutMethod="VerticalTopToBottom"
+                               MarginLeft="20">
+                      <Children>
+                        <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                    SuggestedHeight="30"
+                                    Text="@FormationPanelHeader"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Brush.FontSize="18" Color="#F4E1C4FF" />
+
+                        <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                    SuggestedHeight="26"
+                                    Text="@FormationDistributionSummary"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Brush.FontSize="14" Color="#C0A070FF"
+                                    MarginTop="4" />
+
+                        <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                SuggestedHeight="1"
+                                Sprite="BlankWhiteSquare_9" Color="#7A5620FF"
+                                MarginTop="4" MarginBottom="8" />
+
+                        <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                   HorizontalAlignment="Center"
+                                   StackLayout.LayoutMethod="VerticalTopToBottom"
+                                   DataSource="{FormationSlots}">
+                          <ItemTemplate>
+                            <!-- Formation slot button · same manual highlight overlay pattern as
+                                 the row button so both selection visuals match. -->
+                            <ButtonWidget DoNotPassEventsToChildren="true"
+                                          WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                          SuggestedHeight="46"
+                                          Brush="Clan.Members.Sort.1"
+                                          Command.Click="ExecuteSelect"
+                                          IsSelected="@IsCurrent"
+                                          UpdateChildrenStates="true"
+                                          MarginBottom="6">
+                              <Children>
+                                <Widget IsVisible="@IsCurrent"
+                                        WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                        Sprite="StdAssets\rounded_rectangle_9" Color="#c7ac8577" />
+                                <BrushWidget IsVisible="@IsCurrent"
+                                             WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                             Brush="Frame1Brush" />
+                                <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                           StackLayout.LayoutMethod="HorizontalLeftToRight">
+                                  <Children>
+                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                Brush.FontSize="18" Text="@Label" Color="#F4E1C4FF" />
+                                    <TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                                SuggestedWidth="70"
+                                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                Brush.FontSize="18" Text="@AssignedText" Color="#E4C888FF"
+                                                MarginRight="16" />
+                                  </Children>
+                                </ListPanel>
+                              </Children>
+                            </ButtonWidget>
+                          </ItemTemplate>
+                        </ListPanel>
+                      </Children>
+                    </ListPanel>
+
+                  </Children>
+                </ListPanel>
+
+                <!-- ============ FOOTER ============ -->
+                <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                           SuggestedHeight="60"
+                           StackLayout.LayoutMethod="HorizontalLeftToRight"
+                           MarginTop="10">
+                  <Children>
+                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                Text="@TotalText"
+                                HorizontalAlignment="Left" VerticalAlignment="Center"
+                                Brush.FontSize="20" Color="#F4E1C4FF" />
+
+                    <ButtonWidget DoNotPassEventsToChildren="true"
+                                  WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                  SuggestedWidth="150" SuggestedHeight="46"
+                                  Brush="Clan.Members.Sort.1"
+                                  Command.Click="ExecuteCancel"
+                                  VerticalAlignment="Center">
+                      <Children>
+                        <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                    Brush.FontSize="18" Text="Cancel" Color="#F4E1C4FF"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
+                      </Children>
+                    </ButtonWidget>
+
+                    <ButtonWidget DoNotPassEventsToChildren="true"
+                                  WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                  SuggestedWidth="240" SuggestedHeight="46"
+                                  Brush="Clan.Members.Sort.1"
+                                  Command.Click="ExecuteSave"
+                                  VerticalAlignment="Center" MarginLeft="12">
+                      <Children>
+                        <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                    Brush.FontSize="18" Text="Save Selection" Color="#F4E1C4FF"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
+                      </Children>
+                    </ButtonWidget>
+                  </Children>
+                </ListPanel>
+
+              </Children>
+            </ListPanel>
+          </Children>
+        </Widget>
+      </Children>
+    </Widget>
+  </Window>
+</Prefab>

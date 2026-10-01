@@ -20,6 +20,7 @@ namespace UnifiedTroopManager.UI
 
         private TroopRoster _sourceRoster;
         private RosterSelection _priorSelection;
+        private BattlePlan _priorPlan;
         private UTMTroopManagerVM _vm;
         private GauntletLayer _layer;
         private bool _closing;
@@ -33,10 +34,11 @@ namespace UnifiedTroopManager.UI
                 "UTMTroopManagerView must be created via MenuViewContext.AddMenuView<T>(args).");
         }
 
-        public UTMTroopManagerView(TroopRoster sourceRoster, RosterSelection priorSelection)
+        public UTMTroopManagerView(TroopRoster sourceRoster, RosterSelection priorSelection, BattlePlan priorPlan)
         {
             _sourceRoster = sourceRoster;
             _priorSelection = priorSelection;
+            _priorPlan = priorPlan;
         }
 
         protected override void OnInitialize()
@@ -44,7 +46,7 @@ namespace UnifiedTroopManager.UI
             base.OnInitialize();
             try
             {
-                _vm = new UTMTroopManagerVM(_sourceRoster, _priorSelection, RequestClose);
+                _vm = new UTMTroopManagerVM(_sourceRoster, _priorSelection, _priorPlan, RequestClose);
                 _layer = new GauntletLayer("UTMManageTroops", 210);
                 // Match CYT's OnInitialize sequence: input restrictions + hotkey categories
                 // MUST be set before LoadMovie · otherwise button click events don't route

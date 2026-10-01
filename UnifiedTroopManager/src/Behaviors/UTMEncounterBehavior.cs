@@ -4,7 +4,9 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Library;
+using TaleWorlds.MountAndBlade;
 using UnifiedTroopManager.Data;
+using UnifiedTroopManager.Patches;
 using UnifiedTroopManager.Settings;
 using UnifiedTroopManager.UI;
 using UnifiedTroopManager.Util;
@@ -56,6 +58,49 @@ namespace UnifiedTroopManager.Behaviors
             {
                 string id = args?.MenuContext?.GameMenu?.StringId ?? "<null>";
                 UTMLog.Info("GameMenu opened · id=" + id);
+
+                // SAFETY NET · if a previous battle's roster-modify snapshot
+                // leaked (encounter cancelled before Finish patch could run,
+                // retreat path we don't catch, etc.) the player sees their
+                // MainParty missing thousands of troops. Any time we're back
+                // at a map-level menu without an active mission, restore.
+                if (Mission.Current == null
+                    && UTMBattleState.RosterModified
+                    && UTMBattleState.RosterSnapshot.Count > 0)
+                {
+                    try
+                    {
+                        var mp = MobileParty.MainParty;
+                        if (mp != null && mp.MemberRoster != null)
+                        {
+                            int restoredTypes = 0, restoredCount = 0;
+                            foreach (var kv in UTMBattleState.RosterSnapshot)
+                            {
+                                try
+                                {
+                                    mp.MemberRoster.AddToCounts(kv.Key, kv.Value);
+                                    restoredTypes++;
+                                    restoredCount += kv.Value;
+                                }
+                                catch (Exception innerEx)
+                                {
+                                    UTMLog.Exception("GameMenu safety restore(" + kv.Key?.StringId + ")", innerEx);
+                                }
+                            }
+                            UTMLog.Warn("GameMenu safety restore · " + restoredTypes + " types · "
+                                + restoredCount + " troops · menu=" + id);
+                        }
+                    }
+                    catch (Exception restoreEx)
+                    {
+                        UTMLog.Exception("GameMenu safety restore block", restoreEx);
+                    }
+                    finally
+                    {
+                        UTMBattleState.ResetAll();
+                        MissionSpawnTroopPatch.ResetRoundRobin();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -131,8 +176,9 @@ namespace UnifiedTroopManager.Behaviors
                         "[UTM] Cannot open — main party roster is unavailable.", Colors.Red));
                     return;
                 }
-                ctx.AddMenuView<UTMTroopManagerView>(new object[] { roster, RosterSelection.Current });
-                UTMLog.Info("Encounter menu · added UTMTroopManagerView · roster=" + roster.Count);
+                ctx.AddMenuView<UTMTroopManagerView>(new object[] { roster, RosterSelection.Current, PartyPlanRuntime.Current });
+                UTMLog.Info("Encounter menu · added UTMTroopManagerView · roster=" + roster.Count
+                    + " · priorPlan=" + (PartyPlanRuntime.Current?.Formations.Count ?? 0) + " entries");
             }
             catch (Exception ex)
             {

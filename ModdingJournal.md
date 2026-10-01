@@ -2801,6 +2801,39 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 - [ ] **🔴 UnifiedTroopManager · 全新自研 mod · 整合 CYT + SSYF 功能**（2026-09-28 立项 · **最高优先度**）
 
+  ---
+
+  ### 📅 2026-10-01 session · B6 全阶段进展 + hotfix
+
+  **本轮完成**:
+  - ✅ **B6-A Roster filter** · `SpawnLogic.AfterStart.Prefix` 临时 modify MainParty.MemberRoster + Finish restore · 实测 filter 生效 (log 验证 removed 18 entries · total 4173 troops · numberToAllocate 从 1982→775)
+  - ✅ **B6-B Formation 分配** · `MissionSpawnTroopPatch.Postfix` + `MissionOnBattleSideDeployedPatch.Postfix` 双层 agent reassign · round-robin split
+  - ✅ **B6-C Step 1 OoB class pool override** · `OrderOfBattleVM.Initialize.Postfix` 用 `RefreshFormation(formation, DeploymentFormationClass, mustExist=true)` 让 OoB card 的 class pool 跟随 UTM plan · DeploymentFormationClass 合并逻辑 (ClassToDeployment + ComputePlannedClass) · 兼容 mix (Infantry+Ranged / Cav+HA) 完整工作
+
+  **session 末尾 hotfix 发现的严重 bug**:
+  1. **Party 丢部队** · `PlayerEncounterFinish.Prefix` 没触发时 RosterSnapshot 残留 · MainParty 永久被削 · 已加 3 层 safety restore (OnGameMenuOpened + UI open 时 + BuildEntries virtual merge)
+  2. **UI 构造丢 PartyPlan (致命)** · `UTMEncounterBehavior.OnConsequence` 只传 RosterSelection · 不传 PartyPlanRuntime · 重开 UI → entry.PlannedFormations 空 → Save Selection 把 PartyPlanRuntime 覆盖成空 plan → vanilla classification take over · 已修 4 处 (Behavior/View/VM ctor + BuildEntries 新 RestorePlannedFormations)
+
+  **🔴 下 session 首事 (用户 2026-10-01 明示)**:
+  1. 先解决遗留测试问题 (跨 class mix 实测 · Hero 拍板 · Siege 场景)
+  2. 然后攻坚 **B6-C Step 2 A2** · patch vanilla class-based cleanup
+
+  **Step 2 A2 攻坚起点** (下次 session 直接接):
+  - 侦查目标: 定位 vanilla 在 OnBattleSideDeployed 之后把 agent 推回 DefaultFormationClass 的具体 method
+  - 候选 vanilla method (按概率): OrderController / Team.OnFormationsChanged / Formation.OnMassStateChange / MissionAgentHandler.OnAgentBuilt / DefaultBattleMissionAgentSpawnLogic private / SandBoxBattleMissionSpawnHandler
+  - 定位后 Prefix patch 对 player side 阻止 class-based reassign
+  - 预算 4-6 小时 (侦查 2-3h · 实施 1-2h · 测试 1h)
+
+  **物理限制 (Step 1 的)**:
+  - `DeploymentFormationClass` enum 只有 Infantry / Ranged / Cavalry / HorseArcher + InfantryAndRanged + CavalryAndHorseArcher
+  - 跨 class 不兼容 mix (如 Infantry+Cavalry 同 slot) 只能取 First · 另一类被 vanilla cleanup 推走 · Step 2 A2 要解决
+
+  **架构警告**:
+  - "临时 modify MainParty.MemberRoster" 根本危险 · 任何 edge case 漏 restore → troop 永久丢失
+  - 更稳重构: Clone party roster · 用 clone 走 battle · 工作量 4-6h · 下次迭代考虑
+
+  ---
+
   **📖 权威设计文档**：[`UnifiedTroopManager/DESIGN.md`](./UnifiedTroopManager/DESIGN.md)（v0.3 · 用户已定稿 · Phase 1 可启动）
 
   **触发原因**：2026-09-28 用户 in-game 发现 SSYF（FormationManager）× CYT（ChooseYourTroops）严重冲突 —— 在 CYT UI 选定混合兵种上场后 · 进战斗只加载最近在 SSYF UI 里编辑过的**单一兵种**。反编译定位根因：**FM 的 `OrderOfBattleVMInitializePatch.Postfix`** 在 OoB 屏初始化时强制 `Classes[0].Class = <planned>` + `Classes[1].Class = NumberOfAllFormations` + `OobWeightDistributor.LockManagedSliders` 三连锁 · 挤掉未配 plan 的兵种。CYT 的 `MapEventSide.AllocateTroops` filter 生效不了因为 OoB 权重预处理阶段已经把它们排除。

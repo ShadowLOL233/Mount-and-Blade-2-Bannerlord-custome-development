@@ -47,6 +47,35 @@
 
 ---
 
+### 铁律 2 · 更新工作日志时同步更新 REPLICATE.md
+
+**规则**：**任何触发 Journal 更新的改动**（新自研 mod · 版本升级 · 删文件 · 复刻流程变化 · 跨机 build 命令改动 · launcher load order 变化等）· 在修 `ModdingJournal.md` 的同一响应里**必须**同步修改 `REPLICATE.md` 的相关章节（P6.x 自研 mod phase · P7.1 launcher 清单 · APX.2 custom mod source-of-truth 表）· **然后**才能报 "归档完成"。
+
+**背景**：2026-10-07 session UTM 复活归档时 · Journal 加了大量新 phase + 第二设备 build 说明 · 但 REPLICATE.md 没同步 · UTM/UTMPatch 从未被加到 P6.x 和 P7.1 · 用户追问才发现。REPLICATE.md 是**第二设备机器友好的权威复刻 playbook** · Journal 是人类可读的历史叙事 · 两者脱节会导致：
+- 新设备跟着 REPLICATE 跑一遍 · 装不上新 mod
+- Journal 说 "UTM 核心功能可用" · REPLICATE 的 P7.1 launcher 清单却没列 UTM
+- 跨机复刻失败 · 返工
+
+**明令禁止**：
+- ❌ 只改 Journal 就报 "归档完成"
+- ❌ 认为 "REPLICATE 下次 session 补" —— 下次没触发 · 永远不补
+- ❌ 跳 REPLICATE 的 P6.x deploy script / P7.1 load order / APX.2 清单任一处
+
+**必须的同步步骤**（任何 Journal 更新都要走一遍）：
+1. 修 `ModdingJournal.md` 相关章节
+2. **立刻**打开 `REPLICATE.md` · 判断本次改动影响哪些章节：
+   - 新 mod → 加 P6.x phase（DO / VERIFY / ROLLBACK 三段标准格式）+ APX.2 清单 + P7.1 launcher 行
+   - mod 版本升级 → 改 P6.x 的 version string + VERIFY 的 Select-String pattern + APX.2 的 version
+   - 删 mod → 删 P6.x + APX.2 + P7.1 对应行
+   - launcher load order 变 → 改 P7.1 清单
+   - 第二设备 build 命令变 → 改 P6.0（env vars）或 P6.x 的 DO 段
+3. 一次 git commit 同时含 Journal + REPLICATE 的改动 · 不分开
+4. 才能报 "归档完成"
+
+**记忆条目**：[[journal-replicate-sync]] · Claude 记忆持久化 · 未来任何 session 都要遵守
+
+---
+
 ## 环境与路径
 
 | 项 | 值 |

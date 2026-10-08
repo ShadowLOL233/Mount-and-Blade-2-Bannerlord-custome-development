@@ -650,6 +650,60 @@ Test-Path "$GAME_ROOT\Modules\RBMPlayerStaminaPoiseBuff\bin\Win64_Shipping_Clien
 
 ---
 
+## [P6.6] Build + deploy UnifiedTroopManager (v0.1.0)
+
+**GOAL**: Self-contained troop management mod replacing CYT+FM. Unified Gauntlet UI for roster + Formation plan + Preset system. Core features stable 2026-10-07 (field/hideout/tournament/defender/attacker all verified). See journal `📅 2026-10-07 session · UTM 从封存复活` for full architecture rationale.
+
+**PRE**: [P6.0] complete. **Must NOT install UTMPatch (P6.7) alongside** — both patch `MapEventSide.AllocateTroops` and conflict. UTM users should also unsubscribe/disable CYT + FM since UTM replaces them (TroopClassifier is harmless, can keep).
+
+**DO**:
+```powershell
+& "$repoRoot\UnifiedTroopManager\deploy.ps1" -GameRoot $GAME_ROOT
+```
+Script builds Release (net472) + copies `SubModule.xml` + `GUI/` + `ModuleData/` + `bin/*.dll+pdb` to `$GAME_ROOT\Modules\UnifiedTroopManager\`.
+
+**VERIFY**:
+```powershell
+Test-Path "$GAME_ROOT\Modules\UnifiedTroopManager\bin\Win64_Shipping_Client\UnifiedTroopManager.dll"
+Test-Path "$GAME_ROOT\Modules\UnifiedTroopManager\GUI\Prefabs\UTMTroopManager.xml"
+(Select-String -Path "$GAME_ROOT\Modules\UnifiedTroopManager\SubModule.xml" -Pattern 'v0\.1\.0').Count -eq 1
+# After first in-game session, these appear:
+# $GAME_ROOT\Modules\UnifiedTroopManager\Logs\log.txt
+# $GAME_ROOT\Modules\UnifiedTroopManager\Presets\*.xml  (if user saved presets)
+```
+
+**POST-INSTALL**: Enable `UnifiedTroopManager` in launcher. Open encounter → click "Manage Troops" → UI appears. Pick troops + hero + Formation plan → Save Selection → Start Battle.
+
+**ROLLBACK**: `Remove-Item "$GAME_ROOT\Modules\UnifiedTroopManager" -Recurse -Force`. Presets in `Modules/UnifiedTroopManager/Presets/` are destroyed; back them up first if needed.
+
+---
+
+## [P6.7] Build + deploy UTMPatch (v1.0.1) — ALTERNATIVE to P6.6
+
+**GOAL**: Standalone thin Harmony patch for CYT-only setups. Fixes CYT's whitelist filter so vanilla `_readyTroopsPriorityList` doesn't let one high-stock troop monopolize `numberToAllocate`. For users who prefer CYT's small UI over UTM's full Gauntlet screen.
+
+**PRE**: [P6.0] complete. CYT subscribed via [P1.3]. FM optional (UTMPatch skips if FM not loaded). **Must NOT install alongside UTM (P6.6)** — both patch `MapEventSide.AllocateTroops`.
+
+**DO**:
+```powershell
+& "$repoRoot\UTMPatch\deploy.ps1" -GameRoot $GAME_ROOT
+```
+Script builds Release + copies `SubModule.xml` + `bin/*.dll+pdb` to `$GAME_ROOT\Modules\UTMPatch\`.
+
+**VERIFY**:
+```powershell
+Test-Path "$GAME_ROOT\Modules\UTMPatch\bin\Win64_Shipping_Client\UTMPatch.dll"
+(Select-String -Path "$GAME_ROOT\Modules\UTMPatch\SubModule.xml" -Pattern 'v1\.0\.1').Count -eq 1
+# After first battle:
+# $GAME_ROOT\Modules\UTMPatch\Logs\log.txt  (shows "QuotaEnforcer · installed")
+```
+
+**POST-INSTALL**: Enable `UTM Patch (FM × CYT bridge)` in launcher AFTER ChooseYourTroops and (if present) FormationManager.
+
+**ROLLBACK**: `Remove-Item "$GAME_ROOT\Modules\UTMPatch" -Recurse -Force`.
+
+---
+
 ## [P6.5] Reference data packs (no build — repo-tracked CSVs)
 
 **GOAL**: Have `OSA_Reference/` and `RBM_Reference/` CSVs available for balance queries. They're already in the repo; nothing to build.
@@ -715,6 +769,13 @@ Test-Path "$repoRoot\RBM_Reference\data\rbm_items.csv"
    RBMPlayerStaminaPoiseBuff    ← must load AFTER RBM
    PSCacheWarmup                ← must load AFTER PlayerSettlement (soft dep, safe if PS absent)
    BetterPatrolsBrake           ← must load AFTER BetterPatrols (soft dep, safe if BP absent)
+   UnifiedTroopManager          ← picks ONE: UTM (full UI) OR UTMPatch (thin). NOT BOTH.
+                                   Load AFTER Harmony/ButterLib/UIExtenderEx/MCM.
+                                   UTM user: also UNTICK ChooseYourTroops + FormationManager
+                                   (TroopClassifier harmless · can keep).
+   UTMPatch                     ← CYT-only setup alternative. Load AFTER ChooseYourTroops
+                                   (and FormationManager if present).
+                                   NOT alongside UnifiedTroopManager.
    ```
 2. Ensure `BirthAndDeath`, `FastMode`, `CustomClanPartySize`, `XorberaxLegacy`, `Cheats`, `Bannerlord.HorseSummary`, `Test` are UNticked.
 
@@ -879,6 +940,8 @@ RetinuesCultureFilter/         v1.4.0  (culture filter for Retinues equipment ed
 RBMPlayerStaminaPoiseBuff/     v1.0.2  (RBM stamina/posture regen boost, player only)
 PSCacheWarmup/                 v0.1.1  (auto-warm MapDistanceModel cache after PS building complete)
 BetterPatrolsBrake/            v0.1    (remove 2 BetterPatrols hourly hot patches, keep the other 24)
+UnifiedTroopManager/           v0.1.0  (self-contained CYT+FM replacement · Gauntlet UI + Preset)
+UTMPatch/                      v1.0.1  (standalone CYT quota enforcer · alternative to UTM · NOT both)
 ```
 
 ## [APX.3] Cross-device path-variable table

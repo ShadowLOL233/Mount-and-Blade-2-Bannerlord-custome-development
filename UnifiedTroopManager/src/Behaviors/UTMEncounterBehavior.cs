@@ -59,47 +59,18 @@ namespace UnifiedTroopManager.Behaviors
                 string id = args?.MenuContext?.GameMenu?.StringId ?? "<null>";
                 UTMLog.Info("GameMenu opened · id=" + id);
 
-                // SAFETY NET · if a previous battle's roster-modify snapshot
-                // leaked (encounter cancelled before Finish patch could run,
-                // retreat path we don't catch, etc.) the player sees their
-                // MainParty missing thousands of troops. Any time we're back
-                // at a map-level menu without an active mission, restore.
-                if (Mission.Current == null
-                    && UTMBattleState.RosterModified
-                    && UTMBattleState.RosterSnapshot.Count > 0)
+                // R1 note: previous SAFETY NET block restored MainParty.MemberRoster
+                // from UTMBattleState.RosterSnapshot — removed with the B6-A roster
+                // filter architecture. UTM no longer mutates MainParty, so leaked
+                // state is no longer possible from that path.
+                //
+                // Still reset per-battle state on any map-menu re-entry just in
+                // case SetupActive got stuck on an aborted encounter.
+                if (Mission.Current == null && UTMBattleState.SetupActive)
                 {
-                    try
-                    {
-                        var mp = MobileParty.MainParty;
-                        if (mp != null && mp.MemberRoster != null)
-                        {
-                            int restoredTypes = 0, restoredCount = 0;
-                            foreach (var kv in UTMBattleState.RosterSnapshot)
-                            {
-                                try
-                                {
-                                    mp.MemberRoster.AddToCounts(kv.Key, kv.Value);
-                                    restoredTypes++;
-                                    restoredCount += kv.Value;
-                                }
-                                catch (Exception innerEx)
-                                {
-                                    UTMLog.Exception("GameMenu safety restore(" + kv.Key?.StringId + ")", innerEx);
-                                }
-                            }
-                            UTMLog.Warn("GameMenu safety restore · " + restoredTypes + " types · "
-                                + restoredCount + " troops · menu=" + id);
-                        }
-                    }
-                    catch (Exception restoreEx)
-                    {
-                        UTMLog.Exception("GameMenu safety restore block", restoreEx);
-                    }
-                    finally
-                    {
-                        UTMBattleState.ResetAll();
-                        MissionSpawnTroopPatch.ResetRoundRobin();
-                    }
+                    UTMBattleState.ResetAll();
+                    MissionSpawnTroopPatch.ResetRoundRobin();
+                    UTMLog.Info("GameMenu · reset stale UTMBattleState · menu=" + id);
                 }
             }
             catch (Exception ex)

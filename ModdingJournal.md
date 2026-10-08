@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-09-30
+**最后更新**：2026-10-07
 
 ## 目录
 - [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)
@@ -102,6 +102,31 @@ dotnet build <mod>\src\<mod>.csproj -c Release
 ```
 
 - **2026-09-19 实测**：`Tier6Injector` + `MapBlockadePSBridge` 均**编译通过（0 warn / 0 err）**。本次**只验证编译，未部署进游戏**。（`Tier6Injector` 已于 2026-09-20 主机改名 `EquipmentSpawnerMod`；`MapBlockadePSBridge` 已弃用删除）
+
+### 2026-10-07 新增 UTM / UTMPatch 第二设备 build 说明
+
+**UnifiedTroopManager**（主项目 · 核心功能已可用）
+```powershell
+$env:BannerlordBin = "D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\bin\Win64_Shipping_Client"
+$env:WorkshopRoot  = "D:\SteamLibrary\steamapps\workshop\content\261550"
+dotnet build UnifiedTroopManager\src\UnifiedTroopManager.csproj -c Release
+# 部署（第二设备）：
+UnifiedTroopManager\deploy.ps1 -GameRoot "D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord"
+```
+
+**依赖**（csproj 内已声明）：Harmony / ButterLib / UIExtenderEx / MCMv5 · 都来自 Workshop · `$(WorkshopRoot)` 需正确指向。
+
+**UTMPatch**（独立瘦 patch · 针对纯 CYT 用户）
+```powershell
+$env:BannerlordBin = "D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\bin\Win64_Shipping_Client"
+$env:WorkshopRoot  = "D:\SteamLibrary\steamapps\workshop\content\261550"
+dotnet build UTMPatch\src\UTMPatch.csproj -c Release
+UTMPatch\deploy.ps1 -GameRoot "D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord"
+```
+
+**UTM vs UTMPatch 二选一**（都装会冲突 · 两者都 patch `MapEventSide.AllocateTroops`）：
+- UTM 用户：装 UTM · 卸 UTMPatch · CYT 和 FM 可卸可留（UTM 自治 · 不依赖）
+- 纯 CYT 用户：卸 UTM · 装 UTMPatch · 保留 CYT（+ 可选 FM）
 
 ### 反编译已验证的结论
 
@@ -2797,9 +2822,350 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ## 待办 / 开放问题
 
-### 🔴 P0 · 最高优先度（2026-09-28 用户重排 · UnifiedTroopManager 立项上位）
+### 🔴 P0 · 最高优先度（2026-10-06 用户战略级质询 · UTM 转向 UTMPatch 瘦补丁路线）
 
-- [ ] **🔴 UnifiedTroopManager · 全新自研 mod · 整合 CYT + SSYF 功能**（2026-09-28 立项 · **最高优先度**）
+- [ ] **🔴 UTMPatch · 新自研瘦 Harmony 补丁 mod · 修 FM × CYT 单点冲突**（2026-10-06 立项 · **最高优先度** · UTM 当前路线封存）
+
+  ---
+
+  ### 📅 2026-10-06 session · 战略转向起因
+
+  **用户质询**（session 中段）：
+  > "既然 CYT 和 FM 为我们做了其中两件事：
+  > 1，CYT 允许部队在界面被选择并能正常加载进入战斗
+  > 2，FM 解决部队编组的问题
+  > 那么为什么我们现在还在不断地试错与碰壁？"
+
+  **诚实反思**：UTM 立项（2026-09-28）的 "整合 mod · clean-room reimpl" 路线，是用**系统级重建**解决一个**单点集成冲突**。日志里的立项论证第 3 条 "SSYF bug 是语义假设错误 · 打 patch 治标不治本" 跳过了一个显而易见的小方案：**写一个瘦 Harmony patch 修 FM 的 OoB lock 行为**。License 顾虑对瘦 patch 不成立（Harmony patch 不是 derivative work）。
+
+  **侦查结论**（2026-10-06 · 两个并行 Explore agent 反编译 CYT + FM）：
+
+  **CYT 真实工作方式**（workshop 2957211804）：
+  - 核心 patch：`MapEventSide.AllocateTroops` **Prefix** 直接重新赋值 `customAllocationConditions` 委托
+  - **关键事实修正**：UTM 日志里 "v1.4.7 是 value / v1.4.8+ 是 ref" 的说法**错了** —— CYT 在 v1.4.7 上就在工作，参数就是 `ref` · 我们之前放弃这条路的理由不成立
+  - **CYT 从不碰 MainParty.MemberRoster**（UTM B6-A 的"临时 modify MainParty"从头是错架构）
+  - **CYT 从不碰 OrderOfBattle** · 完全不参与那层
+  - `_setupSide` flag 在 `DefaultBattleMissionAgentSpawnLogic.AfterStart` **Postfix** 里设 · 跟 UTM 当前的 Prefix 落在同一方法 · 时序冲突
+
+  **FM 真实工作方式**（local Modules/FormationManager · v0.5.2 · 全名 "Stop Shuffling You Fools"）：
+  - spawn-time formation 分配独立成章 · 全走 `MissionAgentSpawnPatch.Postfix` + `FormationAssignmentResolver.ResolveFormationIndex` · **不依赖 OoB override**
+  - OoB 的 "force Classes[0]/[1] + lock sliders" 是 **纯 UI 层** · 不是 formation 分配机制
+  - 具体冲突位置（FM 反编译行号）：
+    - `OrderOfBattleVMInitializePatch.Postfix` **lines 3216-3220**：写 `Classes[0].Class = <planned>` + `Classes[1].Class = NumberOfAllFormations`
+    - `OrderOfBattleVMInitializePatch.Postfix` **line 3258**：`OobWeightDistributor.LockManagedSliders`
+  - FM 不碰 MainParty.MemberRoster · 不碰 MapEventSide.AllocateTroops · CYT 领域完全保留
+
+  **UTM 当前路线的三个错架构** ⚠：
+  1. **B6-A roster filter 侵蚀 MainParty** —— CYT 已经用正确路径（MapEventSide 层）解决，我们重做并走错路（MainParty 层）
+  2. **B6-B/C spawn-time formation 分配重复 FM** —— FM 的 `MissionAgentSpawnPatch` 已完全解决，我们在 `MissionSpawnTroopPatch` 重做一遍 · 还跟 FM 在同一 method 竞争时序
+  3. **症状 "OoB 覆盖"实际根因是 B6-A 侵蚀 OoB** —— 不是日志里标的 "Step 2 A2 vanilla cleanup 覆盖"问题 · Step 2 A2 的 4-6h 攻坚会打水漂
+
+  **UTMPatch 可行性判定**：✅ 完全可行 · 2 处 Harmony · 预算 2-3h
+
+  | 补丁 | 目标 | 操作 |
+  |---|---|---|
+  | **P1 · 主** | `OrderOfBattleVM.Initialize` Postfix | `[HarmonyPriority(Last)]` + `[HarmonyAfter("FormationManager")]` · 反向把 FM 的 Classes[0]/[1] 写入 undo 为 NumberOfAllFormations · 可选 unlock sliders |
+  | **P2 · 可选** | FM 的 `RefreshFormationPatch.Prefix` | 当 FM 没有 active plan 时 skip（防御性） |
+
+  **保留不动**：FM 的 `MissionAgentSpawnPatch`（formation 分配核心）· `OobPreviewAssignmentApplier.Apply` · `DistributeWeights` · CYT 全部 patch · vanilla OoB 全部。
+
+  **UTM 封存** · 不删 · 作为备份 · 将来 FM 弃坑可以顶上。MCM 面板不启用。
+
+  ---
+
+  ### 🔴 下 session 首事（2026-10-06 用户明示 "开始吧"）
+
+  1. ✅ **Journal 归档本次侦查 + 转向决策**（本节 · 完成）
+  2. ✅ **搭建 UTMPatch mod scaffold**（SubModule.xml / csproj / deploy.ps1 / README / SubModule bootstrap / P1 Postfix 实现）
+  3. ✅ **build + deploy**（必须立刻 deploy · [[bannerlord-build-deploy]] 铁律）
+  4. ✅ **用户 baseline 测试**：发现 OoB 仍只显示 1 种 troop · 诊断方向连续 3 次修正
+  5. ✅ **真因定位（2026-10-06 下午）**：**不是 FM×CYT OoB 冲突 · 是 CYT whitelist filter 的设计局限**
+
+  ---
+
+  ### 📅 2026-10-06 下午 session · 真因定位 + 转向 quota enforcer
+
+  **诊断过程**（4 次方向修正 · v0.1 → v0.3 诊断逐步 narrow down）：
+
+  | Round | 假设 | 验证 | 结果 |
+  |---|---|---|---|
+  | v0.1 Classes undo | FM 覆盖 Classes 挤出 CYT 选中但无 plan 的 troop | log `slotsTouched=2` 但 OoB 仍挤 | ❌ Classes undo 工作但不是真因 |
+  | v0.2 diagnostic | agent 到底存不存在？ | log `uniqueTroops=2`（只 Crossbowman + hero）| 发现 troop 根本没 spawn |
+  | 中段推测 | FM 把所有 troop route 到 Formation 2 | FM log 显示只对 Crossbowman 做 move | ❌ FM 不是元凶 |
+  | 用户关键线索 | "绑定到第一个选的兵种" | 排除 state 污染 | 指向 CYT filter 行为问题 |
+  | v0.3 diagnostic | dump CYT `_actualTroopRoster` + vanilla `_readyTroopsPriorityList` | **铁证** · 见下 | ✅ 真因定位 |
+
+  **v0.3 log 铁证**（2026-10-06 18:24）：
+  ```
+  CYT · _selectedTroops count=3 · [main_hero, menavliaton, cataphract]
+  CYT · _actualTroopRoster TotalMan=171 (3 elements · N=1/120/50)
+  priorityList · unique=20:
+    crossbowman × 993 (filter 拒绝)
+    legionary × 954 (filter 拒绝)
+    marine_t5 × 841 (filter 拒绝)
+    palatine_guard × 700 (filter 拒绝)
+    cataphract × 668 ← filter 允许 → 吃满 170 slot
+    menavliaton × 483 ← 轮到它时 numberToAllocate=0
+  Postfix allocated=171: cataphract × 170 · hero × 1
+  ```
+
+  **真因**（三重合流）：
+
+  1. **CYT 的 filter 是纯白名单**（HashSet\<string\> 存 StringId · 只回答"允许/拒绝"，不管比例）
+  2. **vanilla `_readyTroopsPriorityList` 按 priority 排序**（Cataphract 668 库存 > Menavlion 483 库存 → 排前面）
+  3. **vanilla AllocateTroops 先到先得**：第一个通过 filter 的 troop 吃满 `numberToAllocate`，后面的 selected troop 零机会
+
+  **"UTM 开发前 CYT 能用"的真相**：以前 MainParty 库存小而均衡，Cataphract 自然被 exhausted → vanilla 切下一种。现在打仗胜利收俘虏 → 单个 troop 库存爆到 600+，暴露了 CYT 这个隐性设计局限。**跟 UTM 开发 / FM / UTMPatch 全无关**。
+
+  ---
+
+  ### UTMPatch 第三次定位修正（最终定位）
+
+  v0.1 定位（**错**）：瘦 patch 修 FM × CYT OoB 冲突
+  v0.2 中段定位（**错**）：加 diagnostic 找 FM Apply 的问题
+  **v1.0 最终定位**（**对**）：**quota enforcer wrapper · 修 CYT 白名单的设计局限**
+
+  **v1.0 patch 核心逻辑**（`QuotaEnforcerPatch.cs`）：
+  - Prefix `MapEventSide.AllocateTroops` · priority Last · `[HarmonyAfter("choose_your_troops")]`
+  - 读 CYT `_actualTroopRoster` 的 per-troop Number 作 quota
+  - Wrap CYT 的 filter，加 per-call `allocated` dict track
+  - 每种 troop 达 quota 后 filter 返回 false → vanilla 自然切下一种
+  - 全反射无 CYT dll build-time 依赖
+
+  **预期效果**：你配 "20 Menavlion + 20 Crossbowman + 20 Cataphract" 真就 spawn 20/20/20。
+
+  **v0.3 诊断保留**，继续 dump 真实数据便于 verify。
+  **v0.1 OoBUndoFM 保留**，无害（只在 FM 污染 Classes 时 undo，没污染不动）。
+
+  ---
+
+  ### 📅 2026-10-06 深夜 session · v1.0 ship + 用户待测
+
+  **交付**：UTMPatch v1.0.0
+  - `src/Patches/QuotaEnforcerPatch.cs`（quota wrapper · 核心新功能）
+  - `src/Patches/AllocateTroopsDiagnosticPatch.cs`（v0.3 诊断 · 修 Character 反射 null bug）
+  - `src/Patches/OoBUndoFMPatch.cs`（v0.1 遗产 · 无害保留）
+  - `src/Patches/OoBDiagnosticPatch.cs`（v0.2 agent/slot dump · 保留）
+  - SubModule.xml version → v1.0.0
+  - DLL 22 KB · build 0 warn/err · deploy 时间戳 18:32
+
+  **用户 v1.0 测试步骤**：
+  1. 关 launcher
+  2. 保持当前 mod 组合（CYT + FM + TC + UTMPatch · UTM 关着）
+  3. 进 game · 配 CYT selection（多种 troop · 每种给具体 count）· 跑 battle
+  4. 预期：log 出现 `QuotaEnforcer · installed · quotas=[...]` + 每种 troop spawn 正好等于配置数量
+  5. 发 log 回来 verify
+
+  ---
+
+  ### 📅 2026-10-06 深夜 · v1.0 → v1.0.1 hotfix · ✅ 收官
+
+  **v1.0 首次测试**：log 显示 `QuotaEnforcer · skip · no quotas available` · roster dump 所有 `N=0 W=0` 但 `TotalMan=251` · 说明反射读到 0。
+
+  **反编译 `TroopRosterElement`** 查真实结构：
+  ```csharp
+  public struct TroopRosterElement {
+      public CharacterObject Character;       // field ✓
+      public int Number { get; set; }         // ← property (backing _number is private)
+      public int WoundedNumber { get; set; }  // ← property
+  }
+  ```
+
+  **根因**：v1.0 用 `GetField("Number")` 读 property · 返回 null · quotas 为空 · wrapper skip 自己 → vanilla iterate 没变化 → Palatine Guard 独占 250 slot。
+
+  **修复**：QuotaEnforcer + Diagnostic 都改 `GetProperty("Number")` / `GetProperty("WoundedNumber")`。
+
+  **v1.0.1 用户测试结果**：**✅ 问题得到修复，部队能正确按照配置加载进入 OoB 内**。
+
+  ---
+
+  ### 项目收官（2026-10-06 深夜）· 核心成果
+
+  **交付物**：UTMPatch v1.0.1 · `Modules/UTMPatch/`
+  - 4 patch 文件（QuotaEnforcer 核心 · 3 个 diagnostic/legacy 保留便于后续 debug）
+  - DLL 22 KB · 全反射无 CYT dll build-time 依赖
+  - Harmony id: `com.situjingzhou.utmpatch`
+  - 自动检测 FM 加载状态 · FM 不在就 skip Harmony.PatchAll
+
+  **决定性数据**（v0.3 + v1.0.1 两次 log）锁定根因：
+  - CYT filter 是纯 whitelist（HashSet\<string\>）· 不管比例
+  - vanilla `_readyTroopsPriorityList` 按库存 priority 排序 · 库存高的 troop 排前
+  - vanilla AllocateTroops 先到先得 · 第一个 whitelist 通过的 troop 独占 numberToAllocate
+  - UTMPatch quota enforcer wrapper 修这个设计局限
+
+  **诊断全链路**（4 次方向修正 · 诚实记录）：
+  1. ❌ v0.1 瘦 patch 修 FM OoB（误诊 · 真因不在 OoB）
+  2. ❌ v0.2 diagnostic 怀疑 FM Apply（误诊 · troop 根本没 spawn）
+  3. ❌ 中段怀疑 CYT state 污染 / TC 干扰（排除）
+  4. ✅ v0.3 diagnostic 定位 vanilla priority 独占 + CYT whitelist 局限
+  5. ✅ v1.0 quota enforcer + v1.0.1 反射 bug 修复 · 收官
+
+  **跟 UTM 整合路线对比**：
+  - UTM 路线：7-8 session · 30+ deploy · 卡 B6-C Step 2 A2 · 未解决
+  - UTMPatch 路线：1 session · 2 build · ~100 行代码 · **已解决**
+  - 价值差：十倍以上 · 验证"瘦 patch 优先于系统重建"的工程铁律
+
+  **UTM 继续封存**（代码不删 · MCM 不启用 · 作为备份）
+
+  **memory 更新建议**（下次 session 可考虑）：
+  - 新增 `[[cyt-quota-enforcer]]` 记忆 · 说明 UTMPatch 真实定位 · 避免未来再把它误认为 "FM OoB patch"
+  - 更新 `[[bannerlord-roster-hero]]` 记忆 · 补充 "TroopRosterElement.Number 是 property 不是 field · 反射用 GetProperty" 的 gotcha
+
+  ---
+
+  ### 📅 2026-10-07 session · UTM 从封存复活 + 核心功能全可用 ✅
+
+  **用户决策**（session 开头 · 回应 10-06 的封存状态）：
+  > "方案 C 是我们这一轮测试排错的初衷，请进行 UTM 的功能补完工作"
+
+  **路线选定**（两次 AskUserQuestion 后拍板）：
+  - **补完焦点**：统一 Gauntlet UI（Roster + Formation 一屏）
+  - **架构取向**：UTM 自治 · 完全替代 CYT + FM（不依赖 UTMPatch）
+  - **删文件策略**：git 有历史 · 直接删 B6-A/B/C 相关文件
+
+  ---
+
+  #### Phase R1 · 架构毒清理（第 1 步）
+
+  **删 3 文件**（全是 B6-A roster filter 毒 · modify MainParty.MemberRoster 的错架构）：
+  - `SpawnLogicAfterStartPatch.cs`
+  - `PlayerEncounterStartBattlePatch.cs`
+  - `MapEventSideAllocateTroopsPatch.cs`
+
+  **删 1 空 stub**：`SpawnLogicInitPatch.cs`（Postfix 只 return · 无逻辑）
+
+  **改写 2 文件**：
+  - `PlayerEncounterFinishPatch.cs` · 删 RosterSnapshot restore 块 · 保留 ResetAll + Round-robin reset + Selection/Plan Clear
+  - `UTMBattleState.cs` · 删 `RosterSnapshot` / `RosterModified` fields · 保留 `SetupActive` + `PlayerSide`
+
+  **清 refs**：`UTMEncounterBehavior.cs` + `UTMTroopManagerVM.cs` 的所有 `UTMBattleState.RosterSnapshot` / `RosterModified` 引用删除
+
+  **验证**：build 0 warn / 0 err
+
+  ---
+
+  #### Phase R2 · UTM 自治 QuotaEnforcer
+
+  **新建** `UTMQuotaEnforcerPatch.cs`：
+  - Prefix `MapEventSide.AllocateTroops` · `[HarmonyPriority(Priority.Last)]` + `[HarmonyAfter("choose_your_troops")]`
+  - 读 UTM 自己的 `RosterSelection.Current` 作 quota（**不**读 CYT._actualTroopRoster）
+  - Wrap `customAllocationConditions` · track per-call `allocated` dict
+  - 架构上**完全独立于 UTMPatch**
+
+  ---
+
+  #### Crash Hotfix 链（6 次 build-deploy-test 迭代）
+
+  **第 1 次 crash**：Start Battle 直接 crash
+  - 真因：QuotaEnforcer filter 对 Hero 返回 false · player side 无 hero · vanilla battle init crash
+  - 修：filter 加 `if (troop.IsHero) return true;` 无条件 bypass
+
+  **第 2 次 crash**（Hero bypass 后仍 crash）：
+  - 真因：Hero bypass **过度放行** · army 其他 party 的 lord（lord_5_10, lord_2_14_1, CharacterObject_3111 等）全被 allow · vanilla 把 army lord 塞 player formation 触发内部 crash
+  - 修：改为只对 `Hero.MainHero.CharacterObject.StringId` 做 safety bypass · companion / lord 走 quotas enforce
+
+  **第 3 次 crash**（narrower bypass 后仍 crash）：
+  - 开始 bisect · disable `OrderOfBattleInitializePatch` → 仍 crash
+  - disable `MissionSpawnTroopPatch` + `MissionOnBattleSideDeployedPatch` → 仍 crash
+  - disable `UTMQuotaEnforcerPatch` → **游戏能进了** · 但 UTM 完全 no-op
+
+  **真因定位**（通过 bisect）：
+  - 对比 CYT 的 `DefaultBattleMissionAgentSpawnLogicInitPostfix` · 发现 CYT 用反射修改 `_battleSideSpawnContexts[i][0].InitialSpawnNumber = _initialPlayerSpawn`
+  - vanilla 的 `numberToAllocate` 默认是 BattleSize (1024+) · 但 UTM filter 只允许 ~700 agent 通过 · vanilla 想 fill 1024 但 filter 不给 · 内部 "allocation incomplete" 检查失败 → player side silent abort → formations 全空 → vanilla SetOrder 在空 team 上 crash
+
+  **真修**：新建 `UTMInitialSpawnPatch.cs`：
+  - Postfix on `DefaultBattleMissionAgentSpawnLogic.Init`
+  - 反射 `_battleSideSpawnContexts` + `_phases` · 对 player phase 设 `InitialSpawnNumber = RosterSelection total`
+  - Re-enable QuotaEnforcer · 游戏能进 · roster quota 工作
+
+  **第 4 次 crash**（Defender 场景）：
+  - player 作为 Defender 时 · UTM 只 modify player phase · enemy phase 保持 vanilla 高值 · 两边 total 超 `_battleSize` cap · vanilla silent abort
+  - 修：UTMInitialSpawnPatch 加 dual-phase · 对 enemy phase 也 cap：`enemyNew = min(vanilla, battleSizeCap - playerTotal)`
+
+  **第 5 次 crash**（大 field battle · battleSizeCap=2040）：
+  - Hard cap 1024 太保守 · 用户装 BattleSizeResized · vanilla `MaxNumberOfAgentsForMission` 实际 ~4080
+  - 修：反射读 runtime `DefaultBattleMissionAgentSpawnLogic.MaxNumberOfAgentsForMission` · 只在真的超出时才 trim
+
+  **Re-enable 后 OoB class icon** (`OrderOfBattleInitializePatch`)：之前 bisect 时怀疑它导致 crash · 后来证明真因是 InitialSpawnNumber · 现在重新启用 · OoB slot icon 跟 UTM plan 对齐 (Infantry slot 显示剑 icon 等)
+
+  ---
+
+  #### UX Fix Pack（用户逐条反馈的 polish）
+
+  | Issue | 真因 | 修复 |
+  |---|---|---|
+  | Reset 按钮只清 count 不清 formation | ExecuteReset 没 ClearPlannedFormations | 加 ClearPlannedFormations + Refresh |
+  | All Zero 不清 formation | ExecuteAllZero 同上 | 同上 |
+  | 第二场 count 没保留但 formation 保留 | Save 只保存 bring>0 · BuildEntries fallback healthy (max) · plan 独立持久化 | prior 非 null 时 default 0 (而不是 healthy) |
+  | 二次 UI 开 count 变 max/formation count | 跟上一条同一个 bug | 同上 fix |
+  | PartyPlan 持久化但 RosterSelection 不 | 两套 state 独立 lifecycle · 是 feature (用户确认喜欢) | 不改 |
+  | Hero 不在 UI 可选列表 | BuildEntries 跳过 IsHero | 删 skip · hero 可选 · TierLabel 显示 "Hero" |
+  | 所有 sort 模式 hero 置顶 | Sort 没 hero-first 规则 | ApplySort 所有 case 加 hero-first wrap · Default 用显式 partition 保 insertion order |
+
+  ---
+
+  #### 情境适配 E 系列
+
+  **Hideout** · 用户报告 "assault hideout 时选随行英雄被替换为其他兵种"
+  - 真因（反编译 vanilla hideout 后）：UTM 的 "Manage Troops" 按钮**只 register 到 `encounter` + `menu_siege_strategies`** · hideout menu `hideout_place` 不在 · UTM UI 从未在 hideout 开过。但 UTM 的 QuotaEnforcer/InitialSpawnPatch 挂 vanilla method 上 · 不管 mission 类型都 fire · 用上一场 field battle 的 stale `RosterSelection` filter · 把 vanilla hideout UI 刚选的 hero 过滤掉 · vanilla 补 whitelist 允许的 troop → 看起来 "替换"
+  - 修：`UTMBattleState.IsHideoutBattle()` 新 helper · 读 `MapEvent.PlayerMapEvent.MapEventSettlement.IsHideout` · 5 个 patch Prefix 加 early return guard
+  - 实测通过 · vanilla hideout 完整走原生 15-troop 规则
+
+  **Tournament** · 实测无干扰（UTM 没 register 到 tournament menu · 本来就不介入）
+
+  **E2 Siege** · 未具体测过 · 大概率 OK（跟 field battle 走同一 pipeline）
+  **E4 Lord's Hall fight** · 现有空 stub patch · 未实装特殊 reset（遇到问题再做）
+
+  ---
+
+  #### 本 session 核心成果
+
+  **UTM 从 2026-10-06 封存状态 → 2026-10-07 核心功能全可用**。实际测试通过场景：
+  - ✅ Field battle 大规模 army 对打 · multi-wave spawn
+  - ✅ Field battle 小规模 looters/bandit · 低数量
+  - ✅ Defender 防御战
+  - ✅ Attacker 攻击战
+  - ✅ Multi-wave reinforcement
+  - ✅ Hideout（UTM 不介入 · vanilla 原生）
+  - ✅ Tournament（UTM 不介入 · vanilla 原生）
+  - ✅ 多场连续战斗（UX pack 修完 state 不残留）
+  - ✅ OoB slot class icon 跟 UTM plan 对齐
+  - ✅ Preset 保存/切换/删除
+  - ✅ Hero + companion + lord 都能可选加入
+
+  **文件清单**（`UnifiedTroopManager/src/Patches/`）：
+  - `UTMQuotaEnforcerPatch.cs`（新 · R2）
+  - `UTMInitialSpawnPatch.cs`（新 · crash 真修 · dual-phase + runtime cap + hideout skip）
+  - `MissionSpawnTroopPatch.cs`（保留 B6-B · 加 hideout skip）
+  - `MissionOnBattleSideDeployedPatch.cs`（保留 · 加 hideout skip）
+  - `OrderOfBattleInitializePatch.cs`（re-enabled · 加 hideout skip · 实现 OoB class icon 对齐）
+  - `PlayerEncounterFinishPatch.cs`（改写 · 删 B6-A restore 块）
+  - `LordsHallFightOnCreatedPatch.cs`（保留空 stub）
+
+  **删除清单**：
+  - `SpawnLogicAfterStartPatch.cs` · `PlayerEncounterStartBattlePatch.cs` · `MapEventSideAllocateTroopsPatch.cs` · `SpawnLogicInitPatch.cs`
+
+  **封存反转**：UTM 的 `[x] ~~封存~~` 状态**取消** · 恢复为主开发线。UTMPatch 继续作独立 mod（针对纯 CYT 用户 · UTM 用户可卸 UTMPatch）。
+
+  ---
+
+  #### 关键工程教训（本 session 多次踩坑归纳）
+
+  1. **bisect 时 disable 的 patch 不是 crash 真因**（第 1-3 次 crash 发现）· 不要太快下诊断结论
+  2. **反编译同类 mod 的 patch 看它怎么 handle vanilla method** 比盲 bisect 更快找真因（CYT 的 Init Postfix 直接揭示 UTMInitialSpawnPatch 的必要性）
+  3. **vanilla 的 `_battleSize` 跟 `MaxNumberOfAgentsForMission` 是不同层次 cap** · hard-code safety 要用 runtime 读的值
+  4. **mission 类型敏感的 patch 必须加场景守卫**（Hideout/Tournament 不走 UTM）· 不能假设 "我 patch 的 method 一定是 UTM 场景"
+  5. **state 独立 lifecycle 可以是 feature 不是 bug**（PartyPlan 持久化 vs RosterSelection 短命）· 问 user 确认别一刀切
+
+  ---
+
+- [ ] **🟢 UnifiedTroopManager · 自研整合 mod · 核心功能全可用**（2026-09-28 立项 · 2026-10-06 封存 · **2026-10-07 复活 · 核心功能全可用**）
+
+  **复活决定**（2026-10-07 session）：用户明示 "方案 C 是我们这一轮测试排错的初衷，请进行 UTM 的功能补完工作"。决策：UTM 完全替代 CYT + FM，走 "统一 Gauntlet UI" 路线。
+
+  **当前状态**：核心功能全部打通 · 实测通过 Field battle (大/小) · Hideout · Tournament · Defender · Attacker · 多场连续战斗。详见上方 "2026-10-07 session · UTM 从封存复活" 归档。
+
+  **跟 UTMPatch 的关系**：UTMPatch 保留作独立瘦 patch mod（针对纯 CYT 用户 · 不装 UTM 的场景）· UTM 用户卸载 UTMPatch 即可。两者解决同样核心问题（CYT whitelist 的 priority list 独占 bug）· 走不同路径。
 
   ---
 

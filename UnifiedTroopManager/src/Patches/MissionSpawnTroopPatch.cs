@@ -89,11 +89,15 @@ namespace UnifiedTroopManager.Patches
         [HarmonyPostfix]
         private static void Postfix(Agent __result, IAgentOriginBase troopOrigin, bool isPlayerSide)
         {
+            // Re-enabled 2026-10-07 after UTMInitialSpawnPatch fixed the
+            // underlying crash. This patch does the per-agent formation
+            // reassignment based on the user's PartyPlan.
             try
             {
                 _enteredCount++;
                 var s = UTMSettings.Instance;
                 if (s == null || !s.MasterEnabled || !s.ApplyFormationPlans) return;
+                if (UTMBattleState.IsHideoutBattle()) return;
 
                 bool diagLog = _diagLogCount < _diagLogLimit;
                 var troopId = (troopOrigin?.Troop)?.StringId ?? "<null>";

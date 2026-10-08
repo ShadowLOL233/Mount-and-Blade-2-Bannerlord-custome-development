@@ -30,6 +30,11 @@ namespace UnifiedTroopManager.UI
         public CharacterObject Character { get; }
         public int TierSortKey { get; }
         public int TypeSortKey { get; }
+        // Hero rows are displayed in the roster list (added 2026-10-07) and are
+        // pinned to the top by every sort mode. QuotaEnforcer bypasses hero
+        // StringId checks so even bring=0 hero still spawns — the UI toggle on
+        // hero rows is informational, not enforceable.
+        public bool IsHero => Character != null && Character.IsHero;
         // Empty set = no plan (troop takes vanilla DefaultFormationClass).
         // 1 element = single-formation plan · 2+ elements = split plan (equal weights).
         public IReadOnlyCollection<int> PlannedFormations => _plannedFormations;
@@ -45,7 +50,7 @@ namespace UnifiedTroopManager.UI
             TroopStringId = character.StringId;
             _visual = new CharacterImageIdentifierVM(CharacterCode.CreateFrom(character));
             _troopName = character.Name?.ToString() ?? character.StringId;
-            _tierLabel = "T" + character.Tier;
+            _tierLabel = character.IsHero ? "Hero" : ("T" + character.Tier);
             _maxAvailable = Math.Max(0, inParty);
             _bring = Math.Max(0, Math.Min(initialBring, _maxAvailable));
             _onCountChanged = onCountChanged;
@@ -194,6 +199,16 @@ namespace UnifiedTroopManager.UI
             if (!_plannedFormations.Remove(formationIndex)) return false;
             RefreshPlanSummary();
             return true;
+        }
+
+        // Wipe every planned formation · used by UTMTroopManagerVM.ExecuteReset
+        // so Reset actually resets the whole row (count + plan) rather than
+        // leaving the previous preset's formation assignments stuck.
+        public void ClearPlannedFormations()
+        {
+            if (_plannedFormations.Count == 0) return;
+            _plannedFormations.Clear();
+            RefreshPlanSummary();
         }
 
         // Integer split of Bring across all planned formations · remainder goes to

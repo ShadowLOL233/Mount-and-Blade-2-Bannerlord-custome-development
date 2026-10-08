@@ -36,10 +36,13 @@ namespace UnifiedTroopManager.Patches
         [HarmonyPostfix]
         private static void Postfix(BattleSideEnum side)
         {
+            // Re-enabled 2026-10-07 · second-pass formation reassign after
+            // vanilla's class-based cleanup.
             try
             {
                 var s = UTMSettings.Instance;
                 if (s == null || !s.MasterEnabled || !s.ApplyFormationPlans) return;
+                if (UTMBattleState.IsHideoutBattle()) return;
                 if (side != UTMBattleState.PlayerSide) return;
 
                 var plan = PartyPlanRuntime.Current;

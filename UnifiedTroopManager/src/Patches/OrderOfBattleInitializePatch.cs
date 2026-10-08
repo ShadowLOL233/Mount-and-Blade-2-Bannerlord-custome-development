@@ -53,10 +53,17 @@ namespace UnifiedTroopManager.Patches
         [HarmonyPostfix]
         private static void Postfix(OrderOfBattleVM __instance)
         {
+            // Re-enabled 2026-10-07 (second time) after confirming the earlier
+            // crash was fixed by UTMInitialSpawnPatch (InitialSpawnNumber
+            // alignment), not by anything this patch did. User asked for OoB
+            // slot icons to match the UTM plan (slot assigned Infantry troops
+            // should show the Infantry sword icon, etc.) — that's exactly what
+            // this patch does via RefreshFormation.
             try
             {
                 var s = UTMSettings.Instance;
                 if (s == null || !s.MasterEnabled || !s.ApplyOoBWeights) return;
+                if (UTMBattleState.IsHideoutBattle()) return;
 
                 var plan = PartyPlanRuntime.Current;
                 if (plan == null || plan.IsEmpty)

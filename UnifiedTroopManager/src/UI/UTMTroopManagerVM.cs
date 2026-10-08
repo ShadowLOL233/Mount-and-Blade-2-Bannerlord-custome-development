@@ -63,6 +63,9 @@ namespace UnifiedTroopManager.UI
             _pendingPresetName = string.Empty;
             _loadDialogStatus = string.Empty;
             BuildEntries(currentSelection, currentPlan);
+            // Pin heroes to the top immediately · subsequent user sort clicks
+            // apply their own order on top of this.
+            ApplySort();
             BuildFormationSlots();
             RefreshTotal();
             // Auto-select the first troop so the Formation panel has meaningful content
@@ -168,16 +171,34 @@ namespace UnifiedTroopManager.UI
         // --- Commands wired from XML ---
         public void ExecuteReset()
         {
-            foreach (var entry in _troops) entry.SetBringSilent(entry.MaxAvailable);
+            // Full reset = count to Max AND every row's formation plan wiped.
+            // Previously only count was reset so previous Preset's formation
+            // plan stuck around after Reset (user-reported 2026-10-07).
+            foreach (var entry in _troops)
+            {
+                entry.SetBringSilent(entry.MaxAvailable);
+                entry.ClearPlannedFormations();
+            }
             RefreshTotal();
-            UTMLog.Info("UI · Reset · all set to Max");
+            RefreshFormationSlotHighlights();
+            RefreshFormationDistributionSummary();
+            UTMLog.Info("UI · Reset · all set to Max · all formation plans cleared");
         }
 
         public void ExecuteAllZero()
         {
-            foreach (var entry in _troops) entry.SetBringSilent(0);
+            // All Zero now also wipes formation plans (user-reported 2026-10-07) —
+            // keeping formation highlights on a row with bring=0 is confusing,
+            // and parallel to the Reset button behavior.
+            foreach (var entry in _troops)
+            {
+                entry.SetBringSilent(0);
+                entry.ClearPlannedFormations();
+            }
             RefreshTotal();
-            UTMLog.Info("UI · All Zero");
+            RefreshFormationSlotHighlights();
+            RefreshFormationDistributionSummary();
+            UTMLog.Info("UI · All Zero · all formation plans cleared");
         }
 
         public void ExecuteAllMax()
@@ -488,74 +509,41 @@ namespace UnifiedTroopManager.UI
 
             try
             {
-                // Safety-net restore: if a previous battle's modify snapshot
-                // leaked (encounter cancelled before Finish patch ran etc.) and
-                // we're currently NOT in a mission, roll back the modify now so
-                // this UI session sees the full roster AND the player's save
-                // file doesn't carry the reduced counts forward.
-                if (Mission.Current == null
-                    && UTMBattleState.RosterModified
-                    && UTMBattleState.RosterSnapshot.Count > 0)
-                {
-                    try
-                    {
-                        var mp = MobileParty.MainParty;
-                        if (mp != null && mp.MemberRoster != null)
-                        {
-                            int restoredTypes = 0, restoredCount = 0;
-                            foreach (var kv in UTMBattleState.RosterSnapshot)
-                            {
-                                try
-                                {
-                                    mp.MemberRoster.AddToCounts(kv.Key, kv.Value);
-                                    restoredTypes++;
-                                    restoredCount += kv.Value;
-                                }
-                                catch (Exception innerEx)
-                                {
-                                    UTMLog.Exception("Safety restore(" + kv.Key?.StringId + ")", innerEx);
-                                }
-                            }
-                            UTMLog.Warn("UI open · safety restore · " + restoredTypes + " types · " + restoredCount
-                                + " troops · previous battle's RosterSnapshot was leaked");
-                        }
-                    }
-                    catch (Exception restoreEx)
-                    {
-                        UTMLog.Exception("Safety restore block", restoreEx);
-                    }
-                    finally
-                    {
-                        UTMBattleState.ResetAll();
-                        MissionSpawnTroopPatch.ResetRoundRobin();
-                    }
-                }
-
-                // Build entries from the (now hopefully complete) MainParty
-                // roster. For the "last battle still active" edge case where
-                // Mission.Current != null and we can't safely restore, merge
-                // the snapshot virtually: display the full count so the player
-                // sees every troop type that exists on paper, even though the
-                // live roster is temporarily reduced.
+                // R1 simplification · UTM no longer mutates MainParty, so no
+                // snapshot restore / virtual merge needed. Just enumerate the
+                // live roster.
                 for (int i = 0; i < _sourceRoster.Count; i++)
                 {
                     var el = _sourceRoster.GetElementCopyAtIndex(i);
                     if (el.Character == null) continue;
-                    if (el.Character.IsHero) continue;
+                    // Hero rows ARE included (2026-10-07) · ApplySort pins them
+                    // to the top; QuotaEnforcer bypasses hero in filter so they
+                    // always spawn regardless of the UI toggle.
                     int healthy = el.Number - el.WoundedNumber;
-                    // Virtual merge: add back whatever this type still owes to
-                    // the snapshot so UI reflects the complete party.
-                    if (UTMBattleState.RosterModified
-                        && UTMBattleState.RosterSnapshot.TryGetValue(el.Character, out int owed)
-                        && owed > 0)
-                    {
-                        healthy += owed;
-                    }
                     if (healthy <= 0) continue;
 
-                    int initialBring = healthy;
-                    if (prior != null && prior.Counts.TryGetValue(el.Character.StringId, out int stored))
+                    // Default bring policy (fixes issue reported 2026-10-07
+                    // where second-battle UI showed non-selected troops at max):
+                    //   · prior == null  (first UI open ever / after full reset) → healthy
+                    //     so the user sees "bring everyone" as the default.
+                    //   · prior != null AND entry listed in prior.Counts → saved count
+                    //   · prior != null AND entry NOT in prior.Counts → 0
+                    //     because the user previously chose to not bring this troop.
+                    //     Previously this fell through to `healthy`, which flipped
+                    //     unselected troops back to max every battle.
+                    int initialBring;
+                    if (prior == null)
+                    {
+                        initialBring = healthy;
+                    }
+                    else if (prior.Counts.TryGetValue(el.Character.StringId, out int stored))
+                    {
                         initialBring = Math.Min(stored, healthy);
+                    }
+                    else
+                    {
+                        initialBring = 0;
+                    }
 
                     var entry = new UTMTroopEntryVM(
                         el.Character,
@@ -567,37 +555,7 @@ namespace UnifiedTroopManager.UI
                     _troops.Add(entry);
                 }
 
-                // Also add snapshot-only entries: character types that were
-                // ENTIRELY removed from the live roster (healthy went to 0
-                // after modify, so GetElementCopyAtIndex may skip them).
-                if (UTMBattleState.RosterModified && UTMBattleState.RosterSnapshot.Count > 0)
-                {
-                    var alreadyListed = new HashSet<string>();
-                    foreach (var entry in _troops) alreadyListed.Add(entry.TroopStringId);
-                    foreach (var kv in UTMBattleState.RosterSnapshot)
-                    {
-                        if (kv.Key == null) continue;
-                        if (alreadyListed.Contains(kv.Key.StringId)) continue;
-                        if (kv.Value <= 0) continue;
-                        if (kv.Key.IsHero) continue;
-
-                        int initialBring = 0;
-                        if (prior != null && prior.Counts.TryGetValue(kv.Key.StringId, out int stored))
-                            initialBring = Math.Min(stored, kv.Value);
-
-                        var entry = new UTMTroopEntryVM(
-                            kv.Key,
-                            inParty: kv.Value,
-                            initialBring: initialBring,
-                            onCountChanged: OnEntryCountChanged,
-                            onFocus: OnTroopFocused);
-                        RestorePlannedFormations(entry, priorPlan);
-                        _troops.Add(entry);
-                    }
-                }
-
                 UTMLog.Info("UI · built " + _troops.Count + " troop entries"
-                    + (UTMBattleState.RosterModified ? " (snapshot merged)" : "")
                     + (priorPlan != null && !priorPlan.IsEmpty ? " · PartyPlan restored (" + priorPlan.Formations.Count + " entries)" : ""));
             }
             catch (Exception ex)
@@ -702,25 +660,27 @@ namespace UnifiedTroopManager.UI
             var list = new List<UTMTroopEntryVM>();
             foreach (var e in _troops) list.Add(e);
 
-            Comparison<UTMTroopEntryVM> cmp;
+            // All sort modes pin heroes to the top (2026-10-07 user request).
+            // Wrapped tiebreak: hero vs non-hero first, then the mode's own order.
+            Comparison<UTMTroopEntryVM> innerCmp;
             switch (_sortMode)
             {
                 case SortMode.TierDesc:
-                    cmp = (a, b) =>
+                    innerCmp = (a, b) =>
                     {
                         int t = b.TierSortKey.CompareTo(a.TierSortKey);
                         return t != 0 ? t : string.Compare(a.TroopName, b.TroopName, StringComparison.OrdinalIgnoreCase);
                     };
                     break;
                 case SortMode.TierAsc:
-                    cmp = (a, b) =>
+                    innerCmp = (a, b) =>
                     {
                         int t = a.TierSortKey.CompareTo(b.TierSortKey);
                         return t != 0 ? t : string.Compare(a.TroopName, b.TroopName, StringComparison.OrdinalIgnoreCase);
                     };
                     break;
                 case SortMode.TypeThenTierDesc:
-                    cmp = (a, b) =>
+                    innerCmp = (a, b) =>
                     {
                         int t = a.TypeSortKey.CompareTo(b.TypeSortKey);
                         if (t != 0) return t;
@@ -729,9 +689,35 @@ namespace UnifiedTroopManager.UI
                     };
                     break;
                 default:
-                    return;
+                    // Default = insertion order. Hero-first still applies by
+                    // keying only on IsHero · ties fall through unchanged.
+                    innerCmp = (a, b) => 0;
+                    break;
             }
-            list.Sort(cmp);
+
+            Comparison<UTMTroopEntryVM> cmp = (a, b) =>
+            {
+                // Heroes before non-heroes regardless of sort mode.
+                int h = (b.IsHero ? 1 : 0).CompareTo(a.IsHero ? 1 : 0);
+                if (h != 0) return h;
+                return innerCmp(a, b);
+            };
+
+            // Stable sort for the Default case so insertion order is preserved
+            // for non-hero rows. List.Sort is not stable in .NET, so for
+            // Default we partition manually.
+            if (_sortMode == SortMode.Default)
+            {
+                var heroes = list.Where(e => e.IsHero).ToList();
+                var rest = list.Where(e => !e.IsHero).ToList();
+                list = new List<UTMTroopEntryVM>(heroes.Count + rest.Count);
+                list.AddRange(heroes);
+                list.AddRange(rest);
+            }
+            else
+            {
+                list.Sort(cmp);
+            }
 
             _troops.Clear();
             foreach (var e in list) _troops.Add(e);

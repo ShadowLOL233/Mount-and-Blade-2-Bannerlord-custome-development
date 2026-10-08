@@ -2,21 +2,25 @@ using System;
 using HarmonyLib;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Encounters;
-using TaleWorlds.CampaignSystem.Party;
 using UnifiedTroopManager.Data;
 using UnifiedTroopManager.Settings;
 using UnifiedTroopManager.Util;
 
 namespace UnifiedTroopManager.Patches
 {
-    // B6-A v2 · restore the roster snapshot that PlayerEncounterStartBattlePatch
-    // applied before the battle, then reset per-battle state.
+    // Per-battle cleanup on encounter finish.
     //
-    // RosterSelection.Clear is still gated on RememberLastRoster so the player
-    // can retry a battle without re-picking the roster. The UTMBattleState
-    // reset (incl. snapshot) always runs because snapshot is scoped to the
-    // vanilla battle lifecycle · the next battle will re-apply from
-    // RosterSelection.Current if it's still set.
+    // Previous B6-A had a snapshot/restore block for MainParty.MemberRoster
+    // mutations · removed in R1 along with the roster-filter patches that
+    // created the snapshot.  UTM no longer touches MainParty; roster quota
+    // enforcement moved to UTMQuotaEnforcerPatch via a Prefix filter on
+    // MapEventSide.AllocateTroops.
+    //
+    // What this Prefix still does:
+    //   · Reset per-battle UTMBattleState (SetupActive, PlayerSide)
+    //   · Reset MissionSpawnTroopPatch round-robin counters
+    //   · Clear RosterSelection + PartyPlanRuntime UNLESS RememberLastRoster
+    //     (D2 · battle retry without re-picking roster)
     [HarmonyPatch(typeof(PlayerEncounter), "FinishEncounterInternal")]
     internal static class PlayerEncounterFinishPatch
     {
@@ -27,35 +31,6 @@ namespace UnifiedTroopManager.Patches
             {
                 var s = UTMSettings.Instance;
                 if (s == null || !s.MasterEnabled) return;
-
-                // Restore the snapshot BEFORE resetting state so a mid-flow
-                // exception doesn't leave the roster permanently reduced.
-                if (UTMBattleState.RosterModified && UTMBattleState.RosterSnapshot.Count > 0)
-                {
-                    var mainParty = MobileParty.MainParty;
-                    if (mainParty != null && mainParty.MemberRoster != null)
-                    {
-                        int restoredTypes = 0, restoredCount = 0;
-                        foreach (var kv in UTMBattleState.RosterSnapshot)
-                        {
-                            try
-                            {
-                                mainParty.MemberRoster.AddToCounts(kv.Key, kv.Value);
-                                restoredTypes++;
-                                restoredCount += kv.Value;
-                            }
-                            catch (Exception innerEx)
-                            {
-                                UTMLog.Exception("Restore AddToCounts(" + kv.Key?.StringId + ")", innerEx);
-                            }
-                        }
-                        UTMLog.Info("FinishEncounter · UTM restored · " + restoredTypes + " types · " + restoredCount + " troops");
-                    }
-                    else
-                    {
-                        UTMLog.Warn("FinishEncounter · snapshot present but MainParty unavailable · roster entries lost");
-                    }
-                }
 
                 UTMBattleState.ResetAll();
                 MissionSpawnTroopPatch.ResetRoundRobin();

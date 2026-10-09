@@ -776,6 +776,11 @@ Test-Path "$repoRoot\RBM_Reference\data\rbm_items.csv"
    UTMPatch                     ← CYT-only setup alternative. Load AFTER ChooseYourTroops
                                    (and FormationManager if present).
                                    NOT alongside UnifiedTroopManager.
+   KunKunEditor                 ← in-game save/world-state editor (Jianghe, v0.6.3).
+                                   Loads after Native/SandBoxCore/Sandbox/StoryMode/CustomBattle.
+                                   No external dep · bundles its own 0Harmony. See [P7.3].
+                                   Note: UI is Simplified Chinese only — set
+                                   BannerlordConfig.txt Language=简体中文 for proper UI.
    ```
 2. Ensure `BirthAndDeath`, `FastMode`, `CustomClanPartySize`, `XorberaxLegacy`, `Cheats`, `Bannerlord.HorseSummary`, `Test` are UNticked.
 
@@ -840,6 +845,60 @@ Test-Path "$GAME_ROOT\Modules\BattleSizeResized\SubModule.xml"
 ```
 
 **ROLLBACK**: `Remove-Item "$GAME_ROOT\Modules\<ModId>" -Recurse -Force`.
+
+---
+
+## [P7.3] External ZIP: KunKunEditor (in-game save/world-state editor)
+
+**GOAL**: KunKunEditor v0.6.3 — in-game Gauntlet full-screen editor for Hero/Clan/Kingdom/Culture/Dialogue/Economy/Equipment/Perk/Quest/Settlement/TownBuilding/Troop/Crafting · author Jianghe · Simplified Chinese UI only.
+
+**NOT a workshop mod · NOT a Nexus mod** — source: ZIP delivered via alternative channel (chat/direct download). Deployed to game modules manually.
+
+**Source ZIP** (source-device location): `C:\Users\situj\Desktop\坤坤编辑器\坤坤编辑器v0.6.3【游戏版本1.4.6-1.4.8】.zip` (4.6 MB)
+
+**PRE**: Bannerlord launcher closed. Target `Modules\KunKunEditor\` does NOT exist (fresh install).
+
+**DO** (powershell):
+```powershell
+# 1. Extract ZIP
+$zip = "C:\Users\situj\Desktop\坤坤编辑器\坤坤编辑器v0.6.3【游戏版本1.4.6-1.4.8】.zip"
+$extract = "C:\Users\situj\Desktop\坤坤编辑器\extracted"
+Expand-Archive -Path $zip -DestinationPath $extract -Force
+
+# 2. Copy to game modules
+$src = "$extract\KunKunEditor"
+$dst = "$GAME_ROOT\Modules\KunKunEditor"
+Copy-Item -Path $src -Destination $dst -Recurse -Force
+```
+
+**VERIFY**:
+```powershell
+# DLLs present
+Test-Path "$GAME_ROOT\Modules\KunKunEditor\bin\Win64_Shipping_Client\KunKunEditor.dll"  # ~2.17 MB
+Test-Path "$GAME_ROOT\Modules\KunKunEditor\bin\Win64_Shipping_Client\0Harmony.dll"      # bundled, ~2.4 MB
+# SubModule
+Test-Path "$GAME_ROOT\Modules\KunKunEditor\SubModule.xml"
+# 35 Gauntlet UI prefabs
+(Get-ChildItem "$GAME_ROOT\Modules\KunKunEditor\GUI\Prefabs\*.xml" | Measure-Object).Count  # expected: 35
+# Chinese language pack
+Test-Path "$GAME_ROOT\Modules\KunKunEditor\ModuleData\Languages\CNs\kunkun_strings.xml"  # 203.6 KB
+```
+Expected total size: **~12.9 MB** in game modules.
+
+**POST-INSTALL** (one-time setup):
+1. Launcher: tick `KunKunEditor` under Mods tab (position per [P7.1])
+2. **For proper Chinese UI**: Edit `$USER_DATA\Configs\BannerlordConfig.txt` → `Language=简体中文` (default `Language=English` leaves Kunkun UI showing raw string IDs — no English fallback shipped)
+3. In-game hotkey (configurable via `KunKunEditorConfigStore.OpenEditorHotkey`) opens the editor Screen on MapScreen or MissionScreen
+
+**ROLLBACK**:
+```powershell
+Remove-Item "$GAME_ROOT\Modules\KunKunEditor" -Recurse -Force
+```
+
+**NOTES**:
+- Zero external mod dependency (bundles own 0Harmony.dll — Bannerlord launcher resolves conflict with Workshop Harmony via load order)
+- Edits persisted via `KunKunCultureCreationStore` / `KunKunTroopEditStore` CampaignBehaviors → **in save file**, not in XML module files
+- Conflict potential with BC + Retinues on shared vanilla patch targets (`AgentApplyDamageModel.CalculateDamage`, `DefaultPartyWageModel.GetTotalWage` etc.) — managed by future CheatsGuard v2 (see journal P0 §🟡 2026-10-08)
 
 ---
 

@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-07
+**最后更新**：2026-10-09（晚 · 3 新 P0 立项：Retinues Captain Perk · OSA v3 平衡重启 · Fief 大规模征召重启）
 
 ## 目录
 - [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)
@@ -2850,6 +2850,464 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 ---
 
 ## 待办 / 开放问题
+
+### 🔴🔴 P0 · 2026-10-09 最高优先度 · OSW Shield Tier 平衡修复
+
+- [ ] **🔴🔴 OSW Shield Tier Fix · Strapped Iron 系 T2 bug + Domed 系 ba 微增**（2026-10-09 用户升为**最高优先度** · 替代之前任何条目）
+
+  **📖 完整方案 memory**：[[osw-shield-tier-fix]]（see `C:\Users\situj\.claude\projects\C--Users-situj-git\memory\project_osw_shield_tier_fix.md`）
+
+  ### 📅 2026-10-09 session · 诊断全链
+
+  **用户触发**：实机发现 "铁质盾牌竟然只是 Tier2 不正常"。
+
+  **反编译 vanilla v1.4.7 Shield tier 公式**（`TaleWorlds.Core.DefaultItemValueModel.CalculateShieldTier` · TaleWorlds.Core.dll:12590 铁证）：
+
+  ```
+  rawTier = (hit_points^1.22 + 3·body_armor + thrust_speed) / (6 + weight^1.11) × 0.04 − 2
+
+  Tier (显示) = ClampInt(Round(rawTier), 0, 6) − 1
+  ```
+
+  **关键发现**：**Weight 在分母 ^1.11 指数项** · 过重的盾 tier 被压低。Tier **不直接影响战场防护**（hp/ba/weight 才直接影响）· 但影响 UI 分类 / Retinues `AllowedTierDifference` / 商人售价 · UX 困惑是真的。
+
+  **问题 scope**：
+
+  | 类别 | 件数 | 当前 tier | 状态 |
+  |---|---:|---|---|
+  | 轻铁 Iron 系（a-h, t, u）| 10 | 全 T6 | ✅ 不改 |
+  | **重铁 Strapped Iron 系（m/n/o/r/s）**| 5 | **m=T2 · n/r=T4 · o=T5 · s=T6** | 🔴 **必修** |
+  | Domed Shield 系（zm/zn/zo/zzi 等）| 9 | 全 T6 | 🟡 可选 ba+1 |
+  | 其他 non-Iron 盾 | ~90 | 混合 T1-T6 | ⏭ 本次 scope 外 |
+
+  **真因**：OSW 原始数据 Strapped Iron 系 `weight=7.3`（远超普通盾 3.3-4.7）· 2026-09-25 的 OSW v2 Shield 平衡（分档 hp 曲线）**只改 hp/ba/spd 不改 weight** · 没覆盖这个 anomaly。
+
+  ---
+
+  ### 修复方案
+
+  **Strapped Iron 4-5 件（必修 · 稳 T6）**：
+
+  | ID | 名字 | hp 旧→新 | ba 旧→新 | wt 旧→新 |
+  |---|---|---|---|---|
+  | AR_shield_infantry_m | Strapped Iron Bound Round | 418 → **570** | 2 → **4** | 7.3 → **5.5** |
+  | AR_shield_infantry_n | Strapped Iron Reinforced Round | 528 → **700** | 3 → **5** | 7.3 → **5.5** |
+  | AR_shield_infantry_o | Strapped Iron Decorated Round | 627 → **750** | 6 → **8** | 7.3 → **5.5** |
+  | AR_shield_infantry_r | Strapped Iron Simple Round | 528 → **700** | 3 → **5** | 7.3 → **5.5** |
+  | AR_shield_infantry_s | Strapped Iron Reinforced Round (s) | 770 → **800** | 4 → **6** | 7.3 → **5.5** |
+
+  **Domed Shield 9 件（可选 · ba+1 · 不动 hp/wt · 维持 niche 分化）**：
+  - zm/zm2: ba 2→3 · zn/zn2: 5→6 · zo/zo2: 6→7 · zzi: 3→4 · zzi2/zzi3: 4→5
+
+  ---
+
+  ### 实施路径（1.5h · 1 session 收官）
+
+  1. 改 `OpenSourceArmouryRBMBalance/src/manual_override_shield.ps1`：
+     - 扩展 weight 修改支持（当前只碰 Weapon 子元素 · 需加 Item 顶级 weight 修改）
+     - 加 Iron 系 post-process override（StringId 精确匹配 Strapped Iron 5 件 + Domed Shield 9 件）
+  2. 重跑脚本 → `OSABalance_shield_override.xml` 新版（114 件 · Strapped Iron + Domed 更新）
+  3. 验证 XML：`Select-String AR_shield_infantry_[mnors]` 看新值
+  4. **Deploy**（铁律 [[bannerlord-build-deploy]]）
+  5. 归档（铁律 [[journal-replicate-sync]]）：
+     - `BALANCE_V2_LOG.md` 加 "2026-10-?? OSW Shield tier bug fix" 章节
+     - `OSW_BALANCE_PROPOSAL.md` 升到 v0.3
+     - Journal 标 "✅ 盾牌 tier 平衡 收官"
+     - REPLICATE.md **不需改**（manual_override_shield.ps1 已在 P6.2 OSA deploy 流程内 · 内部实现变化不影响 replicate playbook）
+
+  **决策待拍板**（上个问题悬着）：
+  - Strapped Iron 要不要同时做 s（已 T6 cap · 做 or 不做都 OK）
+  - Domed Shield 9 件 ba+1 是否要做
+
+  ---
+
+### 🔴 P0 · 2026-10-09 新立项 1 · Retinues Captain Perk Bonus（允许 Captain shadow 无 Companion 时给 formation 加成）
+
+- [ ] **🔴 自研 `RetinuesCaptainPerk` mod · 让 Retinues Captain shadow 作 formation leader 给 bonus（衰减系数 K · 弱于 Companion）**（2026-10-09 立项 · 用户明示 "有必要允许在不配置 Companion 的前提下以 Captain 为部队提供加成"）
+
+  **📖 完整方案 memory**：[[retinues-captain-perk]]
+
+  **技术面已查清**（本 session 反编译铁证）：
+  - `Formation.Captain` 字段 = `Agent`（不限 Hero · MountAndBlade.decompiled.cs:69636）
+  - `SkillHelper.AddPerkBonusFromCaptain(perk, captainCharacter, bonuses)` 调 `CharacterObject.GetPerkValue()` · 不要求 IsHero（CampaignSystem.decompiled.cs:5458）
+  - **Retinues 作者故意没做**（0 Captain Perk 相关代码 · reference_retinues_mod 补充）
+  - **自研可行** · 2-3 天工作量
+
+  **方案 D 简化版 blueprint**：
+  1. Patch `CharacterObject.GetPerkValue` prefix · Retinues Captain shadow StringId 查 `CaptainPerkStore` · 返指定 perk 为 true
+  2. Patch `SkillHelper.AddPerkBonusFromCaptain` postfix · 对 Retinues shadow 衰减系数 **K=0.5-0.7**（弱于 Companion · 用户拍板具体值）
+  3. Patch Mission formation 初始化 · 无 Hero Captain 时自动挑 Retinues Captain shadow 作 formation.Captain
+  4. Retinues Troop Editor 加 "Captain Perks" tab · 为每个 Captain 选 3-5 个 vanilla Captain Perks
+
+  **跟其他系统的关系**：
+  - 跟 Companion-as-Captain **互补不互斥**（Companion 已 assign 的 formation 不碰 · 空档 formation 吃衰减 bonus）
+  - 跟 Hetairos/Hypaspistes 皇家卫队无交集（Retinue troop `CanHaveCaptain=false`）
+  - 跟 UTM/FM formation 分配无冲突（本 mod 只碰 formation.Captain 字段 · 不碰成员分配）
+
+  **待拍板**（下次开工前）：
+  - 衰减系数 K 具体值（建议 0.5 或 0.7 · 用户拍板）
+  - Captain Perks 是否限定子集（例如只允许 OneHanded/Athletics/Riding · 排除 Tactics/Leadership · Hero 独享）
+
+---
+
+### 🔴 P0 · 2026-10-09 新立项 2 · OSA v3 跨文化同材质统一（scope 已明确）
+
+- [ ] **🔴 OSA v3 · 同材质跨文化不一致修订**（2026-10-09 立项 · 用户明示 scope = 类型 C）
+
+  **📖 完整方案 memory**：[[osa-v3-cross-culture]]
+
+  **用户 2026-10-09 quote**：
+  > "同样制作样式的盔甲（例如 Scale 或者 Lamellar）和同样制作材质的盔甲在不同文化下出现了数值有 10-20 点数值差距的问题"
+
+  **scope 明确 · 不需要再问 item 清单**：
+  - 已做：顶点精锐线对比（Nord 155 > Sturgia 150 > ... · §48）· HorseHarness T1-T9 跨文化统一（§49）
+  - 本次 v3 补：**head/body/arm/leg 4 类别扩展 §49 风格统一分档** · 不再分文化定数值 · 同材质同档位 = 同数值
+  - **保留**：精工线 override（Khuzait 华夏/Aserai 波斯/Nord 维京顶）· 用户特批不被打下
+
+  **工作流**（复用 §49 HorseHarness · 4-5 session · 可拆分）：
+  1. **扫描阶段**（~1 session · PowerShell 自动化）
+     - 读 OSA/vanilla CSV
+     - 按 (ItemType, material_type, tier) 分组 · 列 7 文化横向
+     - 识别**同组内差异 > 5 点**instance · 输出 `OSA_V3_CROSS_CULTURE_SCAN.md`
+  2. **建立 T1-T9 统一分档表**（~1 session）· 跟 §49 风格
+  3. **用户 review 决议**（~1 session）
+  4. **修 manual_override.ps1 加统一分档**（~1 session）
+  5. **重跑 + deploy + 归档**（~0.5 session）
+
+  **跟 OSW Shield Tier Fix 的关系**：
+  - OSW Shield 是武器层（manual_override_shield.ps1 独立 pipeline）· 本次 OSA v3 是护甲层 · **两 pipeline 独立可并行**
+
+  **跟 OSA v2 的关系**：
+  - OSA v2（2026-09-28 收官 · 1760 件 deploy）**不动** · v3 是补丁覆盖
+  - §49 HorseHarness 已做 · v3 扩展到 head/body/arm/leg
+  - 精工线 override（§48 2026-09-24 用户特批）**保留**
+
+---
+
+### 🔴 P0 · 2026-10-09 重启立项 3 · Fief 大规模征召
+
+- [ ] **🔴 CastleEliteRecruitment 自研 mod 重启 · 配合已 deploy 的 PlayerFiefRecruitBoost 实现玩家 Faction 从 Fief 大规模征召**（2026-10-09 用户发话重启搁置项目）
+
+  **📖 完整方案 memory**：[[fief-mass-recruitment]]
+
+  **历史回顾**（用户 2026-10-09 要求回顾）：
+  - **已落地 · PlayerFiefRecruitBoost v1.0.0**（Journal §51 · 2026-09-26）：town 加速 slot regen × 3 + tier cap 无 relation 门槛 · 非对称玩家 clan only
+  - **搁置 · CastleEliteRecruitment**（2026-09-20 立项 · 2026-09-21 用户降 P2）：4 组件 A/B/C/D 让城堡也产 notable + recruit · 全 v1.4.7 签名核实 · **未落地**
+
+  **整合规划**：
+  - 两 mod **互补不冲突**（PlayerFiefRecruitBoost 治 town 加速 · CastleEliteRecruitment 扩池让 castle 也产兵源）
+  - 叠加结果 = 玩家 fief 数量 × 速度 × 质量三轴提升 · 真正"大规模"
+
+  **CastleEliteRecruitment 4 组件 blueprint**（全 v1.4.7 签名已核实）：
+  | 组件 | Patch 面 | 作用 |
+  |---|---|---|
+  | A · 城堡生成 notable | 自定义 `NotableSpawnModel` + postfix `SpawnNotablesAtGameStart/IfNeeded` | 城堡有可招对象 |
+  | B · 填城堡志愿兵槽 | prefix/transpiler `UpdateVolunteersOfNotablesInSettlement` 放行 `IsCastle` | 城堡 notable slot 被填 |
+  | C · 强制精英线 RBM-proof | postfix `VolunteerModel.GetBasicVolunteer` 返 `Culture.EliteBasicTroop`（盖掉 RBM 15% nerf）| 城堡必出精英 |
+  | D · 城堡招募入口菜单 | 城堡 game menu `AddGameMenuOption` 加 "招募志愿兵" | 玩家能点招 |
+
+  **工作量**：2-3 天（Day 1 A + 存档测 · Day 2 B/C + build/deploy · Day 3 D + 老存档兼容 + 实机测）
+
+  **铁律 compliance**：
+  - [[bannerlord-build-deploy]]：改 + 重跑 deploy.ps1 + 验证时间戳
+  - [[journal-replicate-sync]]：
+    - Journal 加落地章节
+    - **REPLICATE.md P6.x 加 CastleEliteRecruitment deploy phase**（DO/VERIFY/ROLLBACK）
+    - P7.1 launcher 清单加本 mod（LoadAfter RBM/Retinues/PlayerSettlement）
+    - APX.2 custom mod 表加 version
+
+---
+
+### 🔴 P0 · 2026-10-09 session · 6 条下 session 工作重点
+
+**本 session 做了什么**（归档）：
+1. ✅ 坤坤编辑器 v0.6.3 **已 deploy** 到 `Modules\KunKunEditor\`（12.90 MB · 35 Prefabs · 中文语言包）
+2. ✅ `ThaddeusEmpire_TroopNaming.md` v0.5 大重构：
+   - 皇家卫队换阵（瓦兰吉 → Hetairos + Hypaspistes · 亚历山大希腊旗舰）
+   - §基础主线 v0.3 → v0.5 α 熔炉吸纳（4 分支 24 兵种全帝国通用名）
+   - §三/四/五 旧通用池废弃
+   - §精锐 v0.4 加 α 叙事升级 note（归化外族 → 文化传承军团）
+3. ✅ 跨 mod 兼容性深度调研（反编译 KunKunEditor.dll 75K 行 + Retinues.dll 34K 行）：
+   - 坤坤能看/编辑 Retinues troop · 装备持久化**可能**被 Retinues 覆盖（需实测）
+   - Retinues 装备 pool 来源 = ItemObject.All 全局 · 有 `RestrictItemsToTownInventory` MCM 开关
+   - Retinues EquipmentRow.Hint = vanilla `CharacterEquipmentItemVM` · **RBM modifier 自动显示**（RBM 改底层字段 · vanilla tooltip 直接读）
+   - 坤坤能用 CultureCreationStore 建新文化 · 但**不能**改 loyalty mismatch 模型（需自研 1 处 Harmony patch）
+   - Burning Empires 2.0 全结构（核心 total conversion + Elephants 扩展）· 整合路径 A/B/C
+4. ✅ Thaddian 文化落地路线确定（坤坤 CultureEditor + ThaddianLoyaltyExempt 瘦 patch · 替代 Journal §2621 自研 XML mod 规划）
+
+**下 session 挑一条启动**：
+
+---
+
+#### 重点 1 · 坤坤实测 Retinues troop 装备持久化
+
+- [ ] **坤坤 vs Retinues 装备持久化冲突实测**（2026-10-09 发现 · 优先级最高 · 决定后续路线）
+
+  **背景**：坤坤能看到 Retinues troop · 能 in-memory 编辑 · 但 Retinues 每次打开自己 UI 时 apply 它保存的 troop state · 坤坤对 Retinues troop 装备的改动**大概率被覆盖**。需要实测验证哪些操作持久 · 哪些被覆盖。
+
+  **测试步骤**（30 min · 需备份存档）：
+  1. 备份现有存档
+  2. 开新档 · 挂 Retinues + 坤坤 · 建个 Retinues House
+  3. Retinues UI 里给 Champion 配一套装备（例：铁甲 + 剑）· 退出 Retinues
+  4. 坤坤 Original 筛选 → 找 Retinues Champion troop → 改装备（例：换金甲 + 大锤）
+  5. 保存关游戏 · 重启 · 读档
+  6. **观察**：Champion 装备是坤坤的新还是 Retinues 的旧
+  7. 若存坤坤新 · **再打开 Retinues UI** · 看是否被覆盖
+
+  **结果决定后续路线**：
+  - 若坤坤改 **装备**持久 · 可直接用坤坤 UI 实化 Hetairos/Hypaspistes 装备
+  - 若装备被 Retinues 覆盖 · 需走 Retinues UI 配装备 · 坤坤只用来改名/skill 等
+  - 若全被覆盖 · 坤坤对 Retinues 只能看 · 不能改
+
+---
+
+#### 重点 2 · Retinues 装备 pool "同步 Inventory" 开关实测
+
+- [ ] **Retinues MCM "Restrict Items To Town Inventory" 实测**（2026-10-09 发现 · 原生开关可能一分钟解决用户需求）
+
+  **背景**：用户 2026-10-09 问能否把 Retinues 装备列表跟玩家 Inventory 同步。反编译发现 Retinues 已有 `Config.RestrictItemsToTownInventory` MCM 开关（Equipment 分组 · 默认 off）· 开后装备列表只显示玩家当前所在 town 的 inventory 里有的物品（`Player.CurrentSettlement.ItemCounts()`）。
+
+  **测试步骤**（15 min）：
+  1. 游戏内 Esc → Mod Options → Retinues → Equipment → 勾 `Restrict Items To Town Inventory`
+  2. 进任意 town · 打开 Retinues editor
+  3. 看装备列表是否收窄为 "当前 town 商人卖的 item"
+  4. 退 town 进野外 · 再开 Retinues editor
+  5. 看是否 fallback 到全局池（野外无 town）
+
+  **可能的决策**：
+  - 若原生开关满意 · 工作完成 · 不需自研 patch
+  - 若想要 **玩家 PartyBase.ItemRoster 随身库存** 的更精细同步（野外也生效）· 自研 patch `EquipmentManager.BuildCurrentTownAvailabilitySet` · ~2-3h · 包成 `RetinuesInventorySync` mini mod
+
+  **跟重点 4 的关系**：若做 Thaddian 自定义文化 · 建议配合 `AncestralHeritage` doctrine + `AllCultureEquipmentUnlocked` · 让 Thaddian 文化装备解锁 · 跟 TownInventory 开关互补
+
+---
+
+#### 重点 3 · Thaddian 常备军 §基础主线 功能重叠 3 条整合
+
+- [ ] **Thaddian 常备军 v0.5 功能重叠整合**（2026-10-09 用户诊断搁置 · 等用户发话继续）
+
+  **背景**：2026-10-09 session 从兵种**功能**角度切入 · 发现精锐线 10 分支 + 常备军 24 兵种 + 皇家卫队 2 槽 · 共 36 支兵 · 有 3 处功能同质化：
+
+  | 重叠 | 问题 | 建议方案（我倾向）|
+  |---|---|---|
+  | F6 诺德斧步（精锐 G）vs 巴旦大刃（精锐 J）| 95% 功能重合 · 都是 T5-T7 · 2H 重装砍杀步 | **X · 砍 J · 大刃作 G 高 tier 武器变体** · 精锐 10 → 9 分支 |
+  | F1 3 支 T7 冲击重骑（A 具装 · I 拉丁 · 卫队 Hetairos）| 3 支 T7 功能重合 · 装备 niche 不明 | **Z · I Latinikoi Milites 改"十字军长枪"niche** · 保 T7 但装备 niche 明确拉开 |
+  | F7 精锐 H Rhos 系 niche 不明 | 走 F3 持盾撞 B · 走 F6 2H 撞 G/J · 没有独立 niche | **X · 明确 druzhina 万能亲兵装备栏**（1H+盾+投枪+可选 2H 大斧）· 保 10 分支 · Rhos 定位清晰 |
+
+  **用户 2026-10-09 回复**：没拍板 · 直接搁置转向其他话题。等用户发话确认 3 条整合方案（可全采纳 · 可部分 · 可暂不动）。
+
+  **若组合全采纳**：精锐 10 → 9 分支 · T7 顶 10 → 9 顶 · F1 3 支冲击 niche 全明确 · Rhos druzhina 定位实化。
+
+---
+
+#### 重点 4 · 坤坤建 Thaddian 文化 + ThaddianLoyaltyExempt 瘦 patch
+
+- [ ] **Thaddian 文化落地**（2026-10-09 调研定路线 · 替代 Journal §2621 自研 XML mod）
+
+  **路线**：坤坤 CultureEditor 建 thaddian + 自研 1 处 Harmony patch 免忠诚度 mismatch · 1 session（1-2h）搞定。
+
+  **详见 memory**：[[thaddian-culture]]
+
+  **步骤 1 · 坤坤建 thaddian**（5 min 游戏内 UI 操作）：
+  - 开游戏 · 读档 · 开坤坤 CultureEditor
+  - "创建文化" · 选 Empire 作模板 · 填 ID=`thaddian` · Name=`Thaddian Empire`
+  - 可选上传旗徽图片 · 确认
+
+  **步骤 2 · 自研 `ThaddianLoyaltyExempt` 瘦 patch mod**（~1h）：
+  ```csharp
+  [HarmonyPatch(typeof(DefaultSettlementLoyaltyModel),
+                "GetSettlementLoyaltyChangeDueToOwnerCulture")]
+  public static class ThaddianLoyaltyExemptPatch
+  {
+      static bool Prefix(Settlement settlement, ref ExplainedNumber explainedNumber)
+      {
+          if (settlement.OwnerClan?.Culture?.StringId == "thaddian")
+              return false;  // skip vanilla · 不扣忠诚度
+          return true;
+      }
+  }
+  ```
+  - 包成瘦 mod · 跟 UTMPatch/CheatsGuard 风格一致
+  - `SubModule.xml` + `src/SubModule.cs` + `src/LoyaltyExemptPatch.cs` + `deploy.ps1`
+  - **铁律 [[bannerlord-build-deploy]]**：build + deploy.ps1 + 验时间戳 · 一次到位
+  - **铁律 [[journal-replicate-sync]]**：Journal + REPLICATE.md P6.x/P7.1/APX.2 同步
+
+  **vanilla method 签名核实**：落地前先反编译 `TaleWorlds.CampaignSystem.ComponentInterfaces.SettlementLoyaltyModel` 核 v1.4.7 下 method 名（可能是 `GetSettlementLoyaltyChangeDueToOwnerCulture` 或 `CalculateLoyaltyChange` 的子 call · 需 ilspycmd 确认）
+
+---
+
+#### 重点 5 · 战象整合（Minimal mini mod 或搁置）
+
+- [ ] **Burning Empires 战象整合判断**（2026-10-09 调研完 · 用户没拍板）
+
+  **调研结论**（详见 [[burning-empires]]）：
+
+  | 路径 | 做法 | 工作量 | 可行性 |
+  |---|---|---|---|
+  | A | 装完整 BE（核心 + Elephants）| 10 min · 但 total conversion 跟现有 workflow 冲突巨大 | 🔴 不推荐 |
+  | B | 自研 `ThaddeusElephants` mini mod · 只搬 Elephants 必要 XML | **1-2 天** | 🟢 推荐（如果真需要大象）|
+  | C | 搁置 · OSA 骑兵 + 精锐 D/E/F 已够丰富 | 0 | 🟢 务实 |
+
+  **"生产大象村庄" 技术障碍**：`Item.elephant` is_merchandise=false 不能通过标准 trade good 流通 · 要让村庄产大象需自研 CampaignBehavior + patch is_merchandise + 自建 VillageType 分配 · **3-5 天工作量**
+
+  **等用户拍板 A/B/C**。我 2026-10-09 session 建议 C（搁置 · 承认不必需）或 B（若坚持需要 · 走 Minimal 路径）。
+
+---
+
+#### 重点 6 · CheatsGuard v2 冲突协调器实施
+
+- [ ] **CheatsGuard v2 实施**（2026-10-08 立项 · 待坤坤 baseline 跑完）
+
+  **已归档**：顶部 [🟡 P0 · 2026-10-08 CheatsGuard v2 ...] 章节有完整 blueprint + 7 处 target 默认 prefer 建议。
+
+  **先决条件**：**先 deploy 坤坤跑 baseline**（本 session 已 deploy 到 Modules · 用户下次开游戏跑 1 场战役摸实际 patch 行为）· 实测反馈后 · prefer 默认值从"纸面建议"升级为"实测校正"。
+
+  **实施步骤**（1 session · ~3h · 详见 memory [[cheatsguard-v2]]）：
+  1. `Config.cs` 加 `ManagedNamespaces` + `ConflictPrefer` 解析
+  2. `PatchInterceptor.Prefix` 改 `IsManaged(fqn)` 查表
+  3. 新 `TargetConflictTracker.cs` · 7 处同 target 仲裁
+  4. MCM "Conflict Resolution" 分组 7 项下拉
+  5. 测 · build + deploy.ps1 + Journal/REPLICATE 同步
+
+---
+
+**本 session REPLICATE.md 同步**（铁律 [[journal-replicate-sync]]）：
+- ✅ **已触发**（坤坤从 ZIP → Modules · 执行层变化）
+- ⏭ 本 session 一并处理 · 加 P6.x KunKunEditor deploy phase + P7.1 launcher 清单 + APX.2 custom mod 表
+
+---
+
+### 🟡 P0 · 2026-10-08 新立项 · CheatsGuard v2 通用冲突协调器 · 三 mod 并存方案
+
+- [ ] **🟡 CheatsGuard v2 · 把现有 BC-only wrapper 扩成多 namespace skip-list + 同 target 仲裁 · 让 BC + CheatsGuard + 坤坤编辑器三 mod 并存**（2026-10-08 立项 · 调研完 · 等用户发话动工）
+
+  ---
+
+  ### 📅 2026-10-08 session · 三 mod 整合可行性调研
+
+  **触发**：用户下载坤坤编辑器 v0.6.3（`C:\Users\situj\Desktop\坤坤编辑器\坤坤编辑器v0.6.3【游戏版本1.4.6-1.4.8】.zip` · 4.6 MB），问能否把 BC + CheatsGuard + 坤坤三方整合为自研 mod。
+
+  **调研动作**：ilspycmd 反编译坤坤 2.17 MB DLL → 75,233 行源码 → 核清 patch 面；对照 BC（§53 Round 4 稳定 81/163）+ CheatsGuard（`PatchInterceptor.cs:22` BC-only wrapper）。
+
+  **三 mod 真实画像**：
+
+  | 维度 | BC v3.0.3.0 | CheatsGuard | 坤坤编辑器 v0.6.3 |
+  |---|---|---|---|
+  | 范式 | runtime 作弊按钮 | BC 的 wrapper 层 | **in-game 存档/世界状态编辑器**（Gauntlet 全屏 · 42 Prefab）|
+  | DLL 大小 | ~500 KB | ~50 KB | **2.17 MB** |
+  | UI | MCM 滑块 + 热键 | MCM 99 项镜像 | Gauntlet 全屏 · 热键 `KunKunEditorConfigStore.OpenEditorHotkey` 打开 |
+  | Harmony id | `BannerlordCheats` | `BannerlordCheats.CheatsGuard` | `kunkun.editor` |
+  | Patch 数 | 163（50 skip · 81 启用稳定）| 1 interceptor + 4 replacement + 2 util | **~55**（30 OnSubModuleLoad + 25 OnGameStart）|
+  | 原生语言 | 英文 | 英文 | **中文**（203 KB `kunkun_strings.xml`）|
+  | 依赖 | Harmony+ButterLib+UIExtender+MCM | 同左 | **仅 Native/Sandbox** · 内嵌 0Harmony · 零外部依赖 |
+  | License | MIT（Lusitanie）| 自研 | **无 LICENSE**（Author: Jianghe · 默认 ARR）|
+  | 作者 | upstream 外部 | 你自研 | 外部 |
+
+  **坤坤独家功能面**：Hero/Clan/Kingdom/Culture 全属性编辑 · Troop 从头创建+删除 · Dialogue 编辑 · 自造势力+自造文化 · Item/CraftingPiece/Equipment 全字段 · 城镇建筑/守军/俘虏/Policy/Perk/Quest/Event 编辑 · 战场内编辑器 `KunKunMissionControlLogic+View` · Module Export（编辑结果导出成独立 XML module）· Legacy data migration
+
+  **BC+CheatsGuard 独家**（坤坤无对应）：Money 热键 Ctrl+X/Ctrl+Shift+X · RBM Troop Maintenance 玩家 scope · PassiveXpBehavior 每日被动 XP
+
+  **真·冲突面（7 处同 vanilla method 两方都 patch）**：
+
+  | vanilla target | BC 用途 | KunKun 用途 |
+  |---|---|---|
+  | `AgentApplyDamageModel.CalculateDamage` | Invincible / DamageTakenPercentage | 2 处（PlayerDamage + DamageReduction + IgnoreArmor + MissilePenetrateShield + Cleave 系列）|
+  | `DefaultPartyWageModel.GetTotalWage` | TroopWagesPercentage | MainPartyWageMultiplier |
+  | `DefaultPartySizeLimitModel.GetPartyMemberSizeLimit` | PartySize | PartySizeLimit |
+  | `DefaultPartySizeLimitModel.GetPartyPrisonerSizeLimit` | PrisonerSize | MainPartyPrisonerLimit |
+  | `DefaultClanTierModel.GetCompanionLimit` | CompanionsLimit | CompanionLimit |
+  | `CalculateDailyFoodConsumptionf` | FoodConsumption | MainPartyFoodMultiplier |
+  | `CalculateFinalSpeed` | PartySpeed | PartySpeed |
+  | `UpdateHumanStats` (Sprint) | Sprint | Sprint |
+
+  ---
+
+  ### 整合可行性评估（3 条路线对比）
+
+  | 路线 | 技术面 | 工作量 | 推荐 |
+  |---|---|---|---|
+  | A · BC + CheatsGuard 合为一个自研 mod | 可行（fork BC 源 + inline wrapper）| 1-2 session | ❌ **不推荐** · 抛弃 upstream · 零机能增益 · license OK 但维护成本翻倍 |
+  | B · 三 mod 真·代码整合（单 DLL）| 极难 · 坤坤 75K 行 · license 不明 · 必须 clean-room reimpl | **2-3 月** | ❌ **强烈不推荐** · 等于再写一个坤坤 |
+  | C · **冲突协调（三 mod 并存 + CheatsGuard 式 wrapper 扩展）** | **顺延现有架构**（PatchInterceptor 已是 skip-list wrapper）| **1 session · ~3h** | ✅ **用户 2026-10-08 选定** |
+
+  ---
+
+  ### CheatsGuard v2 架构 blueprint
+
+  **config.xml 新增 schema**：
+  ```xml
+  <ManagedNamespaces>
+    <Namespace>BannerlordCheats.Patches</Namespace>
+    <Namespace>KunKunEditor.Patches</Namespace>
+  </ManagedNamespaces>
+
+  <ConflictResolution>
+    <Target method="AgentApplyDamageModel.CalculateDamage" prefer="KunKun" />
+    <Target method="DefaultPartyWageModel.GetTotalWage" prefer="BC" />
+    <!-- ... 7 处 ... -->
+  </ConflictResolution>
+  ```
+
+  **代码变更**（1 session · ~3h · 全可逆）：
+  1. `Config.cs` 加 `List<string> ManagedNamespaces` + `Dictionary<string,string> ConflictPrefer` 解析（30 min）
+  2. `PatchInterceptor.Prefix` 把 `CheatsNsPrefix` 常量改成 `IsManaged(fqn)` 查表（20 min）
+  3. 新 `TargetConflictTracker.cs` · `AccessTools.GetDeclaredMethods` 读 `[HarmonyPatch]` attr 推 target · 维护 `(target → first-owner)` 字典 · 第二 owner 若非 prefer 则 skip（1h）
+  4. MCM 面板加 "Conflict Resolution" 分组 · 7 项下拉（BC/KunKun/vanilla · 镜像 config）（30 min）
+  5. 测：裸装坤坤 baseline → 装 v2 → 验 7 处 prefer 切换生效（1h）
+  6. **build + deploy.ps1 + Journal/REPLICATE 同步**（铁律 [[bannerlord-build-deploy]] + [[journal-replicate-sync]]）
+
+  ---
+
+  ### 7 处 target 的默认 prefer 建议（纸面推理 · 实测前为假设）
+
+  | target | prefer | 理由 |
+  |---|---|---|
+  | `AgentApplyDamageModel.CalculateDamage` | **KunKun** | 粒度细（friendly cleave + ranged shield penetration + ignore armor + penetrate shield）· BC 只单滑块 |
+  | `DefaultPartyWageModel.GetTotalWage` | **BC** | Round 4 实测稳定 · KunKun 未验证 |
+  | `DefaultPartySizeLimitModel.*` | **KunKun** | 一致处理 member + prisoner + companion 三件套 |
+  | `DefaultClanTierModel.GetCompanionLimit` | **KunKun** | 同上 · 走一方 |
+  | `CalculateDailyFoodConsumption` | **vanilla** | IG + 修改 #5 食物堆叠已覆盖 · cheat mod 不碰 |
+  | `CalculateFinalSpeed` | **BC** | Round 4 稳定 · 保原状 |
+  | `UpdateHumanStats` (Sprint) | **KunKun** | 坤坤 Sprint 跟 Overpower 配套 · 单侧选 |
+
+  ---
+
+  ### 落地前必读 2 件事
+
+  1. **先 deploy 坤坤到 `Modules\KunKunEditor\`**（当前只在 Desktop ZIP · 不在 Modules）· 原装跑 1 场战役 · 熟悉它的 UI/编辑 scope · **7 条 prefer 建议需实测校正** · 否则现在拍的 prefer 是纸面推理 · 实测可能跟你的手感期望偏差
+  2. **锁 v1.4.7 兼容**：坤坤标 "游戏版本 1.4.6-1.4.8" · 需确认在 v1.4.7 build 117484 下所有 patch 不 FAIL · 否则 CheatsGuard v2 的 skip-list 要先补坤坤的 FAIL 清单（跟 BC 32 always-skip 同理）
+
+  ---
+
+  ### 风险 / 必读
+
+  1. **坤坤原生中文** · 跟 [[reports-english]] 冲突 · 但并存模式不整合坤坤代码 · 冲突只影响坤坤自己的 UI · 英化坤坤 = 单独改 `ModuleData/Languages/CNs/kunkun_strings.xml`（203 KB · 不属本次 scope · 用户决定要不要做）
+  2. **坤坤 license 不明** · 并存无侵权风险 · fork/reshape 有侵权风险
+  3. 坤坤 `KunKunMissionTimeSpeedPatch` on `Mission.UpdateSceneTimeSpeed` · 跟 vanilla + RBM time scale 可能有 Prefix 优先级问题 · 实测时注意
+  4. 坤坤有 ROT (Realm of Thrones) 兼容性检测 · 装 ROT 时 skip 6 个 culture creation patch · 你没装 ROT 所以不影响
+
+  ---
+
+  ### 下 session 首事（等用户发话）
+
+  三选一：
+  - **A · 先 deploy 坤坤跑 baseline**：帮用户 deploy 到 `Modules\KunKunEditor\` · 用户裸装跑 1 场战役 · 摸熟 UI + 7 处 patch 实际手感 · 回来校正 prefer 默认值
+  - **B · 直接动手 CheatsGuard v2**：按上方 blueprint 一次到位 · build + deploy + 同步 Journal/REPLICATE
+  - **C · 已完成归档后立即动工**：A 和 B 合二为一 · 1 session 跑完
+
+  **我的建议**：**A → C**。先让坤坤裸装跑一轮 · 用户亲手摸 UI 和 7 处 patch 实际手感 · 再反过来定 ConflictResolution 的 prefer 默认值。
+
+  ---
+
+  ### REPLICATE.md 本次为什么不动
+
+  按 [[journal-replicate-sync]] 铁律 · REPLICATE 更新触发清单是：新 mod deploy / 版本升级 / 删 mod / launcher load order 变 / 第二设备 build 命令变。本次只是**调研归档** · 坤坤还没 deploy · CheatsGuard 还没升 v2 · 没有执行层变化 · REPLICATE 保持原状。当 v2 实施并 deploy 时 · 必须同步修改：
+  - P6.x 加 KunKunEditor deploy phase（装 ZIP → `Modules\KunKunEditor\`）
+  - P6.x 把 CheatsGuard v1 升到 v2（代码+config schema 变化）
+  - P7.1 launcher 清单加 KunKunEditor 条目
+  - APX.2 custom mod source-of-truth 表 version 升级
+
+  ---
 
 ### 🔴 P0 · 最高优先度（2026-10-06 用户战略级质询 · UTM 转向 UTMPatch 瘦补丁路线）
 

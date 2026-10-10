@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <RootNamespace>BannerlordPlayerSettlement</RootNamespace>
+    <AssemblyName>PlayerSettlement</AssemblyName>
+    <Version>7.5.1</Version>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Company>PlayerSettlement</Company>
+    <Product>PlayerSettlement</Product>
+    <AssemblyTitle>PlayerSettlement (Rebuilt)</AssemblyTitle>
+    <Configurations>Debug;Release</Configurations>
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <ErrorReport>none</ErrorReport>
+
+    <GameRoot Condition="'$(GameRoot)' == ''">E:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord</GameRoot>
+    <GameBin>$(GameRoot)\bin\Win64_Shipping_Client</GameBin>
+    <WorkshopRoot>E:\SteamLibrary\steamapps\workshop\content\261550</WorkshopRoot>
+  </PropertyGroup>
+
+  <!-- Suppress tons of nullable warnings and warnings-as-errors noise from decomp artifacts -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8618;CS8625;CS8632;CS8714;CS8767;CS0168;CS0219;CS0162;CS0414;CS0649;CS0108;CS0169;CS8509;CS8603</NoWarn>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- TaleWorlds game assemblies (reference only, do not copy to output) -->
+  <ItemGroup>
+    <Reference Include="TaleWorlds.Core">            <HintPath>$(GameBin)\TaleWorlds.Core.dll</HintPath>                             <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.Library">         <HintPath>$(GameBin)\TaleWorlds.Library.dll</HintPath>                          <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.Engine">          <HintPath>$(GameBin)\TaleWorlds.Engine.dll</HintPath>                           <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.ObjectSystem">    <HintPath>$(GameBin)\TaleWorlds.ObjectSystem.dll</HintPath>                     <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.SaveSystem">      <HintPath>$(GameBin)\TaleWorlds.SaveSystem.dll</HintPath>                       <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.InputSystem">     <HintPath>$(GameBin)\TaleWorlds.InputSystem.dll</HintPath>                      <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.Localization">    <HintPath>$(GameBin)\TaleWorlds.Localization.dll</HintPath>                     <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.ScreenSystem">    <HintPath>$(GameBin)\TaleWorlds.ScreenSystem.dll</HintPath>                     <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.GauntletUI">      <HintPath>$(GameBin)\TaleWorlds.GauntletUI.dll</HintPath>                       <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade">   <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.dll</HintPath>                    <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.ViewModelCollection"> <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.ViewModelCollection.dll</HintPath> <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.GauntletUI">          <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.GauntletUI.dll</HintPath>          <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.GauntletUI.Widgets">  <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.GauntletUI.Widgets.dll</HintPath>  <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.DotNet">          <HintPath>$(GameBin)\TaleWorlds.DotNet.dll</HintPath>                                         <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.ModuleManager">   <HintPath>$(GameBin)\TaleWorlds.ModuleManager.dll</HintPath>                                  <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.NavigationSystem"> <HintPath>$(GameBin)\TaleWorlds.NavigationSystem.dll</HintPath>                              <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.Helpers">            <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.Helpers.dll</HintPath>             <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.GauntletUI">      <HintPath>$(GameBin)\TaleWorlds.GauntletUI.dll</HintPath>                                     <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.GauntletUI.ExtraWidgets">          <HintPath>$(GameBin)\TaleWorlds.GauntletUI.ExtraWidgets.dll</HintPath>           <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.Engine.GauntletUI">                <HintPath>$(GameBin)\TaleWorlds.Engine.GauntletUI.dll</HintPath>                 <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.TwoDimension">    <HintPath>$(GameBin)\TaleWorlds.TwoDimension.dll</HintPath>                                   <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.CampaignSystem"> <HintPath>$(GameBin)\TaleWorlds.CampaignSystem.dll</HintPath>  <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.CampaignSystem.ViewModelCollection"> <HintPath>$(GameBin)\TaleWorlds.CampaignSystem.ViewModelCollection.dll</HintPath> <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.CampaignSystem.GauntletUI">         <HintPath>$(GameBin)\TaleWorlds.CampaignSystem.GauntletUI.dll</HintPath>         <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.Core.ViewModelCollection"> <HintPath>$(GameBin)\TaleWorlds.Core.ViewModelCollection.dll</HintPath>                 <Private>false</Private> </Reference>
+    <Reference Include="SandBox.GauntletUI">                    <HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.GauntletUI.dll</HintPath>  <Private>false</Private> </Reference>
+    <Reference Include="Newtonsoft.Json">            <HintPath>$(GameBin)\Newtonsoft.Json.dll</HintPath>                             <Private>false</Private> </Reference>
+  </ItemGroup>
+
+  <!-- Modules shipped by game Modules\ folder (reference only) -->
+  <ItemGroup>
+    <Reference Include="SandBoxCore">                <HintPath>$(GameRoot)\Modules\SandBoxCore\bin\Win64_Shipping_Client\SandBoxCore.dll</HintPath>                 <Private>false</Private> </Reference>
+    <Reference Include="SandBox">                    <HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.dll</HintPath>                         <Private>false</Private> </Reference>
+    <Reference Include="SandBox.View">               <HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.View.dll</HintPath>                    <Private>false</Private> </Reference>
+    <Reference Include="SandBox.ViewModelCollection"><HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.ViewModelCollection.dll</HintPath>     <Private>false</Private> </Reference>
+    <Reference Include="SandBox.GauntletUI">         <HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.GauntletUI.dll</HintPath>              <Private>false</Private> </Reference>
+    <Reference Include="StoryMode">                  <HintPath>$(GameRoot)\Modules\StoryMode\bin\Win64_Shipping_Client\StoryMode.dll</HintPath>                     <Private>false</Private> </Reference>
+    <Reference Include="NavalDLC">                   <HintPath>$(GameRoot)\Modules\NavalDLC\bin\Win64_Shipping_Client\NavalDLC.dll</HintPath>                       <Private>false</Private> </Reference>
+    <Reference Include="Helpers">                    <HintPath>$(GameRoot)\Modules\Native\bin\Win64_Shipping_Client\Helpers.dll</HintPath>                          <Private>false</Private> </Reference>
+  </ItemGroup>
+
+  <!-- Workshop mod framework assemblies (reference only) -->
+  <ItemGroup>
+    <Reference Include="0Harmony">                   <HintPath>$(WorkshopRoot)\2859188632\bin\Win64_Shipping_Client\0Harmony.dll</HintPath>                   <Private>false</Private> </Reference>
+    <Reference Include="Bannerlord.ButterLib">       <HintPath>$(WorkshopRoot)\2859232415\bin\Win64_Shipping_Client\Bannerlord.ButterLib.dll</HintPath>       <Private>false</Private> </Reference>
+    <Reference Include="Bannerlord.UIExtenderEx">    <HintPath>$(WorkshopRoot)\2859222409\bin\Win64_Shipping_Client\Bannerlord.UIExtenderEx.dll</HintPath>    <Private>false</Private> </Reference>
+    <Reference Include="MCMv5">                      <HintPath>$(WorkshopRoot)\2859238197\bin\Win64_Shipping_Client\MCMv5.dll</HintPath>                      <Private>false</Private> </Reference>
+  </ItemGroup>
+
+  <!-- Framework / BCL -->
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <!-- Exclude bin/obj from compile -->
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
+  </ItemGroup>
+
+</Project>

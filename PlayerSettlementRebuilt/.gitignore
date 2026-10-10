@@ -1,0 +1,12 @@
+# MSBuild build artifacts
+bin/
+obj/
+
+# Reference decompile outputs (large, regeneratable from decompiled_reference)
+decompiled_reference/UIExtenderEx_v3/
+decompiled_reference/MCM_v5123/
+decompiled_reference/TaleWorlds_Core_ViewModelCollection_tmp/
+
+# Local-only dev artifacts
+*.user
+*.suo

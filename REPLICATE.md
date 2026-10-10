@@ -678,9 +678,11 @@ Test-Path "$GAME_ROOT\Modules\UnifiedTroopManager\GUI\Prefabs\UTMTroopManager.xm
 
 ---
 
-## [P6.7] Build + deploy UTMPatch (v1.0.1) — ALTERNATIVE to P6.6
+## [P6.7] ~~Build + deploy UTMPatch (v1.0.1)~~ — 🪦 **DEPRECATED 2026-10-10**
 
-**GOAL**: Standalone thin Harmony patch for CYT-only setups. Fixes CYT's whitelist filter so vanilla `_readyTroopsPriorityList` doesn't let one high-stock troop monopolize `numberToAllocate`. For users who prefer CYT's small UI over UTM's full Gauntlet screen.
+> **Deprecated reason**: UTM revived on 2026-10-07 and now covers quota-enforcement natively (own `UTMQuotaEnforcerPatch` + `UTMInitialSpawnPatch`). UTMPatch was the thin alternative for the UTM-shelved period and is now redundant. Code preserved in `UTMPatch/` as backup; do not deploy or enable.
+
+**GOAL** (historical): Standalone thin Harmony patch for CYT-only setups. Fixes CYT's whitelist filter so vanilla `_readyTroopsPriorityList` doesn't let one high-stock troop monopolize `numberToAllocate`. For users who prefer CYT's small UI over UTM's full Gauntlet screen.
 
 **PRE**: [P6.0] complete. CYT subscribed via [P1.3]. FM optional (UTMPatch skips if FM not loaded). **Must NOT install alongside UTM (P6.6)** — both patch `MapEventSide.AllocateTroops`.
 
@@ -826,11 +828,11 @@ Remove-Item "$USER_DATA\Configs\LauncherData.xml"
 
 **PRE**: Downloaded ZIPs available. Source-device notes (journal §模组清单待下载/计划安装):
 
-| Mod | Version | Nexus ID |
-|---|---|---|
-| Stop Shuffling You Fools – Formation Manager | 0.5.2 | 11869 |
-| TroopClassifier | v0.2.0 | 12104 |
-| BattleSizeResized | 2.0.4 (for 1.4.x) | 8177 |
+| Mod | Version | Nexus ID | Status |
+|---|---|---|---|
+| Stop Shuffling You Fools – Formation Manager | 0.5.2 | 11869 | (optional · UTM supersedes) |
+| ~~TroopClassifier~~ | ~~v0.2.0~~ | ~~12104~~ | 🪦 **DEPRECATED 2026-10-10** (FM dependency · FM no longer needed under UTM) |
+| BattleSizeResized | 2.0.4 (for 1.4.x) | 8177 | active |
 
 **DO** (manual per mod):
 1. Download ZIP from Nexus mods (URL: `https://www.nexusmods.com/mountandblade2bannerlord/mods/<ID>`)

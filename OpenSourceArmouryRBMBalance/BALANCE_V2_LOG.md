@@ -6,6 +6,113 @@
 
 ---
 
+## ✅✅✅ 2026-09-28 深夜 · 全 5 文化全 6 类别 · Full Deploy 收官
+
+**manual_override.xml 已从 843 → 1760 件（+917 · 覆盖 5 文化 5 类别）** · 抽取用 4 并行 agent · pipeline 稳定 · deploy 已同步到 game modules。
+
+**5 处 missing warning**（agent 抽取轻微 hallucination · 0.28% 错误率 · 游戏静默忽略无影响）：`AR_imperial_lamellar_shoulders` · `hmj_southern_helmet` · `ao_subuwari_a/a2` · `saracen_helmet_c_ii`
+
+**Full Deploy Batch D 分布**：
+- Empire Cape/Body/Hand/Leg: ~148 件
+- Vlandia Cape/Body/Hand/Leg: ~141 件
+- Battania Cape/Body/Hand/Leg: ~152 件
+- Sturgia HeadArmor/Cape/Body/Hand/Leg: ~188 件
+- Aserai HeadArmor/Cape/Body/Hand/Leg + 波斯萨珊追加: ~288 件
+- **总 917 件**
+
+**过去 3 批合并累计**（今日 3 阶段 deploy）：
+1. HeadArmor 断层修复 (Empire 150 + Vlandia 128 + Battania 145) = 423 件
+2. 金属盔 head 主导修正 (E1 18 + V1 14 + B1 23) = 55 件（override 已 deploy 项）
+3. **Full Deploy Batch D**（Cape/Body/Hand/Leg + Sturgia/Aserai全）= 917 件
+4. **今日总 deploy 净增 · 1340+ 件**（含 Fix 覆盖）
+
+**遗留 log-only**（合规保留）：Empire 帽/头饰 19 件（铁律 11 · cosmetic 低价值）· `AR_empire_lord_helmet_c` 1 件（v1 script 跳过）· 5 件 agent hallucination missing
+
+**关键 in-game 修复验证**（sample XML）：
+- `AR_imperial_shoulders_m` "Imperial Leather Shoulders" = 16 body / 4 arm（原 v1 script 22/8/2.1 · 命名语义梯度归位）
+- `AR_sturgia_helmet_a` = 61 head（Sturgia 之前完全未 deploy）
+- `AR_aserai_lord_helmet_a` = 91 head（Aserai 之前只做 5 件 Darshi）
+- `TV_battania_warlord_bracers_b` = 50 arm（Battania HandArmor 之前完全未 deploy）
+
+---
+
+## 🔒 2026-09-28 晚 · 铁律 22 · 金属盔 head 主导原则（vanilla+RBM Override 第 2 次打破）
+
+> **用户 2026-09-28 拍板**：`X with/over Y` 命名（X = 金属盔 base_type · Y = aventail 材质如 cloth/leather/padding/mail/coif）的物品 · **head 由 base_type 决定 · Y 只决定 body/arm**（+ coif 类可给 ≤+4 head 反映包住后脑）。
+>
+> **触发**：用户 in-game 发现 `Roundkettle With Leather` 74 head 远低于 `Roundkettle With Mail` 92 head（差 18） · 诊断出 v2 baseline (v2b) 把 vanilla `roundkettle_over_leather 74` vs `roundkettle_over_mail 92` 的差距直接照抄 · 违背设计直觉「金属盔 mesh 才是主要防御 · aventail 仅决定 body/arm」。
+>
+> **参考金属盔 head 表**：
+> | base_type | metal head | 依据 vanilla |
+> |---|---:|---|
+> | Roundkettle | 90-94 | `kettle_helmet_with_mail` 92 · +coif 顶覆盖 +2-4 |
+> | Pointed Helmet | 85-90 | Pointed 无 direct vanilla · Cone 90 |
+> | Pointed Kettle | 88-90 | `spiked_kettle_over_imperial_mail` 90 |
+> | Nasal Helmet | 86 | `nasal_helmet_over_mail` 86 |
+> | Heavy Nasalhelm | 95 | Heavy variant +9 |
+> | Spangenhelm | 95 | user anchor B `ironlame_feathered_spangenhelm_over_mail` 95 |
+> | Heavy Spangenhelm | 99 | Heavy +4 |
+> | Nasal Spangenhelm | 98 | Nasal +3 |
+> | Ridge Helmet | 85-94 | `ridged_northernhelm` 94 顶档 |
+> | Peaked Helmet | 90-92 | `peaked_helmet_over_mail_coif` 95 · base 92 |
+> | Banded Nasalhelm | 84-88 | Cerv 84 · Nasal 86-88 |
+> | Faceguard | 94 | `helmet_with_faceguard` 94 |
+>
+> **aventail body/arm 分档**：cloth wrap 8/5 · padding 8-12/5-8 · leather 15-18/10-12 · mail 25-28/20-25 · mail coif 42/28-30
+>
+> **修正批次**（在 `manual_override.ps1` `Write-Host` 前的 Fix Batch 段 · `$decisions` 后写覆盖前写）：
+> - **Empire Fix E1**: 18 件（Kettle 4 · Pointed Kettle 2 · Pointed/Cone 3 · Spangenhelm 5 · Over Cloth 3 · Nasal 3）
+> - **Vlandia Fix V1**: 14 件（Spangenhelm C 3 · Nasal D.2 4 · Peaked F 3 · Banded E 3 · Flat Top H 1）
+> - **Battania Fix B1**: 23 件（Ridge 9 · Nasal 8 · Banded 3 · Spangenhelm 3）
+> - **总 55 件 override** · 修正后 manual_override.xml 仍 843 件（无新增 · 就地覆盖）
+>
+> **用户 quote**："我严重怀疑你目前使用的分析系统将任何带有非金属物质+头盔的描述理解为了这个头盔使用非金属物质构成"（2026-09-28）
+>
+> **前例意义**：此后任何 v2 决议如引用 vanilla 中「金属盔 + 轻质 aventail」低 head 值作参照 · 需先验证 OSA 侧命名是否属「金属盔 first · 内衬 second」结构 · 是则应用金属盔 head 主导原则 · 否则可直接抄 vanilla（如"leather cap"这种整体皮质）
+
+---
+
+## ✅ 2026-09-28 · Deploy 断层收官（P0 完成）
+
+**收官状态**：
+- `manual_override.xml` **420 → 843 件**（+423 · 全 P0 目标覆盖）
+- Empire HeadArmor **150/165 件** deploy（15 件属铁律 11 合规 cosmetic 帽/头饰保留 🔵 log-only）
+- Vlandia HeadArmor **128/130 件** deploy（全 15 家族覆盖）
+- Battania HeadArmor **145/155 件** deploy（全 15 家族覆盖 · 微差因 log 家族边界描述模糊）
+- Pipeline 稳定：manual_override.ps1 rerun 无 missing 警告 · 4 批次 append 全部命中
+
+**新增 batch 分布**（`src/manual_override.ps1` 追加段）：
+- Empire A1 Pilot: 15 件（Provocator 4 + Kettle 11 · 修复用户观察的 Iron Kettle 命名倒挂）
+- Empire A2: 24 件（Cataphract v3 12 + Roman Helmet 12 含 追溯修正）
+- Empire A3: 40 件（Crowned/Palatine 5 + 特殊 4 + Ridge/Intercisa/Lion 6 + Legatus 3 + Conical/Pointed 8 + TV/AR 混合 14）
+- Empire A4: 52 件（Spangenhelm 27 + Crested 8 + Secutor 6 + Sagittarius 8 + 杂项 3）
+- 加 Lord/Nasal/Elite 19 件
+- Vlandia B: 128 件（A-O 全家族）
+- Battania C: 145 件（A-O 全家族）
+
+**用户命名倒挂修复验证**：
+- `khuzait_ironlame_kettle` "Imperial Closed Iron Kettle" now **78/30/22/3.8** (was 43/18/16)
+- `roundkettle_over_imperial_leather` "Light Roundkettle over Leather" vanilla **74/0/0/1.3**
+- Iron Kettle 现严格强于 Light Roundkettle → 倒挂修复 ✓
+
+**用户下一步**：
+1. 关游戏（当前工作已完成，仅需 game modules 侧同步）
+2. 跑 `deploy.ps1` 一次即可：
+   - 复制新的 `OSABalance_manual_override.xml`（843 件）到 game modules
+   - 同步 `OSABalance_shield_override.xml`（114 件 OSW Shield · 之前只在源码）
+   - 同步 `SubModule.xml v1.2.0`（4 XmlNode 含 shield_override 注册）
+3. 重启 Bannerlord · in-game 验证 Empire HeadArmor 精英/中档均归位
+4. 若 Battania F/G 家族有个别 id 战力异常，回来查 log-only 表格核对（部分 id 因范围表述展开不严格）
+
+**遗留 🔵 log-only**（合规保留，非 deploy 断层）：
+- Empire 帽/头饰 19 件（铁律 11 · cosmetic 低价值 · v1 现值可接受）
+- `AR_empire_lord_helmet_c` 1 件（v1 script 跳过 · 需用户 in-game 确认存在再补）
+- Empire/Vlandia/Battania Cape · BodyArmor · HandArmor · LegArmor · HorseHarness 家族（本次 P0 仅覆盖 HeadArmor · 其他类别后续 session 处理）
+
+---
+
+---
+
 ## 🔒 铁律 · 平衡工作基础数据源（2026-09-23 用户拍板）
 
 > **所有 OSA 平衡工作以「原版经由 RBM 模组修改后的数据」为唯一权威基础**。
@@ -6850,6 +6957,190 @@ Wait - Zebra Skin/Lion Pelt 命名无 shoulder/pauldron → 归 B 组
 - **保持不变**：Khuzait 13 件（华夏中原线特批）· Nord 0 件（NavalDLC 无 HorseHarness）
 - **总 HorseHarness 覆盖**：110 件（100%）· 全跨文化统一 T1-T9 体系
 - **状态**：97 件已 deploy XML · 用户重启游戏后生效
+
+---
+
+## OSW Shield Balance（2026-09-25 · P1 首次 OSW 平衡）
+
+**范围**：OSW（Open Source Weaponry · workshop id `3010984416`）的 114 件 Shield（全 LargeShield）。**scope 严格限定**：blade / CraftingPiece / CraftedItem / 边缘武器均不动（用户 2026-09-25 决策 · 分叉 α "只抬盾"）。
+
+**背景**：见 [`OSW_BASELINE_SCAN.md`](./OSW_BASELINE_SCAN.md)。SP-effective LargeShield baseline (n=70) hp mean 581 / median 570 / p10=380 p90=750。OSW 现值 hp mean 346 / median 340 · 分布位于 baseline 底端 8-30% 分位 · 系统性欠强。
+
+**方案**：见 [`OSW_BALANCE_PROPOSAL.md`](./OSW_BALANCE_PROPOSAL.md) v0.2（取代 v0.1 · v0.1 基于错误 baseline）。
+
+### 平衡规则（3 轴分类 · 25 非空组）
+
+**轴 A · Tier 由现有 hp 分派**（保 OSW 相对序）：
+
+| Current hp | Tier | 新 base hp |
+|---|:---:|---:|
+| ≤ 260 | T1 | 380（baseline p10） |
+| 280–320 | T2 | 480（p25） |
+| 340–380 | T3 | 570（p50） |
+| 400–440 | T4 | 700（p75） |
+| 460–500 | T5 | 750（p90） |
+| 520 | T6 | 800（p95+） |
+
+**轴 B · 重量决定形态**：
+
+| Weight | Class | hp × | ba 偏移 | spd 偏移 |
+|---|---|---:|---:|---:|
+| ≤ 2.9 kg | Buckler | 0.85 | (ba **硬顶 2**) | +2 |
+| 2.9–4.2 | RoundLight | 0.95 | 0 | +1 |
+| 4.2–5.5 | RoundStd | 1.00 | 0 | 0 |
+| > 5.5 | HeavyScutum | 1.10 | +1 | −1 |
+
+**轴 C · 现有 ba 决定材质**（保 OSW 木/加固设计）：
+
+| Current ba | Material | 新 ba 曲线（T1-T6） |
+|:---:|---|---|
+| ≤ 2 | Wood | 1 / 2 / 3 / 3 / 4 / 4 |
+| ≥ 3 | Reinforced | 3 / 4 / 5 / 6 / 7 / 8 |
+
+**Speed**：`84 + weight_offset`（不按 tier · 简化）
+
+**Weight**：**不改**（原值合理 · 改动风险高）
+
+### 完整 114 件决议
+
+格式：`| id | 分类 | before hp/ba/spd | → after hp/ba/spd |`
+
+| id | 分类 | before | after |
+|---|---|---|---|
+| `AR_shield_infantry_i` | T1 · RoundStd · Wood | 260/1/82 | ↑ **380/1/84** |
+| `AR_shield_infantry_i2` | T1 · RoundStd · Wood | 260/1/82 | ↑ **380/1/84** |
+| `AR_shield_infantry_l` | T1 · RoundStd · Wood | 220/1/82 | ↑ **380/1/84** |
+| `AR_shield_infantry_l2` | T1 · RoundStd · Wood | 220/1/82 | ↑ **380/1/84** |
+| `AR_shield_infantry_m` | T1 · HeavyScutum · Wood | 245/1/82 | ↑ **418/2/83** |
+| `AR_shield_infantry_m2` | T1 · HeavyScutum · Wood | 245/1/82 | ↑ **418/2/83** |
+| `AR_shield_infantry_v` | T1 · RoundStd · Wood | 260/1/82 | ↑ **380/1/84** |
+| `AR_shield_infantry_zf` | T1 · RoundStd · Wood | 260/2/82 | ↑ **380/1/84** |
+| `AR_shield_infantry_zg` | T1 · HeavyScutum · Reinforced | 220/4/82 | ↑ **418/4/83** |
+| `AR_shield_infantry_zh` | T1 · HeavyScutum · Reinforced | 240/4/82 | ↑ **418/4/83** |
+| `AR_shield_infantry_zi` | T1 · HeavyScutum · Reinforced | 240/4/82 | ↑ **418/4/83** |
+| `AR_shield_infantry_zs` | T1 · HeavyScutum · Wood | 245/1/82 | ↑ **418/2/83** |
+| `AR_shield_infantry_zs2` | T1 · HeavyScutum · Wood | 245/1/82 | ↑ **418/2/83** |
+| `AR_shield_infantry_zu` | T1 · RoundStd · Wood | 260/1/82 | ↑ **380/1/84** |
+| `AR_shield_infantry_zu2` | T1 · RoundStd · Wood | 260/1/82 | ↑ **380/1/84** |
+| `AR_shield_infantry_zzh` | T1 · RoundLight · Wood | 260/2/87 | ↑ **361/1/85** |
+| `AR_shield_infantry_zzj` | T1 · RoundStd · Wood | 260/1/82 | ↑ **380/1/84** |
+| `AR_shield_infantry_d` | T2 · RoundLight · Wood | 280/2/87 | ↑ **456/2/85** |
+| `AR_shield_infantry_d2` | T2 · RoundLight · Wood | 280/2/87 | ↑ **456/2/85** |
+| `AR_shield_infantry_j` | T2 · RoundStd · Wood | 300/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_j2` | T2 · RoundStd · Wood | 300/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_n` | T2 · HeavyScutum · Wood | 300/2/82 | ↑ **528/3/83** |
+| `AR_shield_infantry_n2` | T2 · HeavyScutum · Wood | 300/2/82 | ↑ **528/3/83** |
+| `AR_shield_infantry_p` | T2 · HeavyScutum · Wood | 280/2/87 | ↑ **528/3/83** |
+| `AR_shield_infantry_r` | T2 · HeavyScutum · Wood | 280/2/87 | ↑ **528/3/83** |
+| `AR_shield_infantry_r2` | T2 · HeavyScutum · Wood | 280/2/87 | ↑ **528/3/83** |
+| `AR_shield_infantry_t` | T2 · RoundLight · Reinforced | 300/6/82 | ↑ **456/4/85** |
+| `AR_shield_infantry_t2` | T2 · RoundLight · Reinforced | 300/6/82 | ↑ **456/4/85** |
+| `AR_shield_infantry_w` | T2 · RoundStd · Wood | 300/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_zj` | T2 · RoundStd · Wood | 280/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_zk` | T2 · RoundStd · Wood | 280/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_zl` | T2 · RoundStd · Wood | 280/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_zm` | T2 · RoundLight · Wood | 280/2/87 | ↑ **456/2/85** |
+| `AR_shield_infantry_zm2` | T2 · RoundLight · Wood | 280/2/87 | ↑ **456/2/85** |
+| `AR_shield_infantry_zv` | T2 · RoundStd · Wood | 300/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_zv2` | T2 · RoundStd · Wood | 300/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_zzb` | T2 · Buckler · Wood | 300/1/82 | ↑ **408/2/86** |
+| `AR_shield_infantry_zzb2` | T2 · Buckler · Wood | 300/1/82 | ↑ **408/2/86** |
+| `AR_shield_infantry_zzf` | T2 · RoundStd · Wood | 300/1/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_zzk` | T2 · RoundStd · Wood | 300/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_zzm` | T2 · RoundStd · Reinforced | 300/6/82 | ↑ **480/4/84** |
+| `AR_shield_infantry_zzp` | T2 · RoundLight · Wood | 320/1/82 | ↑ **456/2/85** |
+| `AR_shield_infantry_zzp2` | T2 · RoundLight · Wood | 320/1/82 | ↑ **456/2/85** |
+| `AR_shield_infantry_zzp3` | T2 · RoundLight · Wood | 320/1/82 | ↑ **456/2/85** |
+| `AR_shield_infantry_zzq` | T2 · RoundStd · Wood | 280/2/82 | ↑ **480/2/84** |
+| `AR_shield_infantry_zzr` | T2 · RoundLight · Wood | 320/1/82 | ↑ **456/2/85** |
+| `AR_shield_infantry_a` | T3 · RoundStd · Wood | 340/1/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_a2` | T3 · RoundStd · Wood | 340/1/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_b` | T3 · RoundStd · Wood | 360/2/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_b2` | T3 · RoundStd · Wood | 360/2/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_f` | T3 · RoundStd · Wood | 340/1/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_f2` | T3 · RoundStd · Wood | 340/1/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_g` | T3 · RoundStd · Wood | 360/2/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_g2` | T3 · RoundStd · Wood | 360/2/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_k` | T3 · RoundStd · Reinforced | 340/6/82 | ↑ **570/5/84** |
+| `AR_shield_infantry_k2` | T3 · RoundStd · Reinforced | 340/6/82 | ↑ **570/5/84** |
+| `AR_shield_infantry_o` | T3 · HeavyScutum · Reinforced | 330/6/82 | ↑ **627/6/83** |
+| `AR_shield_infantry_o2` | T3 · HeavyScutum · Reinforced | 330/6/82 | ↑ **627/6/83** |
+| `AR_shield_infantry_u` | T3 · RoundLight · Reinforced | 330/6/82 | ↑ **542/5/85** |
+| `AR_shield_infantry_u2` | T3 · RoundLight · Reinforced | 330/6/82 | ↑ **542/5/85** |
+| `AR_shield_infantry_x` | T3 · RoundStd · Reinforced | 340/6/82 | ↑ **570/5/84** |
+| `AR_shield_infantry_y` | T3 · RoundStd · Reinforced | 360/6/82 | ↑ **570/5/84** |
+| `AR_shield_infantry_z` | T3 · RoundStd · Wood | 340/1/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_za` | T3 · RoundStd · Wood | 360/2/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_zd` | T3 · RoundStd · Wood | 340/1/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_ze` | T3 · RoundStd · Wood | 360/2/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_zn` | T3 · RoundLight · Reinforced | 350/5/82 | ↑ **542/5/85** |
+| `AR_shield_infantry_zn2` | T3 · RoundLight · Reinforced | 350/5/82 | ↑ **542/5/85** |
+| `AR_shield_infantry_zt` | T3 · HeavyScutum · Wood | 350/1/82 | ↑ **627/4/83** |
+| `AR_shield_infantry_zt2` | T3 · HeavyScutum · Wood | 350/1/82 | ↑ **627/4/83** |
+| `AR_shield_infantry_zw` | T3 · RoundStd · Reinforced | 340/6/82 | ↑ **570/5/84** |
+| `AR_shield_infantry_zw2` | T3 · RoundStd · Reinforced | 340/6/82 | ↑ **570/5/84** |
+| `AR_shield_infantry_zx` | T3 · RoundStd · Wood | 340/1/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_zy` | T3 · Buckler · Wood | 350/1/82 | ↑ **484/2/86** |
+| `AR_shield_infantry_zzc` | T3 · Buckler · Wood | 380/1/82 | ↑ **484/2/86** |
+| `AR_shield_infantry_zzc2` | T3 · Buckler · Wood | 380/1/82 | ↑ **484/2/86** |
+| `AR_shield_infantry_zze` | T3 · Buckler · Wood | 380/1/82 | ↑ **484/2/86** |
+| `AR_shield_infantry_zze2` | T3 · Buckler · Wood | 380/1/82 | ↑ **484/2/86** |
+| `AR_shield_infantry_zzg` | T3 · RoundStd · Wood | 340/1/82 | ↑ **570/3/84** |
+| `AR_shield_infantry_zzi` | T3 · RoundLight · Wood | 380/1/82 | ↑ **542/3/85** |
+| `AR_shield_infantry_zzl` | T3 · RoundStd · Reinforced | 340/6/82 | ↑ **570/5/84** |
+| `AR_shield_infantry_zzn` | T3 · RoundStd · Reinforced | 340/6/82 | ↑ **570/5/84** |
+| `AD_shield_infantry_a` | T4 · RoundLight · Wood | 430/1/82 | ↑ **665/3/85** |
+| `AD_shield_infantry_a2` | T4 · RoundLight · Wood | 430/1/82 | ↑ **665/3/85** |
+| `AD_shield_infantry_c` | T4 · RoundLight · Wood | 430/1/82 | ↑ **665/3/85** |
+| `AD_shield_infantry_c2` | T4 · RoundLight · Wood | 430/1/82 | ↑ **665/3/85** |
+| `AR_shield_infantry_c` | T4 · RoundStd · Reinforced | 410/6/82 | ↑ **700/6/84** |
+| `AR_shield_infantry_c2` | T4 · RoundStd · Reinforced | 410/6/82 | ↑ **700/6/84** |
+| `AR_shield_infantry_e` | T4 · RoundLight · Reinforced | 430/6/82 | ↑ **665/6/85** |
+| `AR_shield_infantry_e2` | T4 · RoundLight · Reinforced | 430/6/82 | ↑ **665/6/85** |
+| `AR_shield_infantry_h` | T4 · RoundStd · Reinforced | 410/6/82 | ↑ **700/6/84** |
+| `AR_shield_infantry_h2` | T4 · RoundStd · Reinforced | 410/6/82 | ↑ **700/6/84** |
+| `AR_shield_infantry_q` | T4 · HeavyScutum · Wood | 430/2/87 | ↑ **770/4/83** |
+| `AR_shield_infantry_s` | T4 · HeavyScutum · Wood | 430/2/87 | ↑ **770/4/83** |
+| `AR_shield_infantry_s2` | T4 · HeavyScutum · Wood | 430/2/87 | ↑ **770/4/83** |
+| `AR_shield_infantry_zb` | T4 · RoundStd · Reinforced | 410/6/82 | ↑ **700/6/84** |
+| `AR_shield_infantry_zo` | T4 · RoundLight · Reinforced | 410/5/82 | ↑ **665/6/85** |
+| `AR_shield_infantry_zo2` | T4 · RoundLight · Reinforced | 410/5/82 | ↑ **665/6/85** |
+| `AR_shield_infantry_zq` | T4 · HeavyScutum · Reinforced | 440/5/89 | ↑ **770/7/83** |
+| `AR_shield_infantry_zr` | T4 · HeavyScutum · Reinforced | 410/6/82 | ↑ **770/7/83** |
+| `AR_shield_infantry_zz` | T4 · RoundLight · Wood | 410/1/82 | ↑ **665/3/85** |
+| `AR_shield_infantry_zzo` | T4 · RoundLight · Reinforced | 430/6/82 | ↑ **665/6/85** |
+| `AR_shield_infantry_zzo2` | T4 · RoundLight · Reinforced | 430/6/82 | ↑ **665/6/85** |
+| `AD_shield_infantry_b` | T5 · RoundLight · Wood | 480/1/82 | ↑ **712/4/85** |
+| `AD_shield_infantry_b2` | T5 · RoundLight · Wood | 480/1/82 | ↑ **712/4/85** |
+| `AD_shield_infantry_d` | T5 · RoundLight · Wood | 480/1/82 | ↑ **712/4/85** |
+| `AD_shield_infantry_d2` | T5 · RoundLight · Wood | 480/1/82 | ↑ **712/4/85** |
+| `AR_shield_infantry_zp` | T5 · RoundStd · Reinforced | 450/7/86 | ↑ **750/7/84** |
+| `AR_shield_infantry_zza` | T5 · RoundLight · Wood | 450/1/82 | ↑ **712/4/85** |
+| `AR_shield_infantry_zzi2` | T5 · RoundLight · Wood | 450/1/82 | ↑ **712/4/85** |
+| `AR_shield_infantry_zzi3` | T5 · RoundLight · Wood | 450/1/82 | ↑ **712/4/85** |
+| `AR_shield_infantry_zc` | T6 · RoundLight · Wood | 520/1/82 | ↑ **760/4/85** |
+| `AR_shield_infantry_zzd` | T6 · RoundLight · Wood | 520/1/82 | ↑ **760/4/85** |
+| `AR_shield_infantry_zzd2` | T6 · RoundLight · Wood | 520/1/82 | ↑ **760/4/85** |
+
+### 收官统计
+
+- **重审件数**：**114 件（100%）**——OSW Shield 全覆盖
+- **全部方向**：↑ 抬升（无一件下调 · 因 OSW 现值系统性欠强）
+- **Pipeline**：`src/manual_override_shield.ps1`（新脚本 · 独立于 armor 的 `manual_override.ps1`）
+  - 输入：`OSA_Reference/data/osa_items.csv` (source_mod=OSW · Type=Shield)
+  - 输出：`ModuleData/OSABalance_shield_override.xml`（113 KB · 114 Item）
+  - 已注册 `SubModule.xml` 第 4 个 XmlNode
+- **状态**：🟡 pending deploy —— 用户 `deploy.ps1` 后生效
+- **无越权**：所有 tier 上限 ≤ SP-effective p95 (780hp) · 无 vanilla override 铁律违反
+
+### 与其他 OSW 内容的关系（本 session 不做）
+
+- ❌ 18 Blade：现值贴合 vanilla-unpatched 段 · 用户 α 决策"不动"
+- ❌ 32 Guard/Handle/Pommel：RBM 未 patch · vanilla-scale · 不阻塞主战斗手感
+- ❌ 9 边缘武器（Thrown/Crossbow/Bolts）：exotic · 独立平衡
+- ❌ 140 CraftedItem：数值由 Piece 传导 · 不改 Piece 则免动
+
+**如后续用户觉需要**：任一延后项都可作为 P2/P3/P4 单独 session 处理（无耦合）。
 
 ---
 

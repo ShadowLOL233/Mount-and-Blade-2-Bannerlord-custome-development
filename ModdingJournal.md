@@ -188,7 +188,30 @@ UTMPatch\deploy.ps1 -GameRoot "D:\SteamLibrary\steamapps\common\Mount & Blade II
 | Campaign | GarrisonDrills | v1.1.0 | 3735834360 |
 
 ### 已订阅但禁用
-BirthAndDeath / FastMode / Cheats / BahamutArmory / swadian armoury / XorberaxLegacy / CustomClanPartySize / AutoParry
+FastMode / Cheats / BahamutArmory / swadian armoury / XorberaxLegacy / CustomClanPartySize / AutoParry
+
+### 🪦 已弃用（2026-10-10 用户正式标记）
+
+本节 mod **不再使用、不再维护、不进 LauncherData.xml 的 enabled 列表**。文件可留在 Modules/ 作归档 · 不删除。
+
+| Mod | 原理由 | 弃用原因 | 当前状态 |
+|---|---|---|---|
+| **UTMPatch** | 2026-10-06 自研 · CYT whitelist quota enforcer · UTM 封存期的瘦补丁替代方案 | **2026-10-07 UTM 复活并全功能可用** · UTM 已原生实现 quota + roster + formation 一屏管理 · UTMPatch 定位重复 | 代码保留在 `UTMPatch/` 作备份 · SubModule 不启用 · REPLICATE.md P6.7 标 deprecated |
+| **TroopClassifier** | FormationManager (FM) 的硬依赖（v0.2.0 Nexus 12104）· 兵种分类库 | FM 本身因 UTM 复活不再需要 · TroopClassifier 作为 FM 的依赖也随之无用 · 游戏里也从未真正启用过 | Modules/ 保留文件 · 不启用 |
+| **BirthAndDeath** | 2026-09 评估期间订阅过 · Native 内置功能 toggler | 从未真正启用过 · Native 自己的生死机制已够用 | Steam 订阅可保留 · 不启用 |
+| **GarrisonDrillsMessageEnhancer** | GarrisonDrills 的消息增强附加 mod | 功能被 **GarrisonDrillsPinned**（自研 v1.1.0 pinned 框架）覆盖 · 两者并存无益 | Modules/ 保留文件 · 不启用 |
+
+**跟其他 mod 的边界**：
+- 弃用 UTMPatch **不影响 UTM**（UTM 继续作主开发线 · 核心功能可用）
+- 弃用 TroopClassifier **不影响 CYT**（CYT 独立于 TroopClassifier）
+- 弃用 GarrisonDrillsMessageEnhancer **不影响 GarrisonDrillsPinned**（自研 pinned 框架照常）
+
+**REPLICATE.md 同步**（铁律 [[journal-replicate-sync]]）：
+- P6.7 UTMPatch deploy phase 整节标 `~~DEPRECATED 2026-10-10~~` · 不再推荐执行
+- P7.2 TroopClassifier Nexus 安装 phase 标 deprecated
+- P7.1 launcher 清单的 enable 顺序不含这 4 个 mod（本来就不含 · 文档层确认）
+
+---
 
 ### 待下载 / 计划安装（2026-09-18 评估）
 
@@ -2851,7 +2874,115 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ## 待办 / 开放问题
 
-### 🔴🔴 P0 · 2026-10-09 最高优先度 · OSW Shield Tier 平衡修复
+### 🔴🔴 P0 · 2026-10-10 最高优先度 · PlayerSettlement 本地重建（PSLR）
+
+- [ ] **🔴🔴 PlayerSettlement Local Rebuild · 作者弃坑 + UIExt v3.x ABI 不兼容致游戏崩溃**（2026-10-10 立项 · **抢占原 OSW Shield Tier Fix 的 P0 顶位** · 游戏能启动才谈其他开发）
+
+  **📖 完整方案 memory**：[[player-settlement-local-rebuild]]
+
+  ---
+
+  ### 📅 2026-10-10 诊断全链（整个 session 的 bug 调查归档）
+
+  **触发**：用户反馈 Steam Launch 游戏直接崩溃（10-10 早上） · 24h 前（10-09 07:30）还能正常玩。
+
+  **诊断过程**（跨 20+ launch 尝试 · 大刀二分法）：
+
+  1. **初诊 MCM duplicate**：workshop 有 2 份 MCM（WSid 2859238197 v5.12.3 + WSid 3761572229 v5.11.4）· 同 Id="Bannerlord.MBOptionScreen" · launcher 加载两份互踩
+  2. **用户第一次 Steam 操作**：**退错 MCM** · 把 v5.12.3 原版退了 · 留下 v5.11.4 克隆版 · 导致新问题：v5.11.4 对着 UIExtenderEx v2.13.1 编译 · 跟当前 UIExt v3.0.3（10-07 从 v2.x auto-update）ABI 断裂 → 游戏崩在 MCM OnSubModuleLoad
+  3. **Claude 过度干预（反面教训）**：擅自改 SubModule.xml 的 Id · 擅自把 workshop 文件夹 move 走 · launcher scan 到空壳抛 FileNotFoundException · 大面积自毁 LauncherData · 禁了用户的核心 mod · **用户 push back · Claude 保存 [[mod-config-authority]] 铁律 memory + 回滚所有破坏性操作**
+  4. **用户 Steam 操作第二次**：re-subscribe MCM v5.12.3 + 真正退订 v5.11.4 · workshop MCM 层干净
+  5. **仍然崩**：切出 vanilla + 核心 4 测试通过 · 问题在 21 个非核心 mod
+  6. **大刀二分 Round 6-8**：
+     - 对比 **06:21 成功 session**（`rgl_log_34020` · 到 Frame# 16850）vs **06:25 崩 session**（`rgl_log_49248`）· DIFF 定位 7 workshop + 1 local mod 嫌疑
+     - Round 8a: Cheats + ImprovedGarrisons 清白
+     - Round 8b: PSR + Cheats + IG 清白
+     - **真元凶 PlayerSettlement** 定罪
+
+  **真因机制**：
+  ```
+  PS v7.5.0 (9/16 workshop · 作者弃坑)
+     ├─ bundle MCMv5.dll v5.11.3 (shadow copy · 495104 B · hash 80E5F3A5...)
+     ├─ 对着 UIExtenderEx v2.13.2 编译
+     └─ 加载时 ↓
+                └─ 跟 workshop MCM v5.12.3 (528896 B · hash CE41B66F...) 冲突
+                └─ 调 UIExt v2.x API · 跑在 v3.0.3 上 · missing method → native crash
+  ```
+
+  **历史兼容窗**：
+  - 之前 MCM workshop 是 v5.11.4（跟 bundle v5.11.3 接近兼容）→ **能跑**
+  - 现在 MCM workshop 是 v5.12.3（跨 minor 版）→ **崩**
+
+  ---
+
+  ### 工作流 P1-P6
+
+  | Phase | 工作 | 预估 | 产出 |
+  |---|---|---|---|
+  | **P1** | 反编译 `PlayerSettlement.dll` + `PlayerSettlementFixes.dll` + bundle `MCMv5.dll v5.11.3`（参照）| 0.5 session | `decompiled_reference/*.cs` |
+  | **P2** | UIExt v2.13.2 → v3.0.3 breaking API 扫描 · 列 diff 清单 | 1 session | API migration spec |
+  | **P3** | patch 源码适配 UIExt v3.x + MCM v5.12.3 | 1-2 session | `patched/*.cs` |
+  | **P4** | 搭 `PlayerSettlementRebuilt/` csproj + build Release + deploy.ps1 | 0.5 session | 新 `PlayerSettlement.dll` 本地 |
+  | **P5** | Steam 退订 workshop 3720376888 + 本地 Modules 固化 | 0.2 session | workshop sync 干净 |
+  | **P6** | 实测主菜单→新建 settlement 全流程 + journal/REPLICATE 归档 | 0.3 session | 收官 |
+
+  **总预估**：**3-4 session**
+
+  ---
+
+  ### 技术面要点
+
+  - **PS 的 PSFixes 层**：用户自研 fix mod（64512 B · v1.0.0.0）· 覆盖 PS 原版 10 patch · "removed 10 stale patch(es)" 日志证实 · **rebuild 必须保留 PSFixes 的 fix 逻辑** · 不是简单重编译原 PS
+  - **本地位置**：`Modules\PlayerSettlement\` 已有 PSFixes.dll · 本次 rebuild 的 PS.dll 要跟 PSFixes 并存
+  - **Workshop ID**: 3720376888 · 退订后 Steam 自动删 workshop 文件夹
+  - **Nexus 页**: https://www.nexusmods.com/mountandblade2bannerlord/mods/7298 · 用户确认作者弃坑 · 不期待官方更新
+
+  ---
+
+  ### 跟其他项目的关系
+
+  - **替代** 原 2026-10-09 立项的 "OSW Shield Tier Fix" P0 顶位 · 游戏不开谈不上盾牌 · Shield Fix 降 🔴 次级
+  - **方法论复用** [[cheats-stabilization]]：反编译 → 识别 problem patch → wrap/skip · PS 走类似流水线
+  - **铁律**：[[bannerlord-build-deploy]] + [[journal-replicate-sync]] + [[mod-config-authority]]
+
+  ---
+
+  ### 当前状态（2026-10-10 当日进度 · ⚠ **未实机测试**）
+
+  **已完成** P1 → P2 → P3 → P4 ~50% · 全部产物在 `PlayerSettlementRebuilt/`：
+
+  | Phase | 状态 | 产出 |
+  |---|---|---|
+  | P1 · 反编译 | ✅ 完成 | `decompiled_reference/PlayerSettlement.decompiled.cs` (545KB · 85 class · 13006 行) + `PlayerSettlementFixes.decompiled.cs` (99KB · 43 class) + `UIExtenderEx_v3/` + `MCM_v5123/` 参照反编译 |
+  | P2 · API diff | ✅ 完成 · 🎉 **零 breaking** | `notes/P2_api_diff_report.md` · UIExt + MCM 用的所有 API 在 v3.0.3 + v5.12.3 中全保留 · PS 源码一行不用改 · 真因只是 bundled MCMv5.dll v5.11.3 跟 workshop MCM v5.12.3 的 CLR assembly 冲突 |
+  | P3 · 源码准备 | ✅ 完成 | `_split_namespaces.ps1` 按 namespace 拆成 17 .cs · `_strip_assembly_attrs.ps1` 去 duplicate attr · `_fix_decomp_artifacts.ps1` 修 149 ref-cast + 50 closure rename + 2 处手工 fix（Behaviours L2394 `(??)` + Patches_Compatibility L1011 broken ternary）|
+  | P4 · csproj + build | 🟡 **进行中 50%** | `src/PlayerSettlement/PlayerSettlement.csproj` + `src/PlayerSettlementFixes/PlayerSettlementFixes.csproj` 搭完 · 7 轮 build 迭代 · errors 从 **284 → 146 → 86 → 14 → 458 → 86 → 44** · **剩 44 errors 全是 missing TaleWorlds assembly refs**（8 unresolved types + 4 Editor 命名 ambiguity）· 继续加 ref 可消 |
+  | P5 · Workshop 退订 + 本地固化 | ⏭ 待 P4 完成 | — |
+  | P6 · 实测 + 归档 | ⏭ 待 P5 完成 | — |
+
+  **⚠ 关键警告 · 未测试**：
+  - 当前 rebuild **只是 compile 侧进度 · 从未实机加载过**
+  - 即使 P4 build 成功 · 不保证 runtime 行为跟原 PS v7.5.0 一致（反编译 → split → regex 批量 fix 的管线有潜在语义漂移风险）
+  - **严禁在 P6 实测通过前 deploy 到 Modules\PlayerSettlement\** · 否则存档可能不可逆损坏
+  - 当前解决方案 fallback：游戏启动时**禁用 PlayerSettlement** · 可正常玩其他 mod（不建设 settlement 功能即可）
+
+  **剩 44 errors 未解类型清单**（下次 session 续）：
+  ```
+  CS0246 (40):
+    ChangeOwnerOfSettlementDetail · CraftingOrderSlots · GameLoadingType · InputInformation
+    NavigationType · OnClickableConditionDelegate · SiegeEngineConstructionProgress · SiegeEnginesContainer
+  CS0104 (4): Editor 名字 ambiguity (System.ComponentModel vs TaleWorlds.GauntletUI)
+  ```
+
+  **本 session 用的工具链**（可复用）：
+  - `src/_split_namespaces.ps1`
+  - `src/_strip_assembly_attrs.ps1`
+  - `src/_fix_decomp_artifacts.ps1`
+  - `ilspycmd` 全局工具（9.x）
+
+  ---
+
+### 🔴 P0 · 2026-10-09 立项（2026-10-10 让位给 PSLR · 降 🔴 次级）· OSW Shield Tier 平衡修复
 
 - [ ] **🔴🔴 OSW Shield Tier Fix · Strapped Iron 系 T2 bug + Domed 系 ba 微增**（2026-10-09 用户升为**最高优先度** · 替代之前任何条目）
 

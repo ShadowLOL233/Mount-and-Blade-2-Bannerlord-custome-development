@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PlayerFiefRecruitBoost 配置
+  修改后重启游戏生效。若删除或格式错误，用内置默认值。
+
+  SlotRegenMultiplier   · 玩家氏族拥有的 fief 里志愿兵日填充概率倍数（vanilla=1.0，默认 3.0，1-10 合理）
+  UnlockMaxTierInOwnFiefs · 自家 fief 里 relation 不足也强制解锁全 tier（vanilla max index 由 relation 决定；true=全解锁）
+  IncludeBoundVillages  · 玩家氏族拥有的城堡/城镇绑定的村庄也算"自家 fief"（默认 true · vanilla 语义如此）
+  LogOnLoad             · 加载时在消息栏打一条 [PFRB] 配置就绪，方便你确认生效（默认 true）
+-->
+<PlayerFiefRecruitBoost>
+  <SlotRegenMultiplier>3.0</SlotRegenMultiplier>
+  <UnlockMaxTierInOwnFiefs>true</UnlockMaxTierInOwnFiefs>
+  <IncludeBoundVillages>true</IncludeBoundVillages>
+  <LogOnLoad>true</LogOnLoad>
+</PlayerFiefRecruitBoost>

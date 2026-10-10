@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  CheatsGuard 配置 · Round 1 状态（2026-09-26）
+  修改后重启游戏生效。若删除/格式错误，使用默认值（空 skip list）。
+
+  当前 Round 1 白名单（启用 30 patch · 安全批）：
+    Sieges 2 · Map 5 · Kingdom 6 · Smithing 6 · Inventory 1
+    Army 3 · Clan 3 · Experience non-FAIL 4 = 30
+
+  SkipClasses 内含 32 always-skip（已确认签名 FAIL）+ 101 待测（Round 2-4 才启用）
+  完整二分工作手册见 ../CHEATS_STABILIZATION_PLAN.md
+-->
+<CheatsGuard>
+  <VerboseLog>true</VerboseLog>
+
+  <!-- Round 1: 启用非 skip 的 patch · 观察 Campaign 是否稳 -->
+  <SkipAllCheatsPatches>false</SkipAllCheatsPatches>
+
+  <!-- ============================================================ -->
+  <!-- ⚠⚠⚠ 危险 · 永远保持 false ⚠⚠⚠                                 -->
+  <!-- CheatsGuard 的 NativeItemSpawningReplacement · Cheats 原版逻辑 -->
+  <!-- 打开背包时把 ObjectManager 里全部 ItemObject 塞进 leftItemRoster -->
+  <!--                                                                -->
+  <!-- 若在 vanilla town/castle 打开 stash 时启用：                   -->
+  <!--   leftItemRoster == Settlement.Stash (持久对象 · 序列化存档)   -->
+  <!--   → 每次打开都往存档塞几千种 item × count 份                    -->
+  <!--   → save 文件肿胀 · EquipmentSpawnerMod 的 OSA 生态被污染      -->
+  <!--   → culture 过滤 + tier sort 全失效 · UI 卡崩                  -->
+  <!--                                                                -->
+  <!-- 想刷钱/物：用 vanilla `Ctrl+~` 控制台 · 或 Cheats 加钱热键     -->
+  <!-- ============================================================ -->
+  <EnableNativeItemSpawning>false</EnableNativeItemSpawning>
+  <NativeItemSpawnCount>1</NativeItemSpawnCount>
+
+  <!-- ============================================================ -->
+  <!-- 💰 Money hotkey replacement (CheatsGuard 独占)                 -->
+  <!-- Cheats 原版 EnableHotkeysMoney 硬编码 1k/100k · 已 skip        -->
+  <!-- 在背包 UI 里：Ctrl+X = Small · Ctrl+Shift+X = Large            -->
+  <!-- 仍需 Cheats MCM 里 "Enable Hotkeys" 打勾（Global 或 PerCampaign）-->
+  <!-- ============================================================ -->
+  <EnableMoneyHotkey>true</EnableMoneyHotkey>
+  <CheatsMoneySmall>10000000</CheatsMoneySmall>       <!-- Ctrl+X       · 10M -->
+  <CheatsMoneyLarge>100000000</CheatsMoneyLarge>      <!-- Ctrl+Shift+X · 100M -->
+  <ShowMoneyHotkeyTip>true</ShowMoneyHotkeyTip>       <!-- 每次打开背包 UI 弹一次热键提示 -->
+
+  <!-- ============================================================ -->
+  <!-- 🛡 RBM Troop Maintenance (player clan only!)                   -->
+  <!-- 由 MaintenancePlayerScopePatch 逐 call swap RBMConfig · 只对   -->
+  <!-- 玩家 clan 生效 · 其他 NPC clan 保持 RBM 自己 config.xml 的值    -->
+  <!-- MCM 里改这三个值 · 立即用于下一次玩家 clan finance 结算          -->
+  <!-- ============================================================ -->
+  <RBMTroopMaintenanceFraction>0.005</RBMTroopMaintenanceFraction>
+  <RBMRecruitMaintenanceDays>20</RBMRecruitMaintenanceDays>
+  <RBMIndependentPurseFraction>1.0</RBMIndependentPurseFraction>
+
+  <!-- ============================================================ -->
+  <!-- 📈 Passive Daily XP (player + companions in main party)        -->
+  <!-- 每日给玩家 party 内 hero 每个 skill 加 Amount XP · MCM 里三滑块 -->
+  <!-- Amount * 18 skills = 每 hero 每天总获得 XP                       -->
+  <!-- ============================================================ -->
+  <!-- ⚠ 崩溃隔离测试期间关闭 · Round 5 疑似崩 · 待用户确认 Round 4 base 稳定后再打开 -->
+  <EnablePassiveDailyXp>false</EnablePassiveDailyXp>
+  <PassiveDailyXpAmount>1000</PassiveDailyXpAmount>
+  <PassiveDailyXpIncludeCompanions>true</PassiveDailyXpIncludeCompanions>
+
+
+  <SkipClasses>
+    <!-- ============ 32 个 always-skip (已确认 FAIL · 签名不匹配 1.4.7) ============ -->
+    <SkipClass>BannerlordCheats.Patches.Workshops.EveryoneBuysWorkshopsCost</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Workshops.EveryoneBuysWorkshopsSelectOwner</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Workshops.WorkshopBuyingCostPercentage</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Workshops.WorkshopDailyExpensePercentage</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Workshops.WorkshopSellingCostMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Workshops.WorkshopUpgradeCostPercentage</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Smithing.CraftedWeaponModifierBonus</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.DailyGarrisonBonus</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.FreeTroopRecruitment</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.FreeTroopUpgrades</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Inventory.NativeItemSpawning</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Experience.CompanionLearningRateMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Experience.LearningLimitMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Experience.LearningRateMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Experience.TroopExperienceMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.AlwaysWinBattleSimulation</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.BanditHideoutTroopLimit</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.DamageMultiplier_Sandbox</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.DamageTakenPercentage_Sandbox</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.EnemyDamagePercentage_Sandbox</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.InfluenceRewardMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.NoFriendlyFire_Sandbox</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.NoTroopSacrificeBreakIn</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.NoTroopSacrificeBreakOut</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.NoTroopSacrificeRunaway</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.OneHitKill_Sandbox</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.PartyDamageMultiplier_Sandbox</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.PartyDamageTakenPercentage_Default</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.PartyDamageTakenPercentage_Sandbox</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.PartyOneHitKill_Sandbox</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.RenownRewardMultiplierBattle</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Combat.SliceThroughEveryoneWeapon</SkipClass>
+
+    <!-- ============ Round 5 崩溃 · 回退至 Round 4 状态（2026-09-27）============ -->
+    <!-- 疑似元凶：MarriageFertility × Cheats.Characters (pregnancy/marriage) · 或 PSR v2.3 × Cheats.Party.Extra* -->
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysMoney</SkipClass>
+    <!-- Characters (10) - MarriageFertility 冲突嫌疑 -->
+    <SkipClass>BannerlordCheats.Patches.Characters.AdjustPregnancyDuration</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Characters.AllowSameSexMarriage</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Characters.BarterOfferAlwaysAccepted</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Characters.ConversationAlwaysSuccessful</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Characters.NeverDieOfOldAge</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Characters.NoBarterCooldown</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Characters.PerfectAttraction</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Characters.PerfectRelationships</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Characters.PregnancyChanceMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Characters.RelationGainAfterBattleMultiplier</SkipClass>
+    <!-- Party (10) - PSR v2.3 冲突嫌疑 -->
+    <SkipClass>BannerlordCheats.Patches.Party.ExtraPartyMemberSize</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.ExtraPartyMorale</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.ExtraPartyPrisonerSize</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.FoodConsumptionPercentage</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.FreeCompanionHiring</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.InstantEscape</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.InstantPrisonerRecruitment</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.NoPrisonerEscape</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.PartyHealingMultiplierHeroes</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Party.PartyHealingMultiplierTroops</SkipClass>
+    <!-- Settlements (17) -->
+    <SkipClass>BannerlordCheats.Patches.Settlements.ConstructionPowerMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.DailyFoodBonus</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.DailyHearthsBonus</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.DailyLoyaltyBonus</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.DailyMilitiaBonusTown</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.DailyMilitiaBonusVillage</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.DailyProsperityBonus</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.DailySecurityBonus</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.DisguiseAlwaysWorks</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.GarrisonWagesPercentage</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.ItemTradingCostPercentage</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.NeverRequireCivilianEquipment</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.NoBribeToEnterKeep</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.RebellionChancePercentage</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.SellingPriceMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.TournamentMaximumBetMultiplier</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.Settlements.VillagesNeverRaided</SkipClass>
+    <!-- General (12) - EnableHotkeysMoney 在上面 · 剩 12 项 hotkey/tips -->
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysAddEncyclopediaTroops</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysAddItems</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysChangePlayerCharacter</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysCharacterAttributes</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysCharacterPoints</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysInfluence</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysKillCharacter</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysTransferSettlement</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysTroopCount</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeysTroopExperience</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeyTipsEncyclopedia</SkipClass>
+    <SkipClass>BannerlordCheats.Patches.General.EnableHotkeyTipsScreens</SkipClass>
+  </SkipClasses>
+</CheatsGuard>

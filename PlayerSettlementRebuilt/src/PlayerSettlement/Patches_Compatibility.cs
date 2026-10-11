@@ -29,6 +29,10 @@ using BannerlordPlayerSettlement.UI.Viewmodels;
 using BannerlordPlayerSettlement.Utils;
 using HarmonyLib;
 using Helpers;
+using NavigationType = TaleWorlds.CampaignSystem.Party.MobileParty.NavigationType;
+using ChangeOwnerOfSettlementDetail = TaleWorlds.CampaignSystem.Actions.ChangeOwnerOfSettlementAction.ChangeOwnerOfSettlementDetail;
+using Debug = TaleWorlds.Library.Debug;
+using ShipType = TaleWorlds.Core.ShipHull.ShipType;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -668,7 +672,7 @@ namespace BannerlordPlayerSettlement.Patches.Compatibility
 				}
 				try
 				{
-					MBList<ShipHull> val = Extensions.ToMBList<ShipHull>(((IEnumerable<Kingdom>)Kingdom.All).SelectMany((Kingdom x) => (IEnumerable<ShipHull>)x.Culture.AvailableShipHulls));
+					MBList<ShipHull> val = TaleWorlds.Library.Extensions.ToMBList<ShipHull>(((IEnumerable<Kingdom>)Kingdom.All).SelectMany((Kingdom x) => (IEnumerable<ShipHull>)x.Culture.AvailableShipHulls));
 					string empty = string.Empty;
 					for (int i = 0; i < count; i++)
 					{
@@ -681,7 +685,7 @@ namespace BannerlordPlayerSettlement.Patches.Compatibility
 							}
 							Ship val2 = new Ship(randomShipHull);
 							List<ShipUpgradePiece> availableShipUpgradePieces = town.GetAvailableShipUpgradePieces();
-							Extensions.Shuffle<ShipUpgradePiece>((IList<ShipUpgradePiece>)availableShipUpgradePieces);
+							TaleWorlds.Core.Extensions.Shuffle<ShipUpgradePiece>((IList<ShipUpgradePiece>)availableShipUpgradePieces);
 							foreach (KeyValuePair<string, ShipSlot> availableSlot in val2.ShipHull.AvailableSlots)
 							{
 								if (!(MBRandom.RandomFloat > 0.5f))

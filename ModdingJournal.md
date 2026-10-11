@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-09（晚 · 3 新 P0 立项：Retinues Captain Perk · OSA v3 平衡重启 · Fief 大规模征召重启）
+**最后更新**：2026-10-11（PSLR P4+P5+P6 全线收官 · 用户建 settlement 成功）
 
 ## 目录
 - [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)
@@ -2874,9 +2874,9 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ## 待办 / 开放问题
 
-### 🔴🔴 P0 · 2026-10-10 最高优先度 · PlayerSettlement 本地重建（PSLR）
+### ✅ 2026-10-11 收官 · PlayerSettlement 本地重建（PSLR）· P4+P5+P6 全线通过
 
-- [ ] **🔴🔴 PlayerSettlement Local Rebuild · 作者弃坑 + UIExt v3.x ABI 不兼容致游戏崩溃**（2026-10-10 立项 · **抢占原 OSW Shield Tier Fix 的 P0 顶位** · 游戏能启动才谈其他开发）
+- [x] **✅ PlayerSettlement Local Rebuild · 2026-10-11 全线收官**（2026-10-10 立项 · 2026-10-11 用户实测建 settlement 成功 · P4 compile ✅ P5 deploy ✅ P6 功能 ✅）
 
   **📖 完整方案 memory**：[[player-settlement-local-rebuild]]
 
@@ -2947,38 +2947,146 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
   ---
 
-  ### 当前状态（2026-10-10 当日进度 · ⚠ **未实机测试**）
-
-  **已完成** P1 → P2 → P3 → P4 ~50% · 全部产物在 `PlayerSettlementRebuilt/`：
+  ### 最终收官状态（2026-10-11 session · 用户实测 settlement 建立成功 ✅）
 
   | Phase | 状态 | 产出 |
   |---|---|---|
-  | P1 · 反编译 | ✅ 完成 | `decompiled_reference/PlayerSettlement.decompiled.cs` (545KB · 85 class · 13006 行) + `PlayerSettlementFixes.decompiled.cs` (99KB · 43 class) + `UIExtenderEx_v3/` + `MCM_v5123/` 参照反编译 |
-  | P2 · API diff | ✅ 完成 · 🎉 **零 breaking** | `notes/P2_api_diff_report.md` · UIExt + MCM 用的所有 API 在 v3.0.3 + v5.12.3 中全保留 · PS 源码一行不用改 · 真因只是 bundled MCMv5.dll v5.11.3 跟 workshop MCM v5.12.3 的 CLR assembly 冲突 |
-  | P3 · 源码准备 | ✅ 完成 | `_split_namespaces.ps1` 按 namespace 拆成 17 .cs · `_strip_assembly_attrs.ps1` 去 duplicate attr · `_fix_decomp_artifacts.ps1` 修 149 ref-cast + 50 closure rename + 2 处手工 fix（Behaviours L2394 `(??)` + Patches_Compatibility L1011 broken ternary）|
-  | P4 · csproj + build | 🟡 **进行中 50%** | `src/PlayerSettlement/PlayerSettlement.csproj` + `src/PlayerSettlementFixes/PlayerSettlementFixes.csproj` 搭完 · 7 轮 build 迭代 · errors 从 **284 → 146 → 86 → 14 → 458 → 86 → 44** · **剩 44 errors 全是 missing TaleWorlds assembly refs**（8 unresolved types + 4 Editor 命名 ambiguity）· 继续加 ref 可消 |
-  | P5 · Workshop 退订 + 本地固化 | ⏭ 待 P4 完成 | — |
-  | P6 · 实测 + 归档 | ⏭ 待 P5 完成 | — |
+  | P1 · 反编译 | ✅ 完成 | `decompiled_reference/*.decompiled.cs` + `UIExtenderEx_v3/` + `MCM_v5123/` 参照 |
+  | P2 · API diff | ✅ 完成 · **零 breaking** | `notes/P2_api_diff_report.md` |
+  | P3 · 源码准备 | ✅ 完成 | split + strip + 批量 fix 149 ref-cast + 50 closure rename |
+  | **P4 · compile** | ✅ **0 errors**（10-11 session 消完 210 条 · journal 原估 "44 errors 全是 missing refs" 严重低估）| `PlayerSettlement.dll` 278 KB v7.5.1 + `PlayerSettlementFixes.dll` 66 KB v1.0.1 |
+  | **P5 · deploy** | ✅ **已 deploy** | `Modules\PlayerSettlement\` 完整就位 · 75 文件 ~43 MB · bundle MCMv5.dll 已删 |
+  | **P6 · 实测** | ✅ **用户建 settlement 成功** | game 启动 OK · 加载存档 OK · UI 显示 OK · 建 settlement end-to-end OK |
 
-  **⚠ 关键警告 · 未测试**：
-  - 当前 rebuild **只是 compile 侧进度 · 从未实机加载过**
-  - 即使 P4 build 成功 · 不保证 runtime 行为跟原 PS v7.5.0 一致（反编译 → split → regex 批量 fix 的管线有潜在语义漂移风险）
-  - **严禁在 P6 实测通过前 deploy 到 Modules\PlayerSettlement\** · 否则存档可能不可逆损坏
-  - 当前解决方案 fallback：游戏启动时**禁用 PlayerSettlement** · 可正常玩其他 mod（不建设 settlement 功能即可）
+  ---
 
-  **剩 44 errors 未解类型清单**（下次 session 续）：
-  ```
-  CS0246 (40):
-    ChangeOwnerOfSettlementDetail · CraftingOrderSlots · GameLoadingType · InputInformation
-    NavigationType · OnClickableConditionDelegate · SiegeEngineConstructionProgress · SiegeEnginesContainer
-  CS0104 (4): Editor 名字 ambiguity (System.ComponentModel vs TaleWorlds.GauntletUI)
-  ```
+  ### 📅 2026-10-11 session · P4+P5+P6 完整执行过程
 
-  **本 session 用的工具链**（可复用）：
-  - `src/_split_namespaces.ps1`
-  - `src/_strip_assembly_attrs.ps1`
-  - `src/_fix_decomp_artifacts.ps1`
-  - `ilspycmd` 全局工具（9.x）
+  #### P4 收官 · errors 从 210 → 0（10 batch）
+
+  Journal 原记 "剩 44 errors" **估计过度乐观** · 实际起点 **210 errors** · 逐 batch 消：
+
+  | Batch | 消 errors | 技术 |
+  |---|---:|---|
+  | 1 · 清 csproj ghost ref + nested type alias + HotKeyBase.op_Implicit 批替 | 79 | csproj 清 CampaignSystem.GauntletUI/SandBoxCore/Helpers（v1.4.7 不存在）+ `HotKeyBase.op_Implicit(` → `(GameKey)(` 替换 60 处 |
+  | 2 · 剩余 nested type alias | 33 | POIType/ChoiceTag/OnPersuasionOptionDelegate/ComponentType/MenuOverlayType/MenuFlags/LeaveType 7 条 using alias |
+  | 3 · System.Range/Index 伪 ctor | 10 | 2 处 `(val)..ctor(...)` 重写为 `val = new X(...)` |
+  | 4 · GetCursorIntersectionPoint ref→out | 26 | 8 call sites 逐一改 arg 3,4,6 从 ref 到 out + GetSiegeCampFrames 一处 |
+  | 5 · base cast 消 CS1540 protected 访问 | 23 | `((PropertyOwnerObject)this).OnPropertyChanged` / `((MBSubModuleBase)this).OnXxx` / `((SaveableTypeDefiner)this).XXX` / `((Widget)this).OnUpdate` 批量 replace |
+  | 6 · OnConditionDelegate 二义性修 | 17 | using alias 让 bare `OnConditionDelegate` = GameMenuOption 版 · dialog 调用 fully qualify 为 `ConversationSentence.OnConditionDelegate` |
+  | 7 · 杂项 1 批 | 22 | Debug fully qualify / Vector2 reference / MBObjectBase null-check / BodyFlags unchecked / POIType cast / event backing field / Extension method qualify / EmbeddedAttribute 删 / System.Numerics.Vectors PackageReference |
+
+  **结果**：
+  - PlayerSettlement.dll: **278,016 B · v7.5.1 · 0 errors · 63 warnings（全 nullable · 非致命）**
+  - PlayerSettlementFixes.dll（独立 csproj 新搭）: **66,048 B · v1.0.1 · 0 errors**
+
+  **额外发现 · Journal 原估不准**：真实起点 210 errors · 其中真正 missing refs 只有 3 条（SandBoxCore / Helpers / CampaignSystem.GauntletUI · v1.4.7 根本不存在 · csproj 里的 ghost reference）· 其余全是 decompile artifact。
+
+  ---
+
+  #### P5 · deploy.ps1 创建 + 执行
+
+  **deploy.ps1** 在 `PlayerSettlementRebuilt/deploy.ps1`（repo 根）：
+  - 从 workshop `3720376888` copy 75 文件（GUI/ModuleData/Prefabs 全部）
+  - overlay rebuild 的 2 DLL + Vectors.dll + 修改版 SubModule.xml
+  - **删 bundle MCMv5.dll v5.11.3**（跟 workshop MCM v5.12.3 冲突根因已消除）
+  - 删 Gaming.Desktop.x64 Xbox 平台 build（PC 不需要）
+  - 包含 DryRun flag + verify 阶段
+
+  **SubModule.xml 修改**：Version `v7.5.1`（原 `v7.5.1-rebuilt` 带 suffix 导致 launcher FormatException · 中途修复）· DependedModule UIExt `v3.0.3` + MCM `v5.12.3` 对齐实际 workshop 版本。
+
+  **执行结果**：Modules\PlayerSettlement\ 完整就位 · 所有 verify OK。Workshop subscription **保留**（作安全网 · 用户 P6 完全通过后可手动退订）。
+
+  ---
+
+  #### P6 · 实测 · 4 轮 runtime bug 修复
+
+  **Round 1 crash**（首次启动）：
+  - 症状：`UnauthorizedAccessException: Access to 'C:\ProgramData\...\logs\BannerlordPlayerSettlement.debug.log' is denied` → `TypeInitializationException on LogManager..cctor` → native crash
+  - **根因**：log 文件（2026-10-09 workshop PS 旧 crash 遗留 · ACL 只允许 SYSTEM/Administrators 写）· 新 session 用 normal user token 写不了。推测历史：10-09 game 被 admin elevated 跑过一次 · 留下 admin-only ACL
+  - **诊断工具**：`dotnet-dump analyze dump.dmp` + `pe -nested` 打印 managed exception + inner exception chain
+  - **修**：用户 admin PowerShell `Remove-Item` 删 orphan 文件 · 新 session 自动创建带正确 ACL 的
+  - **教训**：workshop PS v7.5.0 **也会有同样问题** · 跟 rebuild 代码无关 · 是环境 state 问题
+
+  **Round 2 silent exit**（删 log 后 · 游戏卡在 `Loading localized text xml.`）：
+  - 症状：silent exit · 无 crash dump · 无 BEW · 无 managed exception log · 典型 CLR 4.x StackOverflow
+  - **5 轮 bisection**：
+    - R1 launcher 禁 PS → OK → PS 元凶
+    - R2 SubModule.xml 注释 PSFixes → 还挂 → PS 本体
+    - R3 注释 Harmony.PatchAll → 还挂 → 不是 Harmony
+    - R4 加注释 UIExt.Register → 还挂 → 不是 UIExt code 执行
+    - R5 移走 PSFixes.dll 文件 → 还挂 → 元凶在 PS.dll class metadata
+  - **根因定位**：
+    ```csharp
+    // Saves.cs:109
+    protected override void DefineClassTypes()
+    {
+        DefineClassTypes();   // 👈 调自己 · 无限递归 → StackOverflow
+        AddClassDefinition(...);
+    }
+    ```
+    同 Saves.cs:125 的 `DefineContainerDefinitions()`
+  - **根因 pattern · 反编译 artifact + batch Edit 过度激进**：
+    - ILSpy 把 `base.X()` 反编译成 `((Base)this).X()`
+    - Batch 5 替换 `((SaveableTypeDefiner)this).XXX` → bare `XXX` 时 · 对 `AddClassDefinition` 等 non-virtual inherited method 用 bare 是对的 · 但对 **override 的 virtual method 用 bare 会 virtual dispatch 回自己** → recursion
+  - **修**：Saves.cs:109/123 改成 `base.DefineClassTypes()` / `base.DefineContainerDefinitions()`
+
+  **Round 3 silent exit on save load**（主菜单 OK · 加载存档挂）：
+  - 症状：主菜单到了 · 点加载存档 silent exit
+  - **根因**：相同 recursion pattern · UI_Viewmodels.cs 2 处：
+    ```csharp
+    // UI_Viewmodels.cs:654
+    public override void RefreshValues()
+    {
+        ((MapInfoVM)this).RefreshValues();   // 👈 virtual dispatch 回自己 → recursion
+        CalculateEnabled();
+    }
+    // UI_Viewmodels.cs:660
+    public override void OnFinalize()
+    {
+        ((ViewModel)this).OnFinalize();   // 👈 同
+        ...
+    }
+    ```
+  - **修**：两处都改成 `base.RefreshValues()` / `base.OnFinalize()`
+
+  **Round 4 全线 OK**（PSFixes restore 后）：
+  - 主菜单 ✅ · 加载存档 ✅ · UI 显示 PS 增强 ✅
+  - **用户实测建 settlement 成功** · PSLR 全线收官 🎉
+
+  ---
+
+  ### 本 session 新增/修改文件
+
+  **repo** (PlayerSettlementRebuilt/)：
+  - **新**：`deploy.ps1`（P5 deploy script）· `src/PlayerSettlementFixes/PlayerSettlementFixes.csproj`
+  - **改**：`SubModule.xml`（Version/depend）· `src/PlayerSettlement/*.cs` 11 文件（using alias / out keyword / base. / 等）· `src/PlayerSettlement/PlayerSettlement.csproj`（清 ghost ref + System.Numerics.Vectors PackageReference）· `src/PlayerSettlementFixes/PlayerSettlementFixes.cs`
+
+  **game Modules**（P5 deploy 产出）：
+  - `Modules\PlayerSettlement\` 完整就位 · 75 workshop 文件 + 4 overlay（PS.dll v7.5.1 + PSFixes.dll v1.0.1 + Vectors + SubModule.xml）· 删 bundle MCMv5.dll
+
+  ---
+
+  ### 根因 pattern 教训（下次 PSLR-style 项目的 playbook）
+
+  **反编译 → recompile 的 silent killer**：ILSpy 把 base 调用反编译成 `((Base)this).X()` cast virtual call。batch Edit 时**必须区分**：
+  - **virtual method 且 class 有 override**：用 `base.X()`（non-virtual call 到 base）
+  - **non-virtual inherited method**：用 bare `X()` 或 `this.X()`
+  - **virtual method 但 class 没 override**：用 bare `X()`（virtual dispatch 跳 base 唯一实现）
+
+  **CLR 4.x StackOverflow 的致命特点**：
+  - 不生成 crash dump · 不触发 ButterLib BEW · watchdog log 没 `Crash occurred` 行 · 完全 silent process termination
+  - 唯一诊断线索：rgl log 戛然而止 + process 在 ~5 秒内 exit
+  - **只能靠 bisection**（禁 code block → 重 build → 测）
+
+  **诊断工具**：
+  - `dotnet-dump` 对 .NET Framework 4.x dump 支持有限但够用（`pe -nested` 可打印 managed exception 链）
+  - 本 session 唯一获取 call stack 的方式：**让用户不 cancel TW 的 crash dump 对话框**（Round 1 的 TypeInitializationException 靠此定位）
+
+  **铁律本 session 应用**：
+  - [[bannerlord-build-deploy]]：每次 build 完立刻 deploy + 验时间戳 · 所有 round
+  - [[mod-config-authority]]：bisection 修 user 的 Modules\PlayerSettlement\SubModule.xml 都先问授权
+  - [[journal-replicate-sync]]：本章节更新即触发 REPLICATE.md 同步（下一步做）
 
   ---
 

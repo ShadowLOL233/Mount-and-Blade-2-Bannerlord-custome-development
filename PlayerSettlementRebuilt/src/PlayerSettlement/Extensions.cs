@@ -29,6 +29,9 @@ using BannerlordPlayerSettlement.UI.Viewmodels;
 using BannerlordPlayerSettlement.Utils;
 using HarmonyLib;
 using Helpers;
+using Debug = TaleWorlds.Library.Debug;
+using NavigationType = TaleWorlds.CampaignSystem.Party.MobileParty.NavigationType;
+using CraftingOrderSlots = TaleWorlds.CampaignSystem.CampaignBehaviors.CraftingCampaignBehavior.CraftingOrderSlots;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -167,14 +170,14 @@ namespace BannerlordPlayerSettlement.Extensions
 			return null;
 		}
 
-		public static void SetCampaignGameLoadingType(this Campaign instance, GameLoadingType gameLoadingType)
+		public static void SetCampaignGameLoadingType(this Campaign instance, Campaign.GameLoadingType gameLoadingType)
 		{
 			//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 			FieldInfo fieldInfo = AccessTools.Field(typeof(Campaign), "_gameLoadingType");
 			fieldInfo.SetValue(instance, gameLoadingType);
 		}
 
-		public static T AsCampaignGameLoadingType<T>(this Campaign instance, GameLoadingType gameLoadingType, Func<T> func)
+		public static T AsCampaignGameLoadingType<T>(this Campaign instance, Campaign.GameLoadingType gameLoadingType, Func<T> func)
 		{
 			//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 			FieldInfo fieldInfo = AccessTools.Field(typeof(Campaign), "_gameLoadingType");
@@ -194,14 +197,14 @@ namespace BannerlordPlayerSettlement.Extensions
 	{
 		private static FieldInfo _craftingOrdersField = AccessTools.Field(typeof(CraftingCampaignBehavior), "_craftingOrders");
 
-		public static bool AddTown(this CraftingCampaignBehavior craftingCampaignBehavior, Town town, out Dictionary<Town, CraftingOrderSlots>? _craftingOrders)
+		public static bool AddTown(this CraftingCampaignBehavior craftingCampaignBehavior, Town town, out Dictionary<Town, CraftingCampaignBehavior.CraftingOrderSlots>? _craftingOrders)
 		{
 			//IL_0041: Unknown result type (might be due to invalid IL or missing references)
 			//IL_004b: Expected O, but got Unknown
 			_craftingOrders = null;
 			try
 			{
-				_craftingOrders = _craftingOrdersField.GetValue(craftingCampaignBehavior) as Dictionary<Town, CraftingOrderSlots>;
+				_craftingOrders = _craftingOrdersField.GetValue(craftingCampaignBehavior) as Dictionary<Town, CraftingCampaignBehavior.CraftingOrderSlots>;
 				if (_craftingOrders == null)
 				{
 					return false;
@@ -227,7 +230,7 @@ namespace BannerlordPlayerSettlement.Extensions
 					{
 						if (craftingCampaignBehavior.CraftingOrders[settlement.Town].GetAvailableSlot() > -1)
 						{
-							craftingCampaignBehavior.CreateTownOrder(Extensions.GetRandomElement<Hero>(val), i);
+							craftingCampaignBehavior.CreateTownOrder(TaleWorlds.Core.Extensions.GetRandomElement<Hero>(val), i);
 						}
 					}
 				}
@@ -295,7 +298,7 @@ namespace BannerlordPlayerSettlement.Extensions
 			//IL_000e: Unknown result type (might be due to invalid IL or missing references)
 			//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 			//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-			GameKey val = HotKeyBase.op_Implicit(hotKeyBase);
+			GameKey val = (GameKey)hotKeyBase;
 			return val.KeyboardKey.InputKey;
 		}
 	}

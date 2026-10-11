@@ -706,6 +706,48 @@ Test-Path "$GAME_ROOT\Modules\UTMPatch\bin\Win64_Shipping_Client\UTMPatch.dll"
 
 ---
 
+## [P6.8] Build + deploy PlayerSettlement Rebuilt (PSLR · v7.5.1)
+
+**GOAL**: Local rebuild of workshop `PlayerSettlement` (WSid 3720376888, author abandoned 2025-Q3) + `PlayerSettlementFixes` v1.0.1. Fixes bundled MCMv5.dll v5.11.3 conflict with workshop MCM v5.12.3 (which was crashing the game load) + 4 recursion bugs introduced during decompile → recompile pipeline. See journal `📅 2026-10-11 session · P4+P5+P6 完整执行过程` for full root-cause pattern (ILSpy `base.X()` → `((Base)this).X()` + batch replace to bare `X()` → virtual dispatch to self → StackOverflow silent exit).
+
+**PRE**: [P6.0] complete. [P1.3] subscribed PS (WSid 3720376888) — workshop files needed as source for GUI/ModuleData/Prefabs copy (deploy.ps1 copies 75 files from workshop then overlays rebuild DLLs).
+
+**DO**:
+```powershell
+& "$repoRoot\PlayerSettlementRebuilt\deploy.ps1" -GameRoot $GAME_ROOT
+# Script runs: workshop copy (75 files, ~43 MB) + overlay rebuild DLLs + delete bundled MCMv5.dll + verify.
+# For dry-run preview without changes: add -DryRun flag.
+# If Modules\PlayerSettlement\ already exists: default behavior backs it up to .bak-{timestamp}.
+```
+Script does:
+- Copy workshop `3720376888/*` → `$GAME_ROOT\Modules\PlayerSettlement\` (75 files · GUI/ModuleData/Prefabs full)
+- **Exclude** `bin\Win64_Shipping_Client\MCMv5.dll` (bundled v5.11.3 · conflict with workshop MCM v5.12.3 · deleting lets workshop MCM load exclusively)
+- **Exclude** `bin\Gaming.Desktop.x64_Shipping_Client\*` (Xbox platform build · PC not needed)
+- Overlay rebuild `PlayerSettlement.dll` (278 KB · v7.5.1) + `PlayerSettlementFixes.dll` (66 KB · v1.0.1) + `System.Numerics.Vectors.dll` (NuGet 4.5.0)
+- Overlay modified `SubModule.xml` (Version `v7.5.1` + UIExt DependentVersion `v3.0.3` + MCM `v5.12.3` depend)
+
+**VERIFY**:
+```powershell
+Test-Path "$GAME_ROOT\Modules\PlayerSettlement\bin\Win64_Shipping_Client\PlayerSettlement.dll"
+Test-Path "$GAME_ROOT\Modules\PlayerSettlement\bin\Win64_Shipping_Client\PlayerSettlementFixes.dll"
+(Get-Item "$GAME_ROOT\Modules\PlayerSettlement\bin\Win64_Shipping_Client\PlayerSettlement.dll").Length -ge 270000
+(Get-Item "$GAME_ROOT\Modules\PlayerSettlement\bin\Win64_Shipping_Client\PlayerSettlementFixes.dll").Length -ge 60000
+# Critical: bundle MCMv5.dll must NOT exist (bug repro vector)
+-not (Test-Path "$GAME_ROOT\Modules\PlayerSettlement\bin\Win64_Shipping_Client\MCMv5.dll")
+(Select-String -Path "$GAME_ROOT\Modules\PlayerSettlement\SubModule.xml" -Pattern '<Version value="v7\.5\.1"').Count -eq 1
+# After first launch, PS logger creates its own debug log here (should be user-writable, not admin-only):
+# $env:ProgramData\Mount and Blade II Bannerlord\logs\BannerlordPlayerSettlement.debug.log
+```
+
+**POST-INSTALL**:
+- Enable `Player Settlement` in launcher (depends on Harmony/ButterLib/UIExtenderEx v3.0.3/MCM v5.12.3 · load after them).
+- Workshop subscription **kept** as safety net (if PSLR has issues, remove `Modules\PlayerSettlement\` and workshop version loads back). After confirming PSLR works, user may manually unsubscribe WSid 3720376888 via Steam.
+- First launch: PS Main.OnSubModuleLoad applies ~18 Harmony patches + UIExt registers · PSFixes applies 39 patches. If `logs\BannerlordPlayerSettlement.debug.log` has `UnauthorizedAccessException`, delete that file with admin PowerShell (orphan from previous admin-elevated session · ACL blocks normal user).
+
+**ROLLBACK**: `Remove-Item "$GAME_ROOT\Modules\PlayerSettlement" -Recurse -Force`. Steam will reload workshop version on next launch (workshop version will crash due to MCM bundle conflict · but at least launcher doesn't error). To fully disable PS, also untick in launcher.
+
+---
+
 ## [P6.5] Reference data packs (no build — repo-tracked CSVs)
 
 **GOAL**: Have `OSA_Reference/` and `RBM_Reference/` CSVs available for balance queries. They're already in the repo; nothing to build.
@@ -753,7 +795,9 @@ Test-Path "$repoRoot\RBM_Reference\data\rbm_items.csv"
    Retinues
    PartySizeReunited
    ChooseYourTroops
-   PlayerSettlement
+   PlayerSettlement             ← PSLR rebuild v7.5.1 (see [P6.8]) · workshop version broken
+                                   (bundled MCMv5 v5.11.3 conflicts with workshop MCM v5.12.3)
+                                   Load AFTER Harmony/ButterLib/UIExtenderEx/MCM.
    GarrisonDrills
    AutoParry
    TroopClassifier              (see [P7.2] if missing)
@@ -1003,6 +1047,7 @@ PSCacheWarmup/                 v0.1.1  (auto-warm MapDistanceModel cache after P
 BetterPatrolsBrake/            v0.1    (remove 2 BetterPatrols hourly hot patches, keep the other 24)
 UnifiedTroopManager/           v0.1.0  (self-contained CYT+FM replacement · Gauntlet UI + Preset)
 UTMPatch/                      v1.0.1  (standalone CYT quota enforcer · alternative to UTM · NOT both)
+PlayerSettlementRebuilt/       v7.5.1  (local rebuild of workshop PS 3720376888 · fix bundled MCMv5 conflict + 4 recursion bugs · PSFixes v1.0.1 bundled)
 ```
 
 ## [APX.3] Cross-device path-variable table

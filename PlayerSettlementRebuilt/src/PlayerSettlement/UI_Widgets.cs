@@ -29,6 +29,7 @@ using BannerlordPlayerSettlement.UI.Viewmodels;
 using BannerlordPlayerSettlement.Utils;
 using HarmonyLib;
 using Helpers;
+using Editor = TaleWorlds.GauntletUI.EditorAttribute;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -115,7 +116,7 @@ namespace BannerlordPlayerSettlement.UI.Widgets
 				if (_extendButtonWidget != value)
 				{
 					_extendButtonWidget = value;
-					((PropertyOwnerObject)this).OnPropertyChanged<ButtonWidget>(value, "ExtendButtonWidget");
+					OnPropertyChanged<ButtonWidget>(value, "ExtendButtonWidget");
 					if (!_extendButtonWidget.ClickEventHandlers.Contains(OnExtendButtonClick))
 					{
 						_extendButtonWidget.ClickEventHandlers.Add(OnExtendButtonClick);
@@ -137,8 +138,8 @@ namespace BannerlordPlayerSettlement.UI.Widgets
 				if (_isInfoBarExtended != value)
 				{
 					_isInfoBarExtended = value;
-					((PropertyOwnerObject)this).OnPropertyChanged(value, "IsInfoBarExtended");
-					MapBarExtendStateChangeEvent onMapInfoBarExtendStateChange = this.OnMapInfoBarExtendStateChange;
+					OnPropertyChanged(value, "IsInfoBarExtended");
+					MapBarExtendStateChangeEvent onMapInfoBarExtendStateChange = this.m_OnMapInfoBarExtendStateChange;
 					if (onMapInfoBarExtendStateChange != null)
 					{
 						onMapInfoBarExtendStateChange.Invoke(IsInfoBarExtended);
@@ -195,7 +196,7 @@ namespace BannerlordPlayerSettlement.UI.Widgets
 
 		protected override void OnUpdate(float dt)
 		{
-			((Widget)this).OnUpdate(dt);
+			base.OnUpdate(dt);
 			RefreshBarExtendState();
 		}
 

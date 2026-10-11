@@ -29,6 +29,14 @@ using BannerlordPlayerSettlement.UI.Viewmodels;
 using BannerlordPlayerSettlement.Utils;
 using HarmonyLib;
 using Helpers;
+using InputInformation = SandBox.View.Map.MapCameraView.InputInformation;
+using SiegeEnginesContainer = TaleWorlds.CampaignSystem.Siege.SiegeEvent.SiegeEnginesContainer;
+using SiegeEngineConstructionProgress = TaleWorlds.CampaignSystem.Siege.SiegeEvent.SiegeEngineConstructionProgress;
+using ChangeOwnerOfSettlementDetail = TaleWorlds.CampaignSystem.Actions.ChangeOwnerOfSettlementAction.ChangeOwnerOfSettlementDetail;
+using Debug = TaleWorlds.Library.Debug;
+using POIType = SandBox.ViewModelCollection.MapSiege.MapSiegePOIVM.POIType;
+using ComponentType = TaleWorlds.Engine.GameEntity.ComponentType;
+using NavigationType = TaleWorlds.CampaignSystem.Party.MobileParty.NavigationType;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -194,7 +202,7 @@ namespace BannerlordPlayerSettlement.Patches
 			{
 				town.BuildingsInProgress.Dequeue();
 			}
-			if (((SettlementComponent)town).Owner.Settlement.IsUnderSiege || Extensions.IsEmpty<Building>((IEnumerable<Building>)town.BuildingsInProgress))
+			if (((SettlementComponent)town).Owner.Settlement.IsUnderSiege || TaleWorlds.Core.Extensions.IsEmpty<Building>((IEnumerable<Building>)town.BuildingsInProgress))
 			{
 				return;
 			}
@@ -591,7 +599,7 @@ namespace BannerlordPlayerSettlement.Patches
 				POIType type = __instance.Type;
 				if ((int)type > 0)
 				{
-					if (type - 1 > 3)
+					if ((int)type - 1 > 3)
 					{
 						return true;
 					}
@@ -1322,7 +1330,7 @@ namespace BannerlordPlayerSettlement.Patches
 					{
 						List<MatrixFrame> list5 = default(List<MatrixFrame>);
 						List<MatrixFrame> list6 = default(List<MatrixFrame>);
-						Campaign.Current.MapSceneWrapper.GetSiegeCampFrames(((MapEntityVisual<PartyBase>)(object)__instance).MapEntity.Settlement, ref list5, ref list6);
+						Campaign.Current.MapSceneWrapper.GetSiegeCampFrames(((MapEntityVisual<PartyBase>)(object)__instance).MapEntity.Settlement, out list5, out list6);
 						((MapEntityVisual<PartyBase>)(object)__instance).MapEntity.Settlement.Town.BesiegerCampPositions1 = list5.ToArray();
 						((MapEntityVisual<PartyBase>)(object)__instance).MapEntity.Settlement.Town.BesiegerCampPositions2 = list6.ToArray();
 					}

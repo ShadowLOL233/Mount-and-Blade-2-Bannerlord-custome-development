@@ -2,7 +2,7 @@
 <Module>
   <Name value="Player Settlement (Rebuilt)" />
   <Id value="PlayerSettlement" />
-  <Version value="v7.5.1-rebuilt" />
+  <Version value="v7.5.1" />
   <Url value="https://www.nexusmods.com/mountandblade2bannerlord/mods/7298" />
   <SingleplayerModule value="true" />
   <MultiplayerModule value="false" />

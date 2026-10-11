@@ -29,6 +29,8 @@ using BannerlordPlayerSettlement.UI.Viewmodels;
 using BannerlordPlayerSettlement.Utils;
 using HarmonyLib;
 using Helpers;
+using Path = System.IO.Path;
+using Debug = TaleWorlds.Library.Debug;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -175,8 +177,8 @@ namespace BannerlordPlayerSettlement.Utils
 		{
 			//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 			LogManager.EventTracer.Trace(e.Message, 2);
-			Debug.SetCrashReportCustomString(e.Message);
-			Debug.SetCrashReportCustomStack(e.StackTrace);
+			TaleWorlds.Library.Debug.SetCrashReportCustomString(e.Message);
+			TaleWorlds.Library.Debug.SetCrashReportCustomStack(e.StackTrace);
 			Print(e.Message, Colours.Red, isDebug: false, onlyDisplay: true);
 			ToFile(new List<string> { e.Message, e.StackTrace });
 		}
@@ -184,8 +186,8 @@ namespace BannerlordPlayerSettlement.Utils
 		public void SilentException(Exception e)
 		{
 			LogManager.EventTracer.Trace(e.Message, 2);
-			Debug.SetCrashReportCustomString(e.Message);
-			Debug.SetCrashReportCustomStack(e.StackTrace);
+			TaleWorlds.Library.Debug.SetCrashReportCustomString(e.Message);
+			TaleWorlds.Library.Debug.SetCrashReportCustomStack(e.StackTrace);
 			ToFile(new List<string> { e.Message, e.StackTrace });
 		}
 

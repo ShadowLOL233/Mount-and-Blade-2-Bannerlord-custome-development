@@ -25,6 +25,12 @@ using TaleWorlds.Engine;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.ObjectSystem;
+using ArmyTypes = TaleWorlds.CampaignSystem.Army.ArmyTypes;
+using BattleTypes = TaleWorlds.CampaignSystem.MapEvents.MapEvent.BattleTypes;
+using NavigationType = TaleWorlds.CampaignSystem.Party.MobileParty.NavigationType;
+using SiegeEngineConstructionProgress = TaleWorlds.CampaignSystem.Siege.SiegeEvent.SiegeEngineConstructionProgress;
+using Path = System.IO.Path;
+using Debug = TaleWorlds.Library.Debug;
 
 
 namespace PlayerSettlementFixes;
@@ -35,7 +41,7 @@ public sealed class PlayerSettlementFixesSubModule : MBSubModuleBase
 
 	protected override void OnSubModuleLoad()
 	{
-		((MBSubModuleBase)this).OnSubModuleLoad();
+		base.OnSubModuleLoad();
 		_harmony = _harmony ?? new Harmony("com.b0tlanner.bannerlord.playersettlement.fixes");
 		PlayerSettlementFixesLoader.Initialize(_harmony);
 	}
@@ -638,7 +644,7 @@ public static class IssuesCampaignBehaviorNotablesFix
 			try
 			{
 				MBObjectBase val = (MBObjectBase)settlement;
-				string text = (((int)val != 0) ? val.StringId : null);
+				string text = ((val != null) ? val.StringId : null);
 				if (text != null && (text.StartsWith("player_settlement_town_") || text.StartsWith("player_settlement_castle_") || text.StartsWith("player_settlement_village_")))
 				{
 					PlayerSettlementFixesLoader.LogError("IssuesCampaignBehaviorNotablesFix: suppressed NRE for " + text);
@@ -669,7 +675,7 @@ public static class IssuesCampaignBehaviorClanNoblesFix
 			try
 			{
 				MBObjectBase val = (MBObjectBase)clan;
-				PlayerSettlementFixesLoader.LogError("IssuesCampaignBehaviorClanNoblesFix: suppressed NRE for clan " + (((int)val != 0) ? val.StringId : null));
+				PlayerSettlementFixesLoader.LogError("IssuesCampaignBehaviorClanNoblesFix: suppressed NRE for clan " + ((val != null) ? val.StringId : null));
 				return null;
 			}
 			catch
@@ -1074,7 +1080,7 @@ public static class PlayerBuiltFortificationAiFix
 			{
 				continue;
 			}
-			AiHelper.GetBestNavigationTypeAndAdjustedDistanceOfSettlementForMobileParty(mobileParty, newlyCreatedPlayerBuiltFortification, false, ref val, ref num, ref flag);
+			AiHelper.GetBestNavigationTypeAndAdjustedDistanceOfSettlementForMobileParty(mobileParty, newlyCreatedPlayerBuiltFortification, false, out val, out num, out flag);
 			if ((int)val == 0 || num == float.MaxValue)
 			{
 				continue;
@@ -1091,8 +1097,8 @@ public static class PlayerBuiltFortificationAiFix
 			{
 				continue;
 			}
-			(item)..ctor((IMapPoint)(object)newlyCreatedPlayerBuiltFortification, (AiBehavior)5, val, willGatherArmy, flag, false);
-			if (!p.TryGetBehaviorScore(ref item, ref num5) || !(num5 > 0f))
+			item = new AIBehaviorData((IMapPoint)(object)newlyCreatedPlayerBuiltFortification, (AiBehavior)5, val, willGatherArmy, flag, false);
+			if (!p.TryGetBehaviorScore(ref item, out num5) || !(num5 > 0f))
 			{
 				float num6 = Math.Max(0.1f, 1f - num / Math.Max(1f, maxSiegeReach));
 				float num7 = 0f;
@@ -1340,8 +1346,7 @@ public static class PlayerBuiltSiegeMachinePlacementFix
 		if (val != null)
 		{
 			float z = globalFrame.origin.z;
-			CampaignVec2 val2 = default(CampaignVec2);
-			(val2)..ctor(new Vec2(globalFrame.origin.x, globalFrame.origin.y), true);
+			CampaignVec2 val2 = new CampaignVec2(new Vec2(globalFrame.origin.x, globalFrame.origin.y), true);
 			val.GetHeightAtPoint(ref val2, ref z);
 			if (!float.IsNaN(z) && !float.IsInfinity(z))
 			{
@@ -2451,8 +2456,7 @@ public static class PlayerSettlementGroundLevelFix
 			}
 			MatrixFrame frame = val2.GetFrame();
 			float z = frame.origin.z;
-			CampaignVec2 val4 = default(CampaignVec2);
-			(val4)..ctor(new Vec2(frame.origin.x, frame.origin.y), true);
+			CampaignVec2 val4 = new CampaignVec2(new Vec2(frame.origin.x, frame.origin.y), true);
 			val3.GetHeightAtPoint(ref val4, ref z);
 			if (!float.IsNaN(z) && !float.IsInfinity(z))
 			{

@@ -29,6 +29,19 @@ using BannerlordPlayerSettlement.UI.Viewmodels;
 using BannerlordPlayerSettlement.Utils;
 using HarmonyLib;
 using Helpers;
+using InputInformation = SandBox.View.Map.MapCameraView.InputInformation;
+using OnClickableConditionDelegate = TaleWorlds.CampaignSystem.Conversation.ConversationSentence.OnClickableConditionDelegate;
+using GameLoadingType = TaleWorlds.CampaignSystem.Campaign.GameLoadingType;
+using NavigationType = TaleWorlds.CampaignSystem.Party.MobileParty.NavigationType;
+using CraftingOrderSlots = TaleWorlds.CampaignSystem.CampaignBehaviors.CraftingCampaignBehavior.CraftingOrderSlots;
+using Debug = TaleWorlds.Library.Debug;
+using DebugColor = TaleWorlds.Library.Debug.DebugColor;
+using OnPersuasionOptionDelegate = TaleWorlds.CampaignSystem.Conversation.ConversationSentence.OnPersuasionOptionDelegate;
+using MenuOverlayType = TaleWorlds.CampaignSystem.GameMenus.GameMenu.MenuOverlayType;
+using MenuFlags = TaleWorlds.CampaignSystem.GameMenus.GameMenu.MenuFlags;
+using LeaveType = TaleWorlds.CampaignSystem.GameMenus.GameMenuOption.LeaveType;
+using OnConditionDelegate = TaleWorlds.CampaignSystem.GameMenus.GameMenuOption.OnConditionDelegate;
+using OnConsequenceDelegate = TaleWorlds.CampaignSystem.GameMenus.GameMenuOption.OnConsequenceDelegate;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -101,9 +114,9 @@ namespace BannerlordPlayerSettlement.Behaviours
 
 			public static Func<SettlementMetaV3, string> __9__76_0;
 
-			public static OnConditionDelegate __9__79_0;
+			public static ConversationSentence.OnConditionDelegate __9__79_0;
 
-			public static OnConsequenceDelegate __9__79_1;
+			public static ConversationSentence.OnConsequenceDelegate __9__79_1;
 
 			public static OnClickableConditionDelegate __9__79_2;
 
@@ -566,7 +579,7 @@ namespace BannerlordPlayerSettlement.Behaviours
 				}
 				if (_metaV3.OverwriteSettlements != null)
 				{
-					List<SettlementMetaV3> list2 = Extensions.DistinctBy<SettlementMetaV3, string>((IEnumerable<SettlementMetaV3>)_metaV3.OverwriteSettlements, (Func<SettlementMetaV3, string>)((SettlementMetaV3 o) => o.StringId)).ToList();
+					List<SettlementMetaV3> list2 = TaleWorlds.Core.Extensions.DistinctBy<SettlementMetaV3, string>((IEnumerable<SettlementMetaV3>)_metaV3.OverwriteSettlements, (Func<SettlementMetaV3, string>)((SettlementMetaV3 o) => o.StringId)).ToList();
 					if (list2.Count != _metaV3.OverwriteSettlements.Count)
 					{
 						LogManager.Log.ToFile($"Duplicate overwrites found! {list2.Count}/{_metaV3.OverwriteSettlements.Count} are unique.");
@@ -635,19 +648,19 @@ namespace BannerlordPlayerSettlement.Behaviours
 			//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
 			//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
 			//IL_00cc: Expected O, but got Unknown
-			starter.AddPlayerLine("player_settlement_build_options_intro", "hero_main_options", "player_settlement_build_options_response", "{=player_settlement_25}I would like to review my options for building a settlement.", new OnConditionDelegate(conv_build_start_condition), (OnConsequenceDelegate)null, 100, new OnClickableConditionDelegate(conv_build_start_clickable), (OnPersuasionOptionDelegate)null);
-			starter.AddDialogLine("player_settlement_build_options_response_dialogue", "player_settlement_build_options_response", "player_settlement_build_options_choices", "{=k7ebznzr}Yes?", (OnConditionDelegate)null, (OnConsequenceDelegate)null, 100, (OnClickableConditionDelegate)null);
+			starter.AddPlayerLine("player_settlement_build_options_intro", "hero_main_options", "player_settlement_build_options_response", "{=player_settlement_25}I would like to review my options for building a settlement.", new ConversationSentence.OnConditionDelegate(conv_build_start_condition), (ConversationSentence.OnConsequenceDelegate)null, 100, new OnClickableConditionDelegate(conv_build_start_clickable), (OnPersuasionOptionDelegate)null);
+			starter.AddDialogLine("player_settlement_build_options_response_dialogue", "player_settlement_build_options_response", "player_settlement_build_options_choices", "{=k7ebznzr}Yes?", (ConversationSentence.OnConditionDelegate)null, (ConversationSentence.OnConsequenceDelegate)null, 100, (OnClickableConditionDelegate)null);
 			object obj = __c.__9__79_0;
 			if (obj == null)
 			{
-				OnConditionDelegate val = () => conv_rebuild_condition();
+				ConversationSentence.OnConditionDelegate val = () => conv_rebuild_condition();
 				__c.__9__79_0 = val;
 				obj = (object)val;
 			}
 			object obj2 = __c.__9__79_1;
 			if (obj2 == null)
 			{
-				OnConsequenceDelegate val2 = delegate
+				ConversationSentence.OnConsequenceDelegate val2 = delegate
 				{
 					conv_rebuild_consequence();
 				};
@@ -664,20 +677,20 @@ namespace BannerlordPlayerSettlement.Behaviours
 				__c.__9__79_2 = val3;
 				obj3 = (object)val3;
 			}
-			starter.AddPlayerLine("player_settlement_rebuild_settlement", "player_settlement_build_options_choices", "close_window", "{=player_settlement_40}We should rebuild this settlement.", (OnConditionDelegate)obj, (OnConsequenceDelegate)obj2, 100, (OnClickableConditionDelegate)obj3, (OnPersuasionOptionDelegate)null);
-			starter.AddPlayerLine("player_settlement_build_town", "player_settlement_build_options_choices", "close_window", "{=player_settlement_26}We should build a town.", new OnConditionDelegate(conv_build_town_condition), (OnConsequenceDelegate)delegate
+			starter.AddPlayerLine("player_settlement_rebuild_settlement", "player_settlement_build_options_choices", "close_window", "{=player_settlement_40}We should rebuild this settlement.", (ConversationSentence.OnConditionDelegate)obj, (ConversationSentence.OnConsequenceDelegate)obj2, 100, (OnClickableConditionDelegate)obj3, (OnPersuasionOptionDelegate)null);
+			starter.AddPlayerLine("player_settlement_build_town", "player_settlement_build_options_choices", "close_window", "{=player_settlement_26}We should build a town.", new ConversationSentence.OnConditionDelegate(conv_build_town_condition), (ConversationSentence.OnConsequenceDelegate)delegate
 			{
 				conv_build_consequence(SettlementType.Town);
 			}, 100, new OnClickableConditionDelegate(conv_build_town_clickable), (OnPersuasionOptionDelegate)null);
-			starter.AddPlayerLine("player_settlement_build_village", "player_settlement_build_options_choices", "close_window", "{=player_settlement_27}We should build a village.", new OnConditionDelegate(conv_build_village_condition), (OnConsequenceDelegate)delegate
+			starter.AddPlayerLine("player_settlement_build_village", "player_settlement_build_options_choices", "close_window", "{=player_settlement_27}We should build a village.", new ConversationSentence.OnConditionDelegate(conv_build_village_condition), (ConversationSentence.OnConsequenceDelegate)delegate
 			{
 				conv_build_consequence(SettlementType.Village);
 			}, 100, new OnClickableConditionDelegate(conv_build_village_clickable), (OnPersuasionOptionDelegate)null);
-			starter.AddPlayerLine("player_settlement_build_castle", "player_settlement_build_options_choices", "close_window", "{=player_settlement_28}We should build a castle.", new OnConditionDelegate(conv_build_castle_condition), (OnConsequenceDelegate)delegate
+			starter.AddPlayerLine("player_settlement_build_castle", "player_settlement_build_options_choices", "close_window", "{=player_settlement_28}We should build a castle.", new ConversationSentence.OnConditionDelegate(conv_build_castle_condition), (ConversationSentence.OnConsequenceDelegate)delegate
 			{
 				conv_build_consequence(SettlementType.Castle);
 			}, 100, new OnClickableConditionDelegate(conv_build_castle_clickable), (OnPersuasionOptionDelegate)null);
-			starter.AddPlayerLine("player_settlement_build_nothing", "player_settlement_build_options_choices", "close_window", "{=player_settlement_29}Nevermind.", (OnConditionDelegate)null, (OnConsequenceDelegate)null, 100, (OnClickableConditionDelegate)null, (OnPersuasionOptionDelegate)null);
+			starter.AddPlayerLine("player_settlement_build_nothing", "player_settlement_build_options_choices", "close_window", "{=player_settlement_29}Nevermind.", (ConversationSentence.OnConditionDelegate)null, (ConversationSentence.OnConsequenceDelegate)null, 100, (OnClickableConditionDelegate)null, (OnPersuasionOptionDelegate)null);
 		}
 
 		private static void conv_rebuild_consequence()
@@ -1494,9 +1507,9 @@ namespace BannerlordPlayerSettlement.Behaviours
 				PathFaceRecord nullFaceRecord = PathFaceRecord.NullFaceRecord;
 				float num = default(float);
 				bool flag = default(bool);
-				val2.GetCursorIntersectionPoint(ref val3, ref val4, ref num, ref val5, ref nullFaceRecord, ref flag, (BodyFlags)79617);
+				val2.GetCursorIntersectionPoint(ref val3, ref val4, out num, out val5, ref nullFaceRecord, out flag, (BodyFlags)79617);
 				Vec3 origin = default(Vec3);
-				val2.GetCursorIntersectionPoint(ref val3, ref val4, ref num2, ref origin, ref nullFaceRecord, ref flag, (BodyFlags)1128209);
+				val2.GetCursorIntersectionPoint(ref val3, ref val4, out num2, out origin, ref nullFaceRecord, out flag, (BodyFlags)1128209);
 				MatrixFrame frame = MatrixFrame.Identity;
 				frame.origin = origin;
 				frame.origin.z = val2.MapScene.GetWaterLevelAtPosition((frame.origin).AsVec2, true, false);
@@ -1506,8 +1519,7 @@ namespace BannerlordPlayerSettlement.Behaviours
 				portPlacementFrame = frame;
 				SetFrame(ghostPortVisualEntity, ref frame);
 				bool flag2 = (nullFaceRecord).IsValid() && !flag;
-				CampaignVec2 val6 = default(CampaignVec2);
-				(val6)..ctor((origin).AsVec2, flag);
+				CampaignVec2 val6 = new CampaignVec2((origin).AsVec2, flag);
 				flag2 = flag2 && NavigationHelper.IsPositionValidForNavigationType(val6, (NavigationType)2);
 				if (flag2)
 				{
@@ -1537,9 +1549,9 @@ namespace BannerlordPlayerSettlement.Behaviours
 				PathFaceRecord nullFaceRecord2 = PathFaceRecord.NullFaceRecord;
 				float num3 = default(float);
 				bool flag3 = default(bool);
-				val2.GetCursorIntersectionPoint(ref val7, ref val8, ref num3, ref val5, ref nullFaceRecord2, ref flag3, (BodyFlags)79617);
+				val2.GetCursorIntersectionPoint(ref val7, ref val8, out num3, out val5, ref nullFaceRecord2, out flag3, (BodyFlags)79617);
 				Vec3 origin2 = default(Vec3);
-				val2.GetCursorIntersectionPoint(ref val7, ref val8, ref num2, ref origin2, ref nullFaceRecord2, ref flag3, (BodyFlags)79633);
+				val2.GetCursorIntersectionPoint(ref val7, ref val8, out num2, out origin2, ref nullFaceRecord2, out flag3, (BodyFlags)79633);
 				MatrixFrame frame3 = MatrixFrame.Identity;
 				frame3.origin = origin2;
 				val5 = new Vec3(0.25f, 0.25f, 0.25f, -1f);
@@ -2002,9 +2014,9 @@ namespace BannerlordPlayerSettlement.Behaviours
 					Vec3 val12 = zero6;
 					float num14 = default(float);
 					bool flag21 = default(bool);
-					val2.GetCursorIntersectionPoint(ref val11, ref val12, ref num14, ref val5, ref nullFaceRecord3, ref flag21, (BodyFlags)79617);
+					val2.GetCursorIntersectionPoint(ref val11, ref val12, out num14, out val5, ref nullFaceRecord3, out flag21, (BodyFlags)79617);
 					Vec3 origin3 = default(Vec3);
-					val2.GetCursorIntersectionPoint(ref val11, ref val12, ref num2, ref origin3, ref nullFaceRecord3, ref flag21, (BodyFlags)79633);
+					val2.GetCursorIntersectionPoint(ref val11, ref val12, out num2, out origin3, ref nullFaceRecord3, out flag21, (BodyFlags)79633);
 					frame8.origin = origin3;
 				}
 				DeepTransformEdit deepTransformEdit11 = deepTransformEdits.FirstOrDefault((DeepTransformEdit dte) => dte.Index < 0);
@@ -2028,9 +2040,9 @@ namespace BannerlordPlayerSettlement.Behaviours
 					Vec3 val14 = zero8;
 					float num17 = default(float);
 					bool flag28 = default(bool);
-					val2.GetCursorIntersectionPoint(ref val13, ref val14, ref num17, ref val5, ref nullFaceRecord3, ref flag28, (BodyFlags)79617);
+					val2.GetCursorIntersectionPoint(ref val13, ref val14, out num17, out val5, ref nullFaceRecord3, out flag28, (BodyFlags)79617);
 					Vec3 val15 = default(Vec3);
-					val2.GetCursorIntersectionPoint(ref val13, ref val14, ref num2, ref val15, ref nullFaceRecord3, ref flag28, (BodyFlags)79633);
+					val2.GetCursorIntersectionPoint(ref val13, ref val14, out num2, out val15, ref nullFaceRecord3, out flag28, (BodyFlags)79633);
 					globalFrame.origin.x = val15.x;
 					globalFrame.origin.y = val15.y;
 					MarkEdited(editTarget);
@@ -2128,24 +2140,24 @@ namespace BannerlordPlayerSettlement.Behaviours
 				val.SetTextVariable("APPLY_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)val2).ToString(), 1f));
 				val2 = Main.Submodule.DeepEditToggleKey.GetInputKey();
 				val.SetTextVariable("DEEP_EDIT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)val2).ToString(), 1f));
-				val.SetTextVariable("CYCLE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.CycleModifierKey)).ToString(), 1f));
-				val.SetTextVariable("CYCLE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.CycleBackKey)).ToString(), 1f));
-				val.SetTextVariable("CYCLE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.CycleNextKey)).ToString(), 1f));
-				val.SetTextVariable("MOVE_UP_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.MoveUpKey)).ToString(), 1f));
-				val.SetTextVariable("MOVE_DOWN_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.MoveDownKey)).ToString(), 1f));
+				val.SetTextVariable("CYCLE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.CycleModifierKey)).ToString(), 1f));
+				val.SetTextVariable("CYCLE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.CycleBackKey)).ToString(), 1f));
+				val.SetTextVariable("CYCLE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.CycleNextKey)).ToString(), 1f));
+				val.SetTextVariable("MOVE_UP_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.MoveUpKey)).ToString(), 1f));
+				val.SetTextVariable("MOVE_DOWN_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.MoveDownKey)).ToString(), 1f));
 				val2 = (InputKey)224;
 				val.SetTextVariable("MOUSE_CLICK", HyperlinkTexts.GetKeyHyperlinkText(((object)val2).ToString(), 1f));
-				val.SetTextVariable("ROTATE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateModifierKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_MODIFIER_ALTERNATE", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateAlternateModifierKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotatePreviousKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateNextKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_FORWARD_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateForwardKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_BACKWARD_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateBackwardsKey)).ToString(), 1f));
-				val.SetTextVariable("SCALE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.ScaleModifierKey)).ToString(), 1f));
-				val.SetTextVariable("SCALE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.ScaleSmallerKey)).ToString(), 1f));
-				val.SetTextVariable("SCALE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.ScaleBiggerKey)).ToString(), 1f));
-				val.SetTextVariable("UNDELETE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.UnDeleteModifierKey)).ToString(), 1f));
-				val.SetTextVariable("DELETE_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.DeleteKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateModifierKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_MODIFIER_ALTERNATE", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateAlternateModifierKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotatePreviousKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateNextKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_FORWARD_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateForwardKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_BACKWARD_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateBackwardsKey)).ToString(), 1f));
+				val.SetTextVariable("SCALE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.ScaleModifierKey)).ToString(), 1f));
+				val.SetTextVariable("SCALE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.ScaleSmallerKey)).ToString(), 1f));
+				val.SetTextVariable("SCALE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.ScaleBiggerKey)).ToString(), 1f));
+				val.SetTextVariable("UNDELETE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.UnDeleteModifierKey)).ToString(), 1f));
+				val.SetTextVariable("DELETE_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.DeleteKey)).ToString(), 1f));
 				int num = Main.Settings.HintDurationSeconds * 1000;
 				Hero mainHero = Hero.MainHero;
 				MBInformationManager.AddQuickInformation(val, num, (BasicCharacterObject)(object)((mainHero != null) ? mainHero.CharacterObject : null), (Equipment)null, "");
@@ -2387,8 +2399,7 @@ namespace BannerlordPlayerSettlement.Behaviours
 				if (atGround)
 				{
 					Scene scene = ((MapScene)Campaign.Current.MapSceneWrapper).Scene;
-					Vec3 origin = default(Vec3);
-					(origin)..ctor(frame.origin.x, frame.origin.y, 0f, -1f);
+					Vec3 origin = new Vec3(frame.origin.x, frame.origin.y, 0f, -1f);
 					Vec2 val = new Vec2(frame.origin.x, frame.origin.y);
 					origin.z = scene.GetGroundHeightAtPosition((val).ToVec3(0f), (BodyFlags)544321929);
 					entity.SetLocalPosition((frame.origin = origin) + (Vec3)(offset ?? Vec3.Zero));
@@ -4729,20 +4740,20 @@ namespace BannerlordPlayerSettlement.Behaviours
 				val.SetTextVariable("MOUSE_CLICK", HyperlinkTexts.GetKeyHyperlinkText(((object)val2).ToString(), 1f));
 				val2 = Main.Submodule.DeepEditToggleKey.GetInputKey();
 				val.SetTextVariable("DEEP_EDIT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)val2).ToString(), 1f));
-				val.SetTextVariable("CYCLE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.CycleModifierKey)).ToString(), 1f));
-				val.SetTextVariable("CYCLE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.CycleBackKey)).ToString(), 1f));
-				val.SetTextVariable("CYCLE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.CycleNextKey)).ToString(), 1f));
-				val.SetTextVariable("MOVE_UP_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.MoveUpKey)).ToString(), 1f));
-				val.SetTextVariable("MOVE_DOWN_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.MoveDownKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateModifierKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_MODIFIER_ALTERNATE", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateAlternateModifierKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotatePreviousKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateNextKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_FORWARD_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateForwardKey)).ToString(), 1f));
-				val.SetTextVariable("ROTATE_BACKWARD_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.RotateBackwardsKey)).ToString(), 1f));
-				val.SetTextVariable("SCALE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.ScaleModifierKey)).ToString(), 1f));
-				val.SetTextVariable("SCALE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.ScaleSmallerKey)).ToString(), 1f));
-				val.SetTextVariable("SCALE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)HotKeyBase.op_Implicit(Main.Submodule.ScaleBiggerKey)).ToString(), 1f));
+				val.SetTextVariable("CYCLE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.CycleModifierKey)).ToString(), 1f));
+				val.SetTextVariable("CYCLE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.CycleBackKey)).ToString(), 1f));
+				val.SetTextVariable("CYCLE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.CycleNextKey)).ToString(), 1f));
+				val.SetTextVariable("MOVE_UP_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.MoveUpKey)).ToString(), 1f));
+				val.SetTextVariable("MOVE_DOWN_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.MoveDownKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateModifierKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_MODIFIER_ALTERNATE", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateAlternateModifierKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotatePreviousKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateNextKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_FORWARD_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateForwardKey)).ToString(), 1f));
+				val.SetTextVariable("ROTATE_BACKWARD_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.RotateBackwardsKey)).ToString(), 1f));
+				val.SetTextVariable("SCALE_MODIFIER_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.ScaleModifierKey)).ToString(), 1f));
+				val.SetTextVariable("SCALE_BACK_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.ScaleSmallerKey)).ToString(), 1f));
+				val.SetTextVariable("SCALE_NEXT_KEY", HyperlinkTexts.GetKeyHyperlinkText(((object)(GameKey)(Main.Submodule.ScaleBiggerKey)).ToString(), 1f));
 				int num = Main.Settings.HintDurationSeconds * 1000;
 				Hero mainHero = Hero.MainHero;
 				MBInformationManager.AddQuickInformation(val, num, (BasicCharacterObject)(object)((mainHero != null) ? mainHero.CharacterObject : null), (Equipment)null, "");
@@ -5096,7 +5107,7 @@ namespace BannerlordPlayerSettlement.Behaviours
 					GameEntity? obj = settlementVisualEntity;
 					if (obj != null)
 					{
-						obj.AddBodyFlags((BodyFlags)(-251674689), true);
+						obj.AddBodyFlags(unchecked((BodyFlags)(-251674689)), true);
 					}
 					previousVisualUpdateException = null;
 					if (settlementVisualEntity == (GameEntity)null)
@@ -5231,7 +5242,7 @@ namespace BannerlordPlayerSettlement.Behaviours
 				GameEntity? obj = ghostPortVisualEntity;
 				if (obj != null)
 				{
-					obj.AddBodyFlags((BodyFlags)(-251674689), true);
+					obj.AddBodyFlags(unchecked((BodyFlags)(-251674689)), true);
 				}
 				previousVisualUpdateException = null;
 				if (ghostPortVisualEntity == (GameEntity)null)
@@ -5283,7 +5294,7 @@ namespace BannerlordPlayerSettlement.Behaviours
 				GameEntity? obj = ghostGateVisualEntity;
 				if (obj != null)
 				{
-					obj.AddBodyFlags((BodyFlags)(-251674689), true);
+					obj.AddBodyFlags(unchecked((BodyFlags)(-251674689)), true);
 				}
 				previousVisualUpdateException = null;
 				if (ghostGateVisualEntity == (GameEntity)null)
@@ -5341,7 +5352,7 @@ namespace BannerlordPlayerSettlement.Behaviours
 		{
 			try
 			{
-				InquiryElement randomElement = Extensions.GetRandomElement<InquiryElement>((IReadOnlyList<InquiryElement>)GetVillageTypeInquiry());
+				InquiryElement randomElement = TaleWorlds.Core.Extensions.GetRandomElement<InquiryElement>((IReadOnlyList<InquiryElement>)GetVillageTypeInquiry());
 				object identifier = randomElement.Identifier;
 				VillageType val = (VillageType)((identifier is VillageType) ? identifier : null);
 				if (val != null)

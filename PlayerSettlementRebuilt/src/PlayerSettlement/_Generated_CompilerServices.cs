@@ -92,7 +92,6 @@ using TaleWorlds.ScreenSystem;
 namespace System.Runtime.CompilerServices
 {
 	[CompilerGenerated]
-	[Microsoft.CodeAnalysis.Embedded]
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Parameter | AttributeTargets.ReturnValue | AttributeTargets.GenericParameter, AllowMultiple = false, Inherited = false)]
 	internal sealed class NullableAttribute : Attribute
 	{
@@ -109,7 +108,6 @@ namespace System.Runtime.CompilerServices
 		}
 	}
 	[CompilerGenerated]
-	[Microsoft.CodeAnalysis.Embedded]
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Method | AttributeTargets.Interface | AttributeTargets.Delegate, AllowMultiple = false, Inherited = false)]
 	internal sealed class NullableContextAttribute : Attribute
 	{

@@ -29,6 +29,10 @@ using BannerlordPlayerSettlement.UI.Viewmodels;
 using BannerlordPlayerSettlement.Utils;
 using HarmonyLib;
 using Helpers;
+using GameLoadingType = TaleWorlds.CampaignSystem.Campaign.GameLoadingType;
+using Debug = TaleWorlds.Library.Debug;
+using Path = System.IO.Path;
+using CraftingOrderSlots = TaleWorlds.CampaignSystem.CampaignBehaviors.CraftingCampaignBehavior.CraftingOrderSlots;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -104,29 +108,29 @@ namespace BannerlordPlayerSettlement.Saves
 
 		protected override void DefineClassTypes()
 		{
-			((SaveableTypeDefiner)this).DefineClassTypes();
-			((SaveableTypeDefiner)this).AddClassDefinition(typeof(Mat3Saveable), 9, (IObjectResolver)null);
-			((SaveableTypeDefiner)this).AddClassDefinition(typeof(Vec3Saveable), 10, (IObjectResolver)null);
-			((SaveableTypeDefiner)this).AddClassDefinition(typeof(TransformSaveable), 11, (IObjectResolver)null);
-			((SaveableTypeDefiner)this).AddClassDefinition(typeof(DeepTransformEdit), 12, (IObjectResolver)null);
-			((SaveableTypeDefiner)this).AddClassDefinition(typeof(PlayerSettlementItem), 3, (IObjectResolver)null);
-			((SaveableTypeDefiner)this).AddClassDefinition(typeof(OverwriteSettlementItem), 13, (IObjectResolver)null);
-			((SaveableTypeDefiner)this).AddClassDefinition(typeof(PlayerSettlementInfo), 2, (IObjectResolver)null);
-			((SaveableTypeDefiner)this).AddClassDefinition(typeof(SettlementMetaV3), 5, (IObjectResolver)null);
-			((SaveableTypeDefiner)this).AddClassDefinition(typeof(MetaV3), 7, (IObjectResolver)null);
+			base.DefineClassTypes();
+			AddClassDefinition(typeof(Mat3Saveable), 9, (IObjectResolver)null);
+			AddClassDefinition(typeof(Vec3Saveable), 10, (IObjectResolver)null);
+			AddClassDefinition(typeof(TransformSaveable), 11, (IObjectResolver)null);
+			AddClassDefinition(typeof(DeepTransformEdit), 12, (IObjectResolver)null);
+			AddClassDefinition(typeof(PlayerSettlementItem), 3, (IObjectResolver)null);
+			AddClassDefinition(typeof(OverwriteSettlementItem), 13, (IObjectResolver)null);
+			AddClassDefinition(typeof(PlayerSettlementInfo), 2, (IObjectResolver)null);
+			AddClassDefinition(typeof(SettlementMetaV3), 5, (IObjectResolver)null);
+			AddClassDefinition(typeof(MetaV3), 7, (IObjectResolver)null);
 		}
 
 		protected override void DefineContainerDefinitions()
 		{
-			((SaveableTypeDefiner)this).DefineContainerDefinitions();
-			((SaveableTypeDefiner)this).ConstructContainerDefinition(typeof(List<DeepTransformEdit>));
-			((SaveableTypeDefiner)this).ConstructContainerDefinition(typeof(DeepTransformEdit[]));
-			((SaveableTypeDefiner)this).ConstructContainerDefinition(typeof(List<PlayerSettlementItem>));
-			((SaveableTypeDefiner)this).ConstructContainerDefinition(typeof(PlayerSettlementItem[]));
-			((SaveableTypeDefiner)this).ConstructContainerDefinition(typeof(List<OverwriteSettlementItem>));
-			((SaveableTypeDefiner)this).ConstructContainerDefinition(typeof(OverwriteSettlementItem[]));
-			((SaveableTypeDefiner)this).ConstructContainerDefinition(typeof(List<SettlementMetaV3>));
-			((SaveableTypeDefiner)this).ConstructContainerDefinition(typeof(SettlementMetaV3[]));
+			base.DefineContainerDefinitions();
+			ConstructContainerDefinition(typeof(List<DeepTransformEdit>));
+			ConstructContainerDefinition(typeof(DeepTransformEdit[]));
+			ConstructContainerDefinition(typeof(List<PlayerSettlementItem>));
+			ConstructContainerDefinition(typeof(PlayerSettlementItem[]));
+			ConstructContainerDefinition(typeof(List<OverwriteSettlementItem>));
+			ConstructContainerDefinition(typeof(OverwriteSettlementItem[]));
+			ConstructContainerDefinition(typeof(List<SettlementMetaV3>));
+			ConstructContainerDefinition(typeof(SettlementMetaV3[]));
 		}
 	}
 	public class DeepTransformEdit

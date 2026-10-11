@@ -29,6 +29,11 @@ using BannerlordPlayerSettlement.UI.Viewmodels;
 using BannerlordPlayerSettlement.Utils;
 using HarmonyLib;
 using Helpers;
+using Debug = TaleWorlds.Library.Debug;
+using Path = System.IO.Path;
+using HotKeyManager = Bannerlord.ButterLib.HotKeys.HotKeyManager;
+using Module = TaleWorlds.MountAndBlade.Module;
+using ChoiceTag = TaleWorlds.Core.GameTextManager.ChoiceTag;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -228,7 +233,7 @@ namespace BannerlordPlayerSettlement
 		{
 			try
 			{
-				((MBSubModuleBase)this).OnSubModuleLoad();
+				base.OnSubModuleLoad();
 				LogManager.EnableTracer = true;
 				Harmony = new Harmony(HarmonyDomain);
 				Harmony.PatchAll();
@@ -524,7 +529,7 @@ namespace BannerlordPlayerSettlement
 			//IL_0025: Expected O, but got Unknown
 			try
 			{
-				((MBSubModuleBase)this).OnGameStart(game, starterObject);
+				base.OnGameStart(game, starterObject);
 				if (game.GameType is Campaign)
 				{
 					CampaignGameStarter gameInitializer = (CampaignGameStarter)starterObject;

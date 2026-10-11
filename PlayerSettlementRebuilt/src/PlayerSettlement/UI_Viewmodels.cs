@@ -653,13 +653,13 @@ namespace BannerlordPlayerSettlement.UI.Viewmodels
 
 		public override void RefreshValues()
 		{
-			((MapInfoVM)this).RefreshValues();
+			base.RefreshValues();
 			CalculateEnabled();
 		}
 
 		public override void OnFinalize()
 		{
-			((ViewModel)this).OnFinalize();
+			base.OnFinalize();
 			_playerCastleBuildInfo = null;
 			_playerTownBuildInfo = null;
 			_playerVillageBuildInfo = null;

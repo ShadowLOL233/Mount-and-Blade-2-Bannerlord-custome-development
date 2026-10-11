@@ -45,7 +45,8 @@
     <Reference Include="TaleWorlds.GauntletUI">      <HintPath>$(GameBin)\TaleWorlds.GauntletUI.dll</HintPath>                       <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.MountAndBlade">   <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.dll</HintPath>                    <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.MountAndBlade.ViewModelCollection"> <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.ViewModelCollection.dll</HintPath> <Private>false</Private> </Reference>
-    <Reference Include="TaleWorlds.MountAndBlade.GauntletUI">          <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.GauntletUI.dll</HintPath>          <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.GauntletUI">          <HintPath>$(GameRoot)\Modules\Native\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.GauntletUI.dll</HintPath>          <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.View">                <HintPath>$(GameRoot)\Modules\Native\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.View.dll</HintPath>                <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.MountAndBlade.GauntletUI.Widgets">  <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.GauntletUI.Widgets.dll</HintPath>  <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.DotNet">          <HintPath>$(GameBin)\TaleWorlds.DotNet.dll</HintPath>                                         <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.ModuleManager">   <HintPath>$(GameBin)\TaleWorlds.ModuleManager.dll</HintPath>                                  <Private>false</Private> </Reference>
@@ -57,7 +58,6 @@
     <Reference Include="TaleWorlds.TwoDimension">    <HintPath>$(GameBin)\TaleWorlds.TwoDimension.dll</HintPath>                                   <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.CampaignSystem"> <HintPath>$(GameBin)\TaleWorlds.CampaignSystem.dll</HintPath>  <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.CampaignSystem.ViewModelCollection"> <HintPath>$(GameBin)\TaleWorlds.CampaignSystem.ViewModelCollection.dll</HintPath> <Private>false</Private> </Reference>
-    <Reference Include="TaleWorlds.CampaignSystem.GauntletUI">         <HintPath>$(GameBin)\TaleWorlds.CampaignSystem.GauntletUI.dll</HintPath>         <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.Core.ViewModelCollection"> <HintPath>$(GameBin)\TaleWorlds.Core.ViewModelCollection.dll</HintPath>                 <Private>false</Private> </Reference>
     <Reference Include="SandBox.GauntletUI">                    <HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.GauntletUI.dll</HintPath>  <Private>false</Private> </Reference>
     <Reference Include="Newtonsoft.Json">            <HintPath>$(GameBin)\Newtonsoft.Json.dll</HintPath>                             <Private>false</Private> </Reference>
@@ -65,14 +65,12 @@
 
   <!-- Modules shipped by game Modules\ folder (reference only) -->
   <ItemGroup>
-    <Reference Include="SandBoxCore">                <HintPath>$(GameRoot)\Modules\SandBoxCore\bin\Win64_Shipping_Client\SandBoxCore.dll</HintPath>                 <Private>false</Private> </Reference>
     <Reference Include="SandBox">                    <HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.dll</HintPath>                         <Private>false</Private> </Reference>
     <Reference Include="SandBox.View">               <HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.View.dll</HintPath>                    <Private>false</Private> </Reference>
     <Reference Include="SandBox.ViewModelCollection"><HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.ViewModelCollection.dll</HintPath>     <Private>false</Private> </Reference>
     <Reference Include="SandBox.GauntletUI">         <HintPath>$(GameRoot)\Modules\SandBox\bin\Win64_Shipping_Client\SandBox.GauntletUI.dll</HintPath>              <Private>false</Private> </Reference>
     <Reference Include="StoryMode">                  <HintPath>$(GameRoot)\Modules\StoryMode\bin\Win64_Shipping_Client\StoryMode.dll</HintPath>                     <Private>false</Private> </Reference>
     <Reference Include="NavalDLC">                   <HintPath>$(GameRoot)\Modules\NavalDLC\bin\Win64_Shipping_Client\NavalDLC.dll</HintPath>                       <Private>false</Private> </Reference>
-    <Reference Include="Helpers">                    <HintPath>$(GameRoot)\Modules\Native\bin\Win64_Shipping_Client\Helpers.dll</HintPath>                          <Private>false</Private> </Reference>
   </ItemGroup>
 
   <!-- Workshop mod framework assemblies (reference only) -->
@@ -81,6 +79,11 @@
     <Reference Include="Bannerlord.ButterLib">       <HintPath>$(WorkshopRoot)\2859232415\bin\Win64_Shipping_Client\Bannerlord.ButterLib.dll</HintPath>       <Private>false</Private> </Reference>
     <Reference Include="Bannerlord.UIExtenderEx">    <HintPath>$(WorkshopRoot)\2859222409\bin\Win64_Shipping_Client\Bannerlord.UIExtenderEx.dll</HintPath>    <Private>false</Private> </Reference>
     <Reference Include="MCMv5">                      <HintPath>$(WorkshopRoot)\2859238197\bin\Win64_Shipping_Client\MCMv5.dll</HintPath>                      <Private>false</Private> </Reference>
+  </ItemGroup>
+
+  <!-- NuGet packages -->
+  <ItemGroup>
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
   </ItemGroup>
 
   <!-- Framework / BCL -->

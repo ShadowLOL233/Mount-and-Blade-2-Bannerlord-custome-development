@@ -29,6 +29,10 @@ using BannerlordPlayerSettlement.UI.Viewmodels;
 using BannerlordPlayerSettlement.Utils;
 using HarmonyLib;
 using Helpers;
+using SiegeEnginesContainer = TaleWorlds.CampaignSystem.Siege.SiegeEvent.SiegeEnginesContainer;
+using SiegeEngineConstructionProgress = TaleWorlds.CampaignSystem.Siege.SiegeEvent.SiegeEngineConstructionProgress;
+using Debug = TaleWorlds.Library.Debug;
+using Path = System.IO.Path;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
@@ -638,7 +642,7 @@ namespace PlayerSettlementFixes
 				try
 				{
 					MBObjectBase val = (MBObjectBase)settlement;
-					string text = (((int)val != 0) ? val.StringId : null);
+					string text = ((val != null) ? val.StringId : null);
 					if (text != null && (text.StartsWith("player_settlement_town_") || text.StartsWith("player_settlement_castle_") || text.StartsWith("player_settlement_village_")))
 					{
 						PlayerSettlementFixesLoader.LogError("IssuesCampaignBehaviorNotablesFix: suppressed NRE for " + text);
@@ -669,7 +673,7 @@ namespace PlayerSettlementFixes
 				try
 				{
 					MBObjectBase val = (MBObjectBase)clan;
-					PlayerSettlementFixesLoader.LogError("IssuesCampaignBehaviorClanNoblesFix: suppressed NRE for clan " + (((int)val != 0) ? val.StringId : null));
+					PlayerSettlementFixesLoader.LogError("IssuesCampaignBehaviorClanNoblesFix: suppressed NRE for clan " + ((val != null) ? val.StringId : null));
 					return null;
 				}
 				catch

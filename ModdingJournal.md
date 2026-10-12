@@ -2897,6 +2897,22 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | 6 | Save/load JSON preset + inject custom troops to CustomBattle roster |
 | 7 | Journal + REPLICATE archive + end-to-end 实测 |
 
+**Phase 2b-1 产物（2026-10-12 ✅）**：
+- 独立 Gauntlet editor screen render 完美（深黑半透明背景 + flat_panel_9 居中 panel + 米黄标题 + body + Close button）
+- Prefab XML 2 版迭代：第一版 `Brush.Color="#..."` silent fail → 第二版用 vanilla pattern `Sprite="BlankWhiteSquare_9" Color="#000000FF" AlphaFactor="0.7"` + `Sprite="flat_panel_9"` work
+- hotkey Ctrl+Shift+B push screen + Esc/Close button 关 → 全链路 OK
+
+**🎯 Phase 2b-1 insight · MBObjectManager pool timing**:
+- 主菜单下 BasicCharacterObject.Count = **0**（objects 未 init · Phase 2b-1 render 时实测）
+- Custom Battle 流程内 count = **2222**（Phase 2a 从 Custom Battle 装备页测的）
+- → Phase 3 picker 必须在 Custom Battle context 触发 · Phase 2b-2 的菜单按钮**是唯一可用入口**（hotkey 只作辅助且需 warn empty pool）
+
+**Prefab XML schema 教训**（memory 入库）：
+- `<Prefab><Window>...</Window></Prefab>` 根结构
+- 背景不能 `Brush.Color` · 必须 `Sprite="SpriteName" Color="..." AlphaFactor="..."`
+- `Sprite="BlankWhiteSquare_9"` 通用染色方块 · `Sprite="flat_panel_9"` 标准面板
+- Text/Button Brush 用 vanilla names：`MPEscapeMenu.Title`, `MPEscapeMenu.ButtonText`, `ButtonBrush1`, `Popup.Button.Text`
+
 **Phase 2a 产物（2026-10-12 ✅）**：
 - Ctrl+Shift+B hotkey 升级：弹 vanilla `InformationManager.ShowInquiry` 交互对话框（替代绿字 info）
 - 对话框显示 `BasicCharacterObject.All.Count` + first 5 alphabetical（StringId + culture + level）

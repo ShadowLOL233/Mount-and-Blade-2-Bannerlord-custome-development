@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-12（3 Nexus mod install + CBTB 立项 Phase 1 scaffold ✅）
+**最后更新**：2026-10-12（CBTB P1 + P2a + P2b-1 全验证 · Gauntlet editor screen render OK · Prefab XML schema 教训入 memory）
 
 ## 目录
 - [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)
@@ -2869,6 +2869,28 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-12 session · CustomBattleTroopBuilder (CBTB) 立项 + Phase 1 + 2a + 2b-1 全验证
+
+**本 session 累积进展**（时序）：
+1. Phase 1 scaffold ✅ · SubModule.xml + csproj + Main.cs + deploy.ps1 + README · DLL 7 KB · 主菜单弹黄字 + Ctrl+Shift+B 弹绿字（用户遇 SubModule.xml Version `v0.1.0-scaffold` suffix 的 launcher FormatException · 修为 `v0.1.0` · 入 memory [[feedback-bannerlord-submodule-version]]）
+2. Phase 2a ✅ · hotkey 升级到 InformationManager.ShowInquiry 交互对话框 + troop pool enum 测试 · **发现 2222 条 BasicCharacterObject**（vanilla + mod 累加 · Custom Battle context 下）
+3. Phase 2b recon ✅ · ilspycmd 反编译 CustomBattle.dll · 定位 CustomBattleScreen + CustomBattleVM + Prefab path `Modules\SandBoxCore\GUI\Prefabs\CustomBattle\CustomBattleScreen.xml`
+4. Phase 2b-1 ✅ · 独立 Gauntlet editor Screen + VM + Prefab XML · Prefab 2 版迭代（v1 `Brush.Color` silent fail · v2 vanilla `Sprite`+`Color`+`AlphaFactor`+`flat_panel_9` work）· 用户截图验证 render 完美
+
+**🎯 Phase 2b-1 新发现 · MBObjectManager pool timing**：
+- 主菜单下 `BasicCharacterObject.Count = 0`（objects 未 init）
+- Custom Battle context 内 count = **2222**
+- → Phase 3 picker 必须在 Custom Battle 触发 · Phase 2b-2 菜单按钮**是唯一可用入口** · hotkey 只作辅助且需 warn empty pool
+
+**Phase 2b-2 下 session 启动点**：
+- csproj 加 UIExt v3.0.3 depend
+- 反编译 CustomBattleScreen.xml 找 button container xpath
+- `BaseViewModelMixin<CustomBattleVM>` subclass 加 button + ExecuteOpenTroopBuilder method
+- `PrefabExtensionInsertPatch` 插入 button widget
+- editor open 时如 pool=0 弹 warning
 
 ---
 

@@ -2897,6 +2897,17 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | 6 | Save/load JSON preset + inject custom troops to CustomBattle roster |
 | 7 | Journal + REPLICATE archive + end-to-end 实测 |
 
+**Phase 2a 产物（2026-10-12 ✅）**：
+- Ctrl+Shift+B hotkey 升级：弹 vanilla `InformationManager.ShowInquiry` 交互对话框（替代绿字 info）
+- 对话框显示 `BasicCharacterObject.All.Count` + first 5 alphabetical（StringId + culture + level）
+- OK button handler → 回执绿字 + 写 log
+- 验证通过能力（Phase 3 前置）：troop pool enum · culture/level data 读取 · hotkey→UI→click→callback 全链路
+
+**🎯 Phase 2a 关键数据 · troop pool = 2222 条 BasicCharacterObject**：
+- vanilla 几十 + OSA/OSW/Xiangyong/MarriageFertility/所有装的 mod 累加
+- 比最初 estimate "几百" 大一个 order of magnitude
+- **Phase 3 picker UI 设计硬约束**：MUST search filter · MUST group by culture/role · MUST virtualization · SHOULD 排除 trader/notable/hero template
+
 **Phase 1 产物（2026-10-12 ✅）**：
 - `CustomBattleTroopBuilder/` repo 根 · 跟 UTM/EquipmentSpawnerMod 并列
 - 文件：`SubModule.xml` + `src/CustomBattleTroopBuilder.csproj` + `src/SubModule.cs` + `deploy.ps1` + `README.md`

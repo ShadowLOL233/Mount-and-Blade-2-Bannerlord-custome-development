@@ -822,6 +822,10 @@ Test-Path "$repoRoot\RBM_Reference\data\rbm_items.csv"
    UTMPatch                     ← CYT-only setup alternative. Load AFTER ChooseYourTroops
                                    (and FormationManager if present).
                                    NOT alongside UnifiedTroopManager.
+   GreekFireArsenal             ← Nexus 12473 (see [P7.2]) · 2026-10-12 install · Load AFTER Harmony/MCM.
+   FireJars                     ← Nexus 9620 (see [P7.2]) · 2026-10-12 install · module folder is `FireJars_V2` but Id="FireJars".
+   FieldSiegeEngines            ← Nexus 12116 (see [P7.2]) · 2026-10-12 install · Load AFTER Harmony/MCM.
+                                   (MCM depend declares v5.11.3 but actual workshop MCM v5.12.3; launcher warn OK.)
    KunKunEditor                 ← in-game save/world-state editor (Jianghe, v0.6.3).
                                    Loads after Native/SandBoxCore/Sandbox/StoryMode/CustomBattle.
                                    No external dep · bundles its own 0Harmony. See [P7.3].
@@ -866,31 +870,44 @@ Remove-Item "$USER_DATA\Configs\LauncherData.xml"
 
 ---
 
-## [P7.2] [ONCE] Nexus-installed non-workshop mods (TroopClassifier + FormationManager + BattleSizeResized)
+## [P7.2] [ONCE] Nexus-installed non-workshop mods
 
-**GOAL**: These 3 mods are Nexus-only (not on Steam Workshop). Manual install.
+**GOAL**: These mods are Nexus-only (not on Steam Workshop). Manual install from downloaded ZIP.
 
-**PRE**: Downloaded ZIPs available. Source-device notes (journal §模组清单待下载/计划安装):
+**PRE**: Downloaded ZIPs available.
 
-| Mod | Version | Nexus ID | Status |
-|---|---|---|---|
-| Stop Shuffling You Fools – Formation Manager | 0.5.2 | 11869 | (optional · UTM supersedes) |
-| ~~TroopClassifier~~ | ~~v0.2.0~~ | ~~12104~~ | 🪦 **DEPRECATED 2026-10-10** (FM dependency · FM no longer needed under UTM) |
-| BattleSizeResized | 2.0.4 (for 1.4.x) | 8177 | active |
+| Mod | Version | Nexus ID | Module Folder | Status |
+|---|---|---|---|---|
+| Stop Shuffling You Fools – Formation Manager | 0.5.2 | 11869 | `FormationManager` | (optional · UTM supersedes) |
+| ~~TroopClassifier~~ | ~~v0.2.0~~ | ~~12104~~ | ~~`TroopClassifier`~~ | 🪦 **DEPRECATED 2026-10-10** (FM dep · FM no longer needed under UTM) |
+| BattleSizeResized | 2.0.4 (for 1.4.x) | 8177 | `BattleSizeResized` | active |
+| **Greek Fire and Frundsberg Arsenal (GFA)** | v0.1.5 | 12473 | `GreekFireArsenal` | **2026-10-12 added** · new items (Greek fire + Frundsberg equipment) |
+| **Fire Jars V2** | v1.0.0 | 9620 | `FireJars_V2` | **2026-10-12 added** · thrown fire jar + sling ammo item |
+| **Field Siege Engines (FSE)** | v1.1.0 | 12116 | `FieldSiegeEngines` | **2026-10-12 added** · mobile field artillery (ballista/mangonel variants + fire/canister/solid ammo) |
 
 **DO** (manual per mod):
 1. Download ZIP from Nexus mods (URL: `https://www.nexusmods.com/mountandblade2bannerlord/mods/<ID>`)
-2. Extract to `$GAME_ROOT\Modules\<ModId>\` — the archive should already have this structure
-3. Confirm `SubModule.xml` present at `Modules\<ModId>\SubModule.xml`
+2. Extract to `$GAME_ROOT\Modules\<ModuleFolder>\` — the archive should already have this structure (some archives wrap in `Modules\<ModuleFolder>\` already; strip outer `Modules\` layer if so)
+3. Confirm `SubModule.xml` present at `Modules\<ModuleFolder>\SubModule.xml`
 
 **VERIFY**:
 ```powershell
-Test-Path "$GAME_ROOT\Modules\TroopClassifier\SubModule.xml"
-Test-Path "$GAME_ROOT\Modules\FormationManager\SubModule.xml"
 Test-Path "$GAME_ROOT\Modules\BattleSizeResized\SubModule.xml"
+Test-Path "$GAME_ROOT\Modules\GreekFireArsenal\SubModule.xml"
+Test-Path "$GAME_ROOT\Modules\FireJars_V2\SubModule.xml"
+Test-Path "$GAME_ROOT\Modules\FieldSiegeEngines\SubModule.xml"
+# FormationManager + TroopClassifier only if also installing them
 ```
 
-**ROLLBACK**: `Remove-Item "$GAME_ROOT\Modules\<ModId>" -Recurse -Force`.
+**COMPAT NOTES** (2026-10-12 session evaluation):
+- GFA + FireJars + FSE: no bundled `MCMv5.dll` (safe vs PSLR-type conflict · see [P6.8])
+- GFA + FSE declare Harmony + MCM depend · FireJars no MCM depend (its DLL may use Harmony internally)
+- FSE declares `Bannerlord.MBOptionScreen v5.11.3` but current workshop MCM is v5.12.3 → launcher may warn (yellow) but no CLR assembly conflict since FSE doesn't bundle its own MCM dll
+- Item id prefixes `gfa_` / `fse_` prevent collision with OSA/OSW/vanilla items
+- No UIExtender v2 dependency on any (safe vs current v3.0.3)
+- Localization: all 3 have English base; GFA + FSE also ship `CNs/` zh-HANS (user en-us locale ignores)
+
+**ROLLBACK**: `Remove-Item "$GAME_ROOT\Modules\<ModuleFolder>" -Recurse -Force`.
 
 ---
 

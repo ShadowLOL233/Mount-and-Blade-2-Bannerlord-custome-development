@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-11（PSLR P4+P5+P6 全线收官 · 用户建 settlement 成功）
+**最后更新**：2026-10-12（3 Nexus mod install：GreekFireArsenal + FireJars + FieldSiegeEngines）
 
 ## 目录
 - [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)
@@ -2869,6 +2869,48 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-12 session · 3 Nexus mod install（火焰/攻城器械扩展）
+
+**触发**：用户新下载 3 个 Nexus mod · 要求 compat 调研 + 安装 + 入 REPLICATE。
+
+**mod 清单**：
+
+| mod | Nexus ID | 版本 | 大小 | 模块名 | 作用 |
+|---|---|---|---|---|---|
+| **Greek Fire and Frundsberg Arsenal (GFA)** | 12473 | v0.1.5 | 123 KB DLL + 8.6 MB asset | `GreekFireArsenal` | 希腊火武器 + Frundsberg 装备 items |
+| **Fire Jars V2** | 9620 | v1.0.0 | 25 KB DLL + ~30 KB assets | `FireJars_V2` | 投掷火罐 item + 投石索弹药 |
+| **Field Siege Engines (FSE)** | 12116 | v1.1.0 | 686 KB DLL + 8.5 MB asset + 8 Prefabs | `FieldSiegeEngines` | 野战移动攻城器械（ballista/mangonel 变体 + fire/canister/solid 弹药）|
+
+**兼容性调研**（SubModule.xml + 结构 scan · 无反编译）：
+
+| 检查点 | GFA | FJ | FSE |
+|---|---|---|---|
+| Bundle 自己 MCMv5.dll？ | ❌ 否 ✅ | ❌ 否 ✅ | ❌ 否 ✅ |
+| 依赖 UIExt v2？ | ❌ 否（不 depend UIExt）| ❌ 否 | ❌ 否 |
+| MCM depend version | 无指定（兼容 v5.12.3）| 不 depend MCM | **v5.11.3**（实际 v5.12.3 · launcher warn 但无 CLR 冲突 · 因无 bundle）|
+| 跟 PSLR 冲突 | 无（功能 scope 独立）| 无 | 无 |
+| 跟 RBM 冲突 | 新 items 前缀 `gfa_` 隔离 | 新 investment item | 新 artillery items `fse_` 前缀 |
+| 跟 OSW 冲突 | 加新 items 不改 vanilla | 同 | 同 |
+| 英文 locale 支持 | ✅ base English + optional CNs | ✅ English only | ✅ base English + optional CNs |
+
+**判定**：3 mod 全部 🟢 **低-中风险 · 可装**。无 blocking 冲突。FSE 风险最高（最大 DLL + 多 Prefabs + MCM version warn）· 但没触发 PSLR 那种 bundle-vs-workshop 冲突。
+
+**执行**：3 mod 直接从 Downloads 解压 · copy 到 `E:\SteamLibrary\...\Modules\{module_name}\` · 结构保留原始 · 无改动。
+
+**后续用户动作**：
+1. launcher 手动勾选 3 新 mod（没自动启用）
+2. 加载顺序：
+   - FireJars_V2：Native 之后即可
+   - GreekFireArsenal：Harmony + MCM 之后
+   - FieldSiegeEngines：Harmony + MCM 之后（跟 GFA 并列）
+3. 实测看会不会跟 PS/RBM 的 patch 冲突（FSE 683 KB DLL 可能有不少 Harmony patch）
+
+**同步**：
+- [[journal-replicate-sync]]：加 REPLICATE.md [P7.1] launcher 清单 3 行 + [P7.2] Nexus-installed mod 3 条
+- APX.2 不动（这是 Nexus-installed · 不是自研 custom mod）
 
 ---
 

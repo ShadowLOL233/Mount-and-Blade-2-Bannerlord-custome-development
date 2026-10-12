@@ -70,6 +70,15 @@ if (-not $DryRun) {
   Copy-Item $SubModuleXml (Join-Path $LocalModule "SubModule.xml") -Force
   Copy-Item $Dll (Join-Path $BinTarget "CustomBattleTroopBuilder.dll") -Force
   if (Test-Path $Pdb) { Copy-Item $Pdb (Join-Path $BinTarget "CustomBattleTroopBuilder.pdb") -Force }
+  # Phase 2b-1: copy GUI/ (Prefabs) · needed by GauntletLayer.LoadMovie
+  $GuiSrc = Join-Path $RepoRoot "GUI"
+  if (Test-Path $GuiSrc) {
+    $GuiDst = Join-Path $LocalModule "GUI"
+    if (Test-Path $GuiDst) { Remove-Item $GuiDst -Recurse -Force }
+    Copy-Item $GuiSrc $GuiDst -Recurse -Force
+    $prefabCount = (Get-ChildItem $GuiDst -Recurse -Filter '*.xml' | Measure-Object).Count
+    Say "  copied GUI/ · $prefabCount prefab XML"
+  }
   Say "  copied SubModule.xml + DLL + pdb"
 } else {
   Say "  [DRY-RUN] would copy to $LocalModule" 'Yellow'

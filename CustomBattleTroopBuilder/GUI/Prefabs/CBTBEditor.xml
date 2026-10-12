@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Prefab>
+  <Window WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+    <Children>
+      <Widget Id="DimBackground"
+              WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+              Brush.Color="#000000CC" />
+      <Widget Id="CBTBEditorWindow"
+              WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+              SuggestedWidth="900" SuggestedHeight="650"
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              Brush.Color="#1A1A1AEE">
+        <Children>
+          <TextWidget Id="CBTBTitle"
+                      WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                      SuggestedHeight="80"
+                      VerticalAlignment="Top" HorizontalAlignment="Center"
+                      MarginTop="20"
+                      Brush.FontColor="#E6D6A3" Brush.FontSize="36"
+                      Text="@Title" />
+          <TextWidget Id="CBTBBody"
+                      WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                      SuggestedHeight="400"
+                      VerticalAlignment="Center" HorizontalAlignment="Center"
+                      MarginLeft="40" MarginRight="40"
+                      Brush.FontColor="#D0D0D0" Brush.FontSize="22"
+                      Text="@BodyText" />
+          <ButtonWidget Id="CBTBCloseButton"
+                        WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                        SuggestedWidth="220" SuggestedHeight="60"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                        MarginBottom="30"
+                        Brush.Color="#8B4513" Brush.HoverColor="#A0522D"
+                        Command.Click="ExecuteClose">
+            <Children>
+              <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                          VerticalAlignment="Center" HorizontalAlignment="Center"
+                          Brush.FontColor="#F0F0F0" Brush.FontSize="24"
+                          Text="@CloseText" />
+            </Children>
+          </ButtonWidget>
+        </Children>
+      </Widget>
+    </Children>
+  </Window>
+</Prefab>

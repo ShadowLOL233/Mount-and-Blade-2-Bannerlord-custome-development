@@ -40,6 +40,9 @@
     <Reference Include="TaleWorlds.MountAndBlade">   <HintPath>$(GameBin)\TaleWorlds.MountAndBlade.dll</HintPath>                    <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.ScreenSystem">    <HintPath>$(GameBin)\TaleWorlds.ScreenSystem.dll</HintPath>                     <Private>false</Private> </Reference>
     <Reference Include="TaleWorlds.MountAndBlade.CustomBattle"> <HintPath>$(GameRoot)\Modules\CustomBattle\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.CustomBattle.dll</HintPath> <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.GauntletUI">       <HintPath>$(GameBin)\TaleWorlds.GauntletUI.dll</HintPath>       <Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.Engine.GauntletUI"><HintPath>$(GameBin)\TaleWorlds.Engine.GauntletUI.dll</HintPath><Private>false</Private> </Reference>
+    <Reference Include="TaleWorlds.TwoDimension">     <HintPath>$(GameBin)\TaleWorlds.TwoDimension.dll</HintPath>     <Private>false</Private> </Reference>
   </ItemGroup>
 
   <!-- Workshop frameworks -->

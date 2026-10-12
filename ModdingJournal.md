@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-12（3 Nexus mod install：GreekFireArsenal + FireJars + FieldSiegeEngines）
+**最后更新**：2026-10-12（3 Nexus mod install + CBTB 立项 Phase 1 scaffold ✅）
 
 ## 目录
 - [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)
@@ -2869,6 +2869,45 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-12 session · CustomBattleTroopBuilder (CBTB) 立项 + Phase 1 scaffold
+
+**📖 完整方案 memory**：[[custom-battle-troop-builder]]
+
+**触发**：用户希望在 Custom Battle 里 build+test 自定义兵种 · 原希望复用 Retinues Troop Editor + UTM 编组 UI。但两 mod 深度绑定 Campaign state（Retinues 要 Clan/Hero · UTM 要 MapEventSide）· 移植到 Custom Battle 要 fake 整套 Campaign shim · 2-3 周 code 重写。自研 CBTB 更合理。
+
+**技术决策**：
+- Scope: Full · 2-3 周 · 跨多 session
+- Base troop pool: 全 CharacterObject（vanilla + mod OSA/OSW/Xiangyong 等）· search filter
+- UI: Harmony + full Gauntlet screen · 不走 UIExtender attribute mixin
+- 持久化: JSON 存 `Modules\CustomBattleTroopBuilder\CustomTroops\*.json`
+- Load: OnGameStart 从 JSON 创建 CharacterObject 挂 MBObjectManager · vanilla CustomBattle UI 自动 pick
+- 不绑 Campaign · 不触 Retinues/Clan/Hero/Save vanilla settlement
+
+**Phase 分解**：
+| Phase | Deliverable |
+|---|---|
+| ✅ **1** 本 session | Scaffold + Harmony instance ready + Ctrl+Shift+B hotkey smoke test |
+| 2 | Harmony patch `CustomBattleMenuVM` + add "Troop Builder" button + placeholder editor screen |
+| 3 | Base troop picker（全 CharacterObject + search filter）+ clone + rename |
+| 4 | Equipment 10-slot picker（filter by ItemObject.All）+ RBM tooltip reuse |
+| 5 | Skill 20+ edit panel + body props + culture custom |
+| 6 | Save/load JSON preset + inject custom troops to CustomBattle roster |
+| 7 | Journal + REPLICATE archive + end-to-end 实测 |
+
+**Phase 1 产物（2026-10-12 ✅）**：
+- `CustomBattleTroopBuilder/` repo 根 · 跟 UTM/EquipmentSpawnerMod 并列
+- 文件：`SubModule.xml` + `src/CustomBattleTroopBuilder.csproj` + `src/SubModule.cs` + `deploy.ps1` + `README.md`
+- Build 0 errors 0 warnings · DLL 7 KB
+- Deploy OK · `Modules\CustomBattleTroopBuilder\` 就位
+- 行为：OnSubModuleLoad 创 Harmony instance（不 PatchAll）· 主菜单弹黄字 "CBTB loaded" · Ctrl+Shift+B 弹绿字 "Hotkey works"
+- Log: `C:\ProgramData\Mount and Blade II Bannerlord\logs\CustomBattleTroopBuilder.log`
+
+**用户下 session 测试**：launcher 启用 "Custom Battle Troop Builder" · 看黄字 + 按 hotkey 看绿字 + log 文件写了 · 确认 pipeline OK 后进 Phase 2。
+
+**REPLICATE 本 session 暂不同步**：Phase 1 scaffold 没启用（launcher 需用户手工勾选）· 用户测通后下 session 一起同步 REPLICATE [P7.1] launcher 清单 + APX.2 custom mod 表。
 
 ---
 

@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13（CBTB **v0.3.6 Preview 滚动栏** · 右侧 Preview 加 ScrollablePanel + 独立 ScrollbarWidget(CBTBPrevScrollbar) · Clone button 浮在底部不随滚 · PreviewHeading+PreviewBody 嵌套 Vertical ListPanel 作 scrollable content · 全屏下 List+Preview 双 scrollbar 都可用 · 待 verify "Troop Builder 按钮消失"（v0.3.5 session 用户截图显示 Custom Battle 菜单无 CBTB 按钮 · Phase 2b-2 代码未改 · 可能游戏未完全重启或 UIExt v3 cache 问题）· DLL 23.5 KB）
+**最后更新**：2026-10-13（CBTB **v0.3.7 Troop Builder button 挪位** · 从 CenterControls 内 inline（挤歪 Randomize/Start/Back vanilla 排列）→ 挪到 CenterControls 兄弟位置（父 Widget Children · XPath `..`）· MarginBottom=110 浮在 Start 按钮正上方 · vanilla CenterControls 原布局恢复 · "按钮消失" verified 是游戏未重启问题 · DLL 23.5 KB）
 
 ## 🎯 设备优先度（2026-10-13 更新）
 
@@ -3505,6 +3505,68 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · CBTB v0.3.7 Troop Builder button 挪位 · 解除 CenterControls 挤压
+
+**触发**：v0.3.6 用户完全重启游戏后反馈：
+- ✅ "Troop Builder 按钮回来了"（verified 之前是游戏未完全重启问题）
+- ✅ Preview 滚动栏 OK
+- 🟡 **新要求**：Troop Builder 按钮**位置应放在 Start 按钮上方** · 并**恢复 Start 按钮错位**（当前 button inline 在 CenterControls 里 · 把 Randomize icon + Start + Back 从居中挤到偏右）
+
+**真因**（看 vanilla CustomBattleScreen.xml line 299）：
+```xml
+<ListPanel Id="CenterControls" ... HorizontalAlignment="Center" MarginBottom="10" VerticalAlignment="Bottom">
+  <Children>
+    <ButtonWidget ExecuteRandomize ... HorizontalAlignment="Left" MarginRight="40" />
+    <ButtonWidget ExecuteStart ... HorizontalAlignment="Center" />
+    <ButtonWidget ExecuteBack ... HorizontalAlignment="Right" MarginLeft="40" />
+  </Children>
+</ListPanel>
+```
+CenterControls = CoverChildren 的 ListPanel · 内 3 button 用 HorizontalAlignment=Left/Center/Right + Margin 组合视觉等距对齐。CBTB button 作为第 4 child 加入后 · ListPanel.CoverChildren 展开到容纳 4 widget · 整个 CenterControls 变宽 · 跟父 Widget 的 Center alignment 冲突 · 视觉上 Start 偏左 · Randomize/Back 偏右。
+
+**v0.3.7 fix**：
+- **CBTBMenuButtonExtension.cs 改 XPath**：
+  - 旧：`"descendant::ListPanel[@Id='CenterControls']/Children"` (作为 CenterControls 的 child 加入 inline)
+  - 新：`"descendant::ListPanel[@Id='CenterControls']/../Children"` (XPath `..` 跳到 CenterControls 的父 Widget · 加到父 Widget 的 Children · 即 CenterControls 的**兄弟**位置)
+- **CBTBMenuButton.xml 改 margin**：
+  - 删 `MarginLeft=40`（之前为 ListPanel 内 Horizontal 对齐用的）
+  - 加 `MarginBottom=110`（原 CenterControls MarginBottom=10 + CenterControls Height ~70 + gap ~30 = 110 · 浮在 Start 按钮正上方）
+  - VerticalAlignment=Bottom · HorizontalAlignment=Center 保持
+- **csproj Version** 0.3.6 → **0.3.7** · **SubModule.xml** v0.3.6 → **v0.3.7** · SubModule.cs 2 处 version 同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 23,552 B（跟 v0.3.6 一致 · 只改 Prefab + Extension cs 的 XPath + button XML margin）
+SubModule.xml 1,818 B @ 04:44:53 ✓
+CustomBattleTroopBuilder.dll 23,552 B @ 04:45:04 ✓
+```
+
+**用户 Phase 3b-1-fs2-fix 实测清单**：
+1. **完全退出游戏 · 再 Launch**（新 Prefab 需要游戏启动时重新 preload）
+2. 主菜单看黄字 `v0.3.7 loaded. Button relocated: Troop Builder now floats above Start button · CenterControls restored.`
+3. Custom Battle 菜单 · **验证两件事**：
+   - ✅ **CenterControls 恢复 vanilla 原位** · Randomize icon 居中偏左 · Start 居中 · Back 居中偏右（视觉等距）
+   - ✅ **Troop Builder button 浮在 Start 按钮正上方**（跟 Start 同宽同风格 · 水平居中 · 垂直间距约 30 px gap）
+4. 点 Troop Builder → 进 editor（跟 v0.3.6 一样 · 全屏 + 双 scrollbar）
+5. hotkey Ctrl+Shift+B 继续可用（主菜单下空池守卫 · Custom Battle 内直接打开 editor）
+
+**可能的翻车点**：
+- **🔴 最大风险**：XPath `..` 可能 UIExt v3 不支持原生 XPath parent axis · parser 失败 → button 完全不出现 · 游戏可能不 crash（UIExt 对 Prefab extension fail 一般 soft-fail）· 但 button 消失
+  - Fallback 1：换 XPath 到绝对路径 `/Prefab/.../CenterControls/..` 等
+  - Fallback 2：换 target XPath 到 CenterControls 的 preceding/following sibling（如 NavigationScopeTargeter · 用 InsertType=InsertBefore/After）
+  - Fallback 3：直接 Harmony patch CustomBattleScreen 的 OnInitialize · 代码层加 button（放弃 PrefabExtension）
+- MarginBottom=110 可能跟 Start 按钮不是正好 gap=30 · 若 button 跟 Start 太近/太远 · 调 MarginBottom 值（减到 95 或加到 125）
+- CenterControls 的父 Widget 若还有其他 child 用 absolute margin · CBTB button 可能跟其他 widget overlap
+
+**🔴 若 XPath `..` 失败的 fallback**：
+下 session 立即换方案 · 用 Harmony patch 代替 PrefabExtension（更稳 · 但不如 declarative）或 absolute XPath 完整路径（需 read 完整 CustomBattleScreen.xml 从 root 到 CenterControls 父）
+
+**Phase 3b-2 下 session 启动点**（本次只调 button 位置 · 功能性未动）：
+- 反编译 `TaleWorlds.ObjectSystem.dll` 看 `MBObjectManager.CreateObject<T>` / `RegisterPresumedObject` API
+- Clone 流程：selected troop → `ShowTextInquiry` 输新 StringId · 验 unique → clone 字段 → 挂 MBObjectManager → RefreshFilter
 
 ---
 

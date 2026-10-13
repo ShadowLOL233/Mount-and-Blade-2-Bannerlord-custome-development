@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13（CBTB **Phase 3a 全线收官** · v0.3.3 scrollbar **功能性通过**（鼠标滚轮能滚 · UI 微调延后）· 4 子功能全通：picker 2044 条 + search Contains + Combat/All/Civilian mode + scrollbar · 本机下阶段 Phase 3b · OS 系列工作用户决定留给第二设备）
+**最后更新**：2026-10-13（CBTB **Phase 3b-1 落地** · v0.3.4 build+deploy ✅ · 分左右两列（List 520 + Preview 490）· item 变 ButtonWidget 带 selected overlay（#C7AC8577 半透金底）· Preview 面板 14 字段 + Clone placeholder button（IsEnabled=HasSelection）· Clone 弹 Phase 3b-2 roadmap Inquiry · DLL 23.5 KB · 待实测）
 
 ## 🎯 设备优先度（2026-10-13 更新）
 
@@ -3505,6 +3505,73 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · CBTB v0.3.4 Phase 3b-1 落地 · item 选中 + preview panel + Clone 占位
+
+**触发**：Phase 3a 全线通 · 用户要求继续 Phase 3b · 本切片做 **Phase 3b-1 = item 选中 + 右面板 preview + Clone placeholder**。3b-2 的 rename + MBObjectManager.CreateObject 注册留给下 session（需研究 Register API）。
+
+**Phase 3b-1 产物（2026-10-13 ✅ build+deploy）**：
+
+- **改** `src/UI/TroopListItemVM.cs`
+  - 构造函数加 `Action<TroopListItemVM>? onSelect = null` 参数 · 存 `_onSelect` field
+  - 加 `[DataSourceProperty] bool IsSelected`（供 Prefab ButtonWidget `IsSelected=@IsSelected` + overlay `IsVisible=@IsSelected` 绑定）
+  - 加 `ExecuteSelect()` method · 调 `_onSelect?.Invoke(this)`
+- **改** `src/UI/CBTBEditorVM.cs`（约 90 行新 code）
+  - `BuildAllTroops` 签名加 `Action<TroopListItemVM> onSelect` · 传给每个新 TroopListItemVM
+  - 加 `_selectedTroop` field + `OnSelectTroop(TroopListItemVM)` callback · 旧选中清 IsSelected · 新选中设 IsSelected · 调 RefreshPreview
+  - 加 `RefreshPreview()` method · 根据 _selectedTroop null/non-null 填 PreviewHeading / PreviewBody / HasSelection
+  - Preview 14 字段：StringId · Culture · Tier · Level · IsSoldier · IsHero · IsMounted · IsRanged · IsInfantry · IsFemale · DefaultFormationClass · DefaultFormationGroup · Age · Race
+  - 空选中态 PreviewBody = "Click a row on the left to see details here. Clone button becomes enabled once a selection is made."
+  - 加 `ExecuteClone()` · null-check selected → 弹 Phase 3b-1 placeholder Inquiry 显示 clone target info + Phase 3b-2 roadmap
+  - 加 `[DataSourceProperty]` 4 新 property：PreviewHeading / PreviewBody / HasSelection / CloneText
+  - Title 从 "Phase 3a" → "Phase 3b-1"
+- **改** `GUI/Prefabs/CBTBEditor.xml`（大改 · 分左右两列）
+  - **CBTBListFrame** 从 StretchToParent 宽改成 Fixed `SuggestedWidth=520` · `HorizontalAlignment=Left MarginLeft=40`
+  - 新 **CBTBPreviewFrame** `SuggestedWidth=490` · `HorizontalAlignment=Right MarginRight=40` · 同 MarginTop=200 跟 List 平齐
+  - Preview 内：PreviewHeading（Title brush · top center）+ PreviewBody（ButtonText brush · 多行）+ Clone ButtonWidget（CoverChildren · bottom center · IsEnabled=@HasSelection）
+  - **ItemTemplate 从 Widget 换 ButtonWidget**：`Brush=ButtonBrush1` + `IsSelected=@IsSelected` + `Command.Click=ExecuteSelect` + 子 Widget `IsVisible=@IsSelected Sprite=BlankWhiteSquare_9 Color=#C7AC8577`（半透金底覆层）+ TextWidget（原 SummaryLine）· MarginLeft 从 12 → 8
+  - 其他元素（title · search · mode row · scrollbar · Close）保留原样
+- **csproj Version** 0.3.3 → **0.3.4** · **SubModule.xml** v0.3.3 → **v0.3.4** · SubModule.cs 2 处版本字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 23,552 B（v0.3.3 的 18,944 → +4.6 KB · 加 selection/preview/clone 代码合理）
+SubModule.xml 1,779 B @ 03:25:04 ✓
+CustomBattleTroopBuilder.dll 23,552 B @ 03:25:15 ✓
+```
+
+**用户 Phase 3b-1 实测清单**：
+1. 启动游戏 · 主菜单看黄字 `v0.3.4 loaded. Phase 3b-1: item select + preview panel + Clone placeholder.`
+2. Custom Battle → Troop Builder
+3. editor 应显示：title "**CBTB Editor · Phase 3b-1**" · search · 3 mode button · **左列 List** · **右列 Preview**（显示 "No troop selected"）· Clone button（**disabled 灰色** · 因无选中）· Close
+4. **🔴 选中测试**（关键）：
+   - 点列表任意 troop row · 应：
+     - 该行背景变半透金色（#C7AC8577）
+     - 右面板 Preview 更新：Heading = troop 名字 · Body = 14 字段详情
+     - Clone button 变 enabled
+   - 点另一行 · 应：
+     - 旧行高亮消 · 新行高亮
+     - Preview 换成新 troop 详情
+5. **Clone button**：点击 · 应弹 Inquiry 显示 "Would clone: xxx" + Phase 3b-2 roadmap 文字
+6. **选中状态跨操作保持**：
+   - 选 troop A · 切 Combat → All → Civilian · troop A 仍在 Preview 显示（因 _selectedTroop 不随 mode 变）· 但 troop A 可能被 mode filter 排除 · 高亮暂消（预期行为 · 不是 bug）· 切回包含 troop A 的 mode · 高亮恢复
+   - 选 troop A · search "bandit" · troop A 若不含 bandit 字 · list 隐藏但 Preview 还在
+7. **Mode toggle 跟 search 继续正常**（Phase 3a 功能不碰）
+8. Close/Esc 回 Custom Battle 菜单
+
+**可能的翻车点**：
+- ButtonWidget 的 Click 事件没触发 · 可能子 Widget overlay 的 `DoNotAcceptEvents` 没加 · 导致 overlay 吞 click → 已加
+- Preview 空选中时 Heading/Body 显示但 Clone button **不是 disabled 灰色** → IsEnabled 绑定 bug · 需检查 ButtonBrush1 的 disabled visual
+- 选中 troop 跨 mode 切换 · 列表不显示但 Preview 还在 · 是**预期行为**（不是 bug）· 若用户觉得混乱 · Phase 3b-x 可加 "mode 切换时清 selection" 选项
+- 列表变窄到 520 后 · SummaryLine 文字（例 `[T5 · L26 · battania · inf]  Battanian Veteran Falxman  (battanian_veteran_falxman)`）可能超宽 → 文字裁剪或省略号 · 不影响功能但 UI 需调
+
+**Phase 3b-2 下 session 启动点**：
+- 研究 `MBObjectManager.CreateObject<T>` / `RegisterPresumedObject` API（反编译 TaleWorlds.ObjectSystem.dll）
+- 弄清 Custom Battle 下如何让 **新 BasicCharacterObject 挂到 pool** 让菜单下次打开能 pick
+- Clone 流程：selected troop → `ShowTextInquiry` 输新 StringId · 验证 unique → clone BasicCharacterObject 字段 → 挂 MBObjectManager → RefreshFilter 让列表显示新 troop
+- 边界：如果新 troop 没自动出现在 Custom Battle 菜单 · 可能需 patch CustomBattleVM 或别的 vanilla model
 
 ---
 

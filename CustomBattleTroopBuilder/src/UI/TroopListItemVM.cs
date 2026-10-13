@@ -1,3 +1,4 @@
+using System;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 
@@ -14,11 +15,16 @@ namespace CustomBattleTroopBuilder.UI
         public int Level { get; }
         public bool IsSoldier { get; }
 
-        private string _summaryLine = "";
+        private readonly Action<TroopListItemVM>? _onSelect;
 
-        public TroopListItemVM(BasicCharacterObject character)
+        private string _summaryLine = "";
+        private bool _isSelected;
+
+        public TroopListItemVM(BasicCharacterObject character, Action<TroopListItemVM>? onSelect = null)
         {
             Character = character;
+            _onSelect = onSelect;
+
             StringId = character.StringId ?? "<null>";
             DisplayName = character.Name?.ToString() ?? StringId;
             CultureId = character.Culture?.StringId ?? "neutral";
@@ -45,6 +51,25 @@ namespace CustomBattleTroopBuilder.UI
                     OnPropertyChangedWithValue(value, "SummaryLine");
                 }
             }
+        }
+
+        [DataSourceProperty]
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (value != _isSelected)
+                {
+                    _isSelected = value;
+                    OnPropertyChangedWithValue(value, "IsSelected");
+                }
+            }
+        }
+
+        public void ExecuteSelect()
+        {
+            _onSelect?.Invoke(this);
         }
     }
 }

@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13（CBTB **v0.3.3 scrollbar 落地** · Phase 3a-scroll · vanilla v1.4.7 MultiSelectionQueryPopup pattern · 手工 ScrollbarWidget 不碰 Standard.VerticalScrollbar · build+deploy ✅ · 并同步：OSABalance v1.3.0 Phase 0 骨架 线上 pull · 主力机未 smoke test · OS 部署快照 MAIN_MACHINE_DEPLOY_SNAPSHOT.md 已 push）
+**最后更新**：2026-10-13（CBTB **Phase 3a 全线收官** · v0.3.3 scrollbar **功能性通过**（鼠标滚轮能滚 · UI 微调延后）· 4 子功能全通：picker 2044 条 + search Contains + Combat/All/Civilian mode + scrollbar · 本机下阶段 Phase 3b · OS 系列工作用户决定留给第二设备）
 
 ## 🎯 设备优先度（2026-10-13 更新）
 
@@ -3588,10 +3588,13 @@ CustomBattleTroopBuilder.dll 18,944 B @ 03:00:51 ✓
    - 作用：第二设备开发时参照主力机真实 state
 
 **🔴 下 session 待办**：
-1. 用户测 CBTB v0.3.3 scrollbar · 任何翻车本会话修
-2. 用户在主力机跑 OSABalance v1.3.0 smoke test（`.\deploy.ps1` + 主菜单看绿字 `PBS 9->11, CFM 16->22, POM 20->27`）
-3. 若 CBTB scroll 通 → **Phase 3b**（item 点击选中 + 右面板 preview + Clone button + rename inquiry + 新 CharacterObject 挂 MBObjectManager）
-4. 若 OSABalance 绿字 OK → Phase 0.B（15 件 safe → ~300 件 production）
+1. ✅ 用户测 CBTB v0.3.3 scrollbar · **功能性通过**（鼠标滚轮能滚 · 用户明示"UI 微调以后再做"）· Phase 3a 全线收官
+2. **本机下阶段 Phase 3b**（item 点击选中 + 右面板 preview + Clone button + rename inquiry + 新 CharacterObject 挂 MBObjectManager）
+3. **UI 微调待办列表**（Phase 3 全部功能落地后一次性收拾）：
+   - CBTB "Troop Builder" button 位置/overlap（2026-10-12 用户首反馈）
+   - scrollbar 样式细节（track 太暗？handle 大小？margin）
+   - mode button row 位置
+4. **OS 系列工作**（用户 2026-10-13 决定）：**主力机不接 OSABalance smoke test** · 全部留给第二设备 D: 推进
 
 ---
 

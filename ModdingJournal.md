@@ -2744,6 +2744,131 @@ RideableElephant\
 
 ---
 
+## RBM 机制全解析（2026-10-11 D:第二设备 完整反编译 + XML 扫描）
+
+**触发**：用户想深度理解 RBM 到底修改了什么、"为什么非 RBM-patched armor/weapon mod 不兼容 Combat module"、哪些是隐藏属性。全文件级反编译 + 完整 ModuleData XML 扫描完成。
+
+**反编译产物**：`C:\Users\situj\Downloads\_rbm_decomp\RBMCombat.decompiled.cs`（**679 KB** · 核心战斗 DLL）。其他 5 DLL 可按需补反编译。
+
+### 架构
+
+**6 DLL + 38 ModuleData XML**。双层改造：XML 替换 1083+ items + 引擎 constants，Harmony 替换 20+ 核心战斗方法。
+
+| DLL | 职责 |
+|---|---|
+| RBM | 加载器 |
+| RBMCombat | **伤害 / 护甲 / 武器 / 弹道的核心重写（679 KB · 重头）** |
+| RBMAI | formation 行为、frontline 挤压、charge AI |
+| RBMCampaign | 补给商队、作坊产出、troop power、auto-resolve 真模拟 |
+| RBMConfig | MCM 面板 |
+| RBMTournament | 按 tier 匹配竞技场 |
+
+### XML 层改造清单
+
+| XML | 规模 | 改什么 |
+|---|---|---|
+| `RBM_native_parameters_tweaks.xml` | 50 行 | **引擎底层**物理/碰撞 constants：bipedal_speed_multiplier · quadrupedal_acceleration · thrust_tip_collision_distance · non_humanoid_collision_resistance_multiplier_sp (马冲人阻力 10×) · guard_reset_time · shield_bash_scale · back_angle_disable_shield_blocking 等 |
+| `RBM_spear_managed_core_parameters.xml` | 109 行 | **managed core 70+ 参数**：AirFriction 分武器类型 · Projectile/Shield penetration · Stun 时序 · Combat speed graphs（挥击/刺击的伤害-时序贝塞尔曲线）· Fall/Fist/Thrust-arm damage multipliers（刺击击中手臂倍率 **0.034 近乎零伤**）· Rear attack threshold 13 · HeavyAttackMomentum 1.15 |
+| `RBM_spear_combat_parameters.xml` | 2177 行 | **武器 action 旋转限制**：每种 action（bow/parry/shield/couched_lance/brace）的垂直旋转上限 + rider rotation 限制。控制"什么角度能架枪冲阵、骑射转头多少度" |
+| `RBMCombat_item_modifiers.xml` | - | 完全重写品质后缀（Legendary/Masterwork/Balanced/Dull/Rusty）的加成数值 |
+| `RBMCombat_weapon_descriptions.xml` | - | 锻造 piece 库完全替换 · 每类武器可用的 Blade/Guard/Handle/Pommel pieces 全新定义 |
+| **`RBMCombat_unit_overhaul.xml`** | **937 KB · 26458 行** | **完全重写所有 vanilla NPC character 的 EquipmentRoster** · 换成 RBM-tuned items 的硬编码引用 · **不兼容性头号根因** |
+| `RBMCombat_body_armors.xml` | 1501 行 | vanilla 身甲全重调 |
+| `RBMCombat_horses.xml` | 1495 行 | 全 vanilla 马重调 |
+| `RBMCombat_horse_armors.xml` | 733 行 | 马甲 |
+| `RBMCombat_shields.xml` | 1202 行 | **新增 `body_armor` 字段 + `hit_points`** · vanilla 盾没这些 |
+| `RBMCombat_ranged.xml` | 1297 行 | **crossbow missile_speed 从 ~90 升到 330** + 新增 `reload_phase_count` 等字段 |
+| 其他 10+ XMLs | - | head_armors / arm_armors / leg_armors / shoulder_armors / couched_lances / lances / sword_blades/pieces / axe_pieces / mace_pieces / gladius / siege_engines/ranged / lord_equipment_sets / arrow_visuals / item_holsters / action_sets |
+
+### DLL 层改造（RBMCombat 核心 Harmony patches）
+
+**全替换式 Prefix（返 `false` · 用 RBM 自家 formula）**：
+- `MissionCombatMechanicsHelper.ComputeBlowDamage` · **完整 RBM 伤害公式**
+- `MissionCombatMechanicsHelper.ComputeBlowDamageOnShield` · 盾伤公式（RBM 盾 hit_points 的核心）
+- `Agent.GetBaseArmorEffectivenessForBodyPart` · **ArmorRework 系统**
+- `MissionCombatMechanicsHelper.CalculateBaseMeleeBlowMagnitude`
+- `CombatStatCalculator.CalculateStrikeMagnitudeForPassiveUsage/ForThrust`
+- `MissionCombatMechanicsHelper.ComputeBlowMagnitudeMissile`
+- `ItemModifier.ModifyArmor` / `ModifyDamage`
+- `ItemMenuVM.SetWeaponComponentTooltip` · UI 全重写
+- `SPInventoryVM.UpdateCharacterArmorValues` / `RefreshValues`
+
+**事件钩子（Postfix）**：`BattleAgentLogic.OnAgentHit` / `Agent.HandleBlow` / `SandboxAgentStatCalculateModel.UpdateHumanStats` / `Mission.OnAgentShootMissile` / `HandleMissileCollisionReaction` / `MeleeHitCallback` / `Agent.EquipItemsFromSpawnEquipment` / `Agent.WeaponEquipped` 等。
+
+### ArmorRework · 完全新造的装甲系统
+
+**硬编码 `PlateOverMailBodyArmorIds` 20 件白名单**（RBMCombat.cs:1632）：
+```
+desert_lamellar, desert_scale_armor, aserai_scale_armor_on_cloth,
+western_scale_mail, battanian_scale_armor_a, brass_lamellar_over_mail,
+coat_of_plates_over_mail, northern_brass_lamellar_over_mail,
+sturgian_lamellar_base, imperial_scale_armor, lamellar_with_scale_skirt,
+imperial_lamellar, empire_legion_b, ...（+ 对应 mp_* 多人版）
+```
+这 20 件享受 RBM 的 "板甲套链甲" 分层伤害衰减。**其他所有物品（含 OSA/OSW 自定义板甲）吃单层防护**。
+
+**分 body part 聚合装甲**（RBM 独有）：
+- `getHeadArmor` = 头盔槽 head_armor
+- `getNeckArmor` = **遍历 head+body+arm+leg+shoulder 槽**，ItemType 14/15 的 arm_armor 字段累加
+- `getFaceArmorRBM` / `getUnderShoulderArmorRBM` = sub-body-part 独立计算
+- `getGauntletWeight` = 手套重量 → 影响拳击/盾击伤害
+- `GetArmorMaterialForBodyPartRBM` = 命中部位物品的 `ArmorMaterialTypes`（Cloth/Leather/Chainmail/Plate）
+
+**新几何算法**：
+- **Face hit**：从眼睛位置 offset 几何锥形 · 挥击只有正面命中锥内触发 · 刺击直接触发 · **无视头盔面部外防护**
+- **Under-shoulder hit**：骨骼 index 15/22 + 碰撞法线 z < 0.15 · **无视肩甲**
+- **Crush-through**：格挡被破时按**原本会打中哪个 body part** × 0.85
+- **Thrust tip**：刺击仅顶点命中算 Pierce · 其他转 Blunt
+- **Blade vs handle hit**：挥击命中武器把手 1/10 范围 = handle hit · 钝伤 · 无 edge 加成
+
+### 不兼容性 8 条根因（为什么非 RBM-patched armor/weapon mod 不兼容 Combat module）
+
+**严格说不是"崩游戏"的不兼容，是功能性 downgrade**：
+
+| # | 根因 | 症状 |
+|---|---|---|
+| 1 | `unit_overhaul` 替换 NPC roster | AI **一个都不穿**你 mod 的装备 |
+| 2 | `PlateOverMailBodyArmorIds` 20 件硬白名单 | 你 mod 的"板甲套链甲"不参与分层衰减 |
+| 3 | `ArmorRework` 读 ItemType enum (14/15/24) | 自定义装备槽的 mod 装备被 RBM 聚合返回 0 |
+| 4 | 武器 damage_factor scale 不同 | vanilla scale 在 RBM 环境是"过烫"（RBM 期望 ~0.3-0.5× vanilla）|
+| 5 | 弓弩 missile_speed 大改 | 你 mod 的弓用 vanilla 100 missile_speed · RBM AirFriction 0.003 下慢如走路 |
+| 6 | 盾 `body_armor` 字段 RBM 独有 | 你 mod 的盾不给手臂加 body_armor 防护 |
+| 7 | ItemModifier 覆盖 | Masterwork/Legendary 加成跟 vanilla 不同 · 你 mod vanilla-scaled 物品可能数值失控 |
+| 8 | Managed core parameters 全局影响 | AirFriction/StrikeGraph/StunPeriod 全局影响所有武器 · 作者没在 RBM 环境测则 balance 失配 |
+
+**所谓 "RBM Patch" 的意义** = 在你的 mod 的 ModuleData 里新增 XML / Harmony 补：把你的 item IDs 加入 `unit_overhaul` 的 NPC roster + `PlateOverMailBodyArmorIds` 列表（或等价映射）+ 校准武器 damage_factor 到 RBM scale（约 vanilla × 0.3-0.5）+ 盾加 `body_armor` 字段 + 弓弩调 missile_speed。
+
+### 对本仓库自研 mod 的影响核查
+
+- **OSA v2 armor override**（1835 决议）：纯 XML 数值重调，但：
+  - ⚠ **需确认是否 inject 到 `unit_overhaul` NPC roster**（否则 vanilla NPC 装的还是 RBM items 而非 OSA）
+  - ⚠ OSA 自定义物品**不在** PlateOverMailBodyArmorIds 20 件白名单 → 吃单层防护
+- **OSW shield v2 override**（114 件）：已 override 盾数值 → **需验证加了 `body_armor` 字段**
+- **"重甲飘刀" 直觉**（§48 收官时用户提）：正是不兼容性 №4 和 №8 的实感——OSW vanilla-scale blade damage_factor 在 RBM 环境过烫
+
+### 关键隐藏参数汇总（用户问的"RBM 修改了哪些隐藏属性"）
+
+**物理/碰撞**: `thrust_tip_collision_distance` 0.3/1.2 · `shield_bash_collision_scale` 1.3 · `BipedalRadius` 0.38 / `QuadrupedalRadius` 0.8 · `non_humanoid_collision_resistance_multiplier_sp` 10.0 · `back_angle_to_disable_collision_shield_blocking` 30°
+
+**伤害**: `MakesRearAttackDamageThreshold` 13 · `SwingHitWithArmDamageMultiplier` 0.5 · `ThrustHitWithArmDamageMultiplier` 0.034 · `FistFightDamageMultiplier` 4.0 · `HeavyAttackMomentumMultiplier` 1.15 · `FallDamageMultiplier` 0.575 / `Absorption` 54.0
+
+**弹道**: `AirFrictionArrow` 0.003 / `Javelin` 0.002 / `BallistaBolt` 0.005 / `Bullet` 0.004 / `Knife/Axe` 0.007 · `ProjectileMaxPenetrationSpeed` 120 · `ProjectileMin/MaxPenetration` 0.1/0.4 · `ShieldPenetrationOffset` 30 / `Factor` 3.0
+
+**眩晕**: `StunPeriodAttackerSwing` 0.1 / `Thrust` 0.67 · `StunMomentumTransferFactor` 0.0055 · `StunDefendWeaponWeightBonusTwoHanded` 0.25 / `BonusPolearm` 0.35 / `ActiveBlocked` 0.1 / `ChamberBlocked` 0.4
+
+**伤害-时序贝塞尔曲线**: `Swing/OverSwing/ThrustCombatSpeedGraph*` 4 控制点 × 3 攻击类型 = 12 数值 · **玩家 UI 看不到的隐藏手感 driver**
+
+**速度/时序**: `bipedal_speed_multiplier` 5.2 · `quadrupedal_acceleration_multiplier` 20 · `guard_reset_time` 10.0 · `BipedalCombatSpeedMin/MaxMultiplier` 0.74/0.84 · `on_weapon_hit_slow_down_factor_swing/thrust` 0.7
+
+### 下次工作参考路径
+
+- 反编译: `C:\Users\situj\Downloads\_rbm_decomp\RBMCombat.decompiled.cs`
+- RBM 本体: `D:\SteamLibrary\steamapps\workshop\content\261550\2859251492\`
+- 关键 XMLs: `ModuleData\RBM_native_parameters_tweaks.xml` / `RBM_spear_managed_core_parameters.xml` / `RBMCombat_unit_overhaul.xml`
+- 官方 docs: fellow93.github.io/RealisticBattleProject/ + 本机 workshop `CHANGELOG.md`
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

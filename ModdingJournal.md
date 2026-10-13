@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13（**线上**：OS 系列平衡 Phase 0 骨架落地 · OSABalance v1.3.0 XML→XML+Harmony hybrid · smoke test 待主力机执行；**主力机 2026-10-12 session**：CBTB v0.3.2 safe 回滚 · v0.3.1 的 Standard.VerticalScrollbar 在 v1.4.7 下 crash 游戏启动 · 已回滚保留 mode toggle · scrollbar 深度研究留下 session）
+**最后更新**：2026-10-13（CBTB **v0.3.3 scrollbar 落地** · Phase 3a-scroll · vanilla v1.4.7 MultiSelectionQueryPopup pattern · 手工 ScrollbarWidget 不碰 Standard.VerticalScrollbar · build+deploy ✅ · 并同步：OSABalance v1.3.0 Phase 0 骨架 线上 pull · 主力机未 smoke test · OS 部署快照 MAIN_MACHINE_DEPLOY_SNAPSHOT.md 已 push）
 
 ## 🎯 设备优先度（2026-10-13 更新）
 
@@ -3505,6 +3505,93 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · CBTB v0.3.3 scrollbar 落地（Phase 3a-scroll）· 真因 fix
+
+**触发**：Phase 3a-safe (v0.3.2) 已稳 · 用户要求同 session 做 git sync + OS 快照 + 推进 scrollbar。本 session 完成全部 3 件事。
+
+**v0.3.1 regression 真因**（本 session Explore 完全确认）：
+- `Standard.VerticalScrollbar` 是 **vanilla 的 Prefab namespace reference**（真实存在 `Standard\Standard.VerticalScrollbar.xml`）· 定义完整 scrollbar 外观
+- UTM/NavalDLC/官方 Prefab 都能跑 · 因为 **Native module load 后** Standard 命名空间已注册
+- **CBTB 的 Prefab 在 Native load 之前被 parser 碰到**（UIExt v3 Prefab preload 时序早于 Native）→ parser 找不到 `Standard.*` → 整个 Prefab tree 崩 → 游戏 bootstrap crash
+
+**v0.3.3 修复方案**（vanilla v1.4.7 proven · 从 `Native\GUI\Prefabs\Information\Inquiries\MultiSelectionQueryPopup.xml` 直接复用）：
+- **放弃 Standard.VerticalScrollbar reference** · 完全 self-contained
+- **手工 ScrollbarWidget** · 内嵌 2 widget（track 竖线 + Handle ImageWidget）
+- ScrollablePanel 带 `ClipRect="X" InnerPanel="X\Y" VerticalScrollbar="..\Z"` 三 attribute · 用**相对路径**引用兄弟 ScrollbarWidget
+- 完全不依赖任何 vanilla 命名空间注册 · 能被 UIExt v3 Prefab preload 阶段安全解析
+
+**Phase 3a-scroll 产物（2026-10-13 ✅ build+deploy）**：
+
+- **改** `GUI/Prefabs/CBTBEditor.xml` · 把 v0.3.2 的简化 `<Widget ClipContents>` 替换为：
+  ```
+  <Widget Id="CBTBListFrame" (frame)>
+    <ScrollablePanel ClipRect="CBTBClipRect"
+                     InnerPanel="CBTBClipRect\CBTBInnerList"
+                     VerticalScrollbar="..\CBTBVerticalScrollbar"
+                     AutoHideScrollBars="true">
+      <Widget Id="CBTBClipRect" ClipContents="true">
+        <ListPanel Id="CBTBInnerList" HeightSizePolicy="CoverChildren"
+                   DataSource="{Troops}">...</ListPanel>
+      </Widget>
+    </ScrollablePanel>
+    <ScrollbarWidget Id="CBTBVerticalScrollbar"
+                     SuggestedWidth="8" AlignmentAxis="Vertical"
+                     Handle="CBTBScrollbarHandle">
+      <Widget SuggestedWidth="4" Sprite="BlankWhiteSquare_9" Color="#5A4033FF" />
+      <ImageWidget Id="CBTBScrollbarHandle" Brush="FaceGen.Scrollbar.Handle" />
+    </ScrollbarWidget>
+  </Widget>
+  ```
+- 保留 Phase 3a / 3a-fix 所有其他元素（title · search · 3 mode button · Close）
+- InnerList 的 MarginRight 从 12 → 25 · 给 scrollbar 让 13 px 空间
+- **csproj Version** 0.3.2 → **0.3.3** · **SubModule.xml** v0.3.2 → **v0.3.3** · SubModule.cs 2 处 version 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 18,944 B（跟 v0.3.2 一样 · 只改 Prefab 没改 code）
+SubModule.xml 1,779 B @ 03:00:41 ✓
+CustomBattleTroopBuilder.dll 18,944 B @ 03:00:51 ✓
+```
+
+**用户 Phase 3a-scroll 实测清单**：
+1. launcher 保持 v0.3.3 enabled
+2. **启动游戏**（关键 · 验证 v0.3.3 Prefab 不像 v0.3.1 挂）· 应能进主菜单
+3. 主菜单看黄字 `[CBTB] v0.3.3 loaded. Phase 3a-scroll: manual ScrollbarWidget pattern (vanilla MultiSelectionQueryPopup).`
+4. Custom Battle → Troop Builder
+5. **🔴 Scrollbar 验证**（关键）：
+   - 列表右侧应**可见**暗棕色竖线 track + 10px 棕色 Handle 方块
+   - 鼠标滚轮能滚过列表（滚到底能看到最后一行 troop · Close button 不再挡）
+   - Handle 可拖拽
+   - AutoHideScrollBars=true · 列表短时 scrollbar 可能自动隐（搜 `cultist` 剩几条时可观察）
+6. **Mode toggle 还正常**（Phase 3a-fix 的 功能）：Combat/All/Civilian 切换 · CountText 随 mode 更新
+7. **search 还正常**：输 aserai 过滤 · CountText 实时
+8. Close/Esc 回 Custom Battle 菜单
+
+**可能的翻车点**：
+- scrollbar 可见但不滚：Handle 的 Id 跟 ScrollbarWidget 的 Handle attribute 不匹配 → 滚轮无响应（预防：Id="CBTBScrollbarHandle" 跟 Handle="CBTBScrollbarHandle" 必须完全一致）
+- scrollbar 位置偏：InnerPanel margin 不够 · 列表文字覆盖 scrollbar · 可能需要再加 MarginRight
+- 列表完全不渲染：ClipRect/InnerPanel 路径语法错误（反斜杠 `\` 必需）
+
+**同 session 完成的其他事**：
+
+1. **git sync**：
+   - 本地 commit `910523d` CBTB Phase 2b-2+3a+3a-fix+3a-safe（10 文件改动 · 453 行新增）
+   - 本地 commit `775cdef` Journal+REPLICATE CBTB session 更新
+   - git pull with merge · 解决 Journal 顶部 "设备优先度" 跟 "最后更新" 行的 3-way merge · merge commit `e032588`
+   - 跟线上 fb091c8 (OSABalance v1.3.0 Phase 0 骨架 + Thaddeus pause + PFRB v2 等 8 commits) 合流
+2. **OS 系列部署快照上传**（commit `1913504`）：
+   - 新文件 `OpenSourceArmouryRBMBalance/MAIN_MACHINE_DEPLOY_SNAPSHOT.md`
+   - 内容：workshop 5 mod (OSA/OSS/OSW/RBM/RBM_WS)·OSABalance 主力机 v1.2.0 vs 仓库 v1.3.0 差距·4 override XML 大小+item 数·launcher 7/7 enabled·OSW Shield 实际已 deploy（跟 memory "pending" 对账）·下一步 action items·诊断脚本
+   - 作用：第二设备开发时参照主力机真实 state
+
+**🔴 下 session 待办**：
+1. 用户测 CBTB v0.3.3 scrollbar · 任何翻车本会话修
+2. 用户在主力机跑 OSABalance v1.3.0 smoke test（`.\deploy.ps1` + 主菜单看绿字 `PBS 9->11, CFM 16->22, POM 20->27`）
+3. 若 CBTB scroll 通 → **Phase 3b**（item 点击选中 + 右面板 preview + Clone button + rename inquiry + 新 CharacterObject 挂 MBObjectManager）
+4. 若 OSABalance 绿字 OK → Phase 0.B（15 件 safe → ~300 件 production）
 
 ---
 

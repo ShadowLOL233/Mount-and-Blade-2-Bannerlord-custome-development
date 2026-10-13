@@ -30,7 +30,7 @@ namespace CustomBattleTroopBuilder
                 _extender = UIExtender.Create(ModuleId);
                 _extender.Register(typeof(CBTBSubModule).Assembly);
                 _extender.Enable();
-                Log($"[CBTB] OnSubModuleLoad OK · v0.3.2 · Harmony id={HarmonyId} · UIExtender enabled");
+                Log($"[CBTB] OnSubModuleLoad OK · v0.3.3 · Harmony id={HarmonyId} · UIExtender enabled");
             }
             catch (Exception e)
             {
@@ -45,7 +45,7 @@ namespace CustomBattleTroopBuilder
             {
                 Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 2b-2 ready");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.3.2 loaded. Phase 3a-safe: mode toggle only · scrollbar deferred.", Colors.Yellow));
+                    "[CBTB] v0.3.3 loaded. Phase 3a-scroll: manual ScrollbarWidget pattern (vanilla MultiSelectionQueryPopup).", Colors.Yellow));
             }
             catch (Exception e)
             {

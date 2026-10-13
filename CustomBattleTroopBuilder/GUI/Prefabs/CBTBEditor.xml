@@ -117,34 +117,71 @@
               </Children>
             </ListPanel>
 
-            <!-- Troop list · simplified: Widget + ClipContents (no ScrollablePanel yet · pending v1.4.7 scrollbar research) -->
+            <!-- Troop list + scrollbar · vanilla v1.4.7 MultiSelectionQueryPopup pattern
+                 (手工 ScrollbarWidget · 不用 Standard.VerticalScrollbar · 后者需 Native
+                 预加载 · v0.3.1 crash 的根因) -->
             <Widget Id="CBTBListFrame"
                     WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
                     SuggestedHeight="540"
                     VerticalAlignment="Top" HorizontalAlignment="Center"
-                    MarginTop="200" MarginLeft="40" MarginRight="40"
-                    ClipContents="true"
-                    Sprite="BlankWhiteSquare_9" Color="#00000040" AlphaFactor="1.0">
+                    MarginTop="200" MarginLeft="40" MarginRight="40">
               <Children>
-                <ListPanel Id="CBTBTroopsList"
-                           WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
-                           HorizontalAlignment="Left" VerticalAlignment="Top"
-                           StackLayout.LayoutMethod="VerticalTopToBottom"
-                           DataSource="{Troops}"
-                           MarginLeft="12" MarginRight="12" MarginTop="6" MarginBottom="6">
-                  <ItemTemplate>
-                    <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
-                            SuggestedHeight="28">
+
+                <ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                 AutoHideScrollBars="true"
+                                 ClipRect="CBTBClipRect"
+                                 InnerPanel="CBTBClipRect\CBTBInnerList"
+                                 VerticalScrollbar="..\CBTBVerticalScrollbar">
+                  <Children>
+                    <Widget Id="CBTBClipRect"
+                            WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                            ClipContents="true"
+                            Sprite="BlankWhiteSquare_9" Color="#00000040" AlphaFactor="1.0">
                       <Children>
-                        <TextWidget Text="@SummaryLine"
-                                    WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
-                                    HorizontalAlignment="Left" VerticalAlignment="Center"
-                                    Brush="MPEscapeMenu.ButtonText"
-                                    DoNotAcceptEvents="true" />
+                        <ListPanel Id="CBTBInnerList"
+                                   WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                                   StackLayout.LayoutMethod="VerticalTopToBottom"
+                                   DataSource="{Troops}"
+                                   MarginLeft="12" MarginRight="25" MarginTop="6" MarginBottom="6">
+                          <ItemTemplate>
+                            <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                                    SuggestedHeight="28">
+                              <Children>
+                                <TextWidget Text="@SummaryLine"
+                                            WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                            HorizontalAlignment="Left" VerticalAlignment="Center"
+                                            Brush="MPEscapeMenu.ButtonText"
+                                            DoNotAcceptEvents="true" />
+                              </Children>
+                            </Widget>
+                          </ItemTemplate>
+                        </ListPanel>
                       </Children>
                     </Widget>
-                  </ItemTemplate>
-                </ListPanel>
+                  </Children>
+                </ScrollablePanel>
+
+                <ScrollbarWidget Id="CBTBVerticalScrollbar"
+                                 WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                 SuggestedWidth="8"
+                                 HorizontalAlignment="Right" VerticalAlignment="Top"
+                                 AlignmentAxis="Vertical"
+                                 Handle="CBTBScrollbarHandle"
+                                 MaxValue="100" MinValue="0">
+                  <Children>
+                    <Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                            SuggestedWidth="4"
+                            HorizontalAlignment="Center"
+                            Sprite="BlankWhiteSquare_9" Color="#5A4033FF" AlphaFactor="0.5" />
+                    <ImageWidget Id="CBTBScrollbarHandle"
+                                 WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                 SuggestedHeight="10" SuggestedWidth="10"
+                                 HorizontalAlignment="Center"
+                                 Brush="FaceGen.Scrollbar.Handle" />
+                  </Children>
+                </ScrollbarWidget>
+
               </Children>
             </Widget>
 

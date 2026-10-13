@@ -4,12 +4,13 @@
 - **主力机 CBTB v0.4.0 Phase 3b-2a 核心里程碑**: Clone + Register 实化 · MBObjectManager.CreateObject + reflection FillFrom + reflection _basicName + reflection IsSoldier setter · 用户选 troop → 2 轮 TextInquiry 输 StringId+Name → 新 BasicCharacterObject 注册到 pool · 自动选中新 troop · 待实测 "Custom Battle 菜单能否 pick 新 troop" 决定 3b-2b 是否需 Harmony patch · DLL 28 KB （中间 v0.3.6→3.7→3.8 crash→3.9 回滚→4.0 核心推进历程详见下方 session 段）
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
-- **第二设备 OSABalance Phase 1.1 预分析完成**: 176 件缺口里 **143 件 Plate 真遗漏 · 33 件 Cloth/Leather 按设计跳过**。核心发现 anchor 冲突：Journal #12 (2026-09-20) 决议 body/head anchor=**0.427** · OSA 已填 609 件 Plate 实测 p50=**0.214** · 差 2 倍。4 条候选 formula (A/B/C/D) 待用户选
+- **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
+- **第二设备 OSABalance Phase 1.1 重做完成**: 建 RBM 护甲 reference (RBM 699 件 overhaul · 含 255 件 head + 246 body + 91 shoulder + arm/leg/horse) · 按**工艺结构分 10 bucket** (full_helm/over_mail/closed_face/spangenhelm/lamellar_helm/nasal/skullcap/pointed/kettle/crested/other) · 发现 **plate helm bucket body/head ratio 跨 50 倍** (kettle 0.02 ↔ full_helm 0.99) · 单一 flat ratio 全错 · 143 件 OSA Plate helm 已映射到 bucket + proposed body 产出 · 用户审 proposal
 
-## 🎯 设备优先度（2026-10-13 凌晨更新 · Phase 1.1 预分析 done）
+## 🎯 设备优先度（2026-10-13 凌晨更新 · Phase 1.1 重做 done）
 
 - **主力机（E:）** · 最高优先度：**OSABalance smoke test（Phase 0.B v6）**（主菜单绿字 `PBS 9->32, CFM 16->113, POM 20->207`）· 外加 CBTB v0.3.9 bootstrap crash 修复
-- **第二设备（D:）本机** · 最高优先度：**Phase 1.1 formula 决议 + 143 件 Plate body_armor 批量补齐**（候选 A/B/C/D 待用户选 · 选 A 可本机全自动完成 · 1 session）· 可选 Phase 0.B CFM Tier B 31 件主力机复核
+- **第二设备（D:）本机** · 最高优先度：**审 Phase 1.1 结构 bucket proposal + 决议是否批量应用**（osa_phase1_1_proposal.md · 107 件 HIGH confidence · 18 MEDIUM · 5 LOW lamellar · 13 fallback nasal）· 可选 Phase 0.B CFM Tier B 31 件主力机复核
 
 其他待办（PFRB v2 Keep Recruiter / PlayerFiefPoolShield / BE 战象 Path B' / CheatsGuard Round 1 实测 / BetterPatrolsBrake 测试 等）均为次优 · 等用户 session 分配。
 
@@ -3531,6 +3532,103 @@ _scratch/OSA_phase1/
 ├── preanalysis_1_1.py             Q1-Q5 完整分析脚本
 └── preanalysis_1_1_report.md      完整报告 (5504 bytes)
 ```
+
+### 🔴 本次预分析被用户指正为废稿 · Phase 1.1 重做
+
+用户 2026-10-13 指出 4 条方法论根本偏差（见下节重做）· 本预分析保留作教训归档。
+
+---
+
+## 📅 2026-10-13 session（凌晨 Phase 1.1 重做）· 以 RBM overhaul 为 anchor · 工艺结构 bucket
+
+**用户指正 4 条**:
+1. **单靠 id/name 不可能准确分类** · 自动化只能筛 95% 明确的 · 剩下 5% 必须用户肉眼看 mesh。Phase 0.B 的 reclassifier v6 迭代把 100% 自动化目标是蠢的。
+2. **文化分 bucket 完全错位** · 用户不介意同质化 · "若材质工艺相同 · 防护值就该相同" · 真差异在**材质 × 工艺 × 层级** 不在 culture
+3. **OSA 作者站在原版游戏数值体系** · 不针对 RBM · "OSA 作者没执行 §48" 是**误判**（§48 是我们 patch 作者给 OSA+RBM 组合定的规则 · 不是 OSA workshop 作者的责任）· **OSA 既有 609 件 Plate p50 0.214 不是 formula anchor** · 不能拿它当对账参照
+4. **真正 anchor 应该从 RBM 自己的 overhaul 数据来** · 让 OSA 对账 RBM · 不是对账 OSA 自己
+
+### 重做工作流
+
+**Step 1 · 建 RBM 护甲 reference**（`_scratch/OSA_phase1/build_rbm_reference.py`）
+- 扫 RBM ModuleData 的 6 个 overhaul XML
+- 入 `rbm_armor_reference.json` · **699 件**: head 256 + body 246 + shoulder 91 + arm 32 + leg 39 + horse 35
+- 产 `rbm_vocab.md` · modifier_group × material_type × Type 词汇表
+
+**关键 anchor 修正** (vs 之前的 Journal #12 0.427):
+```
+RBM 自己 HeadArmor 按 modifier_group 的 body/head avg:
+  plate (172 件):          0.224  ← 真正的 plate anchor · 跟 OSA 0.214 几乎相同
+  chain (15 件):           0.421  ← 这个是 chainmail helm · 之前 anchor 0.427 的来源
+  cloth_unarmoured (34):   0.120
+  leather (22):            0.046
+  cloth (12):              0.082
+→ Journal #12 的 0.427 是**全量加权 avg**，不是 plate 单独的 anchor
+```
+
+### Step 2 · plate helmet 工艺结构 bucket（`rbm_plate_helm_structure.py`）
+
+扫 RBM 172 件 plate helmet 的 id/name · 按 10 工艺 cue 分 bucket:
+
+| bucket | n | body/head | 结构说明 |
+|---|---|---|---|
+| **full_helm** | 6 | **0.994** | 全罩式 · body ≈ head (vanilla `full_helm_over_laced_coif` 等) |
+| **closed_face** | 13 | **0.638** | 闭面 (visored/goggled/faceguard) |
+| **nasal** | 20 | **0.234** | 鼻梁条盔 (半开面 + nasal strip) |
+| **crested** | 12 | **0.153** | 装饰盔 (plumed/ridge/decorated/horn/wolfskin/bearskin) |
+| **over_mail** | 32 | **0.165** | 盔下带 mail aventail (face 主要靠 aventail · body plate 轻) |
+| **spangenhelm** | 5 | **0.113** | 条纹盔 (segmentata 等) |
+| **skullcap** | 15 | **0.067** | 皮帽/skullcap (基本 open face) |
+| **kettle** | 17 | **0.020** | 阔沿盔 (open face · 几乎没 body) |
+| **lamellar_helm** | 1 | **0.000** | lamellar 开面 (样本小 · 置信 LOW) |
+| **other** | 51 | 0.146 | catch-all · 杂项 |
+
+**→ 工艺不同 ratio 跨 50 倍** (kettle 0.02 ↔ full_helm 0.99) · 单一 flat ratio 全错 · 用户直觉完全正确
+
+### Step 3 · 143 件 OSA Plate helmet 映射 + per-item proposed fill
+
+`classify_osa_plate_helms.py` · 用同样 cue 把 143 件分到 bucket · 产 `osa_phase1_1_proposal.{json,md}`:
+
+| bucket | OSA n | confidence | ratio used | proposed body avg |
+|---|---|---|---|---|
+| over_mail | 11 | HIGH | 0.165 | 14 |
+| closed_face | 3 | HIGH | 0.638 | 32 |
+| nasal | 11 | HIGH | 0.234 | 15 |
+| crested | 29 | HIGH | 0.153 | 11 |
+| skullcap | 10 | HIGH | 0.067 | 4 |
+| kettle | 5 | HIGH | 0.020 | 1 |
+| other | 38 | HIGH | 0.146 | 7 |
+| **小计 HIGH** | **107** | | | |
+| spangenhelm | 18 | MEDIUM | 0.113 | 8 (RBM anchor n=5) |
+| lamellar_helm | 5 | LOW | 0.000 (保持 0) | 0 (RBM anchor n=1 · 可能开面本应无 body) |
+| pointed | 13 | NONE→nasal fallback | 0.234 | 16 |
+| **总计** | **143** | | | |
+
+**107 件 HIGH confidence** 可以直接自动化 · 剩 36 件 (MEDIUM 18 + LOW 5 + fallback 13) **需要用户审 proposal** 决定是否接受 bucket 分类及 ratio。
+
+### 工具链产物
+
+```
+_scratch/OSA_phase1/
+├── build_rbm_reference.py            RBM 699 件 overhaul 扫 flat JSON
+├── rbm_plate_helm_structure.py       172 件 plate helm 工艺 bucket 统计
+├── classify_osa_plate_helms.py       143 件 OSA 分桶 + proposed fill
+├── rbm_armor_reference.json          RBM 全量 flat index · 跨 session 可复用
+├── rbm_vocab.md                      modifier_group × material_type 词汇表
+├── rbm_plate_bucket_stats.json       bucket stats · formula anchor source
+└── osa_phase1_1_proposal.{json,md}   143 件 per-item fill proposal
+```
+
+### 下一步选项（**待用户决定**）
+
+- **A · 接受 107 件 HIGH + 用户快审 36 件 edge cases**: 本机本 session 内可产 patched XML · 主力机 smoke test
+- **B · 保守: 只做 107 件 HIGH · 剩 36 件待下 session 用户主力机 Retinues editor 可视化审**
+- **C · 转向其他事**: 本次 session 到此结束 · proposal 作为交付品 · 用户下 session 分配
+
+### 用户 4 条指正对工作记忆的影响
+
+- `project-osa-osw-balance.md`：Phase 1.1 从"4 候选 formula 待选"推进到"结构 bucket + per-item proposal 待审"· 承认之前方法论偏差
+- 新加教训点: 自动化止于 95% 明确边界 · 剩 5% 必须用户肉眼审 mesh · 不能把 100% 自动化作目标
+- 新加原则: anchor 必须来自**跟当前环境对账**的权威源 (OSA ↔ RBM 对账 anchor = RBM 自己 overhaul · 不是 OSA 自己既有填法)
 
 ---
 

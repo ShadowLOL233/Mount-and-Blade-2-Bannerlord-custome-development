@@ -5,7 +5,7 @@
                 WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
                 SuggestedWidth="!SpectateButton.Width" SuggestedHeight="!SpectateButton.Height"
                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                MarginBottom="110"
+                MarginLeft="40"
                 Brush="WideButton.Flat"
                 Command.Click="ExecuteOpenTroopBuilder"
                 UpdateChildrenStates="true"

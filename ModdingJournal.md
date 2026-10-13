@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13（CBTB **v0.3.8 XPath fix** · v0.3.7 用 `..` parent axis 实测 UIExt v3 不支持 (红字 "node not found") · fallback 用 `descendant::Widget[@VisualDefinition='CenterMenu']/Children` 直接 attribute predicate 定位 CenterControls 父 · button 浮 MarginBottom=110 · CenterControls vanilla 布局已恢复 · DLL 23.5 KB）
+**最后更新**：2026-10-13（CBTB **v0.3.9 紧急回滚** · v0.3.8 的 `descendant::Widget[@VisualDefinition='CenterMenu']/Children` XPath 导致**bootstrap hard crash**（跟 v0.3.1 Standard.VerticalScrollbar 同模式 · CBTB OnSubModuleLoad 没触发 · rgl log 卡 shader warn · 疑因 UIExt v3 对 Bannerlord 自定义 VisualDefinition attribute 不支持）· 回滚到 v0.3.6 的 inline button 配置（挤 Start 但游戏能用）· 下 session 用 **Harmony patch** CustomBattleScreen.OnInitialize 代码层加 button 彻底解决）
 
 ## 🎯 设备优先度（2026-10-13 更新）
 
@@ -3505,6 +3505,64 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · 🔴 CBTB v0.3.9 紧急回滚 · v0.3.8 bootstrap crash
+
+**触发**：用户 v0.3.8 启动 · "游戏无法进入主菜单且崩溃 · 弹出报错报告"
+- `watchdog_log_2956.txt`：Crash occurred · User canceled dump
+- `rgl_log_2956.txt`：卡在 `rgl_post_warning_line: Shader cache version of the external module (FieldSiegeEngines) is invalid.`
+- CBTB log 最后一条 04:50（v0.3.6/0.3.7）· **v0.3.8 OnSubModuleLoad 没触发**
+- **跟 v0.3.1 Standard.VerticalScrollbar crash 同模式 · UIExt v3 Prefab preload 阶段 hard-crash**
+
+**真因假设**（未 proven · verify 需 reverse UIExt v3 源码）：
+- `descendant::Widget[@VisualDefinition='CenterMenu']` · `VisualDefinition` 是 Bannerlord 自定义 widget attribute · 不是标准 XML attribute · **UIExt v3 的 XPath parser 可能不支持这个 attribute 查询**
+- 或者 `/Children` 对 Widget 节点（不是 ListPanel）解释方式不同 · 导致 insert 时抛未捕获 exception
+- CenterMenu Widget 在 vanilla 中只 1 处（Grep 确认）· 不是多 match 问题
+- UIExt v3 的 soft-fail path 跟 hard-crash path 差异 · v0.3.7 的 `..` fail 走 soft-fail · v0.3.8 的 `[@VisualDefinition=...]` fail 走 hard-crash
+
+**失败路径汇总**（避免未来重复踩坑）：
+| 版本 | XPath | 结果 |
+|---|---|---|
+| v0.3.6 | `descendant::ListPanel[@Id='CenterControls']/Children` | ✅ work · button inline 挤 Start |
+| v0.3.7 | `.../CenterControls/../Children` (parent axis) | 🟡 soft-fail · 红字 "node not found" · 游戏能启 |
+| v0.3.8 | `descendant::Widget[@VisualDefinition='CenterMenu']/Children` | 🔴 **HARD CRASH** bootstrap · 游戏不能启 |
+| v0.3.9 | 回滚到 v0.3.6 | ✅ work · button inline |
+
+**v0.3.9 紧急回滚产物（2026-10-13 ✅ build+deploy）**：
+- **改** `src/UI/CBTBMenuButtonExtension.cs` · XPath 回 `descendant::ListPanel[@Id='CenterControls']/Children`
+- **改** `GUI/Prefabs/CBTBMenuButton.xml` · 回 v0.3.6 的 `MarginLeft=40`（inline 对齐）· 删 `MarginBottom=110`
+- 加 code 注释记录 3 条失败路径 + 下 session TODO
+- **csproj Version** 0.3.8 → **0.3.9** · **SubModule.xml** v0.3.8 → **v0.3.9** · SubModule.cs 2 处 version 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 23,552 B
+SubModule.xml 1,818 B @ 05:18:59 ✓
+CustomBattleTroopBuilder.dll 23,552 B @ 05:19:09 ✓
+```
+
+**用户 v0.3.9 实测清单**：
+1. **启动游戏** · 应能进主菜单（verify 回滚成功）
+2. 看黄字 `v0.3.9 loaded. Emergency rollback from v0.3.8 crash · button back inline · Harmony patch TODO next session.`
+3. Custom Battle 菜单 · "Troop Builder" button inline 在 CenterControls 内（跟 Randomize/Start/Back 并排 · Start 位置略偏 · 这是 v0.3.6 已知状态）
+4. 其他功能全保留（Phase 3b-1-fs2 的全屏 + 双 scrollbar + 选中 + preview + Clone）
+
+**🔴 下 session Harmony patch 计划**（彻底解决 button 位置问题）：
+- 放弃 PrefabExtension · 用 Harmony patch
+- Target 可选：
+  - `CustomBattleScreen.OnInitialize` postfix · 加 button 到 Gauntlet 的 Movie root widget 或某个 layer
+  - `CustomBattleVM` 构造函数或 property setter · 加 custom property + 自己写 Prefab 层挂载
+- Pros：100% code-driven · 不受 UIExt XPath 限制
+- Cons：代码量比 PrefabExtension 多 · 维护成本高
+- 预估 1-2 session
+
+**吸取的教训**（入 memory）：
+- UIExt v3 的 XPath 实现有未明确 documented 的 limitations
+- `..` parent axis 不支持
+- 自定义 Bannerlord attribute（如 `VisualDefinition`）作 predicate 可能导致 bootstrap crash（不只是 soft-fail）
+- **铁律**：新 PrefabExtension XPath 应该先尝试 **跟已知工作 pattern 相同**（例如 `[@Id='X']` 这种标准 XML attribute · PSLR/UTM 验证过）· 不要用高级 XPath feature
 
 ---
 

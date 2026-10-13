@@ -30,7 +30,7 @@ namespace CustomBattleTroopBuilder
                 _extender = UIExtender.Create(ModuleId);
                 _extender.Register(typeof(CBTBSubModule).Assembly);
                 _extender.Enable();
-                Log($"[CBTB] OnSubModuleLoad OK · v0.3.8 · Harmony id={HarmonyId} · UIExtender enabled");
+                Log($"[CBTB] OnSubModuleLoad OK · v0.3.9 · Harmony id={HarmonyId} · UIExtender enabled");
             }
             catch (Exception e)
             {
@@ -45,7 +45,7 @@ namespace CustomBattleTroopBuilder
             {
                 Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 2b-2 ready");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.3.8 loaded. Button XPath fixed: using CenterMenu attribute predicate (no parent axis).", Colors.Yellow));
+                    "[CBTB] v0.3.9 loaded. Emergency rollback from v0.3.8 crash · button back inline · Harmony patch TODO next session.", Colors.Yellow));
             }
             catch (Exception e)
             {

@@ -1,12 +1,11 @@
 using System;
 using System.IO;
-using System.Linq;
+using Bannerlord.UIExtenderEx;
 using CustomBattleTroopBuilder.UI;
 using HarmonyLib;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
-using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.ScreenSystem;
@@ -15,9 +14,12 @@ namespace CustomBattleTroopBuilder
 {
     public sealed class CBTBSubModule : MBSubModuleBase
     {
+        public const string ModuleId = "CustomBattleTroopBuilder";
         public const string HarmonyId = "com.pslr.cbtb";
         public const string LogFile = "CustomBattleTroopBuilder.log";
+
         private static Harmony? _harmony;
+        private static UIExtender? _extender;
 
         protected override void OnSubModuleLoad()
         {
@@ -25,8 +27,10 @@ namespace CustomBattleTroopBuilder
             try
             {
                 _harmony = new Harmony(HarmonyId);
-                // Phase 1 scaffold: no PatchAll yet — Harmony instance ready for Phase 2 UI patches.
-                Log($"[CBTB] OnSubModuleLoad OK · v0.1.0-scaffold · Harmony id={HarmonyId}");
+                _extender = UIExtender.Create(ModuleId);
+                _extender.Register(typeof(CBTBSubModule).Assembly);
+                _extender.Enable();
+                Log($"[CBTB] OnSubModuleLoad OK · v0.3.2 · Harmony id={HarmonyId} · UIExtender enabled");
             }
             catch (Exception e)
             {
@@ -39,9 +43,9 @@ namespace CustomBattleTroopBuilder
             base.OnBeforeInitialModuleScreenSetAsRoot();
             try
             {
-                Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 1 scaffold ready");
+                Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 2b-2 ready");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.1.0-scaffold loaded. Phase 2 UI coming.", Colors.Yellow));
+                    "[CBTB] v0.3.2 loaded. Phase 3a-safe: mode toggle only · scrollbar deferred.", Colors.Yellow));
             }
             catch (Exception e)
             {
@@ -56,7 +60,7 @@ namespace CustomBattleTroopBuilder
             {
                 if (Input.IsKeyDown(InputKey.LeftControl) && Input.IsKeyDown(InputKey.LeftShift) && Input.IsKeyPressed(InputKey.B))
                 {
-                    OpenEditorPlaceholder();
+                    OpenEditor();
                 }
             }
             catch (Exception e)
@@ -66,19 +70,42 @@ namespace CustomBattleTroopBuilder
         }
 
         /// <summary>
-        /// Phase 2a placeholder editor · uses vanilla InquiryData instead of full Gauntlet screen.
-        /// Phase 2b will replace with real ScreenBase + Gauntlet editor + CustomBattleMenu button.
+        /// Shared entry point for both the Ctrl+Shift+B hotkey and the Custom Battle menu button.
+        /// Pushes <see cref="CBTBEditorScreen"/>; the screen itself warns when the troop pool is empty.
         /// </summary>
-        private static void OpenEditorPlaceholder()
+        public static void OpenEditor()
         {
-            Log("[CBTB] OpenEditorPlaceholder invoked · pushing CBTBEditorScreen");
+            Log("[CBTB] OpenEditor invoked · pushing CBTBEditorScreen");
             try
             {
+                int poolCount = 0;
+                try
+                {
+                    var all = MBObjectManager.Instance?.GetObjectTypeList<BasicCharacterObject>();
+                    if (all != null) poolCount = all.Count;
+                }
+                catch { }
+
+                if (poolCount == 0)
+                {
+                    Log("[CBTB] OpenEditor: troop pool empty · showing inquiry · aborting push");
+                    InformationManager.ShowInquiry(new InquiryData(
+                        titleText: "Custom Battle Troop Builder",
+                        text: "Troop pool is empty.\n\nMBObjectManager hasn't loaded any BasicCharacterObject yet. Open the editor from the Custom Battle menu instead — the hotkey only works once Custom Battle has initialised the troop pool.",
+                        isAffirmativeOptionShown: true,
+                        isNegativeOptionShown: false,
+                        affirmativeText: "OK",
+                        negativeText: null,
+                        affirmativeAction: () => { },
+                        negativeAction: null));
+                    return;
+                }
+
                 ScreenManager.PushScreen(new CBTBEditorScreen());
             }
             catch (Exception e)
             {
-                Log($"[CBTB] PushScreen failed: {e}");
+                Log($"[CBTB] OpenEditor failed: {e}");
                 InformationManager.DisplayMessage(new InformationMessage(
                     $"[CBTB] Editor open failed: {e.Message}", Colors.Red));
             }

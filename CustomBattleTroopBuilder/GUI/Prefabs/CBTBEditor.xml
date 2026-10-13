@@ -7,7 +7,7 @@
 
         <Widget Id="CBTBEditorPanel"
                 WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
-                SuggestedWidth="900" SuggestedHeight="650"
+                SuggestedWidth="1100" SuggestedHeight="820"
                 HorizontalAlignment="Center" VerticalAlignment="Center"
                 Sprite="flat_panel_9">
           <Children>
@@ -16,20 +16,142 @@
                         Text="@Title"
                         WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
                         VerticalAlignment="Top" HorizontalAlignment="Center"
-                        MarginTop="40"
+                        MarginTop="30"
                         Brush="MPEscapeMenu.Title" />
 
-            <TextWidget Id="CBTBBody"
-                        Text="@BodyText"
-                        WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
-                        VerticalAlignment="Center" HorizontalAlignment="Center"
-                        MarginLeft="60" MarginRight="60" MarginTop="100"
-                        Brush="MPEscapeMenu.ButtonText" />
+            <!-- Search row -->
+            <Widget Id="CBTBSearchRow"
+                    WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                    SuggestedHeight="46"
+                    VerticalAlignment="Top" HorizontalAlignment="Center"
+                    MarginTop="90" MarginLeft="40" MarginRight="40">
+              <Children>
+
+                <TextWidget Text="@SearchHint"
+                            WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                            SuggestedWidth="360"
+                            HorizontalAlignment="Left" VerticalAlignment="Center"
+                            Brush="MPEscapeMenu.ButtonText" />
+
+                <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        MarginLeft="370" MarginRight="260"
+                        Sprite="BlankWhiteSquare_9" Color="#FFFFFF18" AlphaFactor="1.0">
+                  <Children>
+                    <EditableTextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        MarginLeft="10" MarginRight="10" MarginTop="6" MarginBottom="6"
+                                        Brush="Review.NameInput.Text"
+                                        Text="@SearchText" />
+                  </Children>
+                </Widget>
+
+                <TextWidget Text="@CountText"
+                            WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                            SuggestedWidth="240"
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Brush="MPEscapeMenu.ButtonText" />
+
+              </Children>
+            </Widget>
+
+            <!-- Mode row: Combat / All / Civilian · 3 toggle buttons -->
+            <ListPanel Id="CBTBModeRow"
+                       WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed"
+                       SuggestedHeight="38"
+                       VerticalAlignment="Top" HorizontalAlignment="Center"
+                       MarginTop="150"
+                       StackLayout.LayoutMethod="HorizontalLeftToRight">
+              <Children>
+
+                <ButtonWidget Id="CBTBModeCombat"
+                              WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                              SuggestedWidth="150"
+                              Brush="ButtonBrush1"
+                              DoNotPassEventsToChildren="true"
+                              UpdateChildrenStates="true"
+                              IsSelected="@IsModeCombat"
+                              Command.Click="ExecuteSetModeCombat"
+                              MarginRight="6">
+                  <Children>
+                    <TextWidget Text="@ModeCombatText"
+                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                Brush="Popup.Button.Text" />
+                  </Children>
+                </ButtonWidget>
+
+                <ButtonWidget Id="CBTBModeAll"
+                              WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                              SuggestedWidth="150"
+                              Brush="ButtonBrush1"
+                              DoNotPassEventsToChildren="true"
+                              UpdateChildrenStates="true"
+                              IsSelected="@IsModeAll"
+                              Command.Click="ExecuteSetModeAll"
+                              MarginRight="6">
+                  <Children>
+                    <TextWidget Text="@ModeAllText"
+                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                Brush="Popup.Button.Text" />
+                  </Children>
+                </ButtonWidget>
+
+                <ButtonWidget Id="CBTBModeCivilian"
+                              WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                              SuggestedWidth="150"
+                              Brush="ButtonBrush1"
+                              DoNotPassEventsToChildren="true"
+                              UpdateChildrenStates="true"
+                              IsSelected="@IsModeCivilian"
+                              Command.Click="ExecuteSetModeCivilian">
+                  <Children>
+                    <TextWidget Text="@ModeCivilianText"
+                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                Brush="Popup.Button.Text" />
+                  </Children>
+                </ButtonWidget>
+
+              </Children>
+            </ListPanel>
+
+            <!-- Troop list · simplified: Widget + ClipContents (no ScrollablePanel yet · pending v1.4.7 scrollbar research) -->
+            <Widget Id="CBTBListFrame"
+                    WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                    SuggestedHeight="540"
+                    VerticalAlignment="Top" HorizontalAlignment="Center"
+                    MarginTop="200" MarginLeft="40" MarginRight="40"
+                    ClipContents="true"
+                    Sprite="BlankWhiteSquare_9" Color="#00000040" AlphaFactor="1.0">
+              <Children>
+                <ListPanel Id="CBTBTroopsList"
+                           WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                           HorizontalAlignment="Left" VerticalAlignment="Top"
+                           StackLayout.LayoutMethod="VerticalTopToBottom"
+                           DataSource="{Troops}"
+                           MarginLeft="12" MarginRight="12" MarginTop="6" MarginBottom="6">
+                  <ItemTemplate>
+                    <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                            SuggestedHeight="28">
+                      <Children>
+                        <TextWidget Text="@SummaryLine"
+                                    WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    Brush="MPEscapeMenu.ButtonText"
+                                    DoNotAcceptEvents="true" />
+                      </Children>
+                    </Widget>
+                  </ItemTemplate>
+                </ListPanel>
+              </Children>
+            </Widget>
 
             <ButtonWidget Id="CBTBCloseButton"
                           WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
                           VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                          MarginBottom="40"
+                          MarginBottom="30"
                           Brush="ButtonBrush1"
                           DoNotPassEventsToChildren="true"
                           UpdateChildrenStates="true"

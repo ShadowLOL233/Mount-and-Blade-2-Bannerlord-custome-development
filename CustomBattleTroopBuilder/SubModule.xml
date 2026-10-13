@@ -2,7 +2,7 @@
 <Module>
   <Name value="Custom Battle Troop Builder" />
   <Id value="CustomBattleTroopBuilder" />
-  <Version value="v0.1.0" />
+  <Version value="v0.3.2" />
   <SingleplayerModule value="true" />
   <MultiplayerModule value="false" />
   <Official value="false" />
@@ -12,6 +12,7 @@
   <DependedModules>
     <DependedModule Id="Bannerlord.Harmony" DependentVersion="v2.4.2" />
     <DependedModule Id="Bannerlord.ButterLib" DependentVersion="v2.12.0" />
+    <DependedModule Id="Bannerlord.UIExtenderEx" DependentVersion="v3.0.3" />
     <DependedModule Id="Native" />
     <DependedModule Id="SandBoxCore" />
     <DependedModule Id="Sandbox" />
@@ -20,6 +21,7 @@
   <DependedModuleMetadatas>
     <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" version="v2.4.2" />
     <DependedModuleMetadata id="Bannerlord.ButterLib" order="LoadBeforeThis" version="v2.12.0" />
+    <DependedModuleMetadata id="Bannerlord.UIExtenderEx" order="LoadBeforeThis" version="v3.0.3" />
     <DependedModuleMetadata id="Native" order="LoadBeforeThis" version="1.0.0.*" />
     <DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" version="1.0.0.*" />
     <DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" version="1.0.0.*" />

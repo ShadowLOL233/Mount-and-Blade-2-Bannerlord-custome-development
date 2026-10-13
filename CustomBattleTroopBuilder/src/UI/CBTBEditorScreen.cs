@@ -1,8 +1,5 @@
-using TaleWorlds.Core;
 using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.InputSystem;
-using TaleWorlds.Library;
-using TaleWorlds.ObjectSystem;
 using TaleWorlds.ScreenSystem;
 
 namespace CustomBattleTroopBuilder.UI
@@ -16,22 +13,15 @@ namespace CustomBattleTroopBuilder.UI
         protected override void OnInitialize()
         {
             base.OnInitialize();
-            int poolCount = 0;
-            try
-            {
-                var all = MBObjectManager.Instance?.GetObjectTypeList<BasicCharacterObject>();
-                if (all != null) poolCount = all.Count;
-            }
-            catch { }
 
-            _vm = new CBTBEditorVM(ClosePopScreen, poolCount);
+            _vm = new CBTBEditorVM(ClosePopScreen);
             _layer = new GauntletLayer("CBTBEditor", 1000, true);
             _layer.InputRestrictions.SetInputRestrictions();
             _layer.IsFocusLayer = true;
             _movie = _layer.LoadMovie("CBTBEditor", _vm);
             AddLayer(_layer);
             ScreenManager.TrySetFocus(_layer);
-            CBTBSubModule.Log("[CBTB] CBTBEditorScreen.OnInitialize · loaded prefab");
+            CBTBSubModule.Log("[CBTB] CBTBEditorScreen.OnInitialize · loaded prefab · troop pool enum done");
         }
 
         protected override void OnFinalize()

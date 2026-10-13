@@ -1,11 +1,13 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13（CBTB **v0.3.9 紧急回滚** · v0.3.8 的 `descendant::Widget[@VisualDefinition='CenterMenu']/Children` XPath 导致**bootstrap hard crash**（跟 v0.3.1 Standard.VerticalScrollbar 同模式 · CBTB OnSubModuleLoad 没触发 · rgl log 卡 shader warn · 疑因 UIExt v3 对 Bannerlord 自定义 VisualDefinition attribute 不支持）· 回滚到 v0.3.6 的 inline button 配置（挤 Start 但游戏能用）· 下 session 用 **Harmony patch** CustomBattleScreen.OnInitialize 代码层加 button 彻底解决）
+**最后更新**：2026-10-13 (晚 · 两条并行)
+- **主力机 CBTB v0.3.9 紧急回滚**: v0.3.8 的 `descendant::Widget[@VisualDefinition='CenterMenu']/Children` XPath 导致 bootstrap hard crash（跟 v0.3.1 Standard.VerticalScrollbar 同模式 · CBTB OnSubModuleLoad 没触发 · rgl log 卡 shader warn · 疑因 UIExt v3 对 Bannerlord 自定义 VisualDefinition attribute 不支持）· 回滚到 v0.3.6 inline button 配置（挤 Start 但游戏能用）· 下 session 用 **Harmony patch** CustomBattleScreen.OnInitialize 代码层加 button 彻底解决
+- **第二设备 OSABalance Phase 0.B 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 288 件 Tier A（POM 187 / PBS 21 / CFM 80）· 严格 reclassifier v1→v4 迭代（启发式 → vanilla 语义反推 → word-bound cue + 'Open' 反向排除 → lamellar/vendel/coif mail-equivalent）· 本机 build+deploy D: 验证（铁律 1 通过）· smoke test 待主力机 CBTB session 结束后执行
 
-## 🎯 设备优先度（2026-10-13 更新）
+## 🎯 设备优先度（2026-10-13 晚更新）
 
-- **主力机（E:）** · 最高优先度：**OSABalance v1.3.0 smoke test**（`git pull && deploy.ps1`，主菜单看绿字 `PBS 9->11, CFM 16->22, POM 20->27`）· CBTB 继续推进（本 session 2026-10-12 已到 v0.3.2 safe · 下阶段做 v0.3.3 scrollbar · 需先研究 v1.4.7 proven pattern 避免再撞 Standard.VerticalScrollbar 的 regression）
-- **第二设备（D:）本机** · 最高优先度：**OS 系列平衡 Phase 0.B**（ID 清单精炼 · 把 15 件 safe subset 扩到 ~300 件 production）· 可跟 Phase 1 并发
+- **主力机（E:）** · 最高优先度：**OSABalance v1.3.0 smoke test（Phase 0.B 版）**（`git pull && deploy.ps1`，主菜单看绿字 `PBS 9->30, CFM 16->96, POM 20->207`）· CBTB Phase 3b-1 继续推进
+- **第二设备（D:）本机** · 最高优先度：**Phase 1 字段 audit**（跟 Phase 0.B 完全正交 · journal §3040 开工锚点 · 2-3 session）· 可选 Phase 0.B v5 迭代（捡回 Tier B 的 `AR_khuzait_armor_a`）
 
 其他待办（PFRB v2 Keep Recruiter / PlayerFiefPoolShield / BE 战象 Path B' / CheatsGuard Round 1 实测 / BetterPatrolsBrake 测试 等）均为次优 · 等用户 session 分配。
 
@@ -3227,6 +3229,75 @@ OSABalance RBMBridge: PBS 9->11, CFM 16->22, POM 20->27
 - `project-osa-osw-balance.md`：Phase 0 从"侦查前置"推进到"骨架落地 · 待 smoke test"
 - `project-bannerlord-modding.md`：OSABalance 从"纯 XML pipeline"升级为"XML + Harmony-reflection hybrid"
 - Journal §3016 旧 namespace 错记已修正（见本节首）
+
+---
+
+## 📅 2026-10-13 session（晚）· OSABalance Phase 0.B 完成 · OSAIds Tier A production 清单落地
+
+**承接**: 当天早些 session 的 Phase 0 代码骨架落地 · 用户确认 Steam account single-session 限制 · 主力机在 CBTB · 本机独立推 Phase 0.B（纯数据工作 · 不依赖游戏运行）
+
+**产物 commit**: 本次 session 结束时 push
+**归档**: `_scratch/OSA_phase0/PHASE0_B_REPORT.md` · `reclassify_strict.py` · `generate_osaids_cs.py` · `strict_{pom,pbs,cfm}.tierA.json` · `strict_report.md`
+
+### Phase 0.B 工作成果
+
+**OSAIds.cs** v1 → v2：从 Phase 0.A smoke-test 的 **15 件 safe subset** → **288 件 Tier A production**
+
+| 白名单 | Vanilla | OSA Tier A | 合计（RBM 看到的）| 增幅 |
+|---|---|---|---|---|
+| PlateOverMail (POM) | 20 | 187 | 207 | +935% |
+| PlateBelowShoulder (PBS) | 9 | 21 | 30 | +233% |
+| ClosedFaceMail (CFM) | 16 | 80 | 96 | +500% |
+| 总计 | 45 | **288** | 333 | +640% |
+
+### 严格 reclassifier v1→v4 迭代
+
+**启发**: 从 vanilla 20+9+16 条权威 ID 反推真语义 · 不走 naming heuristic
+
+| 版本 | 关键改动 | POM/PBS/CFM Tier A |
+|---|---|---|
+| **v1** | 原 PHASE0_RECON 启发式单层 | 148/11/142 |
+| **v2** | 严格 cue + Tier A/B 分级 + utf-8 encode fix | 172/0/8 |
+| **v3** | POM 加 `over.?mail`/`reticulated_plate` · CFM `\bmail\b` word-boundary · 'Open' 反向排除 | 187/21/68 |
+| **v4** | CFM 加 `\blamellar\b`/`\bvendel\b`/`\bcoif\b`（lamellar faceguard 等同 mail aventail）| **187/21/80** |
+
+### 本机 build + deploy 验证（铁律 1）
+
+```
+Build: dotnet build -c Release · 0 Warning / 0 Error · Time Elapsed 00:00:00.91
+DLL: OSABalanceRBMBridge.dll 8192→22016 bytes (×2.7 · 跟 15→288 件数组增长一致)
+Deploy: deploy.ps1 自动 D:/E: detect · 落地 D:\...\Modules\OpenSourceArmouryRBMBalance\
+文件时间戳: 2026-10-13 06:07 验证通过
+```
+
+### Tier B 未处理（下一 session 工作）
+
+- **PBS Tier B 1 件** · `AR_khuzait_armor_a` "Eastern Plated Armor" body=45 · cue 没触发因为"plated"单词没在 compound 里 · 下一轮 v5 可以加 `\bplated\b` 单字 cue 捞回
+- **CFM Tier B 62 件** · 多数是 "With Faceguard" 名字 · 需人工预览 mesh 判断是否有 mail aventail · 下一 session 在主力机启游戏用 Retinues editor 可视化复核
+- 归档: `_scratch/OSA_phase0/strict_{pbs,cfm}.tierB.json`
+
+### Smoke test 预期（主力机 CBTB session 结束后执行）
+
+主菜单绿字应显示（Phase 0.B 版）:
+```
+OSABalance RBMBridge: PBS 9->30, CFM 16->96, POM 20->207
+```
+
+### 本次 session 对工作记忆的影响
+
+- `project-osa-osw-balance.md`：Phase 0.B 从"骨架落地 · 待 smoke test"推进到"Tier A production 清单落地 · 本机 build+deploy 验证通过 · smoke test 待主力机"
+- 新增 `_scratch/OSA_phase0/` 下的 reclassifier + generator Python 脚本 · 可重用于未来 OSA/OSW workshop 更新后的清单同步
+
+### 工具链产物（可重用）
+
+```
+_scratch/OSA_phase0/
+├── reclassify_strict.py       v4 分类器 · 可对 OSA XML scan 做增量更新
+├── generate_osaids_cs.py      Tier A → OSAIds.cs 一键生成
+└── strict_{pom,pbs,cfm}.tier{A,B}.json  classification 产物归档
+```
+
+**重跑办法**（workshop update 后）: 先重跑 Phase 0 侦查的 all_items.json 扫描 · 再跑 `reclassify_strict.py` + `generate_osaids_cs.py` · 自动产出新 OSAIds.cs。
 
 ---
 

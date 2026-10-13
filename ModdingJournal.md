@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13（CBTB **Phase 3b-1 落地** · v0.3.4 build+deploy ✅ · 分左右两列（List 520 + Preview 490）· item 变 ButtonWidget 带 selected overlay（#C7AC8577 半透金底）· Preview 面板 14 字段 + Clone placeholder button（IsEnabled=HasSelection）· Clone 弹 Phase 3b-2 roadmap Inquiry · DLL 23.5 KB · 待实测）
+**最后更新**：2026-10-13（CBTB **v0.3.5 全屏布局** · 用户要求利用整个屏幕空间 · panel 从 Fixed 1100×820 → StretchToParent + margin 24 · List/Preview 用 Horizontal StackLayout 两个 StretchToParent 子自动等分 · 自适应任意分辨率 · 背景 Alpha 0.7→0.85 · DLL 23.5 KB · 架构决策：继续自研而非借用 Retinues（Campaign 子系统硬 blocker））
 
 ## 🎯 设备优先度（2026-10-13 更新）
 
@@ -3505,6 +3505,70 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · CBTB v0.3.5 全屏布局 + 架构决策归档
+
+**触发**：Phase 3b-1 (v0.3.4) 实测通 · 用户看完 1100×820 居中小窗后决策：
+1. **UI 请求**：窗口要利用整个屏幕空间 · 不要小 panel 居中周围大片黑
+2. **架构质询**："为什么我们不能直接借用 Retinue 模组的 UI 而是非要自设一个 UI？"
+
+**架构决策归档 · 继续自研 CBTB（不借用 Retinues）**：
+
+- **真因不是 UI 移植难** · 是 **Custom Battle 根本不加载 TaleWorlds.CampaignSystem.dll**
+- Retinues 的整个数据模型围绕 Campaign-only class：
+  - `Clan` / `Clan.CustomTroops` → CampaignSystem.dll
+  - `Hero.MainHero` → CampaignSystem.dll
+  - `MCMv5 Settings` → ButterLib + Campaign bootstrap
+  - `CustomTroopData save` → CampaignSystem.SaveSystem
+- Custom Battle context 下 **这些 class 根本不存在于 process 加载的 assemblies** · Retinues 代码链全是 undefined type references
+- 要让 Retinues "跑在 Custom Battle" 的工作量 = **fake-load 整个 Campaign 子系统**：构造 fake Clan（ctor private 要反射）+ fake Hero.MainHero + fake Campaign singleton + Save/Load 绕开 · 工作量 "2-3 周 + 持续维护"（且 license 不明 · fork 法律风险）
+- 对比：**自研 CBTB 已过半**：Phase 1+2+3a+3a-fix+3a-safe+3a-scroll+3b-1 已完 · 余下 Phase 3b-2 (clone+register ~1 session) + Phase 4 equipment (2-3 session) + Phase 5 skill (2-3 session) + Phase 6 JSON (~1 session) · **总计 6-8 session**
+- Phase 4/5 可参考 **vanilla Native Prefab（Inventory / CharacterDeveloper）** · 不是 Retinues · 因为 Native 在 Custom Battle 下 available · Retinues 不是
+
+**结论**：继续自研路径 · Phase 4/5 时考虑 vanilla pattern 借鉴（非 Retinues）。
+
+**Phase 3b-1-fullscreen 产物（2026-10-13 ✅ build+deploy）**：
+
+- **改** `GUI/Prefabs/CBTBEditor.xml`（layout 大改）：
+  - **CBTBEditorPanel 从 `Fixed SuggestedWidth=1100 SuggestedHeight=820`** → **StretchToParent + MarginLeft/Right/Top/Bottom=24**（四周 24 px margin 让 flat_panel_9 的 nine-slice 边框可见）
+  - 背景半透黑 `AlphaFactor 0.7 → 0.85`（全屏下更强对比）
+  - **CBTBMainRow** 新 `<ListPanel StackLayout.LayoutMethod="HorizontalLeftToRight">` 容器 · 内两个子（CBTBListFrame 和 CBTBPreviewFrame）都用 `WidthSizePolicy="StretchToParent"` · 由 StackLayout 自动等分 panel 宽度（UTM 验证样板 · 适配任意分辨率）
+  - 子之间用 MarginRight=12（List）/ MarginLeft=12（Preview）作间隔
+  - 其他元素比例调整：Mode button 150→170 宽 · 搜索框 MarginRight 260→300 · CountText SuggestedWidth 240→280 · ItemTemplate SuggestedHeight 28→30 · Preview MarginTop 56→80 MarginLeft 18→30 · Clone MarginBottom 20→24 · Close MarginBottom 30→36
+- **改** `src/UI/CBTBEditorVM.cs` · Title "Phase 3b-1" → "Phase 3b-1 · Fullscreen"
+- **csproj Version** 0.3.4 → **0.3.5** · **SubModule.xml** v0.3.4 → **v0.3.5** · SubModule.cs 2 处版本字符串同步
+- Code 实际不变（只改 title 字符串）· DLL 大小 23,552 B 跟 v0.3.4 一致
+
+**build+deploy 验证**：
+```
+build OK · DLL 23,552 B（跟 v0.3.4 一致 · 本次只改 Prefab 和 title string）
+SubModule.xml 1,779 B @ 03:40:29 ✓
+CustomBattleTroopBuilder.dll 23,552 B @ 03:40:38 ✓
+```
+
+**用户 Phase 3b-1-fullscreen 实测清单**：
+1. 启动游戏 · 主菜单看黄字 `v0.3.5 loaded. Phase 3b-1-fs: fullscreen layout · Horizontal split List/Preview.`
+2. Custom Battle → Troop Builder
+3. editor 应**铺满整个屏幕**（四周留 24 px margin）· 标题 "**CBTB Editor · Phase 3b-1 · Fullscreen**"
+4. **🔴 Horizontal StackLayout 等分验证**（关键）：
+   - List（左半 · 等分 panel 宽度一半）· 应显示 40-60 行 troop（比之前 20 行多出 2-3x）
+   - Preview（右半 · 等分 panel 宽度另一半）· 字段显示有大量余白
+   - 两列中间 24 px 间隔（12+12 margin）
+5. 若 **List 跟 Preview 塌到 0 宽**（StackLayout + StretchToParent 不等分）· 立刻回报 · 我会 fallback 用 Fixed widths 按 1920×1080 or 2560×1440 hardcoded
+6. search / mode / scrollbar / select / Preview / Clone 继续正常（Phase 3b-1 功能不碰）
+7. Close/Esc 回 Custom Battle 菜单
+
+**可能的翻车点**：
+- **🔴 最大风险**：Horizontal StackLayout + 两个 StretchToParent 子 · Bannerlord 不一定支持 flex 等分 · 可能两子都 collapsed 到 0 或都 overflow panel
+  - Fallback：用 Fixed widths（例如 List=SuggestedWidth=50% of 2560 ≈ 1200 · Preview 同）· 但 hardcoded 到 2560 用户
+  - 更稳 fallback：两 Fixed width 子 · 2 个各占 panel width / 2（需 VM 层帮算 panel width · 复杂）
+- Preview 字段显示在超宽 panel 下 · 可能看起来空旷 · 后续可考虑用更大字号 brush
+
+**Phase 3b-2 下 session 启动点**（本次全屏调整不涉及功能性 · Phase 3b 继续）：
+- 反编译 `TaleWorlds.ObjectSystem.dll` 看 `MBObjectManager.CreateObject<T>` / `RegisterPresumedObject` API
+- Clone 流程：selected troop → `ShowTextInquiry` 输新 StringId · 验 unique → clone 字段 → 挂 MBObjectManager → RefreshFilter
 
 ---
 

@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13（CBTB **v0.3.7 Troop Builder button 挪位** · 从 CenterControls 内 inline（挤歪 Randomize/Start/Back vanilla 排列）→ 挪到 CenterControls 兄弟位置（父 Widget Children · XPath `..`）· MarginBottom=110 浮在 Start 按钮正上方 · vanilla CenterControls 原布局恢复 · "按钮消失" verified 是游戏未重启问题 · DLL 23.5 KB）
+**最后更新**：2026-10-13（CBTB **v0.3.8 XPath fix** · v0.3.7 用 `..` parent axis 实测 UIExt v3 不支持 (红字 "node not found") · fallback 用 `descendant::Widget[@VisualDefinition='CenterMenu']/Children` 直接 attribute predicate 定位 CenterControls 父 · button 浮 MarginBottom=110 · CenterControls vanilla 布局已恢复 · DLL 23.5 KB）
 
 ## 🎯 设备优先度（2026-10-13 更新）
 
@@ -3505,6 +3505,52 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · CBTB v0.3.8 XPath fix · UIExt v3 不支持 parent axis
+
+**触发**：v0.3.7 用户实测报错截图 ·  Custom Battle 菜单下显示红字：
+```
+UIExtenderEx: Failed to apply extension to CustomBattleScreen:
+node at descendant::ListPanel[@Id='CenterControls']/../Children not found.
+```
+
+**诊断**：**UIExt v3 的 XPath 实现不支持 XPath 1.0 parent axis `..`**（或 `/../` 组合不被识别）。CenterControls 已恢复 vanilla 原位（没 CBTB button inline）· 但 CBTB button 完全消失 · soft-fail 不 crash。
+
+**v0.3.8 fix · 换定位方式**（不用 parent axis）：
+- 利用 vanilla CustomBattleScreen.xml line 68 的 `<Widget VisualDefinition="CenterMenu" PositionYOffset="-505" ...>` 这个 CenterControls 的父 Widget 有唯一 attribute `VisualDefinition="CenterMenu"`
+- XPath 改成：
+  - 旧：`descendant::ListPanel[@Id='CenterControls']/../Children`（parent axis fail）
+  - 新：`descendant::Widget[@VisualDefinition='CenterMenu']/Children`（attribute predicate · UIExt v3 稳定支持 · 跟 PSLR 的 `descendant::VisualDefinitions` 同类型）
+- button 加到 CenterMenu Widget 的 Children · 跟 CenterControls 作兄弟（跟 v0.3.7 目标一致）
+- CBTBMenuButton.xml 不变（VerticalAlignment=Bottom + MarginBottom=110）
+- **csproj Version** 0.3.7 → **0.3.8** · **SubModule.xml** 同步 · SubModule.cs 2 处 version 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 23,552 B（跟 v0.3.7 一致 · 只改 XPath 字符串）
+SubModule.xml 1,818 B @ 04:52:36 ✓
+CustomBattleTroopBuilder.dll 23,552 B @ 04:52:45 ✓
+```
+
+**用户 Phase 3b-1-fs2-fix2 实测清单**：
+1. **完全退出游戏 · 再 Launch**（新 Prefab 需 preload）
+2. 主菜单看黄字 `v0.3.8 loaded. Button XPath fixed: using CenterMenu attribute predicate (no parent axis).`
+3. 主菜单看是否**无红字错误**（之前 v0.3.7 有 UIExtenderEx 红字 · 位置在左下 "0%" 按钮下方）
+4. Custom Battle 菜单：
+   - ✅ CenterControls 恢复 vanilla 原位（Randomize 左 · Start 中 · Back 右 · 视觉等距）
+   - ✅ Troop Builder button 浮在 Start 正上方（跟 Start 同宽同风格 · gap ~30 px）
+5. 点 Troop Builder → 进 editor（跟 v0.3.6/v0.3.7 一样 · 全屏 + 双 scrollbar）
+
+**🔴 Fallback 如 v0.3.8 仍失败**：
+- 若 attribute predicate 也不工作 → UIExt v3 可能连 attribute XPath 都有问题（不可能 · 跟 Phase 2b-2 原 `[@Id='CenterControls']` 同语法 · 那个工作过）
+- 若 CenterMenu Widget 有多个（Prefab 里重复出现）· descendant::Widget[...] 命中错位置 → 用 `descendant::Widget[@VisualDefinition='CenterMenu'][1]` 加 index
+- 若还是不工作 → **放弃 PrefabExtension · 用 Harmony patch** CustomBattleScreen.OnInitialize 代码层加 button（最稳 · 1-2 session 实现）
+
+**Phase 3b-2 下 session 启动点**（button 位置修完就开 Phase 3b-2）：
+- 反编译 `TaleWorlds.ObjectSystem.dll` 看 `MBObjectManager.CreateObject<T>` / `RegisterPresumedObject` API
+- Clone 流程：selected troop → `ShowTextInquiry` 输新 StringId · 验 unique → clone 字段 → 挂 MBObjectManager → RefreshFilter
 
 ---
 

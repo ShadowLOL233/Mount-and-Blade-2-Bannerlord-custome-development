@@ -1,6 +1,13 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-12（CBTB **v0.3.1 regression · 立刻回滚 v0.3.2 safe** · v0.3.1 的 Standard.VerticalScrollbar Prefab reference 在 v1.4.7 下 crash 游戏启动 · rgl log 卡在 Shader cache 之后 · CBTB OnSubModuleLoad 未触发 · 回滚去掉 ScrollablePanel 完整 pattern + Standard.VerticalScrollbar · 保留 Combat/All/Civilian mode toggle · scrollbar 深度研究留下 session）
+**最后更新**：2026-10-13（**线上**：OS 系列平衡 Phase 0 骨架落地 · OSABalance v1.3.0 XML→XML+Harmony hybrid · smoke test 待主力机执行；**主力机 2026-10-12 session**：CBTB v0.3.2 safe 回滚 · v0.3.1 的 Standard.VerticalScrollbar 在 v1.4.7 下 crash 游戏启动 · 已回滚保留 mode toggle · scrollbar 深度研究留下 session）
+
+## 🎯 设备优先度（2026-10-13 更新）
+
+- **主力机（E:）** · 最高优先度：**OSABalance v1.3.0 smoke test**（`git pull && deploy.ps1`，主菜单看绿字 `PBS 9->11, CFM 16->22, POM 20->27`）· CBTB 继续推进（本 session 2026-10-12 已到 v0.3.2 safe · 下阶段做 v0.3.3 scrollbar · 需先研究 v1.4.7 proven pattern 避免再撞 Standard.VerticalScrollbar 的 regression）
+- **第二设备（D:）本机** · 最高优先度：**OS 系列平衡 Phase 0.B**（ID 清单精炼 · 把 15 件 safe subset 扩到 ~300 件 production）· 可跟 Phase 1 并发
+
+其他待办（PFRB v2 Keep Recruiter / PlayerFiefPoolShield / BE 战象 Path B' / CheatsGuard Round 1 实测 / BetterPatrolsBrake 测试 等）均为次优 · 等用户 session 分配。
 
 ## 目录
 - [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)
@@ -2741,6 +2748,635 @@ RideableElephant\
 **用户决策 → 我行动**：
 - 采纳同化 → 建 `ThaddeusCulture` 自研 mod（sp_cultures.xml + spnpccharacters.xml 骨架，可选挂 Nexus 10223 或手写）
 - 保持归化 → 回归命名 backlog · 继续基础常备军骑兵线等命名
+
+---
+
+## RBM 机制全解析（2026-10-11 D:第二设备 完整反编译 + XML 扫描）
+
+**触发**：用户想深度理解 RBM 到底修改了什么、"为什么非 RBM-patched armor/weapon mod 不兼容 Combat module"、哪些是隐藏属性。全文件级反编译 + 完整 ModuleData XML 扫描完成。
+
+**反编译产物**：`C:\Users\situj\Downloads\_rbm_decomp\RBMCombat.decompiled.cs`（**679 KB** · 核心战斗 DLL）。其他 5 DLL 可按需补反编译。
+
+### 架构
+
+**6 DLL + 38 ModuleData XML**。双层改造：XML 替换 1083+ items + 引擎 constants，Harmony 替换 20+ 核心战斗方法。
+
+| DLL | 职责 |
+|---|---|
+| RBM | 加载器 |
+| RBMCombat | **伤害 / 护甲 / 武器 / 弹道的核心重写（679 KB · 重头）** |
+| RBMAI | formation 行为、frontline 挤压、charge AI |
+| RBMCampaign | 补给商队、作坊产出、troop power、auto-resolve 真模拟 |
+| RBMConfig | MCM 面板 |
+| RBMTournament | 按 tier 匹配竞技场 |
+
+### XML 层改造清单
+
+| XML | 规模 | 改什么 |
+|---|---|---|
+| `RBM_native_parameters_tweaks.xml` | 50 行 | **引擎底层**物理/碰撞 constants：bipedal_speed_multiplier · quadrupedal_acceleration · thrust_tip_collision_distance · non_humanoid_collision_resistance_multiplier_sp (马冲人阻力 10×) · guard_reset_time · shield_bash_scale · back_angle_disable_shield_blocking 等 |
+| `RBM_spear_managed_core_parameters.xml` | 109 行 | **managed core 70+ 参数**：AirFriction 分武器类型 · Projectile/Shield penetration · Stun 时序 · Combat speed graphs（挥击/刺击的伤害-时序贝塞尔曲线）· Fall/Fist/Thrust-arm damage multipliers（刺击击中手臂倍率 **0.034 近乎零伤**）· Rear attack threshold 13 · HeavyAttackMomentum 1.15 |
+| `RBM_spear_combat_parameters.xml` | 2177 行 | **武器 action 旋转限制**：每种 action（bow/parry/shield/couched_lance/brace）的垂直旋转上限 + rider rotation 限制。控制"什么角度能架枪冲阵、骑射转头多少度" |
+| `RBMCombat_item_modifiers.xml` | - | 完全重写品质后缀（Legendary/Masterwork/Balanced/Dull/Rusty）的加成数值 |
+| `RBMCombat_weapon_descriptions.xml` | - | 锻造 piece 库完全替换 · 每类武器可用的 Blade/Guard/Handle/Pommel pieces 全新定义 |
+| **`RBMCombat_unit_overhaul.xml`** | **937 KB · 26458 行** | **完全重写所有 vanilla NPC character 的 EquipmentRoster** · 换成 RBM-tuned items 的硬编码引用 · **不兼容性头号根因** |
+| `RBMCombat_body_armors.xml` | 1501 行 | vanilla 身甲全重调 |
+| `RBMCombat_horses.xml` | 1495 行 | 全 vanilla 马重调 |
+| `RBMCombat_horse_armors.xml` | 733 行 | 马甲 |
+| `RBMCombat_shields.xml` | 1202 行 | **新增 `body_armor` 字段 + `hit_points`** · vanilla 盾没这些 |
+| `RBMCombat_ranged.xml` | 1297 行 | **crossbow missile_speed 从 ~90 升到 330** + 新增 `reload_phase_count` 等字段 |
+| 其他 10+ XMLs | - | head_armors / arm_armors / leg_armors / shoulder_armors / couched_lances / lances / sword_blades/pieces / axe_pieces / mace_pieces / gladius / siege_engines/ranged / lord_equipment_sets / arrow_visuals / item_holsters / action_sets |
+
+### DLL 层改造（RBMCombat 核心 Harmony patches）
+
+**全替换式 Prefix（返 `false` · 用 RBM 自家 formula）**：
+- `MissionCombatMechanicsHelper.ComputeBlowDamage` · **完整 RBM 伤害公式**
+- `MissionCombatMechanicsHelper.ComputeBlowDamageOnShield` · 盾伤公式（RBM 盾 hit_points 的核心）
+- `Agent.GetBaseArmorEffectivenessForBodyPart` · **ArmorRework 系统**
+- `MissionCombatMechanicsHelper.CalculateBaseMeleeBlowMagnitude`
+- `CombatStatCalculator.CalculateStrikeMagnitudeForPassiveUsage/ForThrust`
+- `MissionCombatMechanicsHelper.ComputeBlowMagnitudeMissile`
+- `ItemModifier.ModifyArmor` / `ModifyDamage`
+- `ItemMenuVM.SetWeaponComponentTooltip` · UI 全重写
+- `SPInventoryVM.UpdateCharacterArmorValues` / `RefreshValues`
+
+**事件钩子（Postfix）**：`BattleAgentLogic.OnAgentHit` / `Agent.HandleBlow` / `SandboxAgentStatCalculateModel.UpdateHumanStats` / `Mission.OnAgentShootMissile` / `HandleMissileCollisionReaction` / `MeleeHitCallback` / `Agent.EquipItemsFromSpawnEquipment` / `Agent.WeaponEquipped` 等。
+
+### ArmorRework · 完全新造的装甲系统
+
+**硬编码 `PlateOverMailBodyArmorIds` 20 件白名单**（RBMCombat.cs:1632）：
+```
+desert_lamellar, desert_scale_armor, aserai_scale_armor_on_cloth,
+western_scale_mail, battanian_scale_armor_a, brass_lamellar_over_mail,
+coat_of_plates_over_mail, northern_brass_lamellar_over_mail,
+sturgian_lamellar_base, imperial_scale_armor, lamellar_with_scale_skirt,
+imperial_lamellar, empire_legion_b, ...（+ 对应 mp_* 多人版）
+```
+这 20 件享受 RBM 的 "板甲套链甲" 分层伤害衰减。**其他所有物品（含 OSA/OSW 自定义板甲）吃单层防护**。
+
+**分 body part 聚合装甲**（RBM 独有）：
+- `getHeadArmor` = 头盔槽 head_armor
+- `getNeckArmor` = **遍历 head+body+arm+leg+shoulder 槽**，ItemType 14/15 的 arm_armor 字段累加
+- `getFaceArmorRBM` / `getUnderShoulderArmorRBM` = sub-body-part 独立计算
+- `getGauntletWeight` = 手套重量 → 影响拳击/盾击伤害
+- `GetArmorMaterialForBodyPartRBM` = 命中部位物品的 `ArmorMaterialTypes`（Cloth/Leather/Chainmail/Plate）
+
+**新几何算法**：
+- **Face hit**：从眼睛位置 offset 几何锥形 · 挥击只有正面命中锥内触发 · 刺击直接触发 · **无视头盔面部外防护**
+- **Under-shoulder hit**：骨骼 index 15/22 + 碰撞法线 z < 0.15 · **无视肩甲**
+- **Crush-through**：格挡被破时按**原本会打中哪个 body part** × 0.85
+- **Thrust tip**：刺击仅顶点命中算 Pierce · 其他转 Blunt
+- **Blade vs handle hit**：挥击命中武器把手 1/10 范围 = handle hit · 钝伤 · 无 edge 加成
+
+### 不兼容性 8 条根因（为什么非 RBM-patched armor/weapon mod 不兼容 Combat module）
+
+**严格说不是"崩游戏"的不兼容，是功能性 downgrade**：
+
+| # | 根因 | 症状 |
+|---|---|---|
+| 1 | `unit_overhaul` 替换 NPC roster | AI **一个都不穿**你 mod 的装备 |
+| 2 | `PlateOverMailBodyArmorIds` 20 件硬白名单 | 你 mod 的"板甲套链甲"不参与分层衰减 |
+| 3 | `ArmorRework` 读 ItemType enum (14/15/24) | 自定义装备槽的 mod 装备被 RBM 聚合返回 0 |
+| 4 | 武器 damage_factor scale 不同 | vanilla scale 在 RBM 环境是"过烫"（RBM 期望 ~0.3-0.5× vanilla）|
+| 5 | 弓弩 missile_speed 大改 | 你 mod 的弓用 vanilla 100 missile_speed · RBM AirFriction 0.003 下慢如走路 |
+| 6 | 盾 `body_armor` 字段 RBM 独有 | 你 mod 的盾不给手臂加 body_armor 防护 |
+| 7 | ItemModifier 覆盖 | Masterwork/Legendary 加成跟 vanilla 不同 · 你 mod vanilla-scaled 物品可能数值失控 |
+| 8 | Managed core parameters 全局影响 | AirFriction/StrikeGraph/StunPeriod 全局影响所有武器 · 作者没在 RBM 环境测则 balance 失配 |
+
+**所谓 "RBM Patch" 的意义** = 在你的 mod 的 ModuleData 里新增 XML / Harmony 补：把你的 item IDs 加入 `unit_overhaul` 的 NPC roster + `PlateOverMailBodyArmorIds` 列表（或等价映射）+ 校准武器 damage_factor 到 RBM scale（约 vanilla × 0.3-0.5）+ 盾加 `body_armor` 字段 + 弓弩调 missile_speed。
+
+### 对本仓库自研 mod 的影响核查
+
+- **OSA v2 armor override**（1835 决议）：纯 XML 数值重调，但：
+  - ⚠ **需确认是否 inject 到 `unit_overhaul` NPC roster**（否则 vanilla NPC 装的还是 RBM items 而非 OSA）
+  - ⚠ OSA 自定义物品**不在** PlateOverMailBodyArmorIds 20 件白名单 → 吃单层防护
+- **OSW shield v2 override**（114 件）：已 override 盾数值 → **需验证加了 `body_armor` 字段**
+- **"重甲飘刀" 直觉**（§48 收官时用户提）：正是不兼容性 №4 和 №8 的实感——OSW vanilla-scale blade damage_factor 在 RBM 环境过烫
+
+### 关键隐藏参数汇总（用户问的"RBM 修改了哪些隐藏属性"）
+
+**物理/碰撞**: `thrust_tip_collision_distance` 0.3/1.2 · `shield_bash_collision_scale` 1.3 · `BipedalRadius` 0.38 / `QuadrupedalRadius` 0.8 · `non_humanoid_collision_resistance_multiplier_sp` 10.0 · `back_angle_to_disable_collision_shield_blocking` 30°
+
+**伤害**: `MakesRearAttackDamageThreshold` 13 · `SwingHitWithArmDamageMultiplier` 0.5 · `ThrustHitWithArmDamageMultiplier` 0.034 · `FistFightDamageMultiplier` 4.0 · `HeavyAttackMomentumMultiplier` 1.15 · `FallDamageMultiplier` 0.575 / `Absorption` 54.0
+
+**弹道**: `AirFrictionArrow` 0.003 / `Javelin` 0.002 / `BallistaBolt` 0.005 / `Bullet` 0.004 / `Knife/Axe` 0.007 · `ProjectileMaxPenetrationSpeed` 120 · `ProjectileMin/MaxPenetration` 0.1/0.4 · `ShieldPenetrationOffset` 30 / `Factor` 3.0
+
+**眩晕**: `StunPeriodAttackerSwing` 0.1 / `Thrust` 0.67 · `StunMomentumTransferFactor` 0.0055 · `StunDefendWeaponWeightBonusTwoHanded` 0.25 / `BonusPolearm` 0.35 / `ActiveBlocked` 0.1 / `ChamberBlocked` 0.4
+
+**伤害-时序贝塞尔曲线**: `Swing/OverSwing/ThrustCombatSpeedGraph*` 4 控制点 × 3 攻击类型 = 12 数值 · **玩家 UI 看不到的隐藏手感 driver**
+
+**速度/时序**: `bipedal_speed_multiplier` 5.2 · `quadrupedal_acceleration_multiplier` 20 · `guard_reset_time` 10.0 · `BipedalCombatSpeedMin/MaxMultiplier` 0.74/0.84 · `on_weapon_hit_slow_down_factor_swing/thrust` 0.7
+
+### 下次工作参考路径
+
+- 反编译: `C:\Users\situj\Downloads\_rbm_decomp\RBMCombat.decompiled.cs`
+- RBM 本体: `D:\SteamLibrary\steamapps\workshop\content\261550\2859251492\`
+- 关键 XMLs: `ModuleData\RBM_native_parameters_tweaks.xml` / `RBM_spear_managed_core_parameters.xml` / `RBMCombat_unit_overhaul.xml`
+- 官方 docs: fellow93.github.io/RealisticBattleProject/ + 本机 workshop `CHANGELOG.md`
+
+### ★ 补遗 2026-10-11 · RBM Hitbox 权威公式图 + 多层防护完整机制
+
+**源**：用户提供官方 RBM 的 "Human Hitboxes" + "Horse Hitboxes" 两张权威图 · 直接证实并精确化上述 ArmorRework 系统 · **修订本节早期若干推断**。
+
+#### 人类 8 hitbox 装甲聚合公式（图 1 权威）
+
+| hitbox | 装甲值来源公式 | 层数 |
+|---|---|---|
+| **Head** 🔴 | Helmet 的 `head_armor` | 1 层 |
+| **Face** 🟢 | **Helmet 的 `body_armor`**（非 head_armor · 是面罩/面甲防护）| 1 层 |
+| **Neck** 🟡 | ChestPiece 的 `body_armor` | 1 层 |
+| **Shoulder** 🔵 | **Cape.body + Cape.arm + ChestPiece.arm 三源相加** | **3 层叠加** |
+| **Lower Shoulder** 🟢深 | ChestPiece 的 `arm_armor` | 1 层 |
+| **Chest + Abdomen** 🟣 | ChestPiece 的 `body_armor` | 1 层 |
+| **Lower Arm** 🟠 | Gloves 的 `arm_armor` | 1 层 |
+| **Leg** ⚪ | **(ChestPiece.leg + Boots.leg) / 2 均摊** | 2 层均摊 |
+
+**真正多层叠加只在 Shoulder 和 Leg** · 其他 hitbox 单件单源。
+
+#### 马匹 6 hitbox 装甲聚合公式（图 2 权威）
+
+| hitbox | 公式 |
+|---|---|
+| **Head**（头/颈前）🔴 | HorseHarness.head_armor |
+| **Arm**（前胸上部）🟢 | HorseHarness.arm_armor |
+| **Body**（前胸中部小区）🔵 | HorseHarness.body_armor |
+| **Leg**（马臀上部）🟡 | HorseHarness.leg_armor |
+| **腹部大椭圆** 🔵深 | **(leg + body) / 2** |
+| **前后腿紫椭** 🟣 | **(leg × 2 + body) / 3** |
+
+**⚠ 本次修订 §49 "HorseHarness head/arm/leg 装饰性填充"的旧结论**：**错**。图 2 证实全 4 字段都真的参与计算 · 用户 2026-09-24 晚全 4 字段修订**反而是对的** · 旧结论应作废。
+
+#### RBM 多层防护的 3 个耦合机制
+
+**机制 A · 同件装甲内的"区域→材质"硬编码白名单**
+
+RBM 用 **3 个硬编码 ID 列表**（RBMCombat.decompiled.cs 1364/1366/1632）在同一件装甲内按区域重设材质 · 不是堆叠 · 是**区域细化**:
+
+| 列表 | 件数 | 内容 | 作用 |
+|---|---|---|---|
+| **`PlateOverMailBodyArmorIds`** | 20 | desert_lamellar · imperial_scale_armor · imperial_lamellar · empire_legion_b · brass_lamellar_over_mail · coat_of_plates_over_mail · northern_brass_lamellar_over_mail · sturgian_lamellar_base · lamellar_with_scale_skirt · battanian_scale_armor_a · aserai_scale_armor_on_cloth · western_scale_mail · desert_scale_armor · (+ 7 件 mp_*) | 肩部命中 → 材质从 Plate 降为 Chainmail（反映肩是 mail）|
+| **`PlateBelowShoulderArmorIds`** | 9 | sturgian_fortified_armor · khuzait_heavy_armor · plated_leather_coat · eastern_plated_leather · northman_raider_armor · western_scale_mail · (+ 3 件 mp_*) | 肩下命中 → 保留 Plate（反映肩下仍是重装）|
+| **`ClosedFaceMailHelmetIds`** | 16 | closed_desert_helmet · closed_desert_helmet_with_mail · brass_aserai_helmet_closed/b_closed · eastern_vendel_helmet · nordic_helmet · decorated_goggled_helmet · closed_goggled_helmet · goggled_helmet_over_full_mail · lendman_helmet_over_full_mail · sturgian_helmet_closed/b_close · imperial_goggled_helmet · (+ 3 件 mp_*) | 面部命中 → 仍受 mail 保护 · 否则面部暴露 |
+
+**机制 B · 多件装甲数值叠加**（即图 1 的 Shoulder 3 源 + Leg 2 源均摊）· 唯二真正数值叠加的 hitbox。
+
+**机制 C · 材质决定伤害衰减曲线**
+
+`RBMComputeDamage(..., ArmorMaterialTypes armorMaterial)` 把材质传下去 · 不同材质对不同伤害类型的衰减**非线性**:
+
+| ArmorMaterialTypes 枚举 | 对 Cut | 对 Pierce | 对 Blunt |
+|---|---|---|---|
+| 0 None | - | - | - |
+| 1 Cloth | 弱 | 弱 | 弱 |
+| 2 Leather | 中 | 中 | 中 |
+| 3 Chainmail | **极佳** | **最弱**（刺击直钻环）| 中 |
+| 4 Plate | 佳 | 中（但高速穿刺可破）| **极佳**（分散冲量 · trauma 转换）|
+
+**机制 D · Horse HorseHarness 复合权重**：图 2 的 (leg+body)/2 和 (leg×2+body)/3 是**同件内字段加权组合** · 不是多件堆叠（马只戴一件）。
+
+#### 完整伤害流程（例：玩家穿 `imperial_scale_armor` + 冠军披风 + 板金手套 · 被砍到肩膀）
+
+1. **引擎碰撞** → hitBodyPart = 2 (Shoulder)
+2. **RBM Prefix** 命中 `GetBaseArmorEffectivenessForBodyPart` → 走 ArmorRework
+3. **装甲值聚合**（机制 B）: `getShoulderArmor` = Cape.body(45) + Cape.arm(20) + ChestPiece.arm(28) = **93 armor**
+4. **材质判定**（机制 A）: 
+   - `GetMateirialTypeofHitBodyPart(Shoulder)` → slot 6 → `imperial_scale_armor.MaterialType` = Plate (4)
+   - `getShoulderArmorMaterial` 查 PlateOverMailBodyArmorIds → 命中 → **降为 Chainmail (3)**
+5. **伤害计算**（机制 C）: `RBMComputeDamage(mag, 93, Chainmail)` → 走 Chainmail 曲线 · 砍击强防 / 刺击弱防
+6. **最终效果**：高级鳞甲肩部"砍扛得住 · 刺穿得过" · 符合史实
+
+#### 对本仓库自研 mod 的修订影响（深化）
+
+| 问题 | 现决议 | 修订建议 |
+|---|---|---|
+| OSA 自定义板甲**不在** `PlateOverMailBodyArmorIds` | 全被 RBM 当"实心 Plate" · 肩部命中走 Plate 曲线（本应 Chainmail）| 自研 RBMBridge 补 ID 到 RBM 列表 · 或接受"肩部过硬"事实 |
+| OSA 自定义重 chest **不在** `PlateBelowShoulderArmorIds` | lower shoulder 默认 Chainmail（降级）| 重装设计意图的 chest 需补 ID 列表 · 否则肩下过弱 |
+| OSA 自定义 closed-face helmet **不在** `ClosedFaceMailHelmetIds` | 面部命中无 mail 保护 · 直接 face hit damage | 补 ID 列表 |
+| **§49 "HorseHarness head/arm/leg 装饰性填充"旧结论** | 判定 3 字段无效 | **❌ 作废** · 图 2 证实全 4 字段都在用 · 用户 2026-09-24 全 4 字段修订为**正确** |
+| **OSA Chest Piece 的 arm_armor 字段** | 之前未系统性关注 | **直接等于 Shoulder (3 源之一) + Lower Shoulder 的全部防护** · 需审 |
+| **OSA Chest Piece 的 leg_armor 字段** | 之前未系统性关注 | **直接等于腿部均摊的一半防护** · 需审 |
+| **OSA Helmet 的 body_armor 字段** | 之前未系统性关注 | **直接等于 Face hitbox 防护** · 需审 |
+| **OSA Cape 的 arm_armor + body_armor** | §48 Cape 铁律已有 arm · body 未关注 | **Shoulder 3 源公式验证** · body + arm 都要给 |
+| **OSA Boots 的 leg_armor** | 之前有数值但不知其重 | **Leg hitbox 一半来源** · 需审 |
+
+**OSA/OSW 工作方向重写见下方 "📅 2026-10-11 session · OS 系列平衡 patch 工作方向重定 (RBM Hitbox 发现后)" 节**。
+
+---
+
+## 📅 2026-10-11 session · OS 系列平衡 patch 工作方向重定（RBM Hitbox 发现后）
+
+**触发**：RBM Hitbox 公式图 + 3 硬编码白名单 + 材质曲线机制搞清后 · 发现**现有 OS v2 工作栈的 4 处系统性盲点** · 必须在继续 deploy 前先补齐 · 否则 1835 决议落到 XML 后依然在 RBM 环境下**行为不对**。
+
+### 现 OS 工作栈状态梳理
+
+| 组件 | 状态 | 产出 |
+|---|---|---|
+| **OSA armor v2** | 7 文化收官 · 1835 决议 🔵 log-only · XML 未动 | `BALANCE_V2_LOG.md` + `MATERIAL_QUALITY_DICT.md` + `VANILLA_REFERENCE.md` |
+| **OSW shield v2** | 114 件 deploy 完成 · XML 已动 | `OSABalance_shield_override.xml` |
+| **OSW blade v2** | 弃做（用户 α 决策 2026-09-25 "只抬盾不动 blade"）| - |
+| **用户感受"重甲飘刀"** | 2026-09-24 用户提出 · 未解 | - |
+
+### 新 RBM 发现对现工作的 4 处系统性影响
+
+#### 影响 1 · OSA item **全部不在** 3 个 RBM 硬编码白名单
+- 20 件 `PlateOverMailBodyArmorIds` 全是 vanilla 板鳞甲 · OSA 自定义板鳞/板链组合物品一个都没有
+- 9 件 `PlateBelowShoulderArmorIds` 全是 vanilla 重装 chest · OSA 自定义重装一个都没有
+- 16 件 `ClosedFaceMailHelmetIds` 全是 vanilla 闭面头盔 · OSA 自定义闭面盔一个都没有
+- **症状**：OSA 板鳞甲肩部命中走 Plate 曲线（本应 Chainmail）→ 过硬；OSA 重装 chest 的肩下走 Chainmail（本应 Plate）→ 过弱；OSA 闭面盔面部命中无 mail 保护 → face hit 直接吃无甲伤害
+
+#### 影响 2 · 1835 决议是基于"单字段"思维 · 跟多层聚合公式**不对账**
+- 现有决议聚焦主字段（Helmet.head · Chest.body · Boots.leg 等）
+- **图 1 公式证实**：Helmet.body_armor 是 Face 唯一防护 · ChestPiece.arm_armor 是 Shoulder+LowerShoulder 关键一环 · ChestPiece.leg_armor 占腿部 50% · Cape.body+arm 是 Shoulder 3 源之一 · Boots.leg 占腿部 50%
+- **症状**：决议落到 XML 后 · 有些 hitbox 的实际防护值与设计意图偏差 50-100%（取决于次要字段是否填对）
+
+#### 影响 3 · §49 "HorseHarness 装饰性填充"结论**作废**
+- 当时判定 head/arm/leg 字段"是装饰 · 不参与计算"
+- 用户 2026-09-24 晚凭直觉做了全 4 字段修订 · 当时视作保守做法
+- **图 2 证实**：全 4 字段**全部**参与计算 · 还有 `(leg+body)/2` 和 `(leg×2+body)/3` 两个复合公式
+- **症状**：若没按用户修订版 deploy · 马匹腹部/腿部命中防护值计算错
+
+#### 影响 4 · MaterialType enum 字段可能漏审
+- `ArmorMaterialTypes` enum (0 None, 1 Cloth, 2 Leather, 3 Chainmail, 4 Plate) 决定伤害衰减曲线
+- RBMComputeDamage 走不同 material 的衰减**非线性**（Chainmail vs Pierce 最弱 · Plate vs Blunt 最佳 等）
+- OSA/OSW item 若 MaterialType 写错 → RBM 走错曲线 → 整个 hitbox 的实际防护感**跟设计意图偏差一个档位**
+- 这是**暗坑**（没有报错 · 没有警告 · 默默算错）
+
+### 新工作方向 · 重排 Phase 0-5
+
+#### Phase 0 · **RBM 兼容层**（新前置 · 阻塞 Phase 2 deploy）
+
+**定位**：建自研小 patch mod `OSABalance_RBMBridge`（或扩展 `OpenSourceArmouryRBMBalance` 加 Harmony 代码），把 OSA items 注入 RBM 3 个硬编码白名单。
+
+**技术路径 · 2 选 1**:
+- **路径 α · Reflection append**（侵入性小）: Harmony prefix on `ArmorRework.*Material*` 等方法 · reflection 读 private static readonly string[] · append OSA item IDs
+- **路径 β · 逻辑复刻**（更安全但工作量大）: 完全不碰 RBM 内部 · 自己 Harmony prefix 整个 `GetMateirialTypeofHitBodyPart` + `getShoulderArmorMaterial` 等 · 自带 ID 列表判定
+
+**推荐 α · reflection append**：
+```csharp
+[HarmonyPatch(typeof(RBMCombat.Patches.ArmorRework), "GetMateirialTypeofHitBodyPart")]
+static class OSA_PlateOverMail_Inject {
+    static OSA_PlateOverMail_Inject() {
+        // 启动时一次性 append OSA IDs 到 PlateOverMailBodyArmorIds
+        var field = AccessTools.Field(typeof(ArmorRework), "PlateOverMailBodyArmorIds");
+        var original = (string[])field.GetValue(null);
+        var extended = original.Concat(new[] { 
+            // OSA 板鳞/板链 ID 列表（Phase 1 产出）
+            "AR_imperial_scale_v2", 
+            "AR_khuzait_fortified_v2",
+            // ...
+        }).ToArray();
+        field.SetValue(null, extended);
+    }
+}
+```
+
+**产出清单**（Phase 1 补齐）:
+- OSA 板鳞/板链 chest 加入 `PlateOverMailBodyArmorIds`
+- OSA 重装 chest 加入 `PlateBelowShoulderArmorIds`
+- OSA 闭面头盔加入 `ClosedFaceMailHelmetIds`
+
+**工作量**: 1 session
+
+#### Phase 1 · 字段完整性 audit + MaterialType audit（新前置）
+
+**扫 1835 决议清单 · 对每 item 核对**:
+
+| Item 类型 | 主字段（现已填） | 次要字段（需审） |
+|---|---|---|
+| **Helmet** | head_armor | **body_armor**（Face 唯一防护）· arm_armor（§48 已标过部分 aventail）|
+| **ChestPiece** | body_armor | **arm_armor**（Shoulder+LowerShoulder 关键）· **leg_armor**（腿部 50%）|
+| **Cape** | body_armor（§48 已给）· arm_armor（§48 Cape 铁律已给）| 二次验证 Shoulder 3 源公式 |
+| **Gloves** | arm_armor | - |
+| **Boots** | leg_armor（已给）| - |
+| **HorseHarness** | body_armor | **head/arm/leg 全 4 字段**（§49 修订版 · 用户 2026-09-24 全 4 字段决议为准）|
+
+同时审 **MaterialType enum 字段**：所有 OSA items 的 MaterialType 跟设计意图核对（Cloth/Leather/Chainmail/Plate）· 发现偏差补 `OSABalance_material_override.xml`。
+
+**工作量**: 2-3 session（1835 件 × 1-5 字段 complete）· 可用 PowerShell 脚本辅助批量 scan + diff
+
+#### Phase 2 · 已归档决议 deploy 到 XML（原计划 · 但依赖 Phase 1）
+
+**修订**：原计划"直接 deploy 1835 决议"→ 现**必须先过 Phase 1 字段 audit** · 然后 deploy 包含补齐后字段的 override XML。
+
+**工作量**: 1 session（配合 Phase 1 产出的字段 override）
+
+#### Phase 3 · OSW blade damage_factor RBM scale 校准（原"重甲飘刀"问题的终解）
+
+**修订**：原"α 不动 blade" 决策**仍保留**作为**保守默认** · 但现在加 **β 可选 OSW blade RBM-scale override**:
+- 新 `OSABalance_blade_rbm_override.xml` · 把 OSW 的 vanilla-scale blade damage_factor 调到 RBM 期望 scale (约 vanilla × 0.3-0.5)
+- 作为**可选加载**模块 · 用户决定装不装
+
+**工作量**: 1 session（OSW 18 blade pieces 的 damage_factor 按材质对标 RBM）
+
+#### Phase 4 · Khuzait + Nord 文化（原计划 · 现**已完成**）
+
+**核实**: §48 说 "7 文化收官" 已包含 Khuzait + Nord · 之前 journal 待办里"剩 Khuzait + Nord" 是旧状态 · **本项目实际已完成** · 可从待办清理。
+
+#### Phase 5 · 主力机实游戏测 + 数字校准
+
+**修订**：原"deploy 后测试"→ 现"Phase 0+1+2 全完成后一轮完整测试"
+- 主力机 build 自研 RBMBridge
+- deploy OSABalance_manual_override + material_override + shield_override
+- 开 1 场大会战 · 观察肩部/面部/腿部命中反馈
+- 调数字
+
+**工作量**: 1 session
+
+### 风险与权衡
+
+- **Reflection 修改 RBM private 字段**（Phase 0 路径 α）: 若 RBM 升级重构 → OSABridge 需跟着改 · 跟 vanilla + RBM 的 upgrade cycle 耦合
+- **逻辑复刻**（路径 β）: 工作量数倍 · 但独立于 RBM 版本
+- **Phase 1 字段 audit 的 1835 件**: 工作量重 · 但是**必做**（否则 Phase 2 deploy 的 XML 跟设计意图不对账）
+- **MaterialType 审计**: 可能发现系统性错误 · 需时间校正
+
+### 推荐开工顺序（主力机 session 为主）
+
+1. **本机**: Phase 0 骨架 · 写 `OSABridge/` project · reflection 代码 · 配 OSA ID 分类脚本
+2. **本机**: Phase 1 字段 audit · PowerShell 扫 1835 决议 · 生成"字段缺口报告"
+3. **本机**: Phase 2 准备 · 根据 audit 结果生成 override XML
+4. **主力机**: build OSABridge · deploy Phase 2 XML · 开大会战测试 · 校数字
+5. **可选**: Phase 3 blade override
+
+### 跟其他待办的关系
+
+- **PFRB v2 Keep Recruiter**: 完全正交 · 可并行推进
+- **PlayerFiefPoolShield**: 完全正交 · 可并行推进
+- **CBTB (主力机)**: 不影响
+- **优先级**: 这 3 条跟 OS 平衡 patch rework 同列 · 用户 session 分配决定
+
+### 对现有 memory 的更新
+
+- `project-osa-osw-balance.md`：加 Phase 0+1 新前置 · 修订 §49 装饰性填充旧结论
+- `reference-rbm-mechanics.md`：加 hitbox 公式 + 3 ID 列表 reference
+
+---
+
+## 📅 2026-10-13 session · OS 系列平衡 patch Phase 0 执行（第二设备 D:）· 侦查 + 代码骨架落地
+
+**位置**：第二设备 D:（无 E:）· 承接 10-11 session §"OS 系列平衡 patch 工作方向重定" 的 Phase 0 开工锚点
+
+**产物 commit**: `e47d01f` (已 push origin/main)
+**归档**: `_scratch/OSA_phase0/PHASE0_RECON.md` + `_scratch/OSA_phase0/*_candidates.json`
+**反编译源**: `_scratch/RBM_decomp/RBMCombat.decompiled.cs`（13842 行 · 已 .gitignore `_scratch/*_decomp/`）
+
+### 🔴 修正 §"OS 系列平衡 patch 工作方向重定" 的错记
+
+**Journal §3016 旧写**: `[HarmonyPatch(typeof(RBMCombat.Patches.ArmorRework), ...)]`
+**实际反编译结果**:
+- namespace 是 `RBMCombat`（**无** `.Patches` 子命名空间）
+- `PlateBelowShoulderArmorIds` 和 `ClosedFaceMailHelmetIds` 在 **`RBMCombat.DamageRework`**（internal class · 不是 `ArmorRework`）
+- 只有 `PlateOverMailBodyArmorIds` 在 `RBMCombat.ArmorRework`（public class）
+
+三字段权威签名（RBMCombat.dll v4.5.4 · 2026-10-08 build）:
+
+| 字段 | 容器类 | 可见性 | 签名 | 行号 | vanilla 条数 |
+|---|---|---|---|---|---|
+| `PlateBelowShoulderArmorIds` | `RBMCombat.DamageRework` | internal | `private static readonly string[]` | 1364 | 9 |
+| `ClosedFaceMailHelmetIds` | `RBMCombat.DamageRework` | internal | `private static readonly string[]` | 1366 | 16 |
+| `PlateOverMailBodyArmorIds` | `RBMCombat.ArmorRework` | public | `private static readonly string[]` | 1632 | 20 |
+
+Assembly target: `.NETFramework,Version=v4.7.2` · 入口 `RBMCombatPatcher.DoPatching(ref Harmony)`
+
+### Phase 0 侦查：OSA 候选 ID 分桶
+
+扫描源 `D:\...\workshop\content\261550\3011479883\ModuleData\OSA_*.xml` · **14 文件 · 1648 Item**
+
+**全景分布**:
+- Type: HeadArmor 843 / BodyArmor 388 / Cape 310 / LegArmor 61 / HandArmor 46
+- material_type: Plate 1210 / Leather 158 / Cloth 146 / Chainmail 134
+
+**启发式分桶**（需 Phase 0.B 人工复审）:
+- **PlateOverMail (POM)**: BodyArmor+Plate · 命名含 scale/lamellar/over_mail → **148 件**
+- **PlateBelowShoulder (PBS)**: BodyArmor+Plate · 命名含 fortified/plated/heavy_armor/raider/cuirass → **11 件**（偏小 · 疑漏 · `AR_aserai_leather_a` material_type 疑错标）
+- **ClosedFaceMail (CFM)**: HeadArmor · 命名含 closed/goggled/faceguard/bascinet → **142 件**（cue 偏宽 · 需严格化）
+- **Plate 未分类**: generic plate 无命名 cue → **47 件**（Phase 1 字段 audit 同步解决）
+
+归档 JSON: `_scratch/OSA_phase0/{pom,pbs,cfm}_candidates.json` + `plate_unclassified.json`
+
+### Phase 0.A 执行：OSABalance 骨架 XML→DLL 混合
+
+**决策**: 扩展现 `OpenSourceArmouryRBMBalance/`（journal §3008 两选一）· 不新建独立 bridge mod · 理由见 PHASE0_RECON §3.2
+**版本**: SubModule.xml v1.2.0 → **v1.3.0**
+
+**新增文件**:
+```
+OpenSourceArmouryRBMBalance/
+├── SubModule.xml                        + Bannerlord.Harmony dep + <SubModules> entry
+├── deploy.ps1                           + dotnet build 步骤 + GameRoot auto-detect (D:/E:)
+└── src/
+    ├── OSABalanceRBMBridge.csproj       net472 · AssemblyName=OSABalanceRBMBridge · 不 Ref RBMCombat.dll
+    ├── OSAIds.cs                        Phase 0 safe subset: POM 7 件 / PBS 2 件 / CFM 6 件
+    ├── WhitelistInjector.cs             反射 append + before/after 比对自验 · Report struct
+    └── SubModule.cs                     OnSubModuleLoad · 主菜单显示绿/红报告
+```
+
+**技术要点**:
+1. **不 Reference RBMCombat.dll** · 全走 `AccessTools.TypeByName` 字符串解析 · 防 launcher 静态 DLL 扫描失败（跟 RBMPlayerStaminaPoiseBuff 同模式）
+2. **不 Harmony Patch 消费方法** · 直接 `fi.SetValue(null, mergedArray)` 覆写 `private static readonly string[]` · .NET Fx 4.7.2 合法
+3. **OnSubModuleLoad 即注入** · 无需延迟到 `OnMissionBehaviorInitialize`（RBMCombat 跟 RBMAI 不同 · 它是 RBM 启动时 eager-loaded · 而 RBMAI lazy load）
+4. **写入后立即 `getValue` 比对长度** · 异常则抛 · 主菜单显示红字失败消息 · 游戏不崩
+
+**本机验证**:
+```
+dotnet build -c Release
+Build succeeded. 0 Warning(s). 0 Error(s). Time Elapsed 00:00:04.14
+产物: src/bin/Release/OSABalanceRBMBridge.dll (8 KB)
+```
+
+**环境变量用法**（第二设备 D: 兼容）:
+```powershell
+$env:BannerlordBin = 'D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\bin\Win64_Shipping_Client'
+$env:WorkshopRoot  = 'D:\SteamLibrary\steamapps\workshop\content\261550'
+```
+
+### Smoke test 预期（**待主力机 pull 后执行**）
+
+主力机 `git pull && deploy.ps1 -GameRoot "E:\..."` 后，启游戏主菜单应出现**绿色**消息:
+```
+OSABalance RBMBridge: PBS 9->11, CFM 16->22, POM 20->27
+```
+（9+2=11 · 16+6=22 · 20+7=27）
+
+**绿字含义** · 验证的技术假设:
+- ✅ launcher 没把 OSABalanceRBMBridge.dll 拦下（Reference 配置对了）
+- ✅ `OnSubModuleLoad` 跑到了（SubModule.xml 入口配对了）
+- ✅ `AccessTools.TypeByName("RBMCombat.DamageRework")` 找到了 internal class
+- ✅ `AccessTools.Field(..., NonPublic|Static)` 读到了原数组
+- ✅ `SetValue(null, merged)` 写回成功 · readonly 覆写在 .NET Fx 4.7.2 真的允许
+- ✅ `GetValue` readback 长度 = merged.Length · 没被编译器 inline 掉
+
+**红字含义**: 哪一步挂了 · `Error` 字段报告原因 · 游戏仍能运行（soft-fail）
+
+**它不验证的**:
+- ❌ 15 件 ID 的分类是否对（启发式分桶可能有误报 → Phase 0.B 要做的事）
+- ❌ 战斗命中肩部是否真走 Chainmail 曲线（Phase 5 实游戏测）
+- ❌ 剩 141 件 POM / 136 件 CFM 候选是否被覆盖（显然没覆盖 · 等 Phase 0.B 扩清单）
+
+### Phase 0 剩余工作（Smoke test 后）
+
+| 阶段 | 工作 | 预估 |
+|---|---|---|
+| **Smoke test** | 主力机 pull → deploy.ps1 → 启游戏看主菜单绿字 | 主力机 10 min |
+| **Phase 0.B** | ID 清单精炼: 过 148 POM / 11 PBS / 142 CFM / 47 unclassified · 人工 + PowerShell 辅助 · 产出 production OSAIds.cs | 0.5-1 session |
+| **Phase 1** | 1835 决议字段完整性 audit + MaterialType audit（跟 0.B **正交** · 可并发）| 2-3 session |
+| **Phase 2** | deploy 完整 override XML（阻塞于 0.B + 1 都完成）| 1 session |
+| **Phase 5** | 主力机大会战实测 · 校数字 | 1 session |
+
+### 本次 session 对工作记忆的影响
+
+- `project-osa-osw-balance.md`：Phase 0 从"侦查前置"推进到"骨架落地 · 待 smoke test"
+- `project-bannerlord-modding.md`：OSABalance 从"纯 XML pipeline"升级为"XML + Harmony-reflection hybrid"
+- Journal §3016 旧 namespace 错记已修正（见本节首）
+
+---
+
+## 📅 2026-10-11 session · PFRB v2 Keep Recruiter 设计定案 + PlayerFiefPoolShield 立项（IG × PSR 补丁兜底）
+
+**背景**：用户反馈 PFRB v1.0.0 "并未正常运作"。本次 session 做了 PFRB 代码审读 + IG DLL 反编译（ImprovedGarrisons.dll · `C:\Users\situj\Downloads\_ig_decomp\`）· 定位根因 · 定案 v2.0 彻底重构 + 自研兜底 shield mod。
+
+### 根因诊断 · PFRB v1 "不工作" 不是 bug 是 scope 错配
+
+**PFRB v1 代码审读结论**: `VolunteerModelPatches.cs` 2 个 postfix 完全正确命中、buyer check 正确、settlement check 正确、`[HarmonyAfter("RBM")]` 优先级到位 · **机制层面无 bug**。
+
+**真实失败原因**（4 条）:
+1. **PSR 5000 AI 吸干共用池**: PFRB 让玩家 fief notable slot ×3 regen · 但 AI lord 党派 5000 一天到晚进村 · 每次 6 slot 吸光再走 · ×3 regen 也追不上 drink rate
+2. **vanilla 6 slot/notable 硬编码**: PFRB 无法突破 slot 上限 · 一个村庄 3 notables × 6 = 18 slot · PSR 5000 AI 吸一次就是数倍
+3. **概率 clamp ≤ 1.0**: 原生概率已 0.5+ 时 ×3 自然 cap 到 1.0 · 加速效果有限
+4. **纯 pool-tweak scope**: PFRB 只在**共用池**里加速 · 没打破共用的根本约束
+
+### IG 机制反编译结论 · 问题根源同样是共用池
+
+**IG recruiter 工作流**（`ImprovedGarrisons.decompiled.cs` line 3700-3800）:
+```csharp
+recruitingParty.AddElementToMemberRoster(notable.VolunteerTypes[bitCode], 1, false);
+notable.VolunteerTypes[bitCode] = null;  // 消费 vanilla 共用池
+```
+IG recruiter 跟 vanilla player 跟 AI lord 用的是**完全同一个** `notable.VolunteerTypes` 数组 · 先到先得 · PSR AI 每天提前到就先吸光。
+
+**IG 72 config 字段清单（关键）**:
+- `RecruitsAreRecruitedFromVillages` ← 开关（false = town 直 spawn，不走共用池）
+- `AmountOfUnitsToSpawn` · `MinRecruitmentAmountFromVillages`
+- `CustomGarrisonSizeMultiplier` · `MaxUpgradeTier`
+- `AIClanPartySizeMultiplier` · `PlayerClanPartySizeMultiplier` · `MainPartySizeMultiplier`
+- `MaximumNPCRecruitmentThreshold` · `NPCMaxUpgradeTier` · `EnableNPCWorldRecruitment`
+- `DailyEXPAmount` · `GarrisonTrainingMultiplier` · `EnableNPCGarrisonTraining`
+
+### 用户决策（2026-10-11）
+
+- **PFRB rescope 为 Keep Recruiter**（设计见下）
+- **IG 兜底方案选 B · 自研 PlayerFiefPoolShield**（Harmony prefix 阻 AI 消费玩家 fief 共用池）
+- **弃用方案 A**（纯 IG config 调整）: 不动 `RecruitsAreRecruitedFromVillages`（保村庄→recruiter→town 沉浸）· 不动 AI 党派 scale（保 campaign balance）
+
+### 🟡 PFRB v2.0 完整设计（未开工 · 用户 2026-10-11 明确"记录计划不开工"）
+
+#### 核心概念
+**"动员池 + 季度式再生"**：每个玩家 fief 维护 `AvailableRecruits` 整数池 · 征募消耗池 · 池每日按**食物/忠诚/建筑**条件再生 · 废弃单纯 cooldown 日历方案。
+
+#### 1 · 兵种池 · Retinues 自定义兵集成
+- 优先: 玩家 clan Retinues 所有自定义兵
+- Fallback: vanilla `settlement.Culture.BasicTroop`
+- UI: InquiryVM 让玩家选兵种 + 数量 slider
+
+#### 2 · 批量上限 + 成本模型
+- `MaxPerVisit = 9999`（硬 cap · 实际受池大小限制）
+- `FinalCost = N × BasePerTroop × CostMultiplier × ProsperityFactor + 100 gold overhead`
+- `BasePerTroop` = `troop.TroopPrice`（Retinues 兵反映 tier · vanilla T1 ≈ 20 gold）
+- `ProsperityFactor` = `clamp(1 - prosperity/10000 × 0.3, 0.7, 1.0)`
+- 示例: 500 × 20 × 1.0 × 0.85 + 100 = **8600 gold**
+
+#### 3 · 池再生数学
+
+```
+MaxPool = BasePool + BarracksBonus + TrainingYardBonus
+       = 300 + barracks_lv × 100 + training_yard_lv × 50
+```
+- Lv 0 建筑: 300
+- Lv 3 Barracks + Lv 3 TY: 750
+
+```
+DailyRegen = BaseRegen × FoodFactor × LoyaltyFactor
+BaseRegen = 5/day (对标用户 100/21 日 ≈ 4.76/day)
+FoodFactor: 1.5 (food+ · stock>50) | 1.0 (中等) | 0.5 (饿 · stock<20)
+LoyaltyFactor = clamp(loyalty/50, 0.5, 2.0)
+```
+
+**恢复 100 兵实际日数**:
+- 默认（loyalty 50 · 食物中等）: 20 日 ≈ 1 季度（匹配用户期望）
+- 顶峰（loyalty 100 · 食物充盈）: 7 日
+- 艰难（loyalty 25 · 食物短缺）: 80 日
+
+#### 4 · 入口门槛（硬 gate）
+- 必须 player clan 自有 fief（含 bound village 可选）
+- `settlement.Town.FoodStocks > 50`
+- `settlement.Town.Loyalty > 30`
+- 菜单: `town_keep` + `castle_keep` 新 option "Muster recruits"
+- **暂不做** Hall 对话 / 指挥官 NPC（用户明说之后再做）
+
+#### 5 · 升级 XP 不改
+走 vanilla + GarrisonDrills + 战斗 XP。
+
+#### 6 · 建筑耦合
+- Barracks → MaxPool bonus · Phase 1 定位 vanilla building ID
+- Training Yard → Regen bonus · 同上
+- Fallback if no building found: 用 `prosperity / 500` 作简易代理
+
+#### 7 · 项目结构（扩展现 `PlayerFiefRecruitBoost/`）
+```
+PlayerFiefRecruitBoost/
+├── SubModule.xml                 版本 v2.0.0 + 依赖加 Retinues（可选）
+├── ModuleData/config.xml         v2 字段扩展
+└── src/
+    ├── SubModule.cs              改 PatchAll → + RegisterBehavior
+    ├── Config.cs                 v2 字段 (BasePool/BaseRegen/BasePerTroop/CostMultiplier)
+    ├── VolunteerModelPatches.cs  保留 v1 patches 作兜底
+    ├── KeepRecruiterBehavior.cs  新 · CampaignBehavior · 池/再生/菜单/UI
+    └── RetinuesBridge.cs         新 · 封装 Retinues API 调用
+```
+依赖: Retinues v1.4.14.31 作可选依赖（未装 → fallback vanilla · 不崩）
+
+#### 8 · 实施 Phase 分解
+| Phase | 工作 | 位置 |
+|---|---|---|
+| P1 · 探路 | ilspycmd Retinues.dll + 扫 DefaultBuildingTypes 找 barracks/training yard id | 本机 |
+| P2 · 核心 | KeepRecruiterBehavior 菜单+池+日 tick regen+SyncData | 本机 |
+| P3 · 成本/再生 | Config v2 + Food/Loyalty 读取 + 公式实装 | 本机 |
+| P4 · UI | InquiryVM slider + 显示 "当前池/日再生/成本" | 本机 |
+| P5 · deploy + 测 | 主力机 build + 实游戏测 · 校准数字 | 主力机 |
+
+**估 1-2 session**。
+
+### 🟡 PlayerFiefPoolShield 立项（未开工 · 兜底 shield mod）
+
+**定位**: 阻止 AI 党派消费玩家 fief 的 vanilla volunteer pool · 跟 PFRB v2 Keep Recruiter **互补**（后者加独立池；前者保护共用池不被 AI 吸）。
+
+**核心 Harmony prefix 候选**（Phase 1 需在 `_scratch/CampaignSystem_decomp/` 里精确定位）:
+- **选项 A（低层最稳 · 推荐）**: `MobileParty.RecruitTroop(Hero notable, int index)` 或等价消费入口 · prefix 判 `__instance.IsAI && settlement.IsPlayerFief → return false`
+- 选项 B: AI recruitment evaluation 入口 · 把玩家 fief 从候选列表剔除
+- 选项 C: `DefaultVolunteerModel.GetVolunteerAtIndex` · AI 眼里的池返回 null
+
+**优**: 单一拦截点 · 抓所有路径（vanilla + IG recruiter + 任何第三方） · 可逆
+
+**依赖**: 只 Harmony · 跟 IG/RBM/Retinues/PSR 完全正交
+
+**配置**:
+```xml
+<ShieldPlayerFief>true</ShieldPlayerFief>
+<IncludeBoundVillages>true</IncludeBoundVillages>
+<LogRejectionsToFile>true</LogRejectionsToFile>
+```
+
+**估 1 session**（P1 定位 + P2 写 prefix + P3 build/test）
+
+### 整体工作流
+- PFRB v2 (独立池) + PlayerFiefPoolShield (共用池保护) **双保险**
+- v2 Keep Recruiter 走独立池 · 大规模低 tier 批量
+- Shield 保护 vanilla village 流程 · 玩家仍能走传统招募
+- 相互正交 · 不冲突
+
+### 产物引用
+- IG 反编译: `C:\Users\situj\Downloads\_ig_decomp\ImprovedGarrisons.decompiled.cs`
+- Retinues DLL 位置: `D:\SteamLibrary\steamapps\workshop\content\261550\3599557394\bin\Win64_Shipping_Client\Retinues.dll`
+- Retinues reference pattern 参考: `RetinuesCultureFilter/src/RetinuesCultureFilter.csproj`
 
 ---
 

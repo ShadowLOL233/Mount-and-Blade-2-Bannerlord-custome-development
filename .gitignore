@@ -8,3 +8,6 @@ obj/
 # IDE
 .vs/
 .idea/
+
+# Reverse-engineering artifacts (reproducible via ilspycmd, keep out of history)
+_scratch/*_decomp/

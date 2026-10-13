@@ -2869,6 +2869,156 @@ imperial_lamellar, empire_legion_b, ...（+ 对应 mp_* 多人版）
 
 ---
 
+## 📅 2026-10-11 session · PFRB v2 Keep Recruiter 设计定案 + PlayerFiefPoolShield 立项（IG × PSR 补丁兜底）
+
+**背景**：用户反馈 PFRB v1.0.0 "并未正常运作"。本次 session 做了 PFRB 代码审读 + IG DLL 反编译（ImprovedGarrisons.dll · `C:\Users\situj\Downloads\_ig_decomp\`）· 定位根因 · 定案 v2.0 彻底重构 + 自研兜底 shield mod。
+
+### 根因诊断 · PFRB v1 "不工作" 不是 bug 是 scope 错配
+
+**PFRB v1 代码审读结论**: `VolunteerModelPatches.cs` 2 个 postfix 完全正确命中、buyer check 正确、settlement check 正确、`[HarmonyAfter("RBM")]` 优先级到位 · **机制层面无 bug**。
+
+**真实失败原因**（4 条）:
+1. **PSR 5000 AI 吸干共用池**: PFRB 让玩家 fief notable slot ×3 regen · 但 AI lord 党派 5000 一天到晚进村 · 每次 6 slot 吸光再走 · ×3 regen 也追不上 drink rate
+2. **vanilla 6 slot/notable 硬编码**: PFRB 无法突破 slot 上限 · 一个村庄 3 notables × 6 = 18 slot · PSR 5000 AI 吸一次就是数倍
+3. **概率 clamp ≤ 1.0**: 原生概率已 0.5+ 时 ×3 自然 cap 到 1.0 · 加速效果有限
+4. **纯 pool-tweak scope**: PFRB 只在**共用池**里加速 · 没打破共用的根本约束
+
+### IG 机制反编译结论 · 问题根源同样是共用池
+
+**IG recruiter 工作流**（`ImprovedGarrisons.decompiled.cs` line 3700-3800）:
+```csharp
+recruitingParty.AddElementToMemberRoster(notable.VolunteerTypes[bitCode], 1, false);
+notable.VolunteerTypes[bitCode] = null;  // 消费 vanilla 共用池
+```
+IG recruiter 跟 vanilla player 跟 AI lord 用的是**完全同一个** `notable.VolunteerTypes` 数组 · 先到先得 · PSR AI 每天提前到就先吸光。
+
+**IG 72 config 字段清单（关键）**:
+- `RecruitsAreRecruitedFromVillages` ← 开关（false = town 直 spawn，不走共用池）
+- `AmountOfUnitsToSpawn` · `MinRecruitmentAmountFromVillages`
+- `CustomGarrisonSizeMultiplier` · `MaxUpgradeTier`
+- `AIClanPartySizeMultiplier` · `PlayerClanPartySizeMultiplier` · `MainPartySizeMultiplier`
+- `MaximumNPCRecruitmentThreshold` · `NPCMaxUpgradeTier` · `EnableNPCWorldRecruitment`
+- `DailyEXPAmount` · `GarrisonTrainingMultiplier` · `EnableNPCGarrisonTraining`
+
+### 用户决策（2026-10-11）
+
+- **PFRB rescope 为 Keep Recruiter**（设计见下）
+- **IG 兜底方案选 B · 自研 PlayerFiefPoolShield**（Harmony prefix 阻 AI 消费玩家 fief 共用池）
+- **弃用方案 A**（纯 IG config 调整）: 不动 `RecruitsAreRecruitedFromVillages`（保村庄→recruiter→town 沉浸）· 不动 AI 党派 scale（保 campaign balance）
+
+### 🟡 PFRB v2.0 完整设计（未开工 · 用户 2026-10-11 明确"记录计划不开工"）
+
+#### 核心概念
+**"动员池 + 季度式再生"**：每个玩家 fief 维护 `AvailableRecruits` 整数池 · 征募消耗池 · 池每日按**食物/忠诚/建筑**条件再生 · 废弃单纯 cooldown 日历方案。
+
+#### 1 · 兵种池 · Retinues 自定义兵集成
+- 优先: 玩家 clan Retinues 所有自定义兵
+- Fallback: vanilla `settlement.Culture.BasicTroop`
+- UI: InquiryVM 让玩家选兵种 + 数量 slider
+
+#### 2 · 批量上限 + 成本模型
+- `MaxPerVisit = 9999`（硬 cap · 实际受池大小限制）
+- `FinalCost = N × BasePerTroop × CostMultiplier × ProsperityFactor + 100 gold overhead`
+- `BasePerTroop` = `troop.TroopPrice`（Retinues 兵反映 tier · vanilla T1 ≈ 20 gold）
+- `ProsperityFactor` = `clamp(1 - prosperity/10000 × 0.3, 0.7, 1.0)`
+- 示例: 500 × 20 × 1.0 × 0.85 + 100 = **8600 gold**
+
+#### 3 · 池再生数学
+
+```
+MaxPool = BasePool + BarracksBonus + TrainingYardBonus
+       = 300 + barracks_lv × 100 + training_yard_lv × 50
+```
+- Lv 0 建筑: 300
+- Lv 3 Barracks + Lv 3 TY: 750
+
+```
+DailyRegen = BaseRegen × FoodFactor × LoyaltyFactor
+BaseRegen = 5/day (对标用户 100/21 日 ≈ 4.76/day)
+FoodFactor: 1.5 (food+ · stock>50) | 1.0 (中等) | 0.5 (饿 · stock<20)
+LoyaltyFactor = clamp(loyalty/50, 0.5, 2.0)
+```
+
+**恢复 100 兵实际日数**:
+- 默认（loyalty 50 · 食物中等）: 20 日 ≈ 1 季度（匹配用户期望）
+- 顶峰（loyalty 100 · 食物充盈）: 7 日
+- 艰难（loyalty 25 · 食物短缺）: 80 日
+
+#### 4 · 入口门槛（硬 gate）
+- 必须 player clan 自有 fief（含 bound village 可选）
+- `settlement.Town.FoodStocks > 50`
+- `settlement.Town.Loyalty > 30`
+- 菜单: `town_keep` + `castle_keep` 新 option "Muster recruits"
+- **暂不做** Hall 对话 / 指挥官 NPC（用户明说之后再做）
+
+#### 5 · 升级 XP 不改
+走 vanilla + GarrisonDrills + 战斗 XP。
+
+#### 6 · 建筑耦合
+- Barracks → MaxPool bonus · Phase 1 定位 vanilla building ID
+- Training Yard → Regen bonus · 同上
+- Fallback if no building found: 用 `prosperity / 500` 作简易代理
+
+#### 7 · 项目结构（扩展现 `PlayerFiefRecruitBoost/`）
+```
+PlayerFiefRecruitBoost/
+├── SubModule.xml                 版本 v2.0.0 + 依赖加 Retinues（可选）
+├── ModuleData/config.xml         v2 字段扩展
+└── src/
+    ├── SubModule.cs              改 PatchAll → + RegisterBehavior
+    ├── Config.cs                 v2 字段 (BasePool/BaseRegen/BasePerTroop/CostMultiplier)
+    ├── VolunteerModelPatches.cs  保留 v1 patches 作兜底
+    ├── KeepRecruiterBehavior.cs  新 · CampaignBehavior · 池/再生/菜单/UI
+    └── RetinuesBridge.cs         新 · 封装 Retinues API 调用
+```
+依赖: Retinues v1.4.14.31 作可选依赖（未装 → fallback vanilla · 不崩）
+
+#### 8 · 实施 Phase 分解
+| Phase | 工作 | 位置 |
+|---|---|---|
+| P1 · 探路 | ilspycmd Retinues.dll + 扫 DefaultBuildingTypes 找 barracks/training yard id | 本机 |
+| P2 · 核心 | KeepRecruiterBehavior 菜单+池+日 tick regen+SyncData | 本机 |
+| P3 · 成本/再生 | Config v2 + Food/Loyalty 读取 + 公式实装 | 本机 |
+| P4 · UI | InquiryVM slider + 显示 "当前池/日再生/成本" | 本机 |
+| P5 · deploy + 测 | 主力机 build + 实游戏测 · 校准数字 | 主力机 |
+
+**估 1-2 session**。
+
+### 🟡 PlayerFiefPoolShield 立项（未开工 · 兜底 shield mod）
+
+**定位**: 阻止 AI 党派消费玩家 fief 的 vanilla volunteer pool · 跟 PFRB v2 Keep Recruiter **互补**（后者加独立池；前者保护共用池不被 AI 吸）。
+
+**核心 Harmony prefix 候选**（Phase 1 需在 `_scratch/CampaignSystem_decomp/` 里精确定位）:
+- **选项 A（低层最稳 · 推荐）**: `MobileParty.RecruitTroop(Hero notable, int index)` 或等价消费入口 · prefix 判 `__instance.IsAI && settlement.IsPlayerFief → return false`
+- 选项 B: AI recruitment evaluation 入口 · 把玩家 fief 从候选列表剔除
+- 选项 C: `DefaultVolunteerModel.GetVolunteerAtIndex` · AI 眼里的池返回 null
+
+**优**: 单一拦截点 · 抓所有路径（vanilla + IG recruiter + 任何第三方） · 可逆
+
+**依赖**: 只 Harmony · 跟 IG/RBM/Retinues/PSR 完全正交
+
+**配置**:
+```xml
+<ShieldPlayerFief>true</ShieldPlayerFief>
+<IncludeBoundVillages>true</IncludeBoundVillages>
+<LogRejectionsToFile>true</LogRejectionsToFile>
+```
+
+**估 1 session**（P1 定位 + P2 写 prefix + P3 build/test）
+
+### 整体工作流
+- PFRB v2 (独立池) + PlayerFiefPoolShield (共用池保护) **双保险**
+- v2 Keep Recruiter 走独立池 · 大规模低 tier 批量
+- Shield 保护 vanilla village 流程 · 玩家仍能走传统招募
+- 相互正交 · 不冲突
+
+### 产物引用
+- IG 反编译: `C:\Users\situj\Downloads\_ig_decomp\ImprovedGarrisons.decompiled.cs`
+- Retinues DLL 位置: `D:\SteamLibrary\steamapps\workshop\content\261550\3599557394\bin\Win64_Shipping_Client\Retinues.dll`
+- Retinues reference pattern 参考: `RetinuesCultureFilter/src/RetinuesCultureFilter.csproj`
+
+---
+
 ## Bug 历史与修复
 
 ### Bug #1 · 大规模会战结算界面卡死

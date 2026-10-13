@@ -1,11 +1,11 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-11（RBM Hitbox 公式整合 + OS 系列平衡 patch 工作方向重定 · PFRB v2 Keep Recruiter 设计 + PlayerFiefPoolShield 立项）
+**最后更新**：2026-10-13（OS 系列平衡 Phase 0 骨架落地 · OSABalance v1.3.0 XML→XML+Harmony hybrid · smoke test 待主力机执行）
 
-## 🎯 设备优先度（2026-10-11 用户指定）
+## 🎯 设备优先度（2026-10-13 更新）
 
-- **主力机（E:）** · 最高优先度：**CBTB (CustomBattleTroopBuilder)** 继续推进 · 本机不碰（参见 commit `fd5f8d3` 之后的 CBTB 系列 commit）
-- **第二设备（D:）本机** · 最高优先度：**OS 系列平衡 patch 侦查与信息收集** · 用户将在下一 session 亲自执行 · 开工锚点见 §"OS 系列平衡 patch 工作方向重定（RBM Hitbox 发现后）" 节的 Phase 0+1
+- **主力机（E:）** · 最高优先度：**OSABalance v1.3.0 smoke test**（`git pull && deploy.ps1`，主菜单看绿字 `PBS 9->11, CFM 16->22, POM 20->27`）· CBTB 继续推进
+- **第二设备（D:）本机** · 最高优先度：**OS 系列平衡 Phase 0.B**（ID 清单精炼 · 把 15 件 safe subset 扩到 ~300 件 production）· 可跟 Phase 1 并发
 
 其他待办（PFRB v2 Keep Recruiter / PlayerFiefPoolShield / BE 战象 Path B' / CheatsGuard Round 1 实测 / BetterPatrolsBrake 测试 等）均为次优 · 等用户 session 分配。
 
@@ -3108,6 +3108,125 @@ static class OSA_PlateOverMail_Inject {
 
 - `project-osa-osw-balance.md`：加 Phase 0+1 新前置 · 修订 §49 装饰性填充旧结论
 - `reference-rbm-mechanics.md`：加 hitbox 公式 + 3 ID 列表 reference
+
+---
+
+## 📅 2026-10-13 session · OS 系列平衡 patch Phase 0 执行（第二设备 D:）· 侦查 + 代码骨架落地
+
+**位置**：第二设备 D:（无 E:）· 承接 10-11 session §"OS 系列平衡 patch 工作方向重定" 的 Phase 0 开工锚点
+
+**产物 commit**: `e47d01f` (已 push origin/main)
+**归档**: `_scratch/OSA_phase0/PHASE0_RECON.md` + `_scratch/OSA_phase0/*_candidates.json`
+**反编译源**: `_scratch/RBM_decomp/RBMCombat.decompiled.cs`（13842 行 · 已 .gitignore `_scratch/*_decomp/`）
+
+### 🔴 修正 §"OS 系列平衡 patch 工作方向重定" 的错记
+
+**Journal §3016 旧写**: `[HarmonyPatch(typeof(RBMCombat.Patches.ArmorRework), ...)]`
+**实际反编译结果**:
+- namespace 是 `RBMCombat`（**无** `.Patches` 子命名空间）
+- `PlateBelowShoulderArmorIds` 和 `ClosedFaceMailHelmetIds` 在 **`RBMCombat.DamageRework`**（internal class · 不是 `ArmorRework`）
+- 只有 `PlateOverMailBodyArmorIds` 在 `RBMCombat.ArmorRework`（public class）
+
+三字段权威签名（RBMCombat.dll v4.5.4 · 2026-10-08 build）:
+
+| 字段 | 容器类 | 可见性 | 签名 | 行号 | vanilla 条数 |
+|---|---|---|---|---|---|
+| `PlateBelowShoulderArmorIds` | `RBMCombat.DamageRework` | internal | `private static readonly string[]` | 1364 | 9 |
+| `ClosedFaceMailHelmetIds` | `RBMCombat.DamageRework` | internal | `private static readonly string[]` | 1366 | 16 |
+| `PlateOverMailBodyArmorIds` | `RBMCombat.ArmorRework` | public | `private static readonly string[]` | 1632 | 20 |
+
+Assembly target: `.NETFramework,Version=v4.7.2` · 入口 `RBMCombatPatcher.DoPatching(ref Harmony)`
+
+### Phase 0 侦查：OSA 候选 ID 分桶
+
+扫描源 `D:\...\workshop\content\261550\3011479883\ModuleData\OSA_*.xml` · **14 文件 · 1648 Item**
+
+**全景分布**:
+- Type: HeadArmor 843 / BodyArmor 388 / Cape 310 / LegArmor 61 / HandArmor 46
+- material_type: Plate 1210 / Leather 158 / Cloth 146 / Chainmail 134
+
+**启发式分桶**（需 Phase 0.B 人工复审）:
+- **PlateOverMail (POM)**: BodyArmor+Plate · 命名含 scale/lamellar/over_mail → **148 件**
+- **PlateBelowShoulder (PBS)**: BodyArmor+Plate · 命名含 fortified/plated/heavy_armor/raider/cuirass → **11 件**（偏小 · 疑漏 · `AR_aserai_leather_a` material_type 疑错标）
+- **ClosedFaceMail (CFM)**: HeadArmor · 命名含 closed/goggled/faceguard/bascinet → **142 件**（cue 偏宽 · 需严格化）
+- **Plate 未分类**: generic plate 无命名 cue → **47 件**（Phase 1 字段 audit 同步解决）
+
+归档 JSON: `_scratch/OSA_phase0/{pom,pbs,cfm}_candidates.json` + `plate_unclassified.json`
+
+### Phase 0.A 执行：OSABalance 骨架 XML→DLL 混合
+
+**决策**: 扩展现 `OpenSourceArmouryRBMBalance/`（journal §3008 两选一）· 不新建独立 bridge mod · 理由见 PHASE0_RECON §3.2
+**版本**: SubModule.xml v1.2.0 → **v1.3.0**
+
+**新增文件**:
+```
+OpenSourceArmouryRBMBalance/
+├── SubModule.xml                        + Bannerlord.Harmony dep + <SubModules> entry
+├── deploy.ps1                           + dotnet build 步骤 + GameRoot auto-detect (D:/E:)
+└── src/
+    ├── OSABalanceRBMBridge.csproj       net472 · AssemblyName=OSABalanceRBMBridge · 不 Ref RBMCombat.dll
+    ├── OSAIds.cs                        Phase 0 safe subset: POM 7 件 / PBS 2 件 / CFM 6 件
+    ├── WhitelistInjector.cs             反射 append + before/after 比对自验 · Report struct
+    └── SubModule.cs                     OnSubModuleLoad · 主菜单显示绿/红报告
+```
+
+**技术要点**:
+1. **不 Reference RBMCombat.dll** · 全走 `AccessTools.TypeByName` 字符串解析 · 防 launcher 静态 DLL 扫描失败（跟 RBMPlayerStaminaPoiseBuff 同模式）
+2. **不 Harmony Patch 消费方法** · 直接 `fi.SetValue(null, mergedArray)` 覆写 `private static readonly string[]` · .NET Fx 4.7.2 合法
+3. **OnSubModuleLoad 即注入** · 无需延迟到 `OnMissionBehaviorInitialize`（RBMCombat 跟 RBMAI 不同 · 它是 RBM 启动时 eager-loaded · 而 RBMAI lazy load）
+4. **写入后立即 `getValue` 比对长度** · 异常则抛 · 主菜单显示红字失败消息 · 游戏不崩
+
+**本机验证**:
+```
+dotnet build -c Release
+Build succeeded. 0 Warning(s). 0 Error(s). Time Elapsed 00:00:04.14
+产物: src/bin/Release/OSABalanceRBMBridge.dll (8 KB)
+```
+
+**环境变量用法**（第二设备 D: 兼容）:
+```powershell
+$env:BannerlordBin = 'D:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\bin\Win64_Shipping_Client'
+$env:WorkshopRoot  = 'D:\SteamLibrary\steamapps\workshop\content\261550'
+```
+
+### Smoke test 预期（**待主力机 pull 后执行**）
+
+主力机 `git pull && deploy.ps1 -GameRoot "E:\..."` 后，启游戏主菜单应出现**绿色**消息:
+```
+OSABalance RBMBridge: PBS 9->11, CFM 16->22, POM 20->27
+```
+（9+2=11 · 16+6=22 · 20+7=27）
+
+**绿字含义** · 验证的技术假设:
+- ✅ launcher 没把 OSABalanceRBMBridge.dll 拦下（Reference 配置对了）
+- ✅ `OnSubModuleLoad` 跑到了（SubModule.xml 入口配对了）
+- ✅ `AccessTools.TypeByName("RBMCombat.DamageRework")` 找到了 internal class
+- ✅ `AccessTools.Field(..., NonPublic|Static)` 读到了原数组
+- ✅ `SetValue(null, merged)` 写回成功 · readonly 覆写在 .NET Fx 4.7.2 真的允许
+- ✅ `GetValue` readback 长度 = merged.Length · 没被编译器 inline 掉
+
+**红字含义**: 哪一步挂了 · `Error` 字段报告原因 · 游戏仍能运行（soft-fail）
+
+**它不验证的**:
+- ❌ 15 件 ID 的分类是否对（启发式分桶可能有误报 → Phase 0.B 要做的事）
+- ❌ 战斗命中肩部是否真走 Chainmail 曲线（Phase 5 实游戏测）
+- ❌ 剩 141 件 POM / 136 件 CFM 候选是否被覆盖（显然没覆盖 · 等 Phase 0.B 扩清单）
+
+### Phase 0 剩余工作（Smoke test 后）
+
+| 阶段 | 工作 | 预估 |
+|---|---|---|
+| **Smoke test** | 主力机 pull → deploy.ps1 → 启游戏看主菜单绿字 | 主力机 10 min |
+| **Phase 0.B** | ID 清单精炼: 过 148 POM / 11 PBS / 142 CFM / 47 unclassified · 人工 + PowerShell 辅助 · 产出 production OSAIds.cs | 0.5-1 session |
+| **Phase 1** | 1835 决议字段完整性 audit + MaterialType audit（跟 0.B **正交** · 可并发）| 2-3 session |
+| **Phase 2** | deploy 完整 override XML（阻塞于 0.B + 1 都完成）| 1 session |
+| **Phase 5** | 主力机大会战实测 · 校数字 | 1 session |
+
+### 本次 session 对工作记忆的影响
+
+- `project-osa-osw-balance.md`：Phase 0 从"侦查前置"推进到"骨架落地 · 待 smoke test"
+- `project-bannerlord-modding.md`：OSABalance 从"纯 XML pipeline"升级为"XML + Harmony-reflection hybrid"
+- Journal §3016 旧 namespace 错记已修正（见本节首）
 
 ---
 

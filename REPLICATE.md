@@ -530,32 +530,35 @@ Test-Path "$GAME_ROOT\Modules\EquipmentSpawnerMod\GUI\PrefabExtensions\Inventory
 
 ---
 
-## [P6.2] Build + deploy OpenSourceArmouryRBMBalance (v1.1)
+## [P6.2] Build + deploy OpenSourceArmouryRBMBalance (v1.3.0)
 
-**GOAL**: XML override mod that buffs OSA armor to RBM scale + downscales OSA blade damage_factor. Generated from a PowerShell recipe (`src/generate.ps1`) using RBM/OSA workshop XML as input.
+**GOAL**: XML override mod that buffs OSA armor to RBM scale + downscales OSA blade damage_factor, **plus** (v1.3.0+) a self-built OSABalanceRBMBridge.dll that reflection-injects OSA item IDs into RBMCombat.{DamageRework,ArmorRework} 3 hardcoded whitelists at `OnSubModuleLoad` (fixes OSA scale/lamellar/closed-mail items going down wrong RBM material curves). Generated from a PowerShell recipe (`src/generate.ps1`) using RBM/OSA workshop XML as input.
 
-**PRE**: [P6.0] + OSA/OSW/RBM/RBM_WS all subscribed.
+**PRE**: [P6.0] + OSA/OSW/RBM/RBM_WS/Bannerlord.Harmony all subscribed.
 
 **DO**:
 ```powershell
 # Regenerate override XML from workshop (accounts for any workshop update since commit)
 & "$repoRoot\OpenSourceArmouryRBMBalance\src\generate.ps1" -WorkshopRoot $WORKSHOP_ROOT
 
-# Deploy: this mod is pure XML — just copy Modules/ContentFolder over
-$src = "$repoRoot\OpenSourceArmouryRBMBalance"
-$dst = "$GAME_ROOT\Modules\OpenSourceArmouryRBMBalance"
-New-Item -ItemType Directory -Force -Path $dst | Out-Null
-Copy-Item -Path "$src\SubModule.xml" -Destination $dst -Force
-Copy-Item -Path "$src\ModuleData" -Destination $dst -Recurse -Force
+# Build + deploy in one shot (deploy.ps1 auto-detects D:/E: GameRoot, or pass -GameRoot).
+# This builds OSABalanceRBMBridge.dll (net472) then copies SubModule.xml + ModuleData/*
+# + bin/Win64_Shipping_Client/*.dll to Modules/OpenSourceArmouryRBMBalance/.
+& "$repoRoot\OpenSourceArmouryRBMBalance\deploy.ps1" -GameRoot $GAME_ROOT
 ```
 
 **VERIFY**:
 ```powershell
+$dst = "$GAME_ROOT\Modules\OpenSourceArmouryRBMBalance"
 Test-Path "$dst\ModuleData\OSABalance_armor_override.xml"
 Test-Path "$dst\ModuleData\OSABalance_pieces_override.xml"
-(Select-String -Path "$dst\SubModule.xml" -Pattern 'v1\.1').Count -eq 1
+Test-Path "$dst\bin\Win64_Shipping_Client\OSABalanceRBMBridge.dll"
+(Select-String -Path "$dst\SubModule.xml" -Pattern 'v1\.3').Count -eq 1
 # Sanity: armor XML should have ~1500+ Item lines
 (Select-String -Path "$dst\ModuleData\OSABalance_armor_override.xml" -Pattern '<Item id=').Count
+# Smoke test: launch game, on main menu look for a GREEN message:
+#   OSABalance RBMBridge: PBS 9->11, CFM 16->22, POM 20->27
+# Red = reflection failed (Error field names the step). Game still runs (soft-fail).
 ```
 
 **ROLLBACK**: `Remove-Item $dst -Recurse -Force`.
@@ -1057,7 +1060,7 @@ All custom mods live inside this repo. Each has its own `SubModule.xml`, `src/`,
 
 ```
 EquipmentSpawnerMod/           v1.8.1  (equipment injector + personal stash + inventory culture UI)
-OpenSourceArmouryRBMBalance/   v1.1    (OSA<->RBM armour + blade balance via XML overrides)
+OpenSourceArmouryRBMBalance/   v1.3.0  (OSA<->RBM armour + blade balance via XML overrides + OSABalanceRBMBridge.dll reflection-injects OSA IDs to RBMCombat 3 whitelists)
 RetinuesCultureFilter/         v1.4.0  (culture filter for Retinues equipment editor)
 RBMPlayerStaminaPoiseBuff/     v1.0.2  (RBM stamina/posture regen boost, player only)
 PSCacheWarmup/                 v0.1.1  (auto-warm MapDistanceModel cache after PS building complete)

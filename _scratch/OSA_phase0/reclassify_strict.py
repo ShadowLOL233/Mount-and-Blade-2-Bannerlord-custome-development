@@ -1,15 +1,25 @@
 """
-Phase 0.B strict reclassifier (v2).
+Phase 0.B strict reclassifier (v5).
 Input:  _scratch/OSA_phase0/all_items.json (1648 flat items)
 Output: _scratch/OSA_phase0/strict_{pom,pbs,cfm}.{tierA,tierB}.json
         + strict_report.md summarising counts, culture distribution, edge cases.
 
-v2 changes:
-  - Force stdout UTF-8 (fixes cp1252 arrow encode crash on Windows Python)
-  - Widen PBS primary cue: OSA names don't use vanilla-style 'fortified/plated_leather'
-    tokens; added 'warlord/armor_[a-z]+/heavy/plate_body/plate_chest/platebody/segmentata/
-    reinforced/breastplate/cuirass' etc., AND widened Tier B bucket to catch generic plate
-    chests the strict cue misses.
+v6 changes (over v5):
+  - CFM open anti-cue reorder: mail cue now takes priority over 'Open' — names like
+    'Over Open Mail Coif' or 'Vendel Goggled Over Open Mail' have an explicit mail
+    presence and should be Tier A even though they contain the word 'Open'. The old
+    rule demoted them to Tier B. 'Open' only triggers rejection when NO mail cue hits.
+  - CFM Tier B promotion threshold lowered to head_armor >= 50 (no elite cue required):
+    OSA convention for head_armor >= 50 is near-universal mail aventail attachment.
+  - Secutor/gladiator anti-cue: integrated-faceplate helmets have no mail backing;
+    exclude from auto-promotion to keep head>=50 rule safe.
+
+v5 changes:
+  - PBS: add '\\bplated\\b' word-boundary cue to catch names like 'Eastern Plated Armor'
+  - CFM Tier B promotion for head_armor >= 45 AND elite cue
+  - CFM reject: head_armor <= 24
+
+v2-v4 history retained for context (see git log).
 
 Semantics derived from vanilla RBMCombat whitelists (see _scratch/RBM_decomp/RBMCombat.decompiled.cs):
   POM : BodyArmor whose SHOULDER region is visually mail (RBM demotes shoulder material
@@ -48,9 +58,9 @@ POM_OVERMAIL_CUE = re.compile(r'(over_mail|over.?mail|with_mail|on_cloth|on.?clo
 # OSA naming extends to: warlord, breastplate, plate_cuirass, full_plate, reinforced_plate,
 # plate_body, platebody, lorica (lorica_segmentata etc.), coat_of_plates (when NOT 'over_mail').
 PBS_PRIMARY = re.compile(
-    r'(plated_leather|plated.?leather|fortified|heavy_armor|heavy.?cuirass|raider_armor|'
-    r'plate_cuirass|full_plate|segmented_cuirass|cuirass_heavy|warlord|breastplate|'
-    r'plate_body|platebody|reinforced_plate|lorica_segmentata|coat_of_plates)',
+    r'(plated_leather|plated.?leather|\bplated\b|fortified|heavy_armor|heavy.?cuirass|'
+    r'raider_armor|plate_cuirass|full_plate|segmented_cuirass|cuirass_heavy|warlord|'
+    r'breastplate|plate_body|platebody|reinforced_plate|lorica_segmentata|coat_of_plates)',
     re.I)
 # PBS tier B threshold: no cue, but body_armor >= 35 (vanilla PBS floor roughly here)
 PBS_TIERB_BODY_MIN = 35
@@ -70,6 +80,16 @@ CFM_MAIL_CUE = re.compile(
 # Open-face anti-cue: if name says 'Open ... Helmet' it is NOT closed-face even if a
 # faceguard is attached, so we move to Tier B instead of Tier A.
 CFM_OPEN_ANTI = re.compile(r'\bopen\b', re.I)
+# Elite high-tier helmet cue (v5): Lord/Noble/Cataphract/Guard/Cavalry → OSA convention
+# gives mail aventail even if name doesn't say so.
+CFM_ELITE_CUE = re.compile(r'(\blord\b|\bnoble\b|cataphract|\bguard\b|\bcavalry\b|\broyal\b|\belite\b|\bimperial\b)', re.I)
+# v6 anti-cue: integrated-faceplate helms (Secutor/gladiator) have NO mail backing even
+# though head_armor can be high. Exclude from head>=50 auto-promotion.
+CFM_INTEGRATED_FACEPLATE = re.compile(r'(secutor|gladiator)', re.I)
+# Head-armor thresholds for Tier B → promotion / reject
+CFM_PROMOTE_HA_MIN       = 45   # v5 elite-cue path (unchanged)
+CFM_PROMOTE_HA_MIN_V6    = 50   # v6 head-only path (no elite cue required)
+CFM_REJECT_HA_MAX        = 24
 
 def item_text(it):
     return (it['id'] + ' ' + it.get('name','')).lower()
@@ -118,12 +138,29 @@ for it in ITEMS:
         closed    = CFM_CLOSED_CUE.search(tok)
         mail      = CFM_MAIL_CUE.search(tok)
         open_face = CFM_OPEN_ANTI.search(tok)
-        if closed and mail and not open_face:
+        integrated = CFM_INTEGRATED_FACEPLATE.search(tok)
+        try: ha = int(it.get('head_armor','0') or '0')
+        except: ha = 0
+        if closed and mail:
+            # v6: mail cue takes priority over 'Open' — 'Over Open Mail Coif' / 'Vendel
+            # Goggled Over Open Mail' have explicit mail presence despite 'Open' word.
             cfm_A.append(it)
-        elif closed and (not mail or open_face):
-            # Either closed-face without explicit mail cue, OR explicitly 'Open ... with Faceguard'
-            # which is a borderline case — needs manual eye.
-            cfm_B.append(it)
+        elif closed:
+            # No explicit mail cue. Apply promotion paths:
+            elite = CFM_ELITE_CUE.search(tok)
+            if integrated:
+                # Secutor/gladiator → integrated faceplate, no mail backing.
+                head_rejected.append(it)
+            elif ha >= CFM_PROMOTE_HA_MIN_V6 and not open_face:
+                # v6: head >= 50 → OSA convention attaches mail aventail silently.
+                cfm_A.append(it)
+            elif ha >= CFM_PROMOTE_HA_MIN and elite and not open_face:
+                # v5: elite high-tier closed helm (Lord/Noble/Cataphract/etc.)
+                cfm_A.append(it)
+            elif ha <= CFM_REJECT_HA_MAX:
+                head_rejected.append(it)
+            else:
+                cfm_B.append(it)
         else:
             head_rejected.append(it)
 

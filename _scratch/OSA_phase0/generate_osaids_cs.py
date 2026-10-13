@@ -17,6 +17,9 @@ def load(name):
 pom = load('strict_pom.tierA.json')
 pbs = load('strict_pbs.tierA.json')
 cfm = load('strict_cfm.tierA.json')
+# Tier B counts for in-source documentation (edge cases pending manual review)
+pbs_B = load('strict_pbs.tierB.json')
+cfm_B = load('strict_cfm.tierB.json')
 
 def fmt_array(ids, indent=12):
     lines = []
@@ -40,8 +43,9 @@ content = f'''namespace OSABalance.RBMBridge
     //   CFM = HeadArmor with closed-face cue (closed/goggled/faceguard/bascinet/visor)
     //         AND mail-equivalent cue (mail/aventail/coif/lamellar/vendel) AND NOT 'Open'
     //
-    // Tier B items (CFM 62 + PBS 1 edge cases) are NOT in this list — pending manual
-    // review in follow-up session. See strict_cfm.tierB.json / strict_pbs.tierB.json.
+    // Tier B items (CFM {len(cfm_B)} + PBS {len(pbs_B)} edge cases) are NOT in this list —
+    // pending manual review in follow-up session. See strict_cfm.tierB.json /
+    // strict_pbs.tierB.json.
     //
     // Counts (vanilla + Tier A combined):
     //   POM: 20 + {len(pom)} = {20 + len(pom)}

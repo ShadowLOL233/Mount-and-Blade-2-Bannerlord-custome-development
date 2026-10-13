@@ -90,4 +90,5 @@ if (Test-Path $pdbOut) {
 }
 
 Write-Host "`nDeploy done. Enable 'Open Source Armoury RBM Balance Patch' in the launcher (loads after OSA/OSW/RBM)." -ForegroundColor Yellow
-Write-Host "Smoke test: on main menu, look for green 'OSABalance RBMBridge: PBS 9->11, CFM 16->22, POM 20->27' message." -ForegroundColor Yellow
+Write-Host "Smoke test: on main menu, look for green 'OSABalance RBMBridge: PBS 9->32, CFM 16->113, POM 20->207' message." -ForegroundColor Yellow
+Write-Host "(numbers reflect Phase 0.B v6 Tier A production ID list — see _scratch/OSA_phase0/)" -ForegroundColor DarkGray

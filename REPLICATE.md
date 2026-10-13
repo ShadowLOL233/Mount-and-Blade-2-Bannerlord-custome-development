@@ -557,8 +557,8 @@ Test-Path "$dst\bin\Win64_Shipping_Client\OSABalanceRBMBridge.dll"
 # Sanity: armor XML should have ~1500+ Item lines
 (Select-String -Path "$dst\ModuleData\OSABalance_armor_override.xml" -Pattern '<Item id=').Count
 # Smoke test: launch game, on main menu look for a GREEN message:
-#   OSABalance RBMBridge: PBS 9->30, CFM 16->96, POM 20->207
-# (expected numbers reflect Phase 0.B Tier A production ID list from _scratch/OSA_phase0/)
+#   OSABalance RBMBridge: PBS 9->32, CFM 16->113, POM 20->207
+# (expected numbers reflect Phase 0.B v6 Tier A production ID list from _scratch/OSA_phase0/)
 # Red = reflection failed (Error field names the step). Game still runs (soft-fail).
 ```
 

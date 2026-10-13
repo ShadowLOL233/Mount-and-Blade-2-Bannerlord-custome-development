@@ -11,13 +11,14 @@ namespace OSABalance.RBMBridge
     //   CFM = HeadArmor with closed-face cue (closed/goggled/faceguard/bascinet/visor)
     //         AND mail-equivalent cue (mail/aventail/coif/lamellar/vendel) AND NOT 'Open'
     //
-    // Tier B items (CFM 62 + PBS 1 edge cases) are NOT in this list — pending manual
-    // review in follow-up session. See strict_cfm.tierB.json / strict_pbs.tierB.json.
+    // Tier B items (CFM 31 + PBS 0 edge cases) are NOT in this list —
+    // pending manual review in follow-up session. See strict_cfm.tierB.json /
+    // strict_pbs.tierB.json.
     //
     // Counts (vanilla + Tier A combined):
     //   POM: 20 + 187 = 207
-    //   PBS:  9 + 21 = 30
-    //   CFM: 16 + 80 = 96
+    //   PBS:  9 + 23 = 32
+    //   CFM: 16 + 97 = 113
     internal static class OSAIds
     {
         public static readonly string[] PlateOverMail = new[]
@@ -229,6 +230,8 @@ namespace OSABalance.RBMBridge
             "AR_empire_scout_armor_b",
             "AR_empire_scout_armor_d",
             "AR_huntress_armor_b",
+            "AR_khuzait_armor_a",
+            "tv_battania_armor_f",
             "tv_battania_warlord_armor_a",
             "tv_battania_warlord_armor_b",
             "tv_battania_warlord_armor_b2",
@@ -239,16 +242,22 @@ namespace OSABalance.RBMBridge
         public static readonly string[] ClosedFaceMail = new[]
         {
             "AR_aserai_helmet_h",
+            "AR_aserai_lord_helmet_f",
             "AR_closed_kettle_helmet_a",
+            "AR_empire_helmet_h",
+            "AR_empire_lord_helmet_a",
             "AR_goth_helmet_g",
             "AR_khuzait_helmet_w",
             "AR_khuzait_lord_helmet_d",
             "AR_khuzait_lord_helmet_d2",
             "AR_khuzait_lord_helmet_i",
+            "AR_sturgia_helmet_c",
             "AR_vlandia_helmet_i",
             "AR_vlandia_helmet_m",
             "AR_vlandia_helmet_y",
             "AR_vlandia_helmet_z2",
+            "DZ_aserai_helmet_d",
+            "DZ_khuzait_helmet_c",
             "DZ_sturgia_helmet_a",
             "RW_vlandia_lord_helmet_a",
             "TV_aserai_guard_helmet_e",
@@ -263,6 +272,7 @@ namespace OSABalance.RBMBridge
             "TV_empire_helmet_e",
             "TV_empire_helmet_f",
             "TV_empire_lord_helmet_g",
+            "TV_empire_lord_helmet_j",
             "TV_khuzait_helmet_b",
             "TV_khuzait_helmet_h",
             "TV_khuzait_helmet_q",
@@ -272,6 +282,7 @@ namespace OSABalance.RBMBridge
             "TV_nord_helmet_d",
             "TV_nord_helmet_e",
             "TV_nord_helmet_f",
+            "TV_nord_helmet_g",
             "TV_nord_helmet_h",
             "TV_nord_helmet_k",
             "TV_nord_helmet_l",
@@ -279,6 +290,11 @@ namespace OSABalance.RBMBridge
             "TV_nord_helmet_r",
             "TV_nord_helmet_s",
             "TV_nord_helmet_u3",
+            "TV_sturgia_helmet_a",
+            "TV_sturgia_helmet_b",
+            "TV_sturgia_helmet_d",
+            "TV_sturgia_helmet_f",
+            "TV_sturgia_helmet_g2",
             "TV_vlandia_helmet_p",
             "TV_vlandia_helmet_p2",
             "TV_vlandia_helmet_q",
@@ -288,10 +304,13 @@ namespace OSABalance.RBMBridge
             "ao_imperial_cataphracts_plumed_closed_mail_helmet",
             "ao_imperial_closed_mail_nasal_spangenhelmet",
             "ao_imperial_plumed_cone_helmet_with_closed_mail",
+            "ao_sturgian_feathered_helmet_closed",
             "ao_sturgian_feathered_helmet_with_closed_mail",
             "aserai_nasalhelm_mail_veil",
+            "echerian_elite_helm",
             "full_helm_over_mail_coif_x",
             "full_helm_over_mail_coif_z",
+            "imperial_lord_helm_mail",
             "tv_vlandia_helmet_a5",
             "tv_vlandia_helmet_b5",
             "tv_vlandia_helmet_c5",
@@ -303,6 +322,7 @@ namespace OSABalance.RBMBridge
             "tv_vlandia_helmet_r4",
             "tv_vlandia_helmet_t4",
             "tv_vlandia_helmet_u2",
+            "tv_vlandia_helmet_u3",
             "tv_vlandia_lord_helmet_a",
             "tv_vlandia_lord_helmet_a2",
             "tv_vlandia_lord_helmet_b",

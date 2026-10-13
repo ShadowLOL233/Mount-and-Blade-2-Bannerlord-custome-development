@@ -2,12 +2,12 @@
 
 **最后更新**：2026-10-13 (晚 · 两条并行)
 - **主力机 CBTB v0.3.9 紧急回滚**: v0.3.8 的 `descendant::Widget[@VisualDefinition='CenterMenu']/Children` XPath 导致 bootstrap hard crash（跟 v0.3.1 Standard.VerticalScrollbar 同模式 · CBTB OnSubModuleLoad 没触发 · rgl log 卡 shader warn · 疑因 UIExt v3 对 Bannerlord 自定义 VisualDefinition attribute 不支持）· 回滚到 v0.3.6 inline button 配置（挤 Start 但游戏能用）· 下 session 用 **Harmony patch** CustomBattleScreen.OnInitialize 代码层加 button 彻底解决
-- **第二设备 OSABalance Phase 0.B 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 288 件 Tier A（POM 187 / PBS 21 / CFM 80）· 严格 reclassifier v1→v4 迭代（启发式 → vanilla 语义反推 → word-bound cue + 'Open' 反向排除 → lamellar/vendel/coif mail-equivalent）· 本机 build+deploy D: 验证（铁律 1 通过）· smoke test 待主力机 CBTB session 结束后执行
+- **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 
-## 🎯 设备优先度（2026-10-13 晚更新）
+## 🎯 设备优先度（2026-10-13 晚更新 · v6）
 
-- **主力机（E:）** · 最高优先度：**OSABalance v1.3.0 smoke test（Phase 0.B 版）**（`git pull && deploy.ps1`，主菜单看绿字 `PBS 9->30, CFM 16->96, POM 20->207`）· CBTB Phase 3b-1 继续推进
-- **第二设备（D:）本机** · 最高优先度：**Phase 1 字段 audit**（跟 Phase 0.B 完全正交 · journal §3040 开工锚点 · 2-3 session）· 可选 Phase 0.B v5 迭代（捡回 Tier B 的 `AR_khuzait_armor_a`）
+- **主力机（E:）** · 最高优先度：**OSABalance v1.3.0 smoke test（Phase 0.B v6）**（`git pull && deploy.ps1`，主菜单看绿字 `PBS 9->32, CFM 16->113, POM 20->207`）· 外加 CBTB v0.3.9 bootstrap crash 修复（Harmony patch CustomBattleScreen 代码层加 button）
+- **第二设备（D:）本机** · 最高优先度：**Phase 1 字段 audit**（跟 Phase 0.B 完全正交 · journal §3040 开工锚点 · 2-3 session）· CFM Tier B 31 件可视化复核**阻塞于主力机 Retinues editor**（本机不能启游戏）
 
 其他待办（PFRB v2 Keep Recruiter / PlayerFiefPoolShield / BE 战象 Path B' / CheatsGuard Round 1 实测 / BetterPatrolsBrake 测试 等）均为次优 · 等用户 session 分配。
 
@@ -3298,6 +3298,66 @@ _scratch/OSA_phase0/
 ```
 
 **重跑办法**（workshop update 后）: 先重跑 Phase 0 侦查的 all_items.json 扫描 · 再跑 `reclassify_strict.py` + `generate_osaids_cs.py` · 自动产出新 OSAIds.cs。
+
+---
+
+## 📅 2026-10-13 session（深夜）· Phase 0.B v5+v6 迭代 · Tier A 288→307 件
+
+**承接**: 当天晚些的 Phase 0.B v4 收官（288 件 Tier A · PBS Tier B 1 · CFM Tier B 62）
+**决策**: 用户选择继续 Phase 0.B 迭代而非转 Phase 1 · 本机无法启游戏 · 转向启发式自动晋升
+
+### v5 改动
+
+**PBS cue 加 `\bplated\b` 单字 word-boundary**:
+- 之前 `plated_leather` compound cue 漏了 `AR_khuzait_armor_a` "Eastern Plated Armor"（body=45 heavy plate）
+- v5 加 `\bplated\b` 单字匹配 · 顺带捞到 1 件 battania plate · PBS: 21 → 23 件 · PBS Tier B 清零
+
+**CFM Tier B 启发式晋升**:
+- `head_armor >= 45 AND 含 Lord/Noble/Cataphract/Guard/Cavalry/Royal/Elite/Imperial` 自动晋升 Tier A
+- `head_armor <= 24` 自动 reject（轻盔 skullcap/archer helm）
+- CFM: 80 → 87 · Tier B: 62 → 43
+
+### v6 改动（细化）
+
+**CFM anti-cue 重排**: mail cue 优先于 'Open'
+- 之前 `\bopen\b` anti-cue 把 "Over Open Mail Coif" / "Vendel Goggled Over Open Mail" 等**显式有 mail**的名字误降 Tier B
+- v6 判断顺序改为"若 closed+mail 直升 A"· 不管 open · 'Open' 只在无 mail 时才触发 reject
+
+**head_armor >= 50 独立晋升路径**（无需 elite cue）:
+- OSA convention：head >= 50 的高级盔几乎必带 mail aventail mesh
+- 把 Northern Spangenhelm/Blackened Steel 等纯按 head 值挑的高级盔自动升 Tier A
+
+**Secutor/Gladiator anti-cue**:
+- Secutor 角斗士盔是整件钢板面罩 · 无 mail backing
+- 单独 anti-cue 剔出 head≥50 自动晋升路径 · 直接 reject
+
+### v6 最终产出
+
+| 白名单 | Vanilla | OSA Tier A | 合计 | v4 vs v6 增量 |
+|---|---|---|---|---|
+| **POM** | 20 | 187 | 207 | +0 (已稳定) |
+| **PBS** | 9 | **23** | 32 | +2 (捞回 Tier B) |
+| **CFM** | 16 | **97** | 113 | +17 (Tier B 62→31) |
+| **总计** | 45 | **307** | 352 | +19 (×6.8 vs vanilla) |
+
+### 剩余 Tier B（真正需人工审 · 本机做不了）
+
+- **PBS Tier B 0 件** · 清零
+- **CFM Tier B 31 件** · head_armor 25-49 的中等盔 · "With Faceguard" 无 mail cue 无 elite cue · 需在主力机启游戏用 Retinues editor 预览 mesh 判是否带 mail aventail · 典型例子：
+  - `AR_battania_helmet_j/k/n/o/v/v2` (Highland Steel/Bronze With Faceguard · head=30)
+  - `AR_khuzait_helmet_u/v` (Eastern Nasalhelm With Suede/Studded Faceguard · head=34/40)
+  - `AR_vlandia_helmet_x/z` (Western Banded Nasalhelm · head=30/37)
+
+### 本机验证（铁律 1）
+
+```
+Build: dotnet build -c Release · 0 Warning / 0 Error · Time Elapsed 00:00:00.93
+DLL: OSABalanceRBMBridge.dll 22016 → 23040 bytes (+1024 · 跟 288→307 件数组增长一致)
+Deploy: D:\...\Modules\OpenSourceArmouryRBMBalance\bin\Win64_Shipping_Client\OSABalanceRBMBridge.dll · 时间戳 2026-10-13 06:29
+Launcher Smoke test 预期: PBS 9->32, CFM 16->113, POM 20->207 (绿字)
+```
+
+deploy.ps1 的 echo 消息同步更新到 v6 数字。
 
 ---
 

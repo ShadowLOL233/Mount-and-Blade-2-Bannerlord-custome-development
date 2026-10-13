@@ -44,9 +44,15 @@ $pdbOut = Join-Path $srcDir "bin\$Config\OSABalanceRBMBridge.pdb"
 if (-not $SkipBuild) {
     Write-Host "Building OSABalanceRBMBridge ($Config)..." -ForegroundColor Cyan
     # Pass BannerlordBin + WorkshopRoot derived from $GameRoot so D:/E: both work.
+    # $GameRoot = <drive>\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord
+    #   → steamapps = parent of parent → .../SteamLibrary/steamapps
+    #   → workshop  = $steamapps\workshop\content\261550
     $env:BannerlordBin = Join-Path $GameRoot 'bin\Win64_Shipping_Client'
-    $workshopRoot = Split-Path (Split-Path $GameRoot) -Parent
-    $env:WorkshopRoot = Join-Path (Split-Path $GameRoot) 'workshop\content\261550'
+    $steamapps = Split-Path (Split-Path $GameRoot) -Parent
+    $env:WorkshopRoot = Join-Path $steamapps 'workshop\content\261550'
+    if (-not (Test-Path -LiteralPath (Join-Path $env:WorkshopRoot '2859188632\bin\Win64_Shipping_Client\0Harmony.dll'))) {
+        throw "0Harmony.dll not found under derived WorkshopRoot='$($env:WorkshopRoot)'. Pass -GameRoot explicitly or subscribe Harmony (workshop id 2859188632)."
+    }
     Push-Location $srcDir
     try {
         dotnet build -c $Config

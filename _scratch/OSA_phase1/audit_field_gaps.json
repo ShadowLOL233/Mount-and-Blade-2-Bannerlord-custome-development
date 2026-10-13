@@ -1,0 +1,4106 @@
+[
+ {
+  "id": "AR_roman_helmet_cap",
+  "Type": "HeadArmor",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Imperial Cap Helmet",
+  "has_values": {
+   "head_armor": "40",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "green_hat",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Cloth Hat",
+  "has_values": {
+   "head_armor": "8",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_gold_circlet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Simple Gilded Circlet",
+  "has_values": {
+   "head_armor": "12",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_crown_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Pointed Crown",
+  "has_values": {
+   "head_armor": "18",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "crown_x",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Gilded Circlet With Tail",
+  "has_values": {
+   "head_armor": "18",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "crown_z",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Studded Spiked Crown",
+  "has_values": {
+   "head_armor": "20",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_angevin_crown",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Western Ornate Spiked Crown",
+  "has_values": {
+   "head_armor": "22",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_vlandia_helmet_g",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Heavy Skullcap Over Leather",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "tv_vlandia_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Western Painted Nasalhelm",
+  "has_values": {
+   "head_armor": "57",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "tv_vlandia_helmet_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Western Nasal Helmet",
+  "has_values": {
+   "head_armor": "57",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "tv_vlandia_helmet_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Western Conical Nasalhelm",
+  "has_values": {
+   "head_armor": "57",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "tv_vlandia_helmet_t",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Western Bent Conical Nasalhelm",
+  "has_values": {
+   "head_armor": "57",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "tv_vlandia_helmet_k",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Western Peaked Helmet",
+  "has_values": {
+   "head_armor": "68",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "tv_vlandia_helmet_o2",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Western Banded Nasal Cevelliere Over Padded Mail",
+  "has_values": {
+   "head_armor": "84",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "tv_vlandia_helmet_k3",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Western Peaked Helmet Over Mail",
+  "has_values": {
+   "head_armor": "92",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "DZ_vlandia_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Western Pointed Helmet With Leather",
+  "has_values": {
+   "head_armor": "60",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_vlandia_helmet_h",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Roundkettle Helmet Over Studded Leather",
+  "has_values": {
+   "head_armor": "77",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_sturgia_helmet_n",
+  "Type": "HeadArmor",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Cervelliere Over Open Mail",
+  "has_values": {
+   "head_armor": "84",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "highland_headscarf",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Head Scarf",
+  "has_values": {
+   "head_armor": "6",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_phrygian_cap_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Tall Banded Bent Conical Hat",
+  "has_values": {
+   "head_armor": "8",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_hat_e",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Rough Padded Cloth Cap",
+  "has_values": {
+   "head_armor": "11",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_hat_f",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Padded Cloth Cap",
+  "has_values": {
+   "head_armor": "11",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_hat_g",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Plain Padded Cloth Cap",
+  "has_values": {
+   "head_armor": "11",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_hood_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Plaid Cloth Hood",
+  "has_values": {
+   "head_armor": "11",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_hood_a2",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Brown Plaid Cloth Hood",
+  "has_values": {
+   "head_armor": "11",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_hood_a3",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Green Cloth Hood",
+  "has_values": {
+   "head_armor": "11",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_wolf_pelt_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Brown Wolf Head",
+  "has_values": {
+   "head_armor": "25",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_wolf_pelt_e",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Wolf Head",
+  "has_values": {
+   "head_armor": "25",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "battania_fur_cap",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Fur Cap",
+  "has_values": {
+   "head_armor": "34",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_shoulders_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Brown Bear Head",
+  "has_values": {
+   "head_armor": "34",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_battanian_segmented_helmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Segmented Helmet",
+  "has_values": {
+   "head_armor": "42",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_w",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Open Steel Tall Helmet",
+  "has_values": {
+   "head_armor": "48",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_w2",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Open Bronze Tall Helmet",
+  "has_values": {
+   "head_armor": "48",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_battanian_nasal_spangenhelm",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Nasal Spangenhelmet",
+  "has_values": {
+   "head_armor": "45",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_battanian_simple_ridge_helmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Ridge Helmet With Cloth",
+  "has_values": {
+   "head_armor": "45",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "battania_simple_spangenhelm",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Cap Helmet",
+  "has_values": {
+   "head_armor": "42",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "battania_skull_cap",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Skull Cap",
+  "has_values": {
+   "head_armor": "42",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_battanian_nasal_helmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Nasal Helmet",
+  "has_values": {
+   "head_armor": "45",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_p",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Open Steel Ridged Helmet",
+  "has_values": {
+   "head_armor": "48",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_q",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Open Bronze Ridged Helmet",
+  "has_values": {
+   "head_armor": "48",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "hmj_simple_nasal_helm",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Nasal Cap",
+  "has_values": {
+   "head_armor": "45",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "simple_helmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Simple Helmet",
+  "has_values": {
+   "head_armor": "45",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "simple_helmet_scarf",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Simple Helmet With Scarf",
+  "has_values": {
+   "head_armor": "45",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_battanian_ridge_helmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Ridge Helmet With Leather",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "hmj_simple_nasal_helm_hood",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Nasal Cap Over Leather",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "simple_helmet_headcloth",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Simple Helmet Over Headwrap",
+  "has_values": {
+   "head_armor": "48",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Kettle Helmet",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_lord_helmet_d",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Kettle Helmet",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_d",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Kettle Helmet",
+  "has_values": {
+   "head_armor": "70",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "hmj_imperial_cheek_pteurges_plume",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Kettle Helmet With Strips",
+  "has_values": {
+   "head_armor": "70",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Tall Helmet",
+  "has_values": {
+   "head_armor": "55",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Tall Helmet",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_b2",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Tall Helmet Over Mail",
+  "has_values": {
+   "head_armor": "75",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_r",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Steel Ridged Helmet",
+  "has_values": {
+   "head_armor": "85",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_s",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Bronze Ridged Helmet",
+  "has_values": {
+   "head_armor": "84",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_lord_helmet_l",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Bronze Ridge Helmet With Feather Crest",
+  "has_values": {
+   "head_armor": "90",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_lord_helmet_m",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Ridge Helmet With Feather Crest",
+  "has_values": {
+   "head_armor": "90",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_eorling_riveted_nasal_helmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Riveted Nasal Helmet With Mail Aventail",
+  "has_values": {
+   "head_armor": "75",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "celtic_mail_helm",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Tall Nasalhelm With Mail",
+  "has_values": {
+   "head_armor": "82",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Heavy Banded Nasal Helmet Over Mail",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_d",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Domed Nasal Spangenhelm",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_f",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Domed Nasal Spangenhelm Over Mail",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_g",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Tall Nasal Spangenhelm",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_i",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Tall Nasal Spangenhelm Over Mail",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_zf",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Heavy Nasalhelm Over Mail",
+  "has_values": {
+   "head_armor": "95",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_g",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Spangenhelm",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_helmet_i",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Spangenhelm Over Mail",
+  "has_values": {
+   "head_armor": "85",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_j",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Tall Silvered Nasal Spangenhelm",
+  "has_values": {
+   "head_armor": "90",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_j2",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Tall Silvered Spangenhelm Cap",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_k",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Tall Silvered Nasal Spangenhelm Over Leather",
+  "has_values": {
+   "head_armor": "90",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_l",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Tall Silvered Nasal Spangenhelm Over Mail",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_g",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Heavy Bronze Spangenhelm",
+  "has_values": {
+   "head_armor": "85",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_h",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Plumed Heavy Bronze Spangenhelm",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_i",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Feathered Heavy Bronze Spangenhelm",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_m",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Banded Helmet",
+  "has_values": {
+   "head_armor": "68",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_n",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Decorated Banded Helmet",
+  "has_values": {
+   "head_armor": "75",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_pict_helmet_o",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Crested Decorated Banded Helmet",
+  "has_values": {
+   "head_armor": "82",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_phrygian_helmet_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Dryatic Steel Bent Conical Helmet",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_phrygian_helmet_c2",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Dryatic Brass Bent Conical Helmet",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_phrygian_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Dryatic Steel Decorated Bent Conical Helmet",
+  "has_values": {
+   "head_armor": "73",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_phrygian_helmet_a2",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Dryatic Brass Decorated Bent Conical Helmet",
+  "has_values": {
+   "head_armor": "73",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_phrygian_helmet_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Dryatic Steel Decorated Crested Bent Conical Helmet",
+  "has_values": {
+   "head_armor": "82",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_phrygian_helmet_b2",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Dryatic Brass Decorated Crested Bent Conical Helmet",
+  "has_values": {
+   "head_armor": "82",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_goth_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Iron Roughscale Helmet",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_l",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Feathered Pointed Steel Cap Over Cloth",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_m",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Feathered Pointed Bronze Cap Over Cloth",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Fringed Decorated Steel Helmet",
+  "has_values": {
+   "head_armor": "79",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_d",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Fringed Decorated Bronze Helmet",
+  "has_values": {
+   "head_armor": "73",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_e",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Decorated Steel Helmet",
+  "has_values": {
+   "head_armor": "74",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_f",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Decorated Bronze Helmet",
+  "has_values": {
+   "head_armor": "74",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_s",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Pointed Steel Helmet",
+  "has_values": {
+   "head_armor": "71",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_s2",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Pointed Bronze Helmet",
+  "has_values": {
+   "head_armor": "71",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_lord_helmet_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Crested Decorated Steel Cap With Cheek Guards",
+  "has_values": {
+   "head_armor": "89",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Pointed Steel Kettle With Fringes",
+  "has_values": {
+   "head_armor": "79",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Pointed Bronze Kettle With Fringes",
+  "has_values": {
+   "head_armor": "79",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "wolfskin_helmet_guard",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Wolfskin Helmet",
+  "has_values": {
+   "head_armor": "88",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "wolfhelmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Wolfskin Over Highland Helmet",
+  "has_values": {
+   "head_armor": "90",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "bearhelmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Bearskin Over Highland Helmet",
+  "has_values": {
+   "head_armor": "92",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "battanian_crown",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Crown",
+  "has_values": {
+   "head_armor": "15",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_lord_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Iron Highland Crown",
+  "has_values": {
+   "head_armor": "66",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_lord_helmet_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Two Pronged Gold Crown",
+  "has_values": {
+   "head_armor": "66",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_j",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Feathered Heavy Bronze Nasalhelm",
+  "has_values": {
+   "head_armor": "95",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_k",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Heavy Bronze Nasalhelm",
+  "has_values": {
+   "head_armor": "95",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_n",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Horned Steel Helmet With Plume",
+  "has_values": {
+   "head_armor": "95",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_helmet_o",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Highland Horned Bronze Helmet With Plume",
+  "has_values": {
+   "head_armor": "95",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_bone_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Shaman's Bone Lamellar Helmet",
+  "has_values": {
+   "head_armor": "55",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_bone_helmet_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Shaman's Feathered Bone Lamellar Helmet",
+  "has_values": {
+   "head_armor": "60",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_bone_helmet_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Shaman's Horned Bone Lamellar Helmet",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "nordic_civilian_hat_fur_brim",
+  "Type": "HeadArmor",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Nordic Civilian Hat with Fur Brim",
+  "has_values": {
+   "head_armor": "14",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "nordic_civilian_hat",
+  "Type": "HeadArmor",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Nordic Civilian Hat",
+  "has_values": {
+   "head_armor": "7",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "nord_king_crown",
+  "Type": "HeadArmor",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Northern Majestic Crown",
+  "has_values": {
+   "head_armor": "20",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "berserker_cloak",
+  "Type": "Cape",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Berserker Cloak",
+  "has_values": {
+   "body_armor": "25",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "northman_raider_cape",
+  "Type": "Cape",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Northmen Raider Heavy Fur Cape",
+  "has_values": {
+   "body_armor": "22",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "fur_cape_a",
+  "Type": "Cape",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Nordic Furry Mail Cape",
+  "has_values": {
+   "body_armor": "20",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "nord_fur_shoulder",
+  "Type": "Cape",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Linen Fur Cape",
+  "has_values": {
+   "body_armor": "18",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "fur_cape_b",
+  "Type": "Cape",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Nordic Furry Cape",
+  "has_values": {
+   "body_armor": "10",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "cape_norse_lady",
+  "Type": "Cape",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Northern Fur Cape",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "nord_casual_cloak",
+  "Type": "Cape",
+  "culture": "Culture.nord",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Woolen Cloak",
+  "has_values": {
+   "body_armor": "6",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Plated Steel Cap",
+  "has_values": {
+   "head_armor": "70",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_f",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Feathered Plated Steel Cap",
+  "has_values": {
+   "head_armor": "70",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_e",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Plumed Plated Steel Cap",
+  "has_values": {
+   "head_armor": "68",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_d",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Crested Plated Steel Cap",
+  "has_values": {
+   "head_armor": "68",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_c2",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Steel Cap",
+  "has_values": {
+   "head_armor": "55",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_v",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Lamellar Helmet",
+  "has_values": {
+   "head_armor": "65",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_z3",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Steppe Lamellar Helmet Over Mail",
+  "has_values": {
+   "head_armor": "77",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_h",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Iron Helmet Over Rough Fur",
+  "has_values": {
+   "head_armor": "34",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_h2",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Brass Helmet Over Rough Fur",
+  "has_values": {
+   "head_armor": "32",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_i",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Iron Helmet Over Leather",
+  "has_values": {
+   "head_armor": "46",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_i2",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Brass Helmet Over Leather",
+  "has_values": {
+   "head_armor": "44",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_durkhan_iron_helmet_with_leather",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Iltanlar Iron Cap",
+  "has_values": {
+   "head_armor": "46",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_durkhan_brass_helmet_with_leather",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Iltanlar Brass Cap",
+  "has_values": {
+   "head_armor": "44",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_lord_helmet_d",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Ornate Cap",
+  "has_values": {
+   "head_armor": "45",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_y",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Decorated Cap",
+  "has_values": {
+   "head_armor": "45",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_y2",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Decorated Helmet",
+  "has_values": {
+   "head_armor": "55",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_y3",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Plumed Decorated Helmet",
+  "has_values": {
+   "head_armor": "58",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_y4",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Lordly Plumed Decorated Helmet",
+  "has_values": {
+   "head_armor": "68",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_za",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Silvered Helmet",
+  "has_values": {
+   "head_armor": "55",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_zb",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Gilded Helmet",
+  "has_values": {
+   "head_armor": "55",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_c3",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Helmet With Upturned Cap",
+  "has_values": {
+   "head_armor": "38",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_helmet_a2",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Helmet Over Leather",
+  "has_values": {
+   "head_armor": "45",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Steppe Plumed Helmet With Fur",
+  "has_values": {
+   "head_armor": "22",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_b2",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Steppe Plumed Leather Helmet With Fur",
+  "has_values": {
+   "head_armor": "20",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_d",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Steppe Leather Cap",
+  "has_values": {
+   "head_armor": "14",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_d2",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Steppe Furred Leather Cap",
+  "has_values": {
+   "head_armor": "14",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_e",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Steppe Leather Helmet",
+  "has_values": {
+   "head_armor": "18",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_f",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Steppe Leather Helmet With Fur",
+  "has_values": {
+   "head_armor": "18",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Fur Cap",
+  "has_values": {
+   "head_armor": "7",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_hood_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Leather Hood",
+  "has_values": {
+   "head_armor": "12",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_hood_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Peaked Leather Hood",
+  "has_values": {
+   "head_armor": "14",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ON_cone_hat_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Conical Straw Hat",
+  "has_values": {
+   "head_armor": "6",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_goth_helmet_h",
+  "Type": "HeadArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Steppe Lamellar Cap",
+  "has_values": {
+   "head_armor": "34",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_durkhan_trousers",
+  "Type": "BodyArmor",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor",
+   "arm_armor"
+  ],
+  "name": "Eastern Cloth Trousers",
+  "has_values": {
+   "body_armor": "0",
+   "arm_armor": "0",
+   "leg_armor": "3"
+  }
+ },
+ {
+  "id": "TV_khuzait_shoulder_a",
+  "Type": "Cape",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Eastern Plated Bronze Shoulder Straps",
+  "has_values": {
+   "body_armor": "20",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_shoulder_b",
+  "Type": "Cape",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Eastern Plated Brass Shoulder Straps",
+  "has_values": {
+   "body_armor": "20",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_khuzait_shoulder_e",
+  "Type": "Cape",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Steel Lamellar Shoulder Pieces",
+  "has_values": {
+   "body_armor": "0",
+   "arm_armor": "15"
+  }
+ },
+ {
+  "id": "TV_khuzait_shoulder_q",
+  "Type": "Cape",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Blackened Leather Lamellar Shoulder Pieces",
+  "has_values": {
+   "body_armor": "0",
+   "arm_armor": "10"
+  }
+ },
+ {
+  "id": "AR_khuzait_cape_d",
+  "Type": "Cape",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Eastern Woolen Cape",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_khuzait_cape_e",
+  "Type": "Cape",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Eastern Linen Cape",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "ao_durkhan_tassled_necklace",
+  "Type": "Cape",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Eastern Tassled Necklace",
+  "has_values": {
+   "body_armor": "1",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_horse_armor_zh",
+  "Type": "HorseHarness",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor",
+   "leg_armor"
+  ],
+  "name": "Steppe Heavy Fur Harness",
+  "has_values": {
+   "body_armor": "0",
+   "head_armor": "5",
+   "leg_armor": "0",
+   "arm_armor": "5"
+  }
+ },
+ {
+  "id": "AR_horse_armor_zf",
+  "Type": "HorseHarness",
+  "culture": "Culture.khuzait",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor",
+   "leg_armor"
+  ],
+  "name": "Steppe Heavy Saddle",
+  "has_values": {
+   "body_armor": "0",
+   "head_armor": "5",
+   "leg_armor": "0",
+   "arm_armor": "5"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_c",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Scale Shoulders",
+  "has_values": {
+   "body_armor": "32",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_l",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Brass Scale Shoulders",
+  "has_values": {
+   "body_armor": "32",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_v",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Alternating Scale Shoulders",
+  "has_values": {
+   "body_armor": "32",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_u",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Alternating Scale Pauldrons",
+  "has_values": {
+   "body_armor": "32",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_x",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Steel Scale Shoulders",
+  "has_values": {
+   "body_armor": "33",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_w",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Steel Scale Pauldrons",
+  "has_values": {
+   "body_armor": "33",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_wolf_shoulder_g",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Brass Scale Shoulders With Wolf Pelt",
+  "has_values": {
+   "body_armor": "32",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_wolf_shoulder_g2",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Brass Scale Shoulders With Brown Wolf Pelt",
+  "has_values": {
+   "body_armor": "32",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_i",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Studded Imperial Neckguard With Scarf",
+  "has_values": {
+   "body_armor": "28",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_j",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Studded Brass Imperial Neckguard With Leopard Pelt",
+  "has_values": {
+   "body_armor": "31",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_j2",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Studded Brass Imperial Neckguard With Snow Leopard Pelt",
+  "has_values": {
+   "body_armor": "31",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_k",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Studded Iron Imperial Neckguard With Leopard Pelt",
+  "has_values": {
+   "body_armor": "33",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_k2",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Studded Iron Imperial Neckguard With Snow Leopard Pelt",
+  "has_values": {
+   "body_armor": "33",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_z",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Studded Iron Neckguard",
+  "has_values": {
+   "body_armor": "33",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_za",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Studded Brass Neckguard With Long Cape",
+  "has_values": {
+   "body_armor": "33",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_shoulders_zb",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Studded Iron Neckguard With Long Cape",
+  "has_values": {
+   "body_armor": "35",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_a",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Lamellar With Long Cape",
+  "has_values": {
+   "body_armor": "45",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_b",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Lamellar With Cape",
+  "has_values": {
+   "body_armor": "45",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_c",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Lamellar With Fur Cape",
+  "has_values": {
+   "body_armor": "45",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_e",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Lamellar With Long Plaid Cape",
+  "has_values": {
+   "body_armor": "45",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_f",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Lamellar With Long Striped Cape",
+  "has_values": {
+   "body_armor": "45",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_g",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Lamellar With Bear Pelt",
+  "has_values": {
+   "body_armor": "45",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_a2",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Gilded Lamellar With Long Cape",
+  "has_values": {
+   "body_armor": "47",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_b2",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Gilded Lamellar With Cape",
+  "has_values": {
+   "body_armor": "47",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_noble_collar_b",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Noble Lamellar With Long Cape",
+  "has_values": {
+   "body_armor": "50",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "ao_focale",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Focale",
+  "has_values": {
+   "body_armor": "1",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "ao_imperial_noblemans_sash",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Imperial Noble Sash",
+  "has_values": {
+   "body_armor": "5",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_leopard_pelt_a",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Snow Leopard Pelt",
+  "has_values": {
+   "body_armor": "6",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_lion_head_a",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Decorated Lion Head Cloak",
+  "has_values": {
+   "body_armor": "22",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_lion_head_b",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Plated Lion Head Cloak",
+  "has_values": {
+   "body_armor": "28",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_lion_head_d",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Lion Head Cloak",
+  "has_values": {
+   "body_armor": "20",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_m",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Cape",
+  "has_values": {
+   "body_armor": "5",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_m2",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Plaid Cape",
+  "has_values": {
+   "body_armor": "5",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_m3",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Striped Cape",
+  "has_values": {
+   "body_armor": "5",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_o",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Cloth Cape",
+  "has_values": {
+   "body_armor": "2",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_o2",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Plaid Cloth Cape",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_o3",
+  "Type": "Cape",
+  "culture": "Culture.empire",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Striped Cloth Cape",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_vlandia_shoulders_h",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Western Long Cape",
+  "has_values": {
+   "body_armor": "5",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_vlandia_shoulders_i",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Western Patterned Cape",
+  "has_values": {
+   "body_armor": "6",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_vlandia_shoulders_j",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Western Hooded Cloak",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_fur_cape_e",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Furred Long Western Cape",
+  "has_values": {
+   "body_armor": "10",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_vlandia_shoulders_k",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Western Furred Cape",
+  "has_values": {
+   "body_armor": "10",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_vlandia_shoulders_l",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Western Patterned Furred Cape",
+  "has_values": {
+   "body_armor": "10",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "tv_battania_cloak_k",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Western Cape",
+  "has_values": {
+   "body_armor": "12",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_vlandia_shoulders_g",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Western Padded Leather Hood",
+  "has_values": {
+   "body_armor": "15",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_vlandia_shoulders_b",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Western Mail Hood",
+  "has_values": {
+   "body_armor": "22",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_vlandia_shoulders_b2",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Western Chainmail Hood",
+  "has_values": {
+   "body_armor": "22",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_i",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Lamellar With Western Cape",
+  "has_values": {
+   "body_armor": "45",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_h",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Lamellar With Long Western Cape",
+  "has_values": {
+   "body_armor": "48",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_imperial_lamellar_cape_j",
+  "Type": "Cape",
+  "culture": "Culture.vlandia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Lamellar With Western Fur Cape",
+  "has_values": {
+   "body_armor": "45",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "ao_battanian_medallion",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Highland Medallion",
+  "has_values": {
+   "body_armor": "3",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "ao_caladogs_medallion",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Highland Noble Medallion",
+  "has_values": {
+   "body_armor": "5",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "ao_generic_short_cape",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Plain Short Cape",
+  "has_values": {
+   "body_armor": "6",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_l",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Highland Plaid Cloak",
+  "has_values": {
+   "body_armor": "6",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_l2",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Highland Brown Plaid Cloak",
+  "has_values": {
+   "body_armor": "6",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_l3",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Highland Green Cloak",
+  "has_values": {
+   "body_armor": "6",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_p",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Cloak",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_p2",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Plaid Cloak",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_p3",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Striped Cloak",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_q",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Plain Woolen Cape",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_q2",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Plaid Woolen Cape",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_cloak_q3",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Striped Woolen Cape",
+  "has_values": {
+   "body_armor": "8",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_wolf_pelt_a",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Brown Wolf Pelt",
+  "has_values": {
+   "body_armor": "22",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_wolf_pelt_b",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Wolf Pelt",
+  "has_values": {
+   "body_armor": "22",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_fur_cape_a",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Furred Long Cape",
+  "has_values": {
+   "body_armor": "20",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_fur_cape_b",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Furred Long Plaid Cape",
+  "has_values": {
+   "body_armor": "20",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_fur_cape_c",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Furred Long Striped Cape",
+  "has_values": {
+   "body_armor": "20",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_fur_cape_d",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Furred Hide Cape",
+  "has_values": {
+   "body_armor": "20",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_wolf_head_cloak_a",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Wolfskin Cloak",
+  "has_values": {
+   "body_armor": "24",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_wolf_head_cloak_b",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Brown Wolfskin Cloak",
+  "has_values": {
+   "body_armor": "24",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_wolf_pelt_h",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Eastern Wolfskin Cloak",
+  "has_values": {
+   "body_armor": "24",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "tv_battania_cloak_a",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Cape",
+  "has_values": {
+   "body_armor": "14",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "tv_battania_cloak_b",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Plaid Cape",
+  "has_values": {
+   "body_armor": "14",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "tv_battania_cloak_f",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Striped Cape",
+  "has_values": {
+   "body_armor": "14",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "tv_battania_cloak_g",
+  "Type": "Cape",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Long Hide Cape",
+  "has_values": {
+   "body_armor": "16",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_battania_armor_c",
+  "Type": "BodyArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor",
+   "arm_armor"
+  ],
+  "name": "Highland Cloth Trousers",
+  "has_values": {
+   "body_armor": "0",
+   "arm_armor": "0",
+   "leg_armor": "15"
+  }
+ },
+ {
+  "id": "AR_battania_armor_d",
+  "Type": "BodyArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor",
+   "arm_armor"
+  ],
+  "name": "Highland Plaid Cloth Trousers",
+  "has_values": {
+   "body_armor": "0",
+   "arm_armor": "0",
+   "leg_armor": "15"
+  }
+ },
+ {
+  "id": "AR_battania_armor_e",
+  "Type": "BodyArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor",
+   "arm_armor"
+  ],
+  "name": "Highland Striped Cloth Trousers",
+  "has_values": {
+   "body_armor": "0",
+   "arm_armor": "0",
+   "leg_armor": "15"
+  }
+ },
+ {
+  "id": "ao_battanian_scale_armor",
+  "Type": "BodyArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Highland Rugged Scale Armor Over Tunic",
+  "has_values": {
+   "body_armor": "34",
+   "arm_armor": "0",
+   "leg_armor": "20"
+  }
+ },
+ {
+  "id": "tv_battania_armor_a",
+  "Type": "BodyArmor",
+  "culture": "Culture.battania",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Highland Rugged Scale Vest",
+  "has_values": {
+   "body_armor": "34",
+   "arm_armor": "0",
+   "leg_armor": "20"
+  }
+ },
+ {
+  "id": "AR_sturgia_womens_hat_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Northern Women's Hat",
+  "has_values": {
+   "head_armor": "6",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "sloven_hat",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Sloven Hat",
+  "has_values": {
+   "head_armor": "10",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "sloven_hat_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Rich Sloven Hat",
+  "has_values": {
+   "head_armor": "12",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_sturgia_helmet_f",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Spangenhelm Cap",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_sturgia_helmet_g",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Furred Spangenhelm Cap",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_sturgia_helmet_g2",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Brown Furred Spangenhelm Cap",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_sturgia_helmet_i",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Furred Spangenhelm With Leather",
+  "has_values": {
+   "head_armor": "67",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_sturgia_helmet_i2",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Brown Furred Spangenhelm With Leather",
+  "has_values": {
+   "head_armor": "67",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "sloven_helmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Eastern Conical Helmet",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_sturgia_helmet_base_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Northern Light Cavalry Helmet",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_sturgia_helmet_base",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Northern Cavalry Helmet",
+  "has_values": {
+   "head_armor": "55",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_nord_helmet_t",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Nordic Ridged Cap Over Cloth",
+  "has_values": {
+   "head_armor": "55",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_sturgian_spangenhelm_with_leather",
+  "Type": "HeadArmor",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Northern Spangenhelm With Leather",
+  "has_values": {
+   "head_armor": "67",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "tv_sturgia_cloak_a",
+  "Type": "Cape",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Northern Long Cape",
+  "has_values": {
+   "body_armor": "12",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "pauldron_cape_z",
+  "Type": "Cape",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Northern Long Cape",
+  "has_values": {
+   "body_armor": "20",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "berserkr_fur_b",
+  "Type": "Cape",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Bear Pelt",
+  "has_values": {
+   "body_armor": "24",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "berserkr_fur_c",
+  "Type": "Cape",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Rough Bear Pelt",
+  "has_values": {
+   "body_armor": "24",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_battania_shoulders_c",
+  "Type": "Cape",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Brown Bear Pelt",
+  "has_values": {
+   "body_armor": "24",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "berserkr_fur_a",
+  "Type": "Cape",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Plated Bear Fur",
+  "has_values": {
+   "body_armor": "28",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_sturgia_shoulders_l",
+  "Type": "Cape",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Nordic Lamellar Cape",
+  "has_values": {
+   "body_armor": "25",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_sturgia_shoulders_m",
+  "Type": "Cape",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Steel Lamellar Cape",
+  "has_values": {
+   "body_armor": "27",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "TV_sturgia_shoulders_n",
+  "Type": "Cape",
+  "culture": "Culture.sturgia",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Brass Lamellar Cape",
+  "has_values": {
+   "body_armor": "25",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "ao_mabili_feathered_headband",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Feathered Headband",
+  "has_values": {
+   "head_armor": "6",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "ao_mabili_leather_headband",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Leather Headband",
+  "has_values": {
+   "head_armor": "6",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_hat_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Rough Cloth Hat",
+  "has_values": {
+   "head_armor": "9",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_hat_d",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Cloth Hat",
+  "has_values": {
+   "head_armor": "9",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_hat_h",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Bedouin Straw Cap",
+  "has_values": {
+   "head_armor": "10",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_hat_i",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Bedouin Wrapped Straw Cap",
+  "has_values": {
+   "head_armor": "14",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Wrapped Helmet",
+  "has_values": {
+   "head_armor": "44",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_helmet_s",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Wrapped Pointed Iron Cap Helmet",
+  "has_values": {
+   "head_armor": "44",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_helmet_s2",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Wrapped Pointed Bronze Cap Helmet",
+  "has_values": {
+   "head_armor": "44",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "aserai_nasalhelm_cloth",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Loose Wrapped Nasal Helmet",
+  "has_values": {
+   "head_armor": "44",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_aserai_helmet_v2",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Darshi Decorated Spangenhelm",
+  "has_values": {
+   "head_armor": "44",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "southern_cone_helmet",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Open Pointed Skullcap",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "saracen_helmet_c",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Closed Southern Spiked Helmet",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_archer_helmet_a",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Open Archer Helmet",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_archer_helmet_e",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Open Domed Archer Helmet",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_archer_helmet_b",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Closed Archer Helmet",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_archer_helmet_f",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Closed Domed Archer Helmet",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_aserai_guard_helmet_d2",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Fluted Steel Helmet Over Open Cloth",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "TV_aserai_guard_helmet_d3",
+  "Type": "HeadArmor",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "body_armor"
+  ],
+  "name": "Southern Fluted Steel Helmet Over Wrapped Cloth",
+  "has_values": {
+   "head_armor": "50",
+   "body_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_scarf_a",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Southern Cloth Cape",
+  "has_values": {
+   "body_armor": "6",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_shoulder_k",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Zebra Skin",
+  "has_values": {
+   "body_armor": "13",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_shoulder_q",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Lion Pelt",
+  "has_values": {
+   "body_armor": "13",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "tv_aserai_cloak_a",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Southern Long Cape",
+  "has_values": {
+   "body_armor": "12",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_shoulder_l",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Studded Brass Neckguard With Zebra Skin",
+  "has_values": {
+   "body_armor": "28",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_shoulder_m",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Studded Iron Neckguard With Zebra Skin",
+  "has_values": {
+   "body_armor": "28",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_shoulder_r",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Studded Brass Neckguard With Lion Pelt",
+  "has_values": {
+   "body_armor": "28",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_shoulder_s",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Studded Iron Neckguard With Lion Pelt",
+  "has_values": {
+   "body_armor": "28",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_lamellar_cape_a",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Southern Gilded Lamellar With Long Cape",
+  "has_values": {
+   "body_armor": "40",
+   "arm_armor": "0"
+  }
+ },
+ {
+  "id": "AR_aserai_lamellar_cape_b",
+  "Type": "Cape",
+  "culture": "Culture.aserai",
+  "missing_fields": [],
+  "zero_fields": [
+   "arm_armor"
+  ],
+  "name": "Southern Gilded Lamellar With Cape",
+  "has_values": {
+   "body_armor": "40",
+   "arm_armor": "0"
+  }
+ }
+]

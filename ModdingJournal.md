@@ -3,11 +3,12 @@
 **最后更新**：2026-10-13 (晚 · 两条并行)
 - **主力机 CBTB v0.3.9 紧急回滚**: v0.3.8 的 `descendant::Widget[@VisualDefinition='CenterMenu']/Children` XPath 导致 bootstrap hard crash（跟 v0.3.1 Standard.VerticalScrollbar 同模式 · CBTB OnSubModuleLoad 没触发 · rgl log 卡 shader warn · 疑因 UIExt v3 对 Bannerlord 自定义 VisualDefinition attribute 不支持）· 回滚到 v0.3.6 inline button 配置（挤 Start 但游戏能用）· 下 session 用 **Harmony patch** CustomBattleScreen.OnInitialize 代码层加 button 彻底解决
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
+- **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）· 下一 session 做补齐规则
 
-## 🎯 设备优先度（2026-10-13 晚更新 · v6）
+## 🎯 设备优先度（2026-10-13 深夜更新 · Phase 1 audit done）
 
-- **主力机（E:）** · 最高优先度：**OSABalance v1.3.0 smoke test（Phase 0.B v6）**（`git pull && deploy.ps1`，主菜单看绿字 `PBS 9->32, CFM 16->113, POM 20->207`）· 外加 CBTB v0.3.9 bootstrap crash 修复（Harmony patch CustomBattleScreen 代码层加 button）
-- **第二设备（D:）本机** · 最高优先度：**Phase 1 字段 audit**（跟 Phase 0.B 完全正交 · journal §3040 开工锚点 · 2-3 session）· CFM Tier B 31 件可视化复核**阻塞于主力机 Retinues editor**（本机不能启游戏）
+- **主力机（E:）** · 最高优先度：**OSABalance smoke test（Phase 0.B v6）**（主菜单绿字 `PBS 9->32, CFM 16->113, POM 20->207`）· 外加 CBTB v0.3.9 bootstrap crash 修复
+- **第二设备（D:）本机** · 最高优先度：**Phase 1 字段补齐**（Priority 1: 176 件 HeadArmor body_armor 补 Face aventail 值 · 需跟 journal §48 Face aventail 决议对账 · 1 session）· 可选 Phase 0.B CFM Tier B 31 件主力机复核
 
 其他待办（PFRB v2 Keep Recruiter / PlayerFiefPoolShield / BE 战象 Path B' / CheatsGuard Round 1 实测 / BetterPatrolsBrake 测试 等）均为次优 · 等用户 session 分配。
 
@@ -3358,6 +3359,97 @@ Launcher Smoke test 预期: PBS 9->32, CFM 16->113, POM 20->207 (绿字)
 ```
 
 deploy.ps1 的 echo 消息同步更新到 v6 数字。
+
+---
+
+## 📅 2026-10-13 session（凌晨 Phase 1）· 字段完整性 + MaterialType audit · 量化 §影响 2 问题
+
+**承接**: Phase 0.B v6 收官后 · 用户选继续 Phase 1 字段 audit（跟 Phase 0.B 完全正交 · 纯脚本工作 · 本机能做 · 不依赖游戏）
+
+### 工作流
+
+1. **Parse manual_override.xml** · `_scratch/OSA_phase1/parse_manual_override.py`
+   - 产出 `decisions_flat.json` · 1760 件决议 flat index（每件带 head/body/arm/leg_armor + material_type + modifier_group + culture + Type）
+2. **Field completeness audit** · `_scratch/OSA_phase1/audit_fields.py`
+   - 按 Type 定义必填字段规则（见下表）· 扫 missing attribute vs zero value · 分类统计
+3. **MaterialType cross-check** · modifier_group plate↔Plate, chain↔Chainmail, leather↔Leather, cloth↔Cloth
+
+### 必填字段规则（RBM hitbox 公式驱动）
+
+| Type | 必填字段 | RBM 公式依据 |
+|---|---|---|
+| **HeadArmor** | head_armor · **body_armor** | Helmet.body_armor = Face 唯一防护 |
+| **BodyArmor** | body_armor · arm_armor · leg_armor | Shoulder+LowerShoulder + 腿部 50% |
+| **Cape** | body_armor · arm_armor | Shoulder 3 源 (chest+cape+shoulder) |
+| **HorseHarness** | body/head/leg/arm 全 4 字段 | §49 修订后全参与计算 |
+| **LegArmor** | leg_armor | 腿部另 50% |
+| **HandArmor** | arm_armor | 手部 hitbox |
+
+### 📊 Audit 结果
+
+**Type 分布** (headArmor 小写变体 32 件合并入 HeadArmor):
+- HeadArmor: 808 · BodyArmor: 398 · Cape: 324 · HorseHarness: 110 · LegArmor: 67 · HandArmor: 53
+
+**字段缺口** · **292 / 1760 件（16.6%）**:
+
+| 等级 | Type | 缺口字段 | 件数 | 占本类% | 影响 |
+|---|---|---|---|---|---|
+| 🔴 CRITICAL | HeadArmor | `body_armor=0` | **176** | 21.8% | Face 命中吃 0 防护（Plate helmet 也白给）|
+| 🟡 moderate | Cape | `arm_armor=0` | 106 | 33.3% | Shoulder 3 源丢 1 环 (~33% shoulder) |
+| 🟡 minor | Cape | `body_armor=0` | 2 | 0.6% | Shoulder 3 源丢 1 环 |
+| 🟢 minor | BodyArmor | `arm_armor=0` | 6 | 1.5% | Shoulder 单独加成消失 |
+| 🟢 minor | BodyArmor | `body_armor=0` | 4 | 1.0% | 决议数据空缺 |
+| 🟢 minor | HorseHarness | `body=0 or leg=0` | 2+2 | 1.8% | 对应 horse region 无加成 |
+
+### MaterialType 对账: **0 mismatch**
+
+Journal §影响 4 "MaterialType enum 字段漏审 · 暗坑"的担忧 **在当前 1760 决议数据里不存在**。OSA 作者（和 generator）的 modifier_group 跟 material_type 配对 100% 一致：
+- modifier_group="plate" ↔ material_type="Plate"
+- modifier_group="chain" ↔ material_type="Chainmail"
+- modifier_group="leather" ↔ material_type="Leather"
+- modifier_group="cloth" ↔ material_type="Cloth"
+
+**这是本次 audit 的最大好消息** · 可以从 Phase 1 剩余工作里直接划掉 MaterialType audit · 省 1 个 phase。
+
+### 关键定量结论
+
+**176 件 HeadArmor body_armor=0** 完全验证 journal §2987-2990 "1835 决议是基于单字段思维 · 跟多层聚合公式不对账"的判断。这正是：
+- 用户 2026-09-24 感受"重甲飘刀"（面部命中吃 0 的直接解释）
+- Phase 2 deploy 前必须补齐（否则 176 件头盔的 Face 继续 0 防护）
+
+**106 件 Cape arm_armor=0** 相对次要但显著 · §48 "Cape 铁律"没全面覆盖。
+
+### Phase 1 剩余工作（下 session）
+
+**Priority 1 (CRITICAL · 必修)**: 176 件 HeadArmor body_armor 补齐
+- 补齐规则需跟 journal §48 "Face aventail" 决议对账
+- 可能规则: body_armor = f(head_armor, material_type, culture) · 比如 Plate 盔 body = 50% head · Chainmail 盔 body = 70% head
+- 需用户审核 formula · 自动化批量应用
+
+**Priority 2**: 106 件 Cape arm_armor 补齐（formula: 可能 body × 0.8 / 1.0 · 跟 §48 Cape 铁律对齐）
+
+**Priority 3**: BodyArmor 6+4 件 + HorseHarness 4 件 · 一个一个人工审（数量少）
+
+### 工具链产物
+
+```
+_scratch/OSA_phase1/
+├── parse_manual_override.py       1760 决议 → flat JSON
+├── audit_fields.py                字段完整性 + MaterialType 对账
+├── decisions_flat.json            1760 件 flat index (归档 · 供后续 formula 应用)
+├── audit_field_gaps.json          292 件 gap 详情（missing/zero/current values）
+├── audit_materialtype_mismatches.json  空 (OSA 作者标得对)
+└── audit_report.md                完整报告
+```
+
+### 本次 session 对工作记忆的影响
+
+- `project-osa-osw-balance.md`: Phase 1 从"字段 audit + MaterialType audit 两件事"收窄到"只字段补齐 · MaterialType 不用动"
+- 核心数据点: 176/808 HeadArmor Face 问题 = 用户"重甲飘刀"的直接解释
+
+### 跟 Phase 2 的关系
+
+Phase 2 (deploy 1835 决议到 override XML) 的 **阻塞项从"Phase 0 + Phase 1"收窄为"Phase 1 Priority 1 补齐"**。实际上 MaterialType 不动 · Priority 2/3 占影响不大 · 走 Phase 1.1 (Priority 1 only) 后就可以 Phase 2 deploy · 剩下的 pri 2/3 后续迭代。
 
 ---
 

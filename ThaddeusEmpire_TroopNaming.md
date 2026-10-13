@@ -85,6 +85,107 @@
 
 ---
 
+### 📥 补齐信息批次 2（2026-10-11 用户 5 点细节 · 仅记录消化 · 不执行）
+
+#### 点 1 · G 诺德海战精锐（命名已 approve · 装备 + 技能细节）
+
+> **用户原文**: 诺德海战精锐应该以游戏原版中的诺德精锐线对标，单手战斧+大圆盾+破甲标枪+破甲标枪，我认为也可以设计一个双手战斧+大圆盾+破甲标枪+破甲标枪和单手战矛+大圆盾+破甲标枪+单手mace/短剑的 set 来进一步分化诺德海战精锐。技能点分配以**高海战+高双手+中单手+高投掷+高体力**为标准。
+
+**装备 Sets 3 套**（Claude 消化 · 可能是 1 unit 3 sets 变体 or 3 子分支 · 待后续用户澄清）:
+- Set A（原版诺德精锐对标）: 单手战斧 + 大圆盾 + 破甲标枪 x2
+- Set B（双手斧 变体）: 双手战斧 + 大圆盾 + 破甲标枪 x2
+- Set C（枪盾 变体）: 单手战矛 + 大圆盾 + 破甲标枪 + 单手 mace/短剑
+
+**技能**: 高海战 · 高双手 · 中单手 · 高投掷 · 高体力
+
+**消化点**:
+- "进一步分化" 可能有两种实现方式：**interpretation α · 1 unit 3 sets** (Bannerlord 原生支持 EquipmentRoster 多 Roster · spawn 时随机)；**interpretation β · 3 独立子支** (每子支一套 kit · 玩家选升级方向)。前者省工后者更有策略深度 · 用户下次说
+- "原版诺德精锐线对标" = 以 vanilla Nord Warrior/Veteran Warrior/Huscarl 为参考
+- 技能"中单手"意味着单手剑/斧为 fallback 而非主力 · 核心是双手+投掷+海战
+
+#### 点 2 · H 斯特吉亚瓦兰吉（命名 approve · 装备 + 技能细节）
+
+> **用户原文**: 瓦兰吉我认为应该以**重甲+双手战斧+大圆盾+单手战矛+单手mace/短剑**为武器配置，命名我认为瓦兰吉和诺德海战都没有问题。技能点分配以**高体力+高双手+高单手+高长柄**为标准。
+
+**装备**: 重甲 + 双手战斧 + 大圆盾 + 单手战矛 + 单手 mace/短剑
+**技能**: 高体力 · 高双手 · 高单手 · 高长柄
+
+**消化点**:
+- H 单 unit · 单 set（相比 G 的多 set 更朴素 · 瓦兰吉的"重装陆地核心"定位）
+- 装备里**无投掷**（跟 G 诺德的"投掷标枪为核心"拉开 · G 海战派 vs H 陆战派对位清晰）
+- "无海战"技能表达 Sturgia Varangian 的内陆亲兵定位
+- **✅ 命名定案**: `Thaddian Rhos Varangos (T5) → Thaddian Pelekyphoros Rhos (T6) → Thaddian Varangos Druzhinnik (T7)` 全套採纳
+
+#### 点 3 · D 库扎伊特两条骑兵（结构确认 + 装备细节）
+
+> **用户原文**: 库兹特的两条骑兵应该分为复合原版库兹特精锐线（可汗卫队）的**长柄刀+高磅复合弓+破甲箭袋+破甲箭袋**的组合，**人马身披重甲**，面带面具和全身多层扎甲、链甲或板面甲(plate armor)，而另一条则是更符合**历史突厥骑兵**的配置，即**单手骑枪+钢盾+复合弓+破甲箭袋**的组合，**马匹只配备半具装扎甲，而人仍然配备扎甲+链甲**，拥有更高速度的马匹，适合骑射与斩首（合适的时候架枪冲阵）。
+
+**两条路线确认**（都是 hybrid · 之前 Claude 提议的"Toxotai 纯射"**错误** · 两条都带弓都带近战）:
+- **第一条 · 可汗卫队**（原版库扎伊特精锐对标 · 重装 hybrid）
+  - 装备: 长柄刀 + 高磅复合弓 + 破甲箭袋 x2
+  - 装甲: **人马皆重甲** + 面具 + 多层扎甲/链甲/板面甲
+  - 速度: 低（重装代价）
+  - 战术: 阵前拉距离抛箭 · 近战长柄劈砍
+- **第二条 · 历史突厥骑兵**（历史还原 · 轻装 hybrid）
+  - 装备: 单手骑枪 + 钢盾 + 复合弓 + 破甲箭袋
+  - 装甲: 马匹半具装扎甲 · 人扎甲+链甲
+  - 速度: 高
+  - 战术: 骑射 + 斩首 + 合适时架枪冲阵（lance charge）
+
+**消化点**:
+- Claude 之前的 "Vardariotai Toxotai 纯射" 命名 **须作废**（没有纯射角色）
+- 两条都是 hybrid · 用**重装 vs 轻装**+**polearm vs lance+shield** 做结构区分
+- 第一条可用 `Chaganos Hetairos`（可汗卫队 · 符合 Byzantine 对可汗近卫的叫法）或类似重装词根
+- 第二条**待命名** · 候选: `Tourkopouloi Hippotoxotes`（突厥裔马射）· `Skythikos Hippodromoi`（斯基泰骑术轻骑）· `Tourkopouloi Prodromoi`（突厥先锋）等 · 需呼应"历史突厥""轻装高机动"
+- **结构 question**: 两条都 T7 并列 · 共用 T6 Vardariotes base？还是从 T5 具装骑分出成为两独立子支？· 待用户下次定
+
+#### 点 4 · E/F 阿塞莱保留 + 新增骆驼骑兵分支（Request 2 范围扩展）
+
+> **用户原文**: 阿塞莱德两条线我认为可以保留，但是可以额外发展出**骆驼骑兵线**，坐骑修改为骆驼，**人驼皆披重甲**，以**双手战斧+钢盾+单手弯刀+破甲标枪**或者**双手战斧+复合弓+破甲箭袋+破甲箭袋**作为配装。
+
+**结构**:
+- E (Mameloukos) 和 F (Faris) **保留**（之前已确认）
+- **新增一条骆驼骑兵**作为阿塞莱第三条精锐支（扩展 Request 2 范围 · 原本只有 D/E/F/I 四支待处理）
+
+**骆驼骑兵装备**（2 sets · 可能 1 unit 2 sets or 2 子支）:
+- Set A（枪战骆驼）: 双手战斧 + 钢盾 + 单手弯刀 + 破甲标枪
+- Set B（弓骑骆驼）: 双手战斧 + 复合弓 + 破甲箭袋 x2
+
+**装甲**: 人驼皆重甲 · 顶级重装
+
+**消化点**:
+- 精锐线 10 分支（A-J）**变成 11 分支**（新增阿塞莱骆驼骑 K 支 · 或者定为 E'/F'/其他记号 · 待用户下次定）
+- 骆驼在 Bannerlord v1.4.7 是支持的 mount type（camel · family_type 跟马不同）· Aserai vanilla 有 camel rider 原型可参考
+- 命名候选: `Dromedarios`（拜占实际有 Dromedarioi 骆驼骑军）· `Kamelophoros`（持骆驼者 · 造词）· `Jammalin`（阿拉伯骆驼手）· 待下次用户定
+- 两 sets 又是 "多 set 变体 vs 子分支" 的 interpretation 问题（跟点 1 诺德同模式）
+
+#### 点 5 · I 拉丁重骑（已 approve）
+
+> **用户原文**: 拉丁中期我认为没有问题，使用新的 Latinikoi Doryphoroi 作为 T7 的顶级冲击骑兵
+
+**✅ 命名定案**: `Thaddian Frangos (T5) → Thaddian Latinikos Kavallarios (T6) → Latinikoi Doryphoroi (T7)` 全套採纳。
+
+### 消化总结 · Request 1/2 当前进度
+
+| 分支 | 新命名 approve 状态 | 装备 kit 完整度 | 结构问题 |
+|---|---|---|---|
+| G 诺德海战 | ✅ Pelekyphoros Ploimos → Nautikos → Varangos Ploimoi | ✅ 3 sets 齐 | ⬜ 1 unit 3 sets or 3 子支 |
+| H 瓦兰吉 | ✅ Rhos Varangos → Pelekyphoros Rhos → Varangos Druzhinnik | ✅ 1 set 齐 | 无 · 单 unit 单 set |
+| D 库扎（可汗卫队 重装 hybrid）| 🟡 候选 Chaganos Hetairos · 待最终 | ✅ 齐 | ⬜ 两条共 T6 base or 独立子支 |
+| D' 库扎（历史突厥 轻装 hybrid）| ❌ 需命名（Claude 原提 Toxotai 作废）| ✅ 齐 | 同上 |
+| E 马穆鲁克 | ✅ Mameloukos → Mameloukos Furusi 保留 | ✅（kit 之前已给）| 无 |
+| F 法里斯 | ✅ Faris → Palaios → Prodromos 保留 | ✅（kit 之前已给）| 无 |
+| K? 阿塞莱骆驼（新增）| ❌ 需命名 | ✅ 2 sets 齐 | ⬜ 11 分支分支号 + 1 unit 2 sets or 2 子支 |
+| I 拉丁 | ✅ Frangos → Latinikos Kavallarios → Doryphoroi 全套 | ✅（kit 之前已给）| 无 |
+
+**仍待用户补齐**:
+- ⬜ G 诺德"3 sets 是 1 unit 多 set 还是 3 子支"（结构 α vs β）
+- ⬜ D 库扎两条 "共 T6 base 还是独立子支" + D' (历史突厥) 命名
+- ⬜ 阿塞莱骆驼"11 分支分支号" + "2 sets 结构" + 命名
+- ⬜ **Request 3 完整回答**（三层主线细节 · 未开始）
+
+---
+
 **世界观基座**：骑马与砍杀 II 卡拉迪亚（Calradia）。
 
 ---

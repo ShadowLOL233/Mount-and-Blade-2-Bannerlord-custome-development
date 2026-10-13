@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-12（CBTB P1 + P2a + P2b-1 全验证 · Gauntlet editor screen render OK · Prefab XML schema 教训入 memory）
+**最后更新**：2026-10-12（CBTB **v0.3.1 regression · 立刻回滚 v0.3.2 safe** · v0.3.1 的 Standard.VerticalScrollbar Prefab reference 在 v1.4.7 下 crash 游戏启动 · rgl log 卡在 Shader cache 之后 · CBTB OnSubModuleLoad 未触发 · 回滚去掉 ScrollablePanel 完整 pattern + Standard.VerticalScrollbar · 保留 Combat/All/Civilian mode toggle · scrollbar 深度研究留下 session）
 
 ## 目录
 - [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)
@@ -2872,25 +2872,313 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ---
 
-## 📅 2026-10-12 session · CustomBattleTroopBuilder (CBTB) 立项 + Phase 1 + 2a + 2b-1 全验证
+## 📅 2026-10-12 session · 🔴 CBTB v0.3.1 regression · 立刻回滚 v0.3.2 safe · scrollbar 延后
+
+**触发**：用户 launcher 加载 v0.3.1 启动游戏 · **游戏进不去主界面 · 弹报错窗口 · 用户 cancel dump**。诊断线索：
+- `C:\ProgramData\Mount and Blade II Bannerlord\logs\CustomBattleTroopBuilder.log` 最后一条 = v0.3.0 的 7:19 search filter · **v0.3.1 的 OnSubModuleLoad 未写**
+- `logs\rgl_log_23320.txt` 10 KB · 停在 `rgl_post_warning_line: Shader cache version of the external module (FieldSiegeEngines) is invalid.`
+- `logs\watchdog_log_23320.txt` 显示 `Crash occurred. Asking for dump. User canceled dump and report generation!`
+- `logs\rgl_log_errors_23320.txt` 191 B · 没具体 error
+
+**真因判断**（未完全 proven · 但高概率）：**v0.3.1 的 `Standard.VerticalScrollbar` Prefab reference 在 v1.4.7 下无效**。
+- vanilla 的 `Standard.VerticalScrollbar` 只在 3 处用（GameMenuTroopSelection / GameMenuTournamentLeaderboard / MultiSelectionQueryPopup）· 且 vanilla 用法都是 `IsVisible="false"` placeholder + 配手动 `ScrollbarWidget`
+- UTM `UTMTroopManager.xml:442` 的 `Standard.VerticalScrollbar` 用法可能是 v1.4.8+ 才支持 · 或 UTM 自己注册了 `Standard` namespace 的 Prefab extension（本次没查）
+- Prefab preload 阶段比 SubModule.OnSubModuleLoad 更早 · 所以 CBTB log 没写就是**bootstrap 挂了**
+
+**立刻执行 v0.3.2 safe 回滚**（不等 root-cause 深挖）：
+
+- **改** `GUI/Prefabs/CBTBEditor.xml`：
+  - 删 `<ScrollablePanel ClipRect InnerPanel VerticalScrollbar>` 复合 attribute 结构
+  - 删 `<Standard.VerticalScrollbar Id="CBTBScrollbarHost">` 兄弟 widget
+  - 删外层 Horizontal frame ListPanel
+  - 退回简化：`<Widget ClipContents="true">` → 内套 `<ListPanel HeightSizePolicy="CoverChildren" DataSource="{Troops}">`
+  - **保留**：Combat/All/Civilian 3 button mode row · search row · title · Close button · 1100×820 panel 尺寸
+- **csproj Version** 0.3.1 → **0.3.2** · **SubModule.xml** v0.3.1 → **v0.3.2** · SubModule.cs 2 处 version 字符串同步
+
+**build+deploy v0.3.2 验证**：
+```
+build OK · DLL 18,944 B（跟 v0.3.1 一样 · 只改 Prefab 没改 code）
+SubModule.xml 1,779 B @ 07:35:20 ✓
+CustomBattleTroopBuilder.dll 18,944 B @ 07:35:29 ✓
+CBTBEditor.xml 新 safe 版 ✓
+```
+
+**用户 Phase 3a-safe 实测清单**：
+1. launcher 保持 v0.3.2 enabled（无需重勾）
+2. **启动游戏** · 应能进主菜单 · 看黄字 `[CBTB] v0.3.2 loaded. Phase 3a-safe: mode toggle only · scrollbar deferred.`
+3. Custom Battle → Troop Builder
+4. editor 应有：title · search · **3 mode button**（Combat/All/Civilian）· 列表 · Close
+5. **Mode toggle 验证**（主要功能）：
+   - 默认 Combat 高亮 · 列表 ~1700-1900 条
+   - All → 2044 条 · Civilian → 150-300 条
+   - 切换时 CountText 实时更新
+6. **列表显示**：无 scrollbar · 列表到底会被 Close button 挡（已知限制 · 下 session 修）
+   - 搜索/mode 能帮用户在不滚的情况下过滤到想找的 troop
+7. Close/Esc 回 Custom Battle
+
+**下 session scrollbar 深度研究计划**：
+- 反编译 UIExtender v3 看 Prefab preload 流程
+- 查 vanilla GameMenuTroopSelection.xml 的完整 scrollable 实现
+- 可能方案：Grep v1.4.7 下所有 vanilla 的 scrollable list prefab · 复制 proven pattern
+- 或 · 用 Harmony patch 主动插 scrollbar · 不走 Prefab 声明路径
+- 或 · 查 `ScrollbarWidget` + 手动绑定 widget 的 pattern（vanilla MultiSelectionQueryPopup.xml:88 用的那种）
+
+**根因 pattern 教训**（归档）：
+- 从别的 mod（UTM）直接复制 Prefab pattern **不保证**在 v1.4.7 下工作 · UTM 可能是针对 v1.4.8+ 开发
+- Prefab preload 阶段的 crash **不写入 mod 自己的 log** · 要靠 rgl log 诊断
+- Prefab 新改动应**先 build+deploy 跑 1 轮启动烟雾测试**再加其他改动 · 避免多个改动叠加后不好定位
+
+**🔴 下 session 首事**：
+1. 确认 v0.3.2 safe 回滚能启动游戏（本章节用户测试通过后）
+2. 深度研究 v1.4.7 scrollable list prefab 的 proven pattern · 写出 **v0.3.3 带 scrollbar** 版本（不盲引 Standard.VerticalScrollbar）
+
+---
+
+## 📅 2026-10-12 session · CustomBattleTroopBuilder (CBTB) Phase 3a-fix · 滚动条 + 战斗/文明三态 toggle · 🔴 已 regression · 见上方 v0.3.2 safe 回滚章节
+
+**触发**：Phase 3a (v0.3.0) 用户实测 4 截图：
+- ✅ 列表渲染 OK · 2044 条（原 2222 - 178 notable-string 过滤 = 2044 · 跟预期 1900-2100 一致）
+- ✅ search 实时过滤 OK（aser→108 · vetera→48 · empire→1383 · 全部正确）
+- ✅ CountText 动态 OK
+- 🔴 **ScrollablePanel 滚动不工作**（列表只看到前 ~20 行 · 到底被 Close button 挡住 · 鼠标滚轮无响应）
+- 🟡 用户反馈：**保留非战斗单位但必须允许严格分开**（截图里看到 Armorer/Barber/Beggar/Blacksmith/Dancer/Musician/Shipwright/gear_practice_dummy 等 civilian 混在列表里）
+
+**真因**：
+1. **ScrollablePanel 用法错误**：我 v0.3.0 只写了 `ClipContents="true" + AutoHideScrollBars="true"` 两 attribute · 内部直接套 ListPanel · 缺 Bannerlord 要求的 **ClipRect/InnerPanel/VerticalScrollbar 三 attribute** + 外部 **Standard.VerticalScrollbar 兄弟 widget** + 内部 **ClipRect Widget 包装**。vanilla ScrollablePanel 需要显式告诉它 clip 边界和 inner content widget · 否则不触发滚动行为。
+2. **civilian 过滤策略错误**：v0.3.0 用 StringId 字串匹配（trader/notable/preacher/merchant/tavernkeeper/gangleader/artisan/headman/rural_notable 9 词）· 覆盖不全（漏 armorer/barber/beggar/blacksmith/dancer/musician/shipwright/shop_worker/game_host/tavern_wench/gear_practice_dummy 等）· 且过度激进（可能误杀部分战斗兵）。应用 `BasicCharacterObject.IsSoldier` bool · vanilla 自己的分类字段 · 100% 准。
+
+**Phase 3a-fix 产物（2026-10-12 ✅ · build+deploy）**：
+
+- **改** `src/UI/TroopListItemVM.cs` · 加 `IsSoldier` 字段（直接读 `character.IsSoldier`）
+- **改** `src/UI/CBTBEditorVM.cs`
+  - 加 `_mode` 字段（0=Combat 1=All 2=Civilian · 默认 0）
+  - 加 3 个 `[DataSourceProperty] bool IsModeCombat/IsModeAll/IsModeCivilian`（供 button `IsSelected="@..."` 高亮）
+  - 加 3 个 `ExecuteSetModeCombat/All/Civilian()` method
+  - RefreshFilter 加 mode 条件：`mode=0` → `src.Where(t => t.IsSoldier)` · `mode=2` → `src.Where(t => !t.IsSoldier)` · `mode=1` → 不过滤
+  - **删** v0.3.0 的 9 词 StringId 粗略过滤（现在 IsSoldier 做精准分类 · 不需要 heuristic）
+- **改** `GUI/Prefabs/CBTBEditor.xml`（关键 scroll pattern + mode row）
+  - **Scroll pattern 重写**（UTM `UTMTroopManager.xml:200-446` 验证样板）：
+    ```
+    <ListPanel HorizontalLeftToRight>    (frame · 内容+scrollbar 并排)
+      <ScrollablePanel ClipRect="ClipRect"
+                       InnerPanel="ClipRect\InnerContent"
+                       VerticalScrollbar="..\CBTBScrollbarHost\Scrollbar">
+        <Widget Id="ClipRect" ClipContents="true">
+          <ListPanel Id="InnerContent" HeightSizePolicy="CoverChildren"
+                     DataSource="{Troops}">
+            <ItemTemplate>...</ItemTemplate>
+          </ListPanel>
+        </Widget>
+      </ScrollablePanel>
+      <Standard.VerticalScrollbar Id="CBTBScrollbarHost" SuggestedWidth="20" />
+    </ListPanel>
+    ```
+  - 加 Mode row（search 下方 · 3 ButtonWidget 并排 · 每个 150 宽 · IsSelected 双向绑定）：`[Combat] [All] [Civilian]` · 默认 Combat 高亮
+- **csproj Version** 0.3.0 → **0.3.1** · **SubModule.xml** v0.3.0 → **v0.3.1** · SubModule.cs 2 处 version 字符串同步
+
+**Build+Deploy 验证**：
+```
+build OK · DLL 18,944 B（v0.3.0 的 17,408 → 18,944 · +1.5 KB · mode toggle 代码合理）
+SubModule.xml 1,779 B @ 07:23:20 ✓
+CustomBattleTroopBuilder.dll 18,944 B @ 07:23:33 ✓
+CBTBEditor.xml 新版 ✓
+CBTBMenuButton.xml 不变（Phase 2b-2 原件）
+```
+
+**用户 Phase 3a-fix 实测清单**：
+1. launcher 加载 v0.3.1（无需重勾）
+2. 主菜单看黄字 `[CBTB] v0.3.1 loaded. Phase 3a-fix: scrollbar + Combat/All/Civilian mode toggle.`
+3. 主菜单 → Custom Battle → 点 "Troop Builder" button
+4. editor 显示：
+   - 标题 · 搜索行（跟 v0.3.0 一样）
+   - **新**：下方 3 button row `[Combat] [All] [Civilian]` · 默认 Combat 高亮
+   - 列表：右侧应有 scrollbar · 鼠标悬停列表区域 · 滚轮能滚
+5. **关键验证**（滚动条）：
+   - 右侧应**可见**滚动条 track + handle（AutoHideScrollBars=false · 空列表时 handle 可能不显 · 但 track 应可见）
+   - 鼠标滚轮能滚过列表（滚到底能看到最后几条 troop · 不再被 Close button 遮挡）
+   - handle 可拖拽（可选 · 滚轮 work 就 OK）
+6. **关键验证**（Mode toggle）：
+   - 默认 Combat 高亮 · 列表应显示 **~1700-1900 条**（纯战斗兵 · Soldier=true）
+   - 点 "All" → 列表回到 ~2044 条（跟 v0.3.0 一致）· All button 高亮
+   - 点 "Civilian" → 列表只剩 **~150-300 条** civilian（Armorer/Barber/Beggar/Blacksmith/Dancer 等）· Civilian button 高亮
+   - 切换 mode 时 CountText 实时更新
+   - Search 跟 mode 可叠加（例如 Combat + "aserai" = 只 aserai 战斗兵）
+7. Close/Esc 回 Custom Battle 菜单
+
+**预期的 N 值校准**：
+- All mode = **2044** 条（跟 v0.3.0 一致 · 过滤 hero/player 后）
+- Combat mode ≈ **1700-1900** 条（粗估 vanilla + mod 的战斗兵占比 85-90%）
+- Civilian mode ≈ **150-300** 条
+
+**UX 细节决策**：
+- 默认 Combat（用户主要场景 · 保留 civilian 作可选不作默认）
+- 3 button 水平 radio-like · 不用 checkbox（互斥 · 选一个）
+- IsSelected 高亮用 vanilla ButtonBrush1 自带 selected state（UpdateChildrenStates=true 开启）
+
+**Phase 3b 下 session 启动点**（Phase 3a-fix 实测通过后）：
+- 列表 item 点击 → ExecuteSelectTroop(troopId) → VM 存 `SelectedTroop` · 高亮当前 row
+- 右面板加 troop preview（装备 slot / skill 概览）
+- Clone button → InformationManager.ShowTextInquiry rename → 新 CharacterObject 挂 MBObjectManager
+- 研究 Custom Battle 下 BasicCharacterObject vs CharacterObject · 新 troop 怎么注册才能让 Custom Battle 菜单下次打开能 pick
+
+---
+
+## 📅 2026-10-12 session · CustomBattleTroopBuilder (CBTB) Phase 3a 落地 · troop picker + search filter
+
+**触发**：Phase 2b-2 用户 6/6 实测全通过 · 用户选项 A 直推 Phase 3 · 本切片做 **Phase 3a = base troop picker ListPanel + search filter**（Clone/rename/culture 分组 tab 留给 3b/3c）。
+
+**Phase 3a 产物（2026-10-12 ✅ · build+deploy 通过 · 待用户实测）**：
+
+- **新文件** `src/UI/TroopListItemVM.cs`（约 50 行）· ViewModel per troop
+  - 字段：`Character` (BasicCharacterObject) · `StringId` · `DisplayName` · `CultureId` · `Tier` · `Level`
+  - `[DataSourceProperty] SummaryLine` → 格式 `[T{tier} · L{level} · {culture} · {role}]  {name}  ({stringid})`
+  - role 推导：`IsMounted`→cav · `IsRanged`→rng · else inf
+
+- **改** `src/UI/CBTBEditorVM.cs`（完全重写 · 约 180 行 · 从 placeholder VM 升级到真·picker VM）
+  - 加 `List<TroopListItemVM> _allTroops` 内部缓存 + `MBBindingList<TroopListItemVM> Troops` DataSource property
+  - 构造函数读 `MBObjectManager.Instance.GetObjectTypeList<BasicCharacterObject>()` · 过滤 + 排序 + 填 _allTroops
+  - 过滤规则：排除 `IsHero` · `IsPlayerCharacter` · StringId 含 trader/notable/preacher/merchant/tavernkeeper/gangleader/artisan/headman/rural_notable（notable 相关 9 类字串）
+  - 排序：Culture → Tier → Level → StringId
+  - `[DataSourceProperty] SearchText` setter → RefreshFilter() · 当前 `SearchText` 对 StringId/DisplayName/CultureId 三字段 Contains 匹配（IgnoreCase）
+  - `[DataSourceProperty] CountText` 显示 "Showing N / 2222 troops"（动态随 search 变）
+
+- **改** `src/UI/CBTBEditorScreen.cs`（清理 unused imports + 新 VM 签名）
+  - VM 构造签名改 `new CBTBEditorVM(ClosePopScreen)`（pool enum 移进 VM 内部）
+  - 删 TaleWorlds.Core/ObjectSystem/Library 等 unused imports
+
+- **改** `GUI/Prefabs/CBTBEditor.xml`（Phase 3a 版 · 从 650 高 placeholder panel 升级到 1100×800 picker panel）
+  - 布局：顶部 title · 下方 search row（`SearchHint` 文字 + `EditableTextWidget` 双向绑定 `SearchText` + 右侧 `CountText`）
+  - 中部 `<ScrollablePanel>` + 内嵌 `<ListPanel DataSource="{Troops}"><ItemTemplate>` 1 行 30 高度 TextWidget bind `SummaryLine`
+  - 底部 Close button 保留原样
+
+- **csproj Version** 0.2.1 → **0.3.0** · **SubModule.xml Version** v0.2.1 → **v0.3.0** · SubModule.cs 2 处 version 字符串 + 功能描述同步
+
+**Build+Deploy 验证**（铁律 [[bannerlord-build-deploy]] 遵守）：
+```
+build OK · DLL 17,408 B（Phase 2b-2 的 13 KB → 现 17 KB · 加 4 KB 合理）
+Modules\CustomBattleTroopBuilder\SubModule.xml 1,779 B @ 07:07:08 ✓
+Modules\CustomBattleTroopBuilder\bin\...\CustomBattleTroopBuilder.dll 17,408 B @ 07:07:21 ✓
+Modules\CustomBattleTroopBuilder\GUI\Prefabs\CBTBEditor.xml 5,473 B @ 07:06:50 ✓
+Modules\CustomBattleTroopBuilder\GUI\Prefabs\CBTBMenuButton.xml 1,010 B @ 05:46:17 (Phase 2b-2 不变)
+```
+
+**Phase 3a 技术要点**：
+- `BasicCharacterObject` API 核实（ilspycmd 反编译 TaleWorlds.Core.dll）：Custom Battle 的 2222 条是 **BasicCharacterObject** 不是 CharacterObject
+  - 可用：`Name` (TextObject · .ToString() 转 string) · `StringId` · `Culture` (BasicCultureObject · .StringId) · `Level` · `GetBattleTier()` 方法 · `IsHero` · `IsPlayerCharacter` · `IsMounted` · `IsRanged` · `IsInfantry` · `DefaultFormationClass`
+  - **不可用**：`Tier` property（CharacterObject 独有）· `Occupation` enum（CampaignSystem 独有 · Custom Battle 不加载）
+- MBBindingList 模式参考 = UTM `UTMTroopManagerVM.cs:_troops` + `UTMTroopManager.xml:217` ListPanel+ItemTemplate 样板
+- EditableTextWidget 搜索框参考 = UTM `UTMTroopManager.xml:666` `Text="@PendingPresetName"` 双向绑定 brush `Review.NameInput.Text`
+- search filter 实现 = SearchText setter 直接 RefreshFilter · 2222 条 O(N) 遍历每次 keystroke · 无需 debounce/virtualization（N 很小）
+- ScrollablePanel + ListPanel 组合 · ClipContents=true + AutoHideScrollBars=true · 自动滚动
+
+**用户 Phase 3a 实测清单**：
+1. launcher 加载 CBTB v0.3.0（不需重新勾选 · 已在 enabled 列表）
+2. 进游戏 · 主菜单看黄字 `[CBTB] v0.3.0 loaded. Phase 3a: troop picker (search + 2222-filter) ready.`
+3. 主菜单 → Custom Battle → 点 "Troop Builder" button（Phase 2b-2 入口）
+4. 打开 editor · 看到：
+   - 标题 "CBTB Editor · Phase 3a"
+   - 搜索行：左 "Search by StringId..." 提示 + 中间文本框（可点可输入）+ 右 "Showing N / M troops"
+   - 滚动列表：按 culture 分组排序的 troop 清单 · 每行 1 行格式 `[T? · L? · culture · role]  Name  (string_id)`
+   - 底部 Close button
+5. 滚动列表到底 · 看能否顺畅滚（鼠标滚轮 + 侧边滚动条）
+6. 搜索：
+   - 输 "aserai" → 应收窄到 ~200-300 条 Aserai 文化 troops
+   - 输 "sturgia" → ~100-200 条
+   - 输 "veteran" → 跨文化 veteran 类
+   - 输 "cultist" / "bandit" → 应有一些 Mountain Bandits/Looters 类
+   - 清空 search → 回全量 ~2000+ 条（排除 ~200 hero/notable 后）
+7. CountText "Showing N / M" 跟搜索实时更新
+8. Close / Esc 回 Custom Battle 菜单（Phase 2b-2 已验证的回退逻辑不碰 · 应仍工作）
+
+**预期的 "N / M troops" 实际值**：
+- 2222 原始 pool
+- 过滤 hero/notable 后 ≈ **1900-2100 条**（取决于 vanilla + mod 的 notable 占比）
+- 若 "Showing" 跟 "/" 后的 M 差很多（例如 M = 500 甚至 100）· 说明过滤规则过度激进 · 需放宽
+- 若 M = 2222 · 说明过滤没触发 · bug
+
+**Phase 3b 下 session 启动点**（Phase 3a 实测通过后）：
+- 列表 item 点击 → 选中状态（高亮 selected row）
+- 右面板显示选中 troop 的 preview（Name/Culture/Equipment slot 简述）
+- Clone button + rename InformationManager.ShowTextInquiry
+- 新 CharacterObject 挂 MBObjectManager（**但 Custom Battle 用 BasicCharacterObject** · 需研究 MBObjectManager.RegisterObject API 怎么挂新 troop 让 Custom Battle 下次开菜单能看到）
+
+**🟡 Phase 2b-2 button 位置/overlap UX 问题**：仍挂在前一个章节（下方 "已知 UI 问题"）· 本次 3a 不触碰 · 待后续 UX 优化 session。
+
+---
+
+## 📅 2026-10-12 session · CustomBattleTroopBuilder (CBTB) 立项 + Phase 1 + 2a + 2b-1 + 2b-2 全落地
 
 **本 session 累积进展**（时序）：
 1. Phase 1 scaffold ✅ · SubModule.xml + csproj + Main.cs + deploy.ps1 + README · DLL 7 KB · 主菜单弹黄字 + Ctrl+Shift+B 弹绿字（用户遇 SubModule.xml Version `v0.1.0-scaffold` suffix 的 launcher FormatException · 修为 `v0.1.0` · 入 memory [[feedback-bannerlord-submodule-version]]）
 2. Phase 2a ✅ · hotkey 升级到 InformationManager.ShowInquiry 交互对话框 + troop pool enum 测试 · **发现 2222 条 BasicCharacterObject**（vanilla + mod 累加 · Custom Battle context 下）
 3. Phase 2b recon ✅ · ilspycmd 反编译 CustomBattle.dll · 定位 CustomBattleScreen + CustomBattleVM + Prefab path `Modules\SandBoxCore\GUI\Prefabs\CustomBattle\CustomBattleScreen.xml`
 4. Phase 2b-1 ✅ · 独立 Gauntlet editor Screen + VM + Prefab XML · Prefab 2 版迭代（v1 `Brush.Color` silent fail · v2 vanilla `Sprite`+`Color`+`AlphaFactor`+`flat_panel_9` work）· 用户截图验证 render 完美
+5. Phase 2b-2 ✅ · UIExt v3.0.3 depend + ViewModelMixin + PrefabExtensionInsertPatch · Custom Battle 菜单 CenterControls ListPanel 追加 "Troop Builder" button · build 0 err 0 warn · DLL 13 KB · deploy OK · **v0.2.0 待用户实机验证**
 
 **🎯 Phase 2b-1 新发现 · MBObjectManager pool timing**：
 - 主菜单下 `BasicCharacterObject.Count = 0`（objects 未 init）
 - Custom Battle context 内 count = **2222**
 - → Phase 3 picker 必须在 Custom Battle 触发 · Phase 2b-2 菜单按钮**是唯一可用入口** · hotkey 只作辅助且需 warn empty pool
 
-**Phase 2b-2 下 session 启动点**：
-- csproj 加 UIExt v3.0.3 depend
-- 反编译 CustomBattleScreen.xml 找 button container xpath
-- `BaseViewModelMixin<CustomBattleVM>` subclass 加 button + ExecuteOpenTroopBuilder method
-- `PrefabExtensionInsertPatch` 插入 button widget
-- editor open 时如 pool=0 弹 warning
+**Phase 2b-2 产物（2026-10-12 ✅）**：
+- `src/UI/CBTBCustomBattleMenuMixin.cs` · `BaseViewModelMixin<CustomBattleVM>` 子类 · `[ViewModelMixin("RefreshValues", true)]` · `TroopBuilderButtonText` property + `ExecuteOpenTroopBuilder()` method
+- `src/UI/CBTBMenuButtonExtension.cs` · `PrefabExtensionInsertPatch` · `[PrefabExtension("CustomBattleScreen", "descendant::ListPanel[@Id='CenterControls']/Children")]` · `InsertType=3`（ReplaceKeepChildren · 保留 vanilla Randomize/Start/Back 3 button · 追加 CBTB button）· `[PrefabExtensionFileName(false)]` → 读 `GUI/Prefabs/CBTBMenuButton.xml`
+- `GUI/Prefabs/CBTBMenuButton.xml` · 复用 vanilla `WideButton.Flat` brush + `MPTeamSelection.SpectateButton.Text` · 跟 Start 按钮同宽同风格 · 保 UX 一致
+- `src/SubModule.cs` 改造：OnSubModuleLoad 加 `UIExtender.Create("CustomBattleTroopBuilder").Register(asm).Enable()` · 提取共享 `OpenEditor()` static method · hotkey 和 mixin 共用 · 内置 pool=0 守卫（空池弹 Inquiry 告知 "open from Custom Battle menu"）
+- SubModule.xml 加 `<DependedModule Id="Bannerlord.UIExtenderEx" DependentVersion="v3.0.3" />` + metadata
+- 版本号 v0.1.0 → v0.2.0（csproj + SubModule.xml 对齐 · 纯 vN.N.N 遵守 [[feedback-bannerlord-submodule-version]]）
+
+**🎯 Phase 2b-2 技术要点**：
+- UIExt v3 API 参考源 = PSLR 的 `src/PlayerSettlement/Main.cs:244` + `UI_Extensions.cs:94-113` + `UI_Viewmodels.cs:94-150`
+- `UIExtender.Create(ModuleId)` 静态工厂 · 不是 `new UIExtender(...)`
+- InsertType=3 实战验证（PSLR MapBar 用的同值 · 本次 CenterControls Children xpath 同策略）
+- Button 的 `Command.Click="ExecuteOpenTroopBuilder"` 直接调 mixin 方法 · DataSource 不用显式切换（UIExt 自动把 mixin property/method 混入主 VM）
+
+**用户实测清单** · ✅ **全部通过**（2026-10-12 用户 3 轮截图确认）：
+1. ✅ launcher 启用 "Custom Battle Troop Builder" · 顺序 LoadAfter UIExtenderEx · 无红字 · 无 version warn
+2. ✅ 进游戏 → 主菜单 → Custom Battle · 第 4 个按钮 "Troop Builder" 出现在 CenterControls 跟 Randomize/Start/Back 并列（🟡 **但位置/overlap UX 不满意** · 见下方 "已知 UI 问题" 章节）
+3. ✅ 点 "Troop Builder" button · 打开 CBTB editor Gauntlet 面板 · **显示 "Troop pool: 2222 BasicCharacterObject"**（pool enum 读取正确）
+4. ✅ editor 内 **Close button** · 回到 Custom Battle 菜单（非主菜单 · screen stack 正确）
+5. ✅ editor 内 **Esc key** · 同样回到 Custom Battle 菜单
+6. ✅ **主菜单下**（没进 Custom Battle）按 Ctrl+Shift+B · 弹 vanilla Inquiry 告知 "Troop pool is empty. MBObjectManager hasn't loaded any BasicCharacterObject yet. Open the editor from the Custom Battle menu instead — the hotkey only works once Custom Battle has initialised the troop pool."（pool=0 守卫生效 · 文案清晰）
+
+**Phase 3 启动点** · ✅ **前置实测已通 · 可开工**（等用户发话 · UI 位置修复可穿插做或 Phase 3 后一并做）：
+- CBTBEditorVM 替换 placeholder 文字 · 开始 base troop picker UI
+- 读 `BasicCharacterObject.All` 全量 2222 条 · ListPanel 虚拟化 + search filter 文本框
+- 按 culture / role / tier 分组
+- 排除 notable/trader/hero template（StringId 过滤 or Occupation 枚举）
+- 选中 troop → clone button → 弹 rename inquiry → 新 CharacterObject 挂 MBObjectManager
+
+### 🟡 已知 UI 问题（2026-10-12 用户截图反馈 · 待后续 CBTB UI 优化 session 修复）
+
+- [ ] **CBTB "Troop Builder" 按钮位置 / overlap 问题**（Phase 2b-2 落地后用户第一轮实测反馈 · 功能通但 UX 不满意）
+
+  **用户反馈**：按钮确实出现 · 但对**位置**和跟 **UI 其他元素的 overlap**不满意（2026-10-12 实测截图）
+
+  **截图观察**（Custom Battle menu · screen 2560×1440）：
+  - "Troop Builder" button 位置 = 底部 CenterControls 区域最左侧 · 跟 Randomize（中间小图标）+ Start（右侧长按钮）并列
+  - **问题 1**：Troop Builder button 占了原本 CenterControls 左侧空间 · 把 Randomize 图标和 Start 挤到右边
+  - **问题 2**：button 左边缘很贴近左侧 PLAYER 面板的 **Army Size** 滑块文字 + "206" 数字 · 视觉上拥挤
+  - **问题 3**：button 右侧 Randomize icon + Start button 跟右侧 ENEMY 面板的 **Army Size** 滑块 + "2362" 数字也紧挨
+  - **问题 4**：button 跟最底部的 **Back** 按钮（左侧带箭头的圆按钮）在同一水平带 · 整个底部横条看起来过度拥挤
+  - 整体 UX：vanilla Custom Battle 底部横条原本是 Randomize+Start+Back 3 个 · 平衡居中 · 加入第 4 个 button 后破坏了原布局平衡
+
+  **当前实现**（供修时参考）：
+  - Prefab XPath = `descendant::ListPanel[@Id='CenterControls']/Children`
+  - InsertType = 3 (ReplaceKeepChildren · append)
+  - Button XML = `GUI/Prefabs/CBTBMenuButton.xml` · 复用 vanilla `WideButton.Flat` + `MPTeamSelection.SpectateButton.Text`
+  - 宽度 = 跟 Start button 同宽（默认 WideButton.Flat brush 决定）
+
+  **可能的修复方向**（待设计 · 下 session 讨论）：
+  - **A · 按钮位置换位**：把 CBTB button 插到 Back button 旁边（左下角 · 不占 CenterControls）· 或插到画面某处独立悬浮位
+  - **B · 按钮尺寸收窄**：改成 compact icon-only button（像 Randomize 的小圆图标）· 不占 wide button 宽度
+  - **C · 换 XPath / InsertType**：找别的 target panel · 比如顶部 Custom Battle 标题行附近 · 不碰 CenterControls
+  - **D · 独立 overlay 面板**：完全不侵入 CustomBattleScreen · 挂个 UI Extender 的全屏 overlay button 在角落
+  - **E · 保持当前位置 · 只缩尺寸 + 加 margin**：最小改动路径
+
+  **优先级**：功能完整后再调 UX · 不急。等用户发话继续时在 CBTB 下 session 内解决。
+
+  **不动的东西**：build / deploy / 版本号都不升 · 这是 UX issue 不是 bug · 不触发 REPLICATE 同步。
 
 ---
 

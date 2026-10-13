@@ -748,6 +748,42 @@ Test-Path "$GAME_ROOT\Modules\PlayerSettlement\bin\Win64_Shipping_Client\PlayerS
 
 ---
 
+## [P6.9] Build + deploy CustomBattleTroopBuilder (CBTB · v0.2.0)
+
+**GOAL**: Self-authored Custom Battle troop builder — build + test custom troops without Campaign dependency. Phase 2b-2 state: UIExtenderEx v3 mixin + PrefabExtensionInsertPatch injects a "Troop Builder" button into vanilla Custom Battle `CenterControls` ListPanel (next to Randomize/Start/Back) + Gauntlet editor screen placeholder. Phase 3+ pending: base troop picker + equipment/skill editor + JSON persistence.
+
+**PRE**: [P6.0] complete. UIExtenderEx v3.0.3 subscribed via [P1.3] (workshop `2859222409`). CBTB does NOT depend on Campaign — purely CustomBattle sandbox.
+
+**DO**:
+```powershell
+& "$repoRoot\CustomBattleTroopBuilder\deploy.ps1"
+# Script runs: dotnet build Release + copy SubModule.xml + DLL + pdb to Modules\CustomBattleTroopBuilder\
+# + copy GUI/Prefabs/*.xml (CBTBEditor.xml + CBTBMenuButton.xml) · 2 prefab total.
+# For dry-run preview: add -DryRun flag.
+```
+
+**VERIFY**:
+```powershell
+Test-Path "$GAME_ROOT\Modules\CustomBattleTroopBuilder\SubModule.xml"
+Test-Path "$GAME_ROOT\Modules\CustomBattleTroopBuilder\bin\Win64_Shipping_Client\CustomBattleTroopBuilder.dll"
+(Get-Item "$GAME_ROOT\Modules\CustomBattleTroopBuilder\bin\Win64_Shipping_Client\CustomBattleTroopBuilder.dll").Length -ge 12000
+# 2 prefab XML present
+Test-Path "$GAME_ROOT\Modules\CustomBattleTroopBuilder\GUI\Prefabs\CBTBEditor.xml"
+Test-Path "$GAME_ROOT\Modules\CustomBattleTroopBuilder\GUI\Prefabs\CBTBMenuButton.xml"
+(Select-String -Path "$GAME_ROOT\Modules\CustomBattleTroopBuilder\SubModule.xml" -Pattern '<Version value="v0\.2\.0"').Count -eq 1
+```
+
+**POST-INSTALL**:
+- Enable `Custom Battle Troop Builder` in launcher (depends on Harmony/ButterLib/UIExtenderEx v3.0.3 · load after them · see [P7.1]).
+- Main menu greets with yellow info `[CBTB] v0.2.0 loaded. Phase 2b-2: Troop Builder button in Custom Battle menu.`
+- In-game verification: Main Menu → Custom Battle · bottom `CenterControls` row shows a 4th button "Troop Builder" alongside Randomize / Start / Back. Click → opens Gauntlet editor (placeholder · shows troop pool count ≈ 2222). Esc / Close returns.
+- `Ctrl+Shift+B` hotkey (anywhere) is a dev shortcut; when `BasicCharacterObject.All.Count == 0` (main menu context before CustomBattle init) it shows an InquiryData warning instead of pushing an empty editor.
+- Logs: `C:\ProgramData\Mount and Blade II Bannerlord\logs\CustomBattleTroopBuilder.log` records `OnSubModuleLoad OK` + `CustomBattleMenuMixin ctor` + `mixin.ExecuteOpenTroopBuilder invoked`.
+
+**ROLLBACK**: `Remove-Item "$GAME_ROOT\Modules\CustomBattleTroopBuilder" -Recurse -Force`. No save-game state (CBTB does not persist to vanilla save — all custom troops live in `Modules\CustomBattleTroopBuilder\CustomTroops\*.json` once Phase 6 lands).
+
+---
+
 ## [P6.5] Reference data packs (no build — repo-tracked CSVs)
 
 **GOAL**: Have `OSA_Reference/` and `RBM_Reference/` CSVs available for balance queries. They're already in the repo; nothing to build.
@@ -822,6 +858,9 @@ Test-Path "$repoRoot\RBM_Reference\data\rbm_items.csv"
    UTMPatch                     ← CYT-only setup alternative. Load AFTER ChooseYourTroops
                                    (and FormationManager if present).
                                    NOT alongside UnifiedTroopManager.
+   CustomBattleTroopBuilder     ← self-authored CBTB v0.2.0 (see [P6.9]) · 2026-10-12 Phase 2b-2.
+                                   Load AFTER Harmony/ButterLib/UIExtenderEx/CustomBattle.
+                                   Not Campaign-coupled · can be enabled standalone.
    GreekFireArsenal             ← Nexus 12473 (see [P7.2]) · 2026-10-12 install · Load AFTER Harmony/MCM.
    FireJars                     ← Nexus 9620 (see [P7.2]) · 2026-10-12 install · module folder is `FireJars_V2` but Id="FireJars".
    FieldSiegeEngines            ← Nexus 12116 (see [P7.2]) · 2026-10-12 install · Load AFTER Harmony/MCM.
@@ -1065,6 +1104,7 @@ BetterPatrolsBrake/            v0.1    (remove 2 BetterPatrols hourly hot patche
 UnifiedTroopManager/           v0.1.0  (self-contained CYT+FM replacement · Gauntlet UI + Preset)
 UTMPatch/                      v1.0.1  (standalone CYT quota enforcer · alternative to UTM · NOT both)
 PlayerSettlementRebuilt/       v7.5.1  (local rebuild of workshop PS 3720376888 · fix bundled MCMv5 conflict + 4 recursion bugs · PSFixes v1.0.1 bundled)
+CustomBattleTroopBuilder/      v0.2.0  (Custom Battle troop builder · 2026-10-12 Phase 2b-2 · UIExt v3 mixin + button in CustomBattleScreen CenterControls · placeholder editor pending Phase 3+)
 ```
 
 ## [APX.3] Cross-device path-variable table

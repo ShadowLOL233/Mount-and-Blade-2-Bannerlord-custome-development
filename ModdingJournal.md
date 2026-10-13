@@ -3,12 +3,13 @@
 **最后更新**：2026-10-13 (晚 · 三条并行)
 - **主力机 CBTB v0.4.0 Phase 3b-2a 核心里程碑**: Clone + Register 实化 · MBObjectManager.CreateObject + reflection FillFrom + reflection _basicName + reflection IsSoldier setter · 用户选 troop → 2 轮 TextInquiry 输 StringId+Name → 新 BasicCharacterObject 注册到 pool · 自动选中新 troop · 待实测 "Custom Battle 菜单能否 pick 新 troop" 决定 3b-2b 是否需 Harmony patch · DLL 28 KB （中间 v0.3.6→3.7→3.8 crash→3.9 回滚→4.0 核心推进历程详见下方 session 段）
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
-- **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）· 下一 session 做补齐规则
+- **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
+- **第二设备 OSABalance Phase 1.1 预分析完成**: 176 件缺口里 **143 件 Plate 真遗漏 · 33 件 Cloth/Leather 按设计跳过**。核心发现 anchor 冲突：Journal #12 (2026-09-20) 决议 body/head anchor=**0.427** · OSA 已填 609 件 Plate 实测 p50=**0.214** · 差 2 倍。4 条候选 formula (A/B/C/D) 待用户选
 
-## 🎯 设备优先度（2026-10-13 深夜更新 · Phase 1 audit done）
+## 🎯 设备优先度（2026-10-13 凌晨更新 · Phase 1.1 预分析 done）
 
 - **主力机（E:）** · 最高优先度：**OSABalance smoke test（Phase 0.B v6）**（主菜单绿字 `PBS 9->32, CFM 16->113, POM 20->207`）· 外加 CBTB v0.3.9 bootstrap crash 修复
-- **第二设备（D:）本机** · 最高优先度：**Phase 1 字段补齐**（Priority 1: 176 件 HeadArmor body_armor 补 Face aventail 值 · 需跟 journal §48 Face aventail 决议对账 · 1 session）· 可选 Phase 0.B CFM Tier B 31 件主力机复核
+- **第二设备（D:）本机** · 最高优先度：**Phase 1.1 formula 决议 + 143 件 Plate body_armor 批量补齐**（候选 A/B/C/D 待用户选 · 选 A 可本机全自动完成 · 1 session）· 可选 Phase 0.B CFM Tier B 31 件主力机复核
 
 其他待办（PFRB v2 Keep Recruiter / PlayerFiefPoolShield / BE 战象 Path B' / CheatsGuard Round 1 实测 / BetterPatrolsBrake 测试 等）均为次优 · 等用户 session 分配。
 
@@ -3450,6 +3451,86 @@ _scratch/OSA_phase1/
 ### 跟 Phase 2 的关系
 
 Phase 2 (deploy 1835 决议到 override XML) 的 **阻塞项从"Phase 0 + Phase 1"收窄为"Phase 1 Priority 1 补齐"**。实际上 MaterialType 不动 · Priority 2/3 占影响不大 · 走 Phase 1.1 (Priority 1 only) 后就可以 Phase 2 deploy · 剩下的 pri 2/3 后续迭代。
+
+---
+
+## 📅 2026-10-13 session（凌晨 Phase 1.1 预分析）· 176 件 HeadArmor Face 补齐 · formula anchor 冲突暴露
+
+**承接**: Phase 1 audit 收官 · 176 件 HeadArmor body_armor=0 的 formula 决策做准备
+
+### Q1 · 176 件 gap 的 material_type 分布（厘清真遗漏 vs 设计意图）
+
+| material_type | count | classification |
+|---|---|---|
+| **Plate** | **143** | 🔴 MUST FILL · 真遗漏 · RBM aventail 模型要求 Face 防护 |
+| Cloth | 18 | 🟢 SKIP · 2026-09-20 决议"仅 Chainmail/Plate 补" |
+| Leather | 15 | 🟢 SKIP · 同上 |
+| **Chainmail** | **0** | — Chainmail 盔 body 都填好了 |
+
+**→ 实际 MUST FILL 只有 143 件（全是 Plate）** · 不是 176。节省 33 件工作。
+
+### Q2 · OSA 已填 632 件 HeadArmor 的 body/head ratio 实测
+
+| material_type | n | mean | p25 | p50 | p75 | min | max |
+|---|---|---|---|---|---|---|---|
+| **Plate** | **609** | 0.291 | 0.135 | **0.214** | 0.391 | 0.049 | 1.000 |
+| Chainmail | 20 | 0.286 | 0.141 | 0.273 | 0.385 | 0.124 | 0.649 |
+| Leather | 2 | 0.360 | — | — | — | — | — |
+| Cloth | 1 | 0.720 | — | — | — | — | — |
+
+### 🔴 Anchor 冲突暴露
+
+| 权威来源 | body/head ratio |
+|---|---|
+| Journal 修改 #12 anchor (2026-09-20 决议 · RBM 全量 256 件 avg) | **0.427** |
+| OSA 已填 Plate 609 件实测 p50 (OSA 作者/§48 实际落地) | **0.214** |
+
+**差 2 倍**。原因推测：
+- 2026-09-20 anchor 是 "RBM 全量 avg" 包含了 full_helm_over_mail (ratio 0.83) 等 vanilla 顶点
+- OSA 作者/§48 实际手工审时普遍走更保守的 ratio · 大多数盔走 0.2 左右 · 只有少数 full-face helm 走高档
+
+### Q3 · 143 件 MUST FILL 文化分布
+
+| culture | Plate head range | count |
+|---|---|---|
+| battania | >=70 | **45** (最大 bucket · Highland lord/warlord 系列) |
+| battania | 50-69 | 18 |
+| battania | 40-49 | 14 |
+| sturgia + khuzait + aserai + vlandia (50-69) | 50-69 | 34 |
+
+Battania Plate helm 占 143 件里的 **54.5%** (78/143) · 几乎所有都是没补 Face 的 OSA Highland 系列。
+
+### Q4 · §48 "头>身>臂" ordering 验证（意外发现）
+
+- head < body: **0 件** ✅
+- **body < arm**: **270 件违反** ❗（OSA 已填 Plate 盔的 44%）
+
+典型例子: `AR_empire_desert_helmet_c` h=65 b=12 a=25 (Spangenhelm Over Mail) · OSA 作者**没严格执行 §48** · 实际做法是"aventail 肩袖 (arm) > 面罩 (body)" · 跟 §48 名义相反。
+
+**→ 这意味着**: 补 body 时不受 §48 约束 · 自由选 formula。
+
+### 4 条候选 formula
+
+| 方案 | 规则 | 143 件平均 body 增量 | 取舍 |
+|---|---|---|---|
+| **A** | body = head × 0.21 (跟 OSA 既有 p50 对齐) | ~14 | 跟 609 件对账最平滑 · Face 保护仍弱 · 自动化 OK |
+| **B** | body = head × 0.42 (跟 RBM anchor) | ~30 | Face 保护强 · 跟 OSA 既有 2× 差 · 风格断裂 |
+| **C** | 分阶梯: <40 × 0.21 · 40-69 × 0.28 · >=70 × 0.35 | ~22 (加权) | 高档盔略强 · 跟 vanilla full_helm (0.83) 方向对齐 |
+| **D** | body = head × 0.25 flat (A/B 中间) | ~17 | 兜底 flat |
+
+### 建议路径
+
+**从 A 起步** · 跟 OSA 既有 609 件对账最平滑 · 自动化本机 session 内就能产 patched XML。实游戏 (主力机 smoke test 后) 若"重甲飘刀" 仍严重 · 再 Phase 1.1b 升级 C 或 B。
+
+**待用户决定**: 选 A/B/C/D 的哪条 · 或自定义 ratio。
+
+### 工具链产物
+
+```
+_scratch/OSA_phase1/
+├── preanalysis_1_1.py             Q1-Q5 完整分析脚本
+└── preanalysis_1_1_report.md      完整报告 (5504 bytes)
+```
 
 ---
 

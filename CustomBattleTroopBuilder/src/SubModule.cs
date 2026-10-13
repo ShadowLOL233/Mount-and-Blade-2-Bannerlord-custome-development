@@ -30,7 +30,7 @@ namespace CustomBattleTroopBuilder
                 _extender = UIExtender.Create(ModuleId);
                 _extender.Register(typeof(CBTBSubModule).Assembly);
                 _extender.Enable();
-                Log($"[CBTB] OnSubModuleLoad OK · v0.3.9 · Harmony id={HarmonyId} · UIExtender enabled");
+                Log($"[CBTB] OnSubModuleLoad OK · v0.4.0 · Harmony id={HarmonyId} · UIExtender enabled");
             }
             catch (Exception e)
             {
@@ -45,7 +45,7 @@ namespace CustomBattleTroopBuilder
             {
                 Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 2b-2 ready");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.3.9 loaded. Emergency rollback from v0.3.8 crash · button back inline · Harmony patch TODO next session.", Colors.Yellow));
+                    "[CBTB] v0.4.0 loaded. Phase 3b-2a: Clone + Register (MBObjectManager.CreateObject · FillFrom · reflection IsSoldier).", Colors.Yellow));
             }
             catch (Exception e)
             {

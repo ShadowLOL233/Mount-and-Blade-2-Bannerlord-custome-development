@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13 (晚 · 两条并行)
-- **主力机 CBTB v0.3.9 紧急回滚**: v0.3.8 的 `descendant::Widget[@VisualDefinition='CenterMenu']/Children` XPath 导致 bootstrap hard crash（跟 v0.3.1 Standard.VerticalScrollbar 同模式 · CBTB OnSubModuleLoad 没触发 · rgl log 卡 shader warn · 疑因 UIExt v3 对 Bannerlord 自定义 VisualDefinition attribute 不支持）· 回滚到 v0.3.6 inline button 配置（挤 Start 但游戏能用）· 下 session 用 **Harmony patch** CustomBattleScreen.OnInitialize 代码层加 button 彻底解决
+**最后更新**：2026-10-13 (晚 · 三条并行)
+- **主力机 CBTB v0.4.0 Phase 3b-2a 核心里程碑**: Clone + Register 实化 · MBObjectManager.CreateObject + reflection FillFrom + reflection _basicName + reflection IsSoldier setter · 用户选 troop → 2 轮 TextInquiry 输 StringId+Name → 新 BasicCharacterObject 注册到 pool · 自动选中新 troop · 待实测 "Custom Battle 菜单能否 pick 新 troop" 决定 3b-2b 是否需 Harmony patch · DLL 28 KB （中间 v0.3.6→3.7→3.8 crash→3.9 回滚→4.0 核心推进历程详见下方 session 段）
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）· 下一 session 做补齐规则
 
@@ -3728,6 +3728,87 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · 🎯 CBTB v0.4.0 Phase 3b-2a · 核心功能里程碑 · Clone + Register 实化
+
+**触发**：用户确认 v0.3.9 稳定 · "继续核心功能的构建吧 · UI 留到最后再修"。启 Phase 3b-2a 核心功能。
+
+**Phase 3b-2a 调研**（Explore agent · 反编译 TaleWorlds.ObjectSystem.dll + TaleWorlds.Core.dll）：
+- ✅ `MBObjectManager.CreateObject<T>(string stringId)` where T:MBObjectBase,new() · 直接可用 · 自动 register · 新 instance 立刻进 pool · 无 lock-after-init
+- ✅ `BasicCharacterObject.FillFrom(source)` 存在但 **protected** · 需 reflection
+- ✅ `GetObjectTypeList<T>()` 返回 RegisteredObjectsList 引用 · 新 CreateObject 立刻可见
+- 🟡 `IsSoldier` **private setter** · 需 reflection 绕过 · 否则 Custom Battle 过滤掉
+- 🟡 `Name` 实际 **read-only property** · 需 reflection 设 _basicName protected field（调研报告说"public set"错 · verify 过后确认 CS0200 "read-only"）
+- 🟡 Equipment/Skills shallow copy · source 和 clone 共享 reference（Phase 3b-3 做 deep copy）
+- ❓ Custom Battle 菜单的 troop pool 可能有 VM-level cache · 实测后决定 3b-2b 是否需 Harmony patch
+
+**Phase 3b-2a 产物（2026-10-13 ✅ build+deploy）**：
+
+- **大改** `src/UI/CBTBEditorVM.cs`（+90 行 Clone 流程）：
+  - 把 `BuildAllTroops` static method 重构成 `RefreshAllTroopsFromPool` instance method · 构造函数 + ExecuteClone 后共用
+  - 加 `OnStringIdEntered(source, newId)` 异步 chain callback（第 1 轮 Inquiry）
+  - 加 `CompleteClone(source, newId, displayName)` 最终 clone 实施（第 2 轮 Inquiry 后）
+  - 加 `ShowInfoInquiry(title, body)` helper
+- **Clone 流程**（5 步）：
+  1. 验 selected · 弹第 1 轮 TextInquiry（输新 StringId · suggested = `{sourceId}_clone`）
+  2. 验非空 · `MBObjectManager.Instance.GetObject<BasicCharacterObject>(newId)` 验 unique
+  3. 弹第 2 轮 TextInquiry（输 display name · suggested = `{sourceName} (Clone)`）
+  4. 实施：
+     - `MBObjectManager.Instance.CreateObject<BasicCharacterObject>(newStringId)` → 新 instance 自动 register
+     - Reflection 调 `FillFrom(source)`（protected method · `BindingFlags.NonPublic`）
+     - Reflection 设 `_basicName` field 为新 `TextObject(displayName)`（fallback 到 Name property setter 若 _basicName 不存在）
+     - Reflection 调 `IsSoldier` property 的 non-public setter 写入 `source.IsSoldier`
+  5. `RefreshAllTroopsFromPool()` 重 enumerate · `OnSelectTroop(newItem)` 自动选中新 troop · 弹 success Inquiry（含 limitations 说明）
+- **compile errors 修 4 处**（调研报告有偏差 · 实际 v1.4.7 下）：
+  - TextInquiryData 没有 `shouldInputBeTrimmed` 和 `textCondition` 参数 → 删
+  - FillFrom protected → reflection
+  - Name read-only → reflection _basicName
+- **csproj Version** 0.3.9 → **0.4.0**（Phase 3b-2a 大里程碑 · minor 版升）· **SubModule.xml** 同步 · SubModule.cs 版本字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 28,160 B（v0.3.9 的 23,552 → +4.6 KB · Clone 流程 + reflection 代码合理）
+SubModule.xml 1,818 B @ 06:47:51 ✓
+CustomBattleTroopBuilder.dll 28,160 B @ 06:48:49 ✓
+```
+
+**用户 Phase 3b-2a 实测清单**（关键 · 要 verify 3 个核心 claim）：
+
+1. **启动游戏** · 主菜单看黄字 `v0.4.0 loaded. Phase 3b-2a: Clone + Register (MBObjectManager.CreateObject · FillFrom · reflection IsSoldier).`
+2. Custom Battle → Troop Builder（CBTB editor）
+3. 选任意 troop（例 Aserai Faris）
+4. **点 Clone button** → 应弹第 1 轮 Inquiry：
+   - Title: "Clone Troop · New StringId"
+   - Default input: `aserai_faris_clone`
+   - 可改成 `my_test_troop` 等
+   - 点 Next
+5. 应弹第 2 轮 Inquiry：
+   - Title: "Clone Troop · Display Name"
+   - Default input: `Aserai Faris (Clone)`
+   - 可改成 `My Elite Guard` 等
+   - 点 Clone
+6. **🔴 核心 verify 1**：应弹 success Inquiry · 显示 "Created BasicCharacterObject · StringId · Name · Source · IsSoldier"
+7. **🔴 核心 verify 2**：Success Inquiry 关闭后 · 列表自动选中新 troop · Preview 显示新 troop 字段（Name 应是你输的 · StringId 应是你输的 · IsSoldier 应跟 source 一致 · Culture/Tier/Level 跟 source 一样）
+8. **🔴 核心 verify 3**：search 栏输新 StringId → 列表应 narrow 到新 troop · CountText 应为 `Showing 1 / {N+1} troops`（N+1 比 clone 前多 1）
+9. **🟡 bonus verify**（如果想测 Custom Battle 可见性）：Close editor → 看 Custom Battle 菜单的 troop list（点各 culture slot 的 + button 展开 troop picker）· **若新 troop 出现**：Phase 3b-2b 可能不需要；**若没出现**：Phase 3b-2b 要 Harmony patch CustomBattleVM 的 troops cache
+
+**可能的翻车点**：
+- **Reflection FillFrom 失败**：若 method 名或签名跟调研不符 · log 会写 · 新 troop 字段都是默认值（0/null）· clone 不完整但不 crash
+- **_basicName field 不存在**：fallback 到 Name setter · 若两者都失败 · 新 troop Name 为空
+- **IsSoldier reflection 失败**：新 troop IsSoldier=false · Custom Battle 可能过滤掉（CBTB list 的 Combat mode 也看不到）· 要切 All mode 才看到
+- **CreateObject 签名不接受已存在 stringId**：vanilla 可能自动加后缀 `_1` · 结果新 troop StringId 不是用户输的
+
+**📖 完整日志**：所有 clone 操作都写入 `C:\ProgramData\Mount and Blade II Bannerlord\logs\CustomBattleTroopBuilder.log` · 翻车时提供 log 片段。
+
+**Phase 3b-2b 启动条件**：
+- 若 verify 1-3 ✅ 但 verify 9 ❌ → Phase 3b-2b 做 Custom Battle 菜单 refresh patch
+- 若 verify 1-3 任何 ❌ → Phase 3b-2a 需要修复（reflection 调用 / API 签名 / 等）
+
+**Phase 3b-3 preview**（Phase 3b-2 全完后）：
+- Equipment deep copy（避免 clone 跟 source 共享装备被 mutate）
+- 或者更基础 · Phase 4 Equipment picker（让用户给 clone 配独立装备）
 
 ---
 

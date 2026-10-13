@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.ObjectSystem;
@@ -15,7 +16,7 @@ namespace CustomBattleTroopBuilder.UI
 
         private readonly Action _closeAction;
 
-        private string _title = "CBTB Editor · Phase 3b-1 · Fullscreen · Dual Scroll";
+        private string _title = "CBTB Editor · Phase 3b-2";
         private string _closeText = "Close";
         private string _searchHint = "Search by StringId / Name / Culture…";
         private string _searchText = "";
@@ -34,21 +35,26 @@ namespace CustomBattleTroopBuilder.UI
         private bool _hasSelection = false;
         private string _cloneText = "Clone";
 
-        private readonly List<TroopListItemVM> _allTroops;
+        private readonly List<TroopListItemVM> _allTroops = new List<TroopListItemVM>();
         private MBBindingList<TroopListItemVM> _troops = new MBBindingList<TroopListItemVM>();
         private TroopListItemVM? _selectedTroop;
 
         public CBTBEditorVM(Action closeAction)
         {
             _closeAction = closeAction;
-            _allTroops = BuildAllTroops(OnSelectTroop);
-            RefreshFilter();
+            RefreshAllTroopsFromPool();
             RefreshPreview();
         }
 
-        private static List<TroopListItemVM> BuildAllTroops(Action<TroopListItemVM> onSelect)
+        /// <summary>
+        /// Rebuild _allTroops from MBObjectManager · called at ctor + after Clone.
+        /// Preserves selected troop reference if its StringId still exists.
+        /// </summary>
+        private void RefreshAllTroopsFromPool()
         {
-            var list = new List<TroopListItemVM>();
+            var prevSelectedId = _selectedTroop?.StringId;
+
+            _allTroops.Clear();
             try
             {
                 var pool = MBObjectManager.Instance?.GetObjectTypeList<BasicCharacterObject>();
@@ -63,16 +69,16 @@ namespace CustomBattleTroopBuilder.UI
                         var sid = ch.StringId ?? "";
                         if (sid.Length == 0) continue;
 
-                        list.Add(new TroopListItemVM(ch, onSelect));
+                        _allTroops.Add(new TroopListItemVM(ch, OnSelectTroop));
                     }
                 }
             }
             catch (Exception e)
             {
-                CBTBSubModule.Log($"[CBTB] BuildAllTroops failed: {e}");
+                CBTBSubModule.Log($"[CBTB] RefreshAllTroopsFromPool failed: {e}");
             }
 
-            list.Sort((a, b) =>
+            _allTroops.Sort((a, b) =>
             {
                 int c = string.Compare(a.CultureId, b.CultureId, StringComparison.OrdinalIgnoreCase);
                 if (c != 0) return c;
@@ -83,7 +89,13 @@ namespace CustomBattleTroopBuilder.UI
                 return string.Compare(a.StringId, b.StringId, StringComparison.OrdinalIgnoreCase);
             });
 
-            return list;
+            if (prevSelectedId != null)
+            {
+                _selectedTroop = _allTroops.FirstOrDefault(t => t.StringId == prevSelectedId);
+                if (_selectedTroop != null) _selectedTroop.IsSelected = true;
+            }
+
+            RefreshFilter();
         }
 
         private void RefreshFilter()
@@ -180,31 +192,175 @@ namespace CustomBattleTroopBuilder.UI
         {
             if (_selectedTroop == null)
             {
-                InformationManager.ShowInquiry(new InquiryData(
-                    titleText: "Clone Troop",
-                    text: "No troop selected. Pick one from the list first.",
-                    isAffirmativeOptionShown: true, isNegativeOptionShown: false,
-                    affirmativeText: "OK", negativeText: null,
-                    affirmativeAction: () => { }, negativeAction: null));
+                ShowInfoInquiry("Clone Troop", "No troop selected. Pick one from the list first.");
                 return;
             }
 
-            var t = _selectedTroop;
+            var source = _selectedTroop.Character;
+            var suggestedId = source.StringId + "_clone";
+
+            InformationManager.ShowTextInquiry(new TextInquiryData(
+                titleText: "Clone Troop · New StringId",
+                text: $"Source: {source.StringId}\nSource name: {source.Name?.ToString() ?? "<none>"}\n\n" +
+                      "Enter a new unique StringId (lowercase · no spaces · ascii only recommended):",
+                isAffirmativeOptionShown: true,
+                isNegativeOptionShown: true,
+                affirmativeText: "Next",
+                negativeText: "Cancel",
+                affirmativeAction: (newId) => OnStringIdEntered(source, newId),
+                negativeAction: () => CBTBSubModule.Log("[CBTB] Clone cancelled at StringId step"),
+                defaultInputText: suggestedId));
+        }
+
+        private void OnStringIdEntered(BasicCharacterObject source, string newStringId)
+        {
+            if (string.IsNullOrWhiteSpace(newStringId))
+            {
+                ShowInfoInquiry("Clone Troop", "StringId cannot be empty · clone cancelled.");
+                return;
+            }
+            newStringId = newStringId.Trim();
+
+            BasicCharacterObject? existing = null;
+            try { existing = MBObjectManager.Instance?.GetObject<BasicCharacterObject>(newStringId); }
+            catch { existing = null; }
+
+            if (existing != null)
+            {
+                ShowInfoInquiry("Clone Troop · Duplicate",
+                    $"StringId '{newStringId}' already exists in the pool.\nPick another.");
+                return;
+            }
+
+            var suggestedName = (source.Name?.ToString() ?? source.StringId) + " (Clone)";
+            InformationManager.ShowTextInquiry(new TextInquiryData(
+                titleText: "Clone Troop · Display Name",
+                text: $"New StringId: {newStringId}\n\n" +
+                      "Enter the display name shown in Custom Battle UI:",
+                isAffirmativeOptionShown: true,
+                isNegativeOptionShown: true,
+                affirmativeText: "Clone",
+                negativeText: "Cancel",
+                affirmativeAction: (name) => CompleteClone(source, newStringId, name),
+                negativeAction: () => CBTBSubModule.Log("[CBTB] Clone cancelled at Name step"),
+                defaultInputText: suggestedName));
+        }
+
+        private void CompleteClone(BasicCharacterObject source, string newStringId, string displayName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(displayName))
+                    displayName = newStringId;
+
+                BasicCharacterObject? newTroop = null;
+                try
+                {
+                    newTroop = MBObjectManager.Instance?.CreateObject<BasicCharacterObject>(newStringId);
+                }
+                catch (Exception e)
+                {
+                    CBTBSubModule.Log($"[CBTB] CreateObject failed: {e}");
+                    ShowInfoInquiry("Clone Failed", $"MBObjectManager.CreateObject threw: {e.Message}");
+                    return;
+                }
+
+                if (newTroop == null)
+                {
+                    ShowInfoInquiry("Clone Failed", "MBObjectManager.CreateObject returned null.");
+                    return;
+                }
+
+                // FillFrom is protected · reflection to invoke
+                try
+                {
+                    var fillFromMethod = typeof(BasicCharacterObject).GetMethod("FillFrom",
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                        null, new Type[] { typeof(BasicCharacterObject) }, null);
+                    fillFromMethod?.Invoke(newTroop, new object[] { source });
+                }
+                catch (Exception e)
+                {
+                    CBTBSubModule.Log($"[CBTB] FillFrom reflection failed: {e}");
+                    ShowInfoInquiry("Clone Partial Fail", $"FillFrom reflection threw: {e.Message}");
+                    // keep going · newTroop still exists in pool
+                }
+
+                // Name has no public setter in v1.4.7 · reflection to _basicName field
+                try
+                {
+                    var nameField = typeof(BasicCharacterObject).GetField("_basicName",
+                        BindingFlags.Instance | BindingFlags.NonPublic);
+                    if (nameField != null)
+                    {
+                        nameField.SetValue(newTroop, new TaleWorlds.Localization.TextObject(displayName));
+                    }
+                    else
+                    {
+                        // Fallback · try Name setter via reflection (might be non-public)
+                        var nameProp = typeof(BasicCharacterObject).GetProperty("Name");
+                        nameProp?.GetSetMethod(nonPublic: true)?.Invoke(newTroop,
+                            new object[] { new TaleWorlds.Localization.TextObject(displayName) });
+                    }
+                }
+                catch (Exception e)
+                {
+                    CBTBSubModule.Log($"[CBTB] set Name reflection failed: {e}");
+                }
+
+                try
+                {
+                    var prop = typeof(BasicCharacterObject).GetProperty("IsSoldier",
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    prop?.GetSetMethod(nonPublic: true)?.Invoke(newTroop, new object[] { source.IsSoldier });
+                }
+                catch (Exception e)
+                {
+                    CBTBSubModule.Log($"[CBTB] IsSoldier reflection fix failed: {e}");
+                }
+
+                CBTBSubModule.Log($"[CBTB] Cloned '{source.StringId}' → '{newStringId}' · name='{displayName}' · IsSoldier={newTroop.IsSoldier}");
+
+                // Rebuild list · new troop will appear
+                _selectedTroop = null;
+                RefreshAllTroopsFromPool();
+                var newItem = _allTroops.FirstOrDefault(t => t.StringId == newStringId);
+                if (newItem != null) OnSelectTroop(newItem);
+
+                InformationManager.ShowInquiry(new InquiryData(
+                    titleText: "Clone Successful",
+                    text:
+                        $"Created BasicCharacterObject:\n" +
+                        $"  StringId:  {newStringId}\n" +
+                        $"  Name:      {displayName}\n" +
+                        $"  Source:    {source.StringId}\n" +
+                        $"  IsSoldier: {newTroop.IsSoldier}\n\n" +
+                        "The clone is registered in MBObjectManager and visible in the CBTB list (search for it).\n\n" +
+                        "⚠ Phase 3b-2a limitations:\n" +
+                        "  • Equipment/Skills are shared with source (shallow copy · Phase 3b-3)\n" +
+                        "  • Custom Battle troop selector may need refresh (Phase 3b-2b patch)\n" +
+                        "  • Clone persists only this game session (JSON save = Phase 6)",
+                    isAffirmativeOptionShown: true,
+                    isNegativeOptionShown: false,
+                    affirmativeText: "OK",
+                    negativeText: null,
+                    affirmativeAction: () => { },
+                    negativeAction: null));
+            }
+            catch (Exception e)
+            {
+                CBTBSubModule.Log($"[CBTB] CompleteClone outer failed: {e}");
+                ShowInfoInquiry("Clone Failed", $"Unexpected error: {e.Message}");
+            }
+        }
+
+        private static void ShowInfoInquiry(string title, string body)
+        {
             InformationManager.ShowInquiry(new InquiryData(
-                titleText: "Clone Troop · Phase 3b-1 placeholder",
-                text:
-                    $"Would clone: {t.DisplayName}\n" +
-                    $"StringId:   {t.StringId}\n" +
-                    $"Culture:    {t.CultureId}\n" +
-                    $"Tier/Level: T{t.Tier} · L{t.Level}\n\n" +
-                    "Phase 3b-2 (next session):\n" +
-                    "  • rename inquiry (new StringId + display name)\n" +
-                    "  • MBObjectManager.CreateObject<BasicCharacterObject> to register\n" +
-                    "    the clone so Custom Battle picks it up next time the menu opens.",
+                titleText: title, text: body,
                 isAffirmativeOptionShown: true, isNegativeOptionShown: false,
                 affirmativeText: "OK", negativeText: null,
                 affirmativeAction: () => { }, negativeAction: null));
-            CBTBSubModule.Log($"[CBTB] ExecuteClone · placeholder · selected={t.StringId}");
         }
 
         public void ExecuteClose() => _closeAction?.Invoke();

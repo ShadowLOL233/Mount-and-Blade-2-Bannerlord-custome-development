@@ -1,6 +1,6 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-13（CBTB **v0.3.5 全屏布局** · 用户要求利用整个屏幕空间 · panel 从 Fixed 1100×820 → StretchToParent + margin 24 · List/Preview 用 Horizontal StackLayout 两个 StretchToParent 子自动等分 · 自适应任意分辨率 · 背景 Alpha 0.7→0.85 · DLL 23.5 KB · 架构决策：继续自研而非借用 Retinues（Campaign 子系统硬 blocker））
+**最后更新**：2026-10-13（CBTB **v0.3.6 Preview 滚动栏** · 右侧 Preview 加 ScrollablePanel + 独立 ScrollbarWidget(CBTBPrevScrollbar) · Clone button 浮在底部不随滚 · PreviewHeading+PreviewBody 嵌套 Vertical ListPanel 作 scrollable content · 全屏下 List+Preview 双 scrollbar 都可用 · 待 verify "Troop Builder 按钮消失"（v0.3.5 session 用户截图显示 Custom Battle 菜单无 CBTB 按钮 · Phase 2b-2 代码未改 · 可能游戏未完全重启或 UIExt v3 cache 问题）· DLL 23.5 KB）
 
 ## 🎯 设备优先度（2026-10-13 更新）
 
@@ -3505,6 +3505,71 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · CBTB v0.3.6 Preview 滚动栏 + 2 件 follow-up
+
+**触发**：v0.3.5 全屏布局实测反馈 2 件：
+1. **🟢 全屏 Horizontal StackLayout 等分架构 verified**（List 占左半 + Preview 占右半 · 没塌 0 · 没 overflow · 适配 2560×1440 OK）
+2. **🔴 "Troop Builder 按钮不见了"**（用户第一条截图 · Custom Battle 菜单 CenterControls 只有 Randomize/Start/Back 3 个 vanilla · 没第 4 个 CBTB button）
+3. **🟡 要求右侧 Preview 加滚动栏**（用户第二条截图 · Preview 14 字段的 Age + Race 被 Clone button 遮挡）
+
+**诊断按钮消失**：
+- CBTBMenuButton.xml 时间戳 **10-12 05:46**（Phase 2b-2 原件 · v0.3.4/5 session 未改）
+- CBTBCustomBattleMenuMixin.cs + CBTBMenuButtonExtension.cs 自 commit 910523d (Phase 2b-2) 后未改
+- 代码无 regression · 可能原因：
+  - 用户没完全重启游戏（旧 session 加载 state 残留）
+  - UIExt v3 的 PrefabExtension cache 没 re-apply（CBTBEditor.xml 大改触发了某种 reset？）
+  - 加载的其他 mod 跟 CenterControls Children xpath 冲突（但 v0.3.4 测试时按钮还在 · 应该 unlikely）
+- **v0.3.6 测试需 verify**：若按钮回来 → 游戏重启问题；若还消失 → 深度 diagnose UIExt + launcher 加载顺序
+
+**Phase 3b-1-fs2 产物（2026-10-13 ✅ build+deploy）**：
+
+- **改** `GUI/Prefabs/CBTBEditor.xml` · 右侧 Preview panel 结构重构：
+  - 新 **CBTBPreviewScrollFrame** Widget（StretchToParent · MarginBottom=90 · 排除底部给 Clone button 让位）
+  - 内套 ScrollablePanel · 用 vanilla MultiSelectionQueryPopup 同 pattern：`ClipRect="CBTBPrevClipRect" InnerPanel="CBTBPrevClipRect\CBTBPrevInnerList" VerticalScrollbar="..\CBTBPrevScrollbar"`
+  - 再内套 `<ListPanel Vertical>` 包 PreviewHeading（居中 title · MarginBottom=20）+ PreviewBody（左对齐 · 多行）
+  - 独立 ScrollbarWidget `Id="CBTBPrevScrollbar"` + Handle `Id="CBTBPrevScrollbarHandle"`（跟 List 的 CBTBVerticalScrollbar 独立 · Id 不冲突）
+  - **Clone button 独立出 ScrollablePanel**（VerticalAlignment=Bottom · MarginBottom=24 · 不随滚）· 永远可见
+- Preview 字段多时自动滚（鼠标滚轮 · scrollbar 可拖）· 字段少时 AutoHideScrollBars=true 自动隐
+- **改** `src/UI/CBTBEditorVM.cs` · Title 加 "Dual Scroll" 后缀
+- **csproj Version** 0.3.5 → **0.3.6** · **SubModule.xml** v0.3.5 → **v0.3.6** · SubModule.cs 2 处 version 同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 23,552 B（跟 v0.3.5 一致 · 只改 Prefab + title string）
+SubModule.xml 1,818 B @ 04:21:01 ✓
+CustomBattleTroopBuilder.dll 23,552 B @ 04:21:12 ✓
+```
+
+**用户 Phase 3b-1-fs2 实测清单**：
+1. **完全退出游戏到 Steam · 再 Launch**（关键 · verify 按钮消失是否游戏未重启问题）
+2. 主菜单看黄字 `v0.3.6 loaded. Phase 3b-1-fs2: fullscreen + dual scrollbar (list + preview) · Clone fixed bottom.`
+3. Custom Battle → 看 CenterControls 行是否出现第 4 个 **"Troop Builder" button**：
+   - ✅ 出现 → 之前消失是**游戏未完全重启** · Journal 标记已解决 · 下阶段开发
+   - ❌ 没出现 → 深度 diagnose（可能要查 UIExt v3 的 PrefabExtensionInsertPatch apply 流程 · 或某 mod 冲突）
+4. **🔴 Preview 滚动栏验证**：
+   - 选任意 troop · Preview 显示 14 字段 + Heading
+   - 滚轮悬停在 Preview 面板上 · 应能滚过长内容（当前 14 字段 fit 在高度内 · 可能不触发滚 · AutoHideScrollBars=true 会 hide）
+   - Clone button 永远在 Preview 底部 · 不被遮挡 · 不随滚
+5. List 的 scrollbar 继续工作（左侧 · Phase 3a-scroll 原件）
+6. 其他：search / mode / select / Clone 都正常
+7. Close/Esc 回 Custom Battle 菜单
+
+**可能的翻车点**：
+- **Preview scrollbar 跟 List scrollbar 的 relative path 冲突**：两个都用 `..\CBTBXxxScrollbar` 相对路径 · 父节点不同（List 的父是 CBTBListFrame · Preview 的父是 CBTBPrevScrollFrame）· 应该不冲突 · 但要测
+- **Preview scrollable area 跟 Clone button 边界**：MarginBottom=90 让出空间 · Clone button 本体 CoverChildren 可能略 > 90 · 可能 overlap 底部 content · 测后调
+- **列表 scrollbar 可能卡死**（因为 Preview scrollbar 共享 ScrollablePanel class · 可能有全局状态问题）
+
+**🔴 按钮消失 follow-up**：若 v0.3.6 测试后按钮仍不出现 · 下 session 要做：
+- 启 Agent 查 UIExt v3 的 PrefabExtension cache 行为
+- 看 CBTB log 的 UIExt enable 条目是否正常
+- 可能需 patch 加强（例如 OnBeforeInitialModuleScreenSetAsRoot 二次调用 UIExtender.Enable）
+
+**Phase 3b-2 下 session 启动点**（本次全屏调整不涉及功能性 · Phase 3b-2 核心未开工）：
+- 反编译 `TaleWorlds.ObjectSystem.dll` 看 `MBObjectManager.CreateObject<T>` / `RegisterPresumedObject` API
+- Clone 流程：selected troop → `ShowTextInquiry` 输新 StringId · 验 unique → clone 字段 → 挂 MBObjectManager → RefreshFilter
 
 ---
 

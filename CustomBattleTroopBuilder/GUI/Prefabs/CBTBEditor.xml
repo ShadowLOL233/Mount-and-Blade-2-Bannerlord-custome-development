@@ -196,25 +196,78 @@
                   </Children>
                 </Widget>
 
-                <!-- Right half · Preview panel + Clone button -->
+                <!-- Right half · Preview panel (scrollable content + fixed bottom Clone button) -->
                 <Widget Id="CBTBPreviewFrame"
                         WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
                         MarginLeft="12"
                         Sprite="BlankWhiteSquare_9" Color="#00000040" AlphaFactor="1.0">
                   <Children>
 
-                    <TextWidget Text="@PreviewHeading"
-                                WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
-                                VerticalAlignment="Top" HorizontalAlignment="Center"
-                                MarginTop="20" MarginLeft="16" MarginRight="16"
-                                Brush="MPEscapeMenu.Title" />
+                    <!-- Scrollable preview area · exclude bottom 90 for Clone button -->
+                    <Widget Id="CBTBPreviewScrollFrame"
+                            WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                            VerticalAlignment="Top" HorizontalAlignment="Center"
+                            MarginBottom="90">
+                      <Children>
 
-                    <TextWidget Text="@PreviewBody"
-                                WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
-                                VerticalAlignment="Top" HorizontalAlignment="Left"
-                                MarginTop="80" MarginLeft="30" MarginRight="30"
-                                Brush="MPEscapeMenu.ButtonText" />
+                        <ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                         AutoHideScrollBars="true"
+                                         ClipRect="CBTBPrevClipRect"
+                                         InnerPanel="CBTBPrevClipRect\CBTBPrevInnerList"
+                                         VerticalScrollbar="..\CBTBPrevScrollbar">
+                          <Children>
+                            <Widget Id="CBTBPrevClipRect"
+                                    WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                    ClipContents="true">
+                              <Children>
 
+                                <ListPanel Id="CBTBPrevInnerList"
+                                           WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                           HorizontalAlignment="Left" VerticalAlignment="Top"
+                                           StackLayout.LayoutMethod="VerticalTopToBottom"
+                                           MarginLeft="30" MarginRight="30" MarginTop="20" MarginBottom="12">
+                                  <Children>
+                                    <TextWidget Text="@PreviewHeading"
+                                                WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                                HorizontalAlignment="Center" VerticalAlignment="Top"
+                                                MarginBottom="20"
+                                                Brush="MPEscapeMenu.Title" />
+                                    <TextWidget Text="@PreviewBody"
+                                                WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                                HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                Brush="MPEscapeMenu.ButtonText" />
+                                  </Children>
+                                </ListPanel>
+
+                              </Children>
+                            </Widget>
+                          </Children>
+                        </ScrollablePanel>
+
+                        <ScrollbarWidget Id="CBTBPrevScrollbar"
+                                         WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                         SuggestedWidth="8"
+                                         HorizontalAlignment="Right" VerticalAlignment="Top"
+                                         AlignmentAxis="Vertical"
+                                         Handle="CBTBPrevScrollbarHandle"
+                                         MaxValue="100" MinValue="0">
+                          <Children>
+                            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                    SuggestedWidth="4"
+                                    HorizontalAlignment="Center"
+                                    Sprite="BlankWhiteSquare_9" Color="#5A4033FF" AlphaFactor="0.5" />
+                            <ImageWidget Id="CBTBPrevScrollbarHandle"
+                                         WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                         SuggestedHeight="10" SuggestedWidth="10"
+                                         HorizontalAlignment="Center"
+                                         Brush="FaceGen.Scrollbar.Handle" />
+                          </Children>
+                        </ScrollbarWidget>
+
+                      </Children>
+                    </Widget>
+
+                    <!-- Clone button · fixed at bottom · outside scroll · not clipped -->
                     <ButtonWidget Id="CBTBCloneButton"
                                   WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
                                   VerticalAlignment="Bottom" HorizontalAlignment="Center"

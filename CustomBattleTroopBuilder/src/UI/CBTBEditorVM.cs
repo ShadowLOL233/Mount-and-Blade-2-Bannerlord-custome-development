@@ -15,7 +15,7 @@ namespace CustomBattleTroopBuilder.UI
 
         private readonly Action _closeAction;
 
-        private string _title = "CBTB Editor · Phase 3b-1 · Fullscreen";
+        private string _title = "CBTB Editor · Phase 3b-1 · Fullscreen · Dual Scroll";
         private string _closeText = "Close";
         private string _searchHint = "Search by StringId / Name / Culture…";
         private string _searchText = "";

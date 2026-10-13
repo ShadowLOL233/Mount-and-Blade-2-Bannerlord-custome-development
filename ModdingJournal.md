@@ -1,6 +1,13 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
-**最后更新**：2026-10-12（CBTB P1 + P2a + P2b-1 全验证 · Gauntlet editor screen render OK · Prefab XML schema 教训入 memory）
+**最后更新**：2026-10-11（RBM Hitbox 公式整合 + OS 系列平衡 patch 工作方向重定 · PFRB v2 Keep Recruiter 设计 + PlayerFiefPoolShield 立项）
+
+## 🎯 设备优先度（2026-10-11 用户指定）
+
+- **主力机（E:）** · 最高优先度：**CBTB (CustomBattleTroopBuilder)** 继续推进 · 本机不碰（参见 commit `fd5f8d3` 之后的 CBTB 系列 commit）
+- **第二设备（D:）本机** · 最高优先度：**OS 系列平衡 patch 侦查与信息收集** · 用户将在下一 session 亲自执行 · 开工锚点见 §"OS 系列平衡 patch 工作方向重定（RBM Hitbox 发现后）" 节的 Phase 0+1
+
+其他待办（PFRB v2 Keep Recruiter / PlayerFiefPoolShield / BE 战象 Path B' / CheatsGuard Round 1 实测 / BetterPatrolsBrake 测试 等）均为次优 · 等用户 session 分配。
 
 ## 目录
 - [🔴 自研 mod 开发流程铁律](#-自研-mod-开发流程铁律)

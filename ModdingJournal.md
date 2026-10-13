@@ -2867,6 +2867,241 @@ imperial_lamellar, empire_legion_b, ...（+ 对应 mp_* 多人版）
 - 关键 XMLs: `ModuleData\RBM_native_parameters_tweaks.xml` / `RBM_spear_managed_core_parameters.xml` / `RBMCombat_unit_overhaul.xml`
 - 官方 docs: fellow93.github.io/RealisticBattleProject/ + 本机 workshop `CHANGELOG.md`
 
+### ★ 补遗 2026-10-11 · RBM Hitbox 权威公式图 + 多层防护完整机制
+
+**源**：用户提供官方 RBM 的 "Human Hitboxes" + "Horse Hitboxes" 两张权威图 · 直接证实并精确化上述 ArmorRework 系统 · **修订本节早期若干推断**。
+
+#### 人类 8 hitbox 装甲聚合公式（图 1 权威）
+
+| hitbox | 装甲值来源公式 | 层数 |
+|---|---|---|
+| **Head** 🔴 | Helmet 的 `head_armor` | 1 层 |
+| **Face** 🟢 | **Helmet 的 `body_armor`**（非 head_armor · 是面罩/面甲防护）| 1 层 |
+| **Neck** 🟡 | ChestPiece 的 `body_armor` | 1 层 |
+| **Shoulder** 🔵 | **Cape.body + Cape.arm + ChestPiece.arm 三源相加** | **3 层叠加** |
+| **Lower Shoulder** 🟢深 | ChestPiece 的 `arm_armor` | 1 层 |
+| **Chest + Abdomen** 🟣 | ChestPiece 的 `body_armor` | 1 层 |
+| **Lower Arm** 🟠 | Gloves 的 `arm_armor` | 1 层 |
+| **Leg** ⚪ | **(ChestPiece.leg + Boots.leg) / 2 均摊** | 2 层均摊 |
+
+**真正多层叠加只在 Shoulder 和 Leg** · 其他 hitbox 单件单源。
+
+#### 马匹 6 hitbox 装甲聚合公式（图 2 权威）
+
+| hitbox | 公式 |
+|---|---|
+| **Head**（头/颈前）🔴 | HorseHarness.head_armor |
+| **Arm**（前胸上部）🟢 | HorseHarness.arm_armor |
+| **Body**（前胸中部小区）🔵 | HorseHarness.body_armor |
+| **Leg**（马臀上部）🟡 | HorseHarness.leg_armor |
+| **腹部大椭圆** 🔵深 | **(leg + body) / 2** |
+| **前后腿紫椭** 🟣 | **(leg × 2 + body) / 3** |
+
+**⚠ 本次修订 §49 "HorseHarness head/arm/leg 装饰性填充"的旧结论**：**错**。图 2 证实全 4 字段都真的参与计算 · 用户 2026-09-24 晚全 4 字段修订**反而是对的** · 旧结论应作废。
+
+#### RBM 多层防护的 3 个耦合机制
+
+**机制 A · 同件装甲内的"区域→材质"硬编码白名单**
+
+RBM 用 **3 个硬编码 ID 列表**（RBMCombat.decompiled.cs 1364/1366/1632）在同一件装甲内按区域重设材质 · 不是堆叠 · 是**区域细化**:
+
+| 列表 | 件数 | 内容 | 作用 |
+|---|---|---|---|
+| **`PlateOverMailBodyArmorIds`** | 20 | desert_lamellar · imperial_scale_armor · imperial_lamellar · empire_legion_b · brass_lamellar_over_mail · coat_of_plates_over_mail · northern_brass_lamellar_over_mail · sturgian_lamellar_base · lamellar_with_scale_skirt · battanian_scale_armor_a · aserai_scale_armor_on_cloth · western_scale_mail · desert_scale_armor · (+ 7 件 mp_*) | 肩部命中 → 材质从 Plate 降为 Chainmail（反映肩是 mail）|
+| **`PlateBelowShoulderArmorIds`** | 9 | sturgian_fortified_armor · khuzait_heavy_armor · plated_leather_coat · eastern_plated_leather · northman_raider_armor · western_scale_mail · (+ 3 件 mp_*) | 肩下命中 → 保留 Plate（反映肩下仍是重装）|
+| **`ClosedFaceMailHelmetIds`** | 16 | closed_desert_helmet · closed_desert_helmet_with_mail · brass_aserai_helmet_closed/b_closed · eastern_vendel_helmet · nordic_helmet · decorated_goggled_helmet · closed_goggled_helmet · goggled_helmet_over_full_mail · lendman_helmet_over_full_mail · sturgian_helmet_closed/b_close · imperial_goggled_helmet · (+ 3 件 mp_*) | 面部命中 → 仍受 mail 保护 · 否则面部暴露 |
+
+**机制 B · 多件装甲数值叠加**（即图 1 的 Shoulder 3 源 + Leg 2 源均摊）· 唯二真正数值叠加的 hitbox。
+
+**机制 C · 材质决定伤害衰减曲线**
+
+`RBMComputeDamage(..., ArmorMaterialTypes armorMaterial)` 把材质传下去 · 不同材质对不同伤害类型的衰减**非线性**:
+
+| ArmorMaterialTypes 枚举 | 对 Cut | 对 Pierce | 对 Blunt |
+|---|---|---|---|
+| 0 None | - | - | - |
+| 1 Cloth | 弱 | 弱 | 弱 |
+| 2 Leather | 中 | 中 | 中 |
+| 3 Chainmail | **极佳** | **最弱**（刺击直钻环）| 中 |
+| 4 Plate | 佳 | 中（但高速穿刺可破）| **极佳**（分散冲量 · trauma 转换）|
+
+**机制 D · Horse HorseHarness 复合权重**：图 2 的 (leg+body)/2 和 (leg×2+body)/3 是**同件内字段加权组合** · 不是多件堆叠（马只戴一件）。
+
+#### 完整伤害流程（例：玩家穿 `imperial_scale_armor` + 冠军披风 + 板金手套 · 被砍到肩膀）
+
+1. **引擎碰撞** → hitBodyPart = 2 (Shoulder)
+2. **RBM Prefix** 命中 `GetBaseArmorEffectivenessForBodyPart` → 走 ArmorRework
+3. **装甲值聚合**（机制 B）: `getShoulderArmor` = Cape.body(45) + Cape.arm(20) + ChestPiece.arm(28) = **93 armor**
+4. **材质判定**（机制 A）: 
+   - `GetMateirialTypeofHitBodyPart(Shoulder)` → slot 6 → `imperial_scale_armor.MaterialType` = Plate (4)
+   - `getShoulderArmorMaterial` 查 PlateOverMailBodyArmorIds → 命中 → **降为 Chainmail (3)**
+5. **伤害计算**（机制 C）: `RBMComputeDamage(mag, 93, Chainmail)` → 走 Chainmail 曲线 · 砍击强防 / 刺击弱防
+6. **最终效果**：高级鳞甲肩部"砍扛得住 · 刺穿得过" · 符合史实
+
+#### 对本仓库自研 mod 的修订影响（深化）
+
+| 问题 | 现决议 | 修订建议 |
+|---|---|---|
+| OSA 自定义板甲**不在** `PlateOverMailBodyArmorIds` | 全被 RBM 当"实心 Plate" · 肩部命中走 Plate 曲线（本应 Chainmail）| 自研 RBMBridge 补 ID 到 RBM 列表 · 或接受"肩部过硬"事实 |
+| OSA 自定义重 chest **不在** `PlateBelowShoulderArmorIds` | lower shoulder 默认 Chainmail（降级）| 重装设计意图的 chest 需补 ID 列表 · 否则肩下过弱 |
+| OSA 自定义 closed-face helmet **不在** `ClosedFaceMailHelmetIds` | 面部命中无 mail 保护 · 直接 face hit damage | 补 ID 列表 |
+| **§49 "HorseHarness head/arm/leg 装饰性填充"旧结论** | 判定 3 字段无效 | **❌ 作废** · 图 2 证实全 4 字段都在用 · 用户 2026-09-24 全 4 字段修订为**正确** |
+| **OSA Chest Piece 的 arm_armor 字段** | 之前未系统性关注 | **直接等于 Shoulder (3 源之一) + Lower Shoulder 的全部防护** · 需审 |
+| **OSA Chest Piece 的 leg_armor 字段** | 之前未系统性关注 | **直接等于腿部均摊的一半防护** · 需审 |
+| **OSA Helmet 的 body_armor 字段** | 之前未系统性关注 | **直接等于 Face hitbox 防护** · 需审 |
+| **OSA Cape 的 arm_armor + body_armor** | §48 Cape 铁律已有 arm · body 未关注 | **Shoulder 3 源公式验证** · body + arm 都要给 |
+| **OSA Boots 的 leg_armor** | 之前有数值但不知其重 | **Leg hitbox 一半来源** · 需审 |
+
+**OSA/OSW 工作方向重写见下方 "📅 2026-10-11 session · OS 系列平衡 patch 工作方向重定 (RBM Hitbox 发现后)" 节**。
+
+---
+
+## 📅 2026-10-11 session · OS 系列平衡 patch 工作方向重定（RBM Hitbox 发现后）
+
+**触发**：RBM Hitbox 公式图 + 3 硬编码白名单 + 材质曲线机制搞清后 · 发现**现有 OS v2 工作栈的 4 处系统性盲点** · 必须在继续 deploy 前先补齐 · 否则 1835 决议落到 XML 后依然在 RBM 环境下**行为不对**。
+
+### 现 OS 工作栈状态梳理
+
+| 组件 | 状态 | 产出 |
+|---|---|---|
+| **OSA armor v2** | 7 文化收官 · 1835 决议 🔵 log-only · XML 未动 | `BALANCE_V2_LOG.md` + `MATERIAL_QUALITY_DICT.md` + `VANILLA_REFERENCE.md` |
+| **OSW shield v2** | 114 件 deploy 完成 · XML 已动 | `OSABalance_shield_override.xml` |
+| **OSW blade v2** | 弃做（用户 α 决策 2026-09-25 "只抬盾不动 blade"）| - |
+| **用户感受"重甲飘刀"** | 2026-09-24 用户提出 · 未解 | - |
+
+### 新 RBM 发现对现工作的 4 处系统性影响
+
+#### 影响 1 · OSA item **全部不在** 3 个 RBM 硬编码白名单
+- 20 件 `PlateOverMailBodyArmorIds` 全是 vanilla 板鳞甲 · OSA 自定义板鳞/板链组合物品一个都没有
+- 9 件 `PlateBelowShoulderArmorIds` 全是 vanilla 重装 chest · OSA 自定义重装一个都没有
+- 16 件 `ClosedFaceMailHelmetIds` 全是 vanilla 闭面头盔 · OSA 自定义闭面盔一个都没有
+- **症状**：OSA 板鳞甲肩部命中走 Plate 曲线（本应 Chainmail）→ 过硬；OSA 重装 chest 的肩下走 Chainmail（本应 Plate）→ 过弱；OSA 闭面盔面部命中无 mail 保护 → face hit 直接吃无甲伤害
+
+#### 影响 2 · 1835 决议是基于"单字段"思维 · 跟多层聚合公式**不对账**
+- 现有决议聚焦主字段（Helmet.head · Chest.body · Boots.leg 等）
+- **图 1 公式证实**：Helmet.body_armor 是 Face 唯一防护 · ChestPiece.arm_armor 是 Shoulder+LowerShoulder 关键一环 · ChestPiece.leg_armor 占腿部 50% · Cape.body+arm 是 Shoulder 3 源之一 · Boots.leg 占腿部 50%
+- **症状**：决议落到 XML 后 · 有些 hitbox 的实际防护值与设计意图偏差 50-100%（取决于次要字段是否填对）
+
+#### 影响 3 · §49 "HorseHarness 装饰性填充"结论**作废**
+- 当时判定 head/arm/leg 字段"是装饰 · 不参与计算"
+- 用户 2026-09-24 晚凭直觉做了全 4 字段修订 · 当时视作保守做法
+- **图 2 证实**：全 4 字段**全部**参与计算 · 还有 `(leg+body)/2` 和 `(leg×2+body)/3` 两个复合公式
+- **症状**：若没按用户修订版 deploy · 马匹腹部/腿部命中防护值计算错
+
+#### 影响 4 · MaterialType enum 字段可能漏审
+- `ArmorMaterialTypes` enum (0 None, 1 Cloth, 2 Leather, 3 Chainmail, 4 Plate) 决定伤害衰减曲线
+- RBMComputeDamage 走不同 material 的衰减**非线性**（Chainmail vs Pierce 最弱 · Plate vs Blunt 最佳 等）
+- OSA/OSW item 若 MaterialType 写错 → RBM 走错曲线 → 整个 hitbox 的实际防护感**跟设计意图偏差一个档位**
+- 这是**暗坑**（没有报错 · 没有警告 · 默默算错）
+
+### 新工作方向 · 重排 Phase 0-5
+
+#### Phase 0 · **RBM 兼容层**（新前置 · 阻塞 Phase 2 deploy）
+
+**定位**：建自研小 patch mod `OSABalance_RBMBridge`（或扩展 `OpenSourceArmouryRBMBalance` 加 Harmony 代码），把 OSA items 注入 RBM 3 个硬编码白名单。
+
+**技术路径 · 2 选 1**:
+- **路径 α · Reflection append**（侵入性小）: Harmony prefix on `ArmorRework.*Material*` 等方法 · reflection 读 private static readonly string[] · append OSA item IDs
+- **路径 β · 逻辑复刻**（更安全但工作量大）: 完全不碰 RBM 内部 · 自己 Harmony prefix 整个 `GetMateirialTypeofHitBodyPart` + `getShoulderArmorMaterial` 等 · 自带 ID 列表判定
+
+**推荐 α · reflection append**：
+```csharp
+[HarmonyPatch(typeof(RBMCombat.Patches.ArmorRework), "GetMateirialTypeofHitBodyPart")]
+static class OSA_PlateOverMail_Inject {
+    static OSA_PlateOverMail_Inject() {
+        // 启动时一次性 append OSA IDs 到 PlateOverMailBodyArmorIds
+        var field = AccessTools.Field(typeof(ArmorRework), "PlateOverMailBodyArmorIds");
+        var original = (string[])field.GetValue(null);
+        var extended = original.Concat(new[] { 
+            // OSA 板鳞/板链 ID 列表（Phase 1 产出）
+            "AR_imperial_scale_v2", 
+            "AR_khuzait_fortified_v2",
+            // ...
+        }).ToArray();
+        field.SetValue(null, extended);
+    }
+}
+```
+
+**产出清单**（Phase 1 补齐）:
+- OSA 板鳞/板链 chest 加入 `PlateOverMailBodyArmorIds`
+- OSA 重装 chest 加入 `PlateBelowShoulderArmorIds`
+- OSA 闭面头盔加入 `ClosedFaceMailHelmetIds`
+
+**工作量**: 1 session
+
+#### Phase 1 · 字段完整性 audit + MaterialType audit（新前置）
+
+**扫 1835 决议清单 · 对每 item 核对**:
+
+| Item 类型 | 主字段（现已填） | 次要字段（需审） |
+|---|---|---|
+| **Helmet** | head_armor | **body_armor**（Face 唯一防护）· arm_armor（§48 已标过部分 aventail）|
+| **ChestPiece** | body_armor | **arm_armor**（Shoulder+LowerShoulder 关键）· **leg_armor**（腿部 50%）|
+| **Cape** | body_armor（§48 已给）· arm_armor（§48 Cape 铁律已给）| 二次验证 Shoulder 3 源公式 |
+| **Gloves** | arm_armor | - |
+| **Boots** | leg_armor（已给）| - |
+| **HorseHarness** | body_armor | **head/arm/leg 全 4 字段**（§49 修订版 · 用户 2026-09-24 全 4 字段决议为准）|
+
+同时审 **MaterialType enum 字段**：所有 OSA items 的 MaterialType 跟设计意图核对（Cloth/Leather/Chainmail/Plate）· 发现偏差补 `OSABalance_material_override.xml`。
+
+**工作量**: 2-3 session（1835 件 × 1-5 字段 complete）· 可用 PowerShell 脚本辅助批量 scan + diff
+
+#### Phase 2 · 已归档决议 deploy 到 XML（原计划 · 但依赖 Phase 1）
+
+**修订**：原计划"直接 deploy 1835 决议"→ 现**必须先过 Phase 1 字段 audit** · 然后 deploy 包含补齐后字段的 override XML。
+
+**工作量**: 1 session（配合 Phase 1 产出的字段 override）
+
+#### Phase 3 · OSW blade damage_factor RBM scale 校准（原"重甲飘刀"问题的终解）
+
+**修订**：原"α 不动 blade" 决策**仍保留**作为**保守默认** · 但现在加 **β 可选 OSW blade RBM-scale override**:
+- 新 `OSABalance_blade_rbm_override.xml` · 把 OSW 的 vanilla-scale blade damage_factor 调到 RBM 期望 scale (约 vanilla × 0.3-0.5)
+- 作为**可选加载**模块 · 用户决定装不装
+
+**工作量**: 1 session（OSW 18 blade pieces 的 damage_factor 按材质对标 RBM）
+
+#### Phase 4 · Khuzait + Nord 文化（原计划 · 现**已完成**）
+
+**核实**: §48 说 "7 文化收官" 已包含 Khuzait + Nord · 之前 journal 待办里"剩 Khuzait + Nord" 是旧状态 · **本项目实际已完成** · 可从待办清理。
+
+#### Phase 5 · 主力机实游戏测 + 数字校准
+
+**修订**：原"deploy 后测试"→ 现"Phase 0+1+2 全完成后一轮完整测试"
+- 主力机 build 自研 RBMBridge
+- deploy OSABalance_manual_override + material_override + shield_override
+- 开 1 场大会战 · 观察肩部/面部/腿部命中反馈
+- 调数字
+
+**工作量**: 1 session
+
+### 风险与权衡
+
+- **Reflection 修改 RBM private 字段**（Phase 0 路径 α）: 若 RBM 升级重构 → OSABridge 需跟着改 · 跟 vanilla + RBM 的 upgrade cycle 耦合
+- **逻辑复刻**（路径 β）: 工作量数倍 · 但独立于 RBM 版本
+- **Phase 1 字段 audit 的 1835 件**: 工作量重 · 但是**必做**（否则 Phase 2 deploy 的 XML 跟设计意图不对账）
+- **MaterialType 审计**: 可能发现系统性错误 · 需时间校正
+
+### 推荐开工顺序（主力机 session 为主）
+
+1. **本机**: Phase 0 骨架 · 写 `OSABridge/` project · reflection 代码 · 配 OSA ID 分类脚本
+2. **本机**: Phase 1 字段 audit · PowerShell 扫 1835 决议 · 生成"字段缺口报告"
+3. **本机**: Phase 2 准备 · 根据 audit 结果生成 override XML
+4. **主力机**: build OSABridge · deploy Phase 2 XML · 开大会战测试 · 校数字
+5. **可选**: Phase 3 blade override
+
+### 跟其他待办的关系
+
+- **PFRB v2 Keep Recruiter**: 完全正交 · 可并行推进
+- **PlayerFiefPoolShield**: 完全正交 · 可并行推进
+- **CBTB (主力机)**: 不影响
+- **优先级**: 这 3 条跟 OS 平衡 patch rework 同列 · 用户 session 分配决定
+
+### 对现有 memory 的更新
+
+- `project-osa-osw-balance.md`：加 Phase 0+1 新前置 · 修订 §49 装饰性填充旧结论
+- `reference-rbm-mechanics.md`：加 hitbox 公式 + 3 ID 列表 reference
+
 ---
 
 ## 📅 2026-10-11 session · PFRB v2 Keep Recruiter 设计定案 + PlayerFiefPoolShield 立项（IG × PSR 补丁兜底）

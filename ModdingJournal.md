@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.5.0 架构转向**: 用户 reflection 问 "这几轮为何多阻碍" · 重审 Phase 3b-2b 定位发现**跟 Retinues 模式不匹配**（Retinues 也不改 vanilla culture slot picker · 是独立 editor + party pool 注入）· 死磕 ArmyCompositionGroupVM snapshot 跟 vanilla cache / Game re-init 对抗导致 4 次 bootstrap crash · 彻底弃 Phase 3b-2b · 转向两条新 track：Track A (Phase 3c Test Battle launcher · editor 内自己构造 Mission 绕过 vanilla picker) + Track B (Phase 4 Equipment picker + Phase 5 Skill editor + Phase 6 JSON save)· DLL 34 KB (code 没减 · 只注释 Apply 调用保留 Patch class 供下次调研)
+- **主力机 CBTB v0.5.1 Phase 3d 4-tab 架构骨架**: 用户要先攻坚 UI 再做 Phase 4 · Explore 深度调研 Retinues v1.4.14.31 Troop Editor UI（3 栏 + 4 tab 架构 · Equipment 是列式非 grid · Picker 右侧独立 popup）· 简化 2 栏复现（跳 Character Tableau 3D）· 右面板从 Preview 改成 4 tab（Summary / Equipment / Skills / Meta）· Clone+Close 挪到底部并列 · Equipment/Skills/Meta 为 Phase 4a/5a/5b pending 文字占位 · DLL 39 KB
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3907,6 +3907,87 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-14 session · 🎯 CBTB v0.5.1 Phase 3d · 4-tab 架构骨架 · UI 攻坚起步
+
+**触发**：用户 v0.5.0 架构转向后判断"现阶段必须攻坚 UI · 当前 UI 无法做 Phase 4 工作" · 要求读 Retinues editor UI + 思考 CBTB 复现。
+
+**Explore 深度调研 Retinues v1.4.14.31 editor UI**（≤500 字 blueprint）：
+- **3 栏布局**：左 Character Tableau (3D 模型 · 465 fixed) + 中 Tab content + 右 Troop list (290 fixed)
+- **顶部 4 tab button**：TroopsTab / EquipmentTab / SkillsTab / DoctrineTab
+- **EquipmentScreen 关键**：**列式** (不是 grid) · 每 slot 1 行 · 水平 `[SelectButton 160x48] + [ItemImage 86x42 Frame1Brush] + [ItemText 300px]` · 10 slot (Head/Cape/Body/Gloves/Leg/Horse/HorseHarness/Weapon1-4)
+- **Item Picker 机制**：点 SelectButton → 右侧弹独立 BrushListPanel · NavigatableListPanel 纵向 scroll · 行 68 高含 Banner(48x48)+Image(96x48)+Name+Cost+CheckMark+Hint
+- **Tooltip**：复用 vanilla `CharacterEquipmentItemVM` Hint · RBM modifier 自动显示（RBM 改底层字段 · vanilla tooltip 直接读）
+- **参考文件**：Retinues ClanScreen_TroopsPanel.xml:1951 slot + :3097 picker rows · EquipmentScreenVM:14465 · EquipmentSlotVM:14705
+
+**CBTB 复现方案（简化 2 栏 · 跳 Character Tableau 3D · CampaignSystem deps 规避）**：
+```
+┌────────────────────────────────────────────────────────────┐
+│ Title · Search · Mode row (保留)                            │
+├─────────────────┬──────────────────────────────────────────┤
+│ Troop list      │ Tab bar: [Summary][Equipment][Skills][Meta]
+│ (左 · 保留)      ├──────────────────────────────────────────┤
+│ search/mode/scr │ Tab content (swap by IsVisible)          │
+│                 │  • Summary: 14 字段 preview (保留)         │
+│                 │  • Equipment: Phase 4a Pending            │
+│                 │  • Skills: Phase 5a Pending               │
+│                 │  • Meta: Phase 5b Pending                 │
+├─────────────────┴──────────────────────────────────────────┤
+│         [Clone]  [Close]  (底部并列 · 全局)                  │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Phase 3d 产物（2026-10-14 ✅ build+deploy）**：
+
+- **改** `src/UI/CBTBEditorVM.cs`（+70 行 Tab state + placeholder text）：
+  - 加 Tab state const (TabSummary / TabEquipment / TabSkills / TabMeta)
+  - 加 4 bool `IsSummaryTab/IsEquipmentTab/IsSkillsTab/IsMetaTab` + 4 string TabXText + 3 PendingText
+  - 加 SetTab(int) + 4 ExecuteSetTabX method (跟 SetMode mode toggle 同 pattern)
+  - 加 对应 [DataSourceProperty] setter（跟 IsModeCombat/等 pattern）
+  - PendingText 内容：Phase 4a/5a/5b 详细 roadmap (slot 清单 + Retinues 参考文件行号)
+- **改** `GUI/Prefabs/CBTBEditor.xml`（大改 · 右面板 structure 换）：
+  - **保留**：Left Troop list (ScrollablePanel + ListPanel pattern · Phase 3a-scroll 原件)
+  - **新**：Right CBTBTabFrame (StretchToParent) 包：
+    - CBTBTabBar: 4 ButtonWidget horizontal (StretchToParent 等分 · IsSelected 高亮 · 跟 Mode row pattern)
+    - CBTBTabContent: 4 Widget swap by `IsVisible="@IsXTab"`
+      - CBTBSummaryContent: 独立 ScrollablePanel + ScrollbarWidget(CBTBSummScrollbar/Handle) · 内嵌 Vertical ListPanel 包 PreviewHeading + PreviewBody
+      - CBTBEquipmentContent / CBTBSkillsContent / CBTBMetaContent: 简单 TextWidget 显示 PendingText
+  - **挪**：Clone button 从 Preview panel 内 → **底部全局**跟 Close 并列 (Horizontal ListPanel · MarginBottom=30)
+- Scrollbar 第 3 组 (`CBTBSummScrollbar/CBTBSummScrollbarHandle`) · 跟 List 和 (deprecated) PrevScrollbar 独立 Id 不冲突
+- **csproj Version** 0.5.0 → **0.5.1** · **SubModule.xml** 同步 · log 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 39,424 B（v0.5.0 的 34,304 → +5 KB · Tab state + placeholder text 代码合理）
+SubModule.xml 1,818 B @ 02:04:49 ✓
+CustomBattleTroopBuilder.dll 39,424 B @ 02:05:01 ✓
+```
+
+**用户 v0.5.1 实测清单**：
+1. 启动游戏 · 主菜单看黄字 `v0.5.1 loaded. Phase 3d: 4-tab architecture (Summary / Equipment / Skills / Meta)...`
+2. Custom Battle → Troop Builder → editor 打开
+3. **🔴 核心 verify (4-tab 架构)**：
+   - 右面板顶部应有 4 button 水平 row：`[Summary] [Equipment] [Skills] [Meta]` · 默认 Summary 高亮
+   - 点 Equipment → 高亮切换 · 内容换成 Phase 4a pending 文字（10 slot 清单 + Retinues 参考）
+   - 点 Skills → 内容换成 Phase 5a pending（20+ skill 清单）
+   - 点 Meta → 内容换成 Phase 5b pending（Name/Gender/Age 清单）
+   - 点 Summary → 回到 14 字段 preview
+4. 选任意 troop · Summary tab 显示字段（跟 v0.5.0 一样）
+5. **底部 Clone + Close 并列** (之前 Close 单独 · 现在水平并列)
+6. Clone 功能保留 (验证 Clone 核心未坏)
+
+**可能的翻车点**：
+- Tab button 用 StretchToParent + Horizontal StackLayout 等分 → Phase 3a-fs 已验证 work · 应 OK
+- `IsVisible="@IsXTab"` 控制 swap · Bannerlord Gauntlet 原生支持 · 应 OK
+- Summary tab 的独立 ScrollablePanel + Scrollbar (3rd independent id set) · 若 tab 切换时 scrollbar 状态异常 · 下次调
+
+**🎯 Phase 4a 下 session 启动点**（本 session Phase 3d 架构骨架后）：
+- Equipment tab 内容实施：10-slot 列式 list (Head/Cape/Body/Gloves/Leg/Horse/HorseHarness/Weapon1-4)
+- 每 slot ButtonWidget + ItemImage placeholder + ItemText
+- 新 CBTBEquipmentTabVM + CBTBEquipmentSlotVM · child VM 架构
+- 本 session 不动 item picker · 下 session Phase 4b 做
 
 ---
 

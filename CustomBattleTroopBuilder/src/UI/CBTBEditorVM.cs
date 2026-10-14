@@ -14,9 +14,14 @@ namespace CustomBattleTroopBuilder.UI
         private const int ModeAll = 1;
         private const int ModeCivilian = 2;
 
+        private const int TabSummary = 0;
+        private const int TabEquipment = 1;
+        private const int TabSkills = 2;
+        private const int TabMeta = 3;
+
         private readonly Action _closeAction;
 
-        private string _title = "CBTB Editor · v0.5.0 · Pending Phase 3c Test Battle + Phase 4 Equipment + Phase 5 Skill";
+        private string _title = "CBTB Editor · v0.5.1 · Phase 3d · 4-tab architecture";
         private string _closeText = "Close";
         private string _searchHint = "Search by StringId / Name / Culture…";
         private string _searchText = "";
@@ -34,6 +39,42 @@ namespace CustomBattleTroopBuilder.UI
         private string _previewBody = "";
         private bool _hasSelection = false;
         private string _cloneText = "Clone";
+
+        // Tab bar state (Phase 3d)
+        private string _tabSummaryText = "Summary";
+        private string _tabEquipmentText = "Equipment";
+        private string _tabSkillsText = "Skills";
+        private string _tabMetaText = "Meta";
+        private bool _isSummaryTab = true;
+        private bool _isEquipmentTab = false;
+        private bool _isSkillsTab = false;
+        private bool _isMetaTab = false;
+        private int _tab = TabSummary;
+
+        // Placeholder text for not-yet-implemented tabs
+        private string _equipmentPendingText =
+            "Phase 4a Equipment picker · Coming next session\n\n" +
+            "10-slot vertical list (Head · Cape · Body · Gloves · Leg · Horse · HorseHarness · Weapon1-4)\n" +
+            "Click a slot → ItemObject.All picker popup (right side · scrollable)\n" +
+            "vanilla CharacterEquipmentItemVM tooltip reuse → RBM modifier auto-display\n" +
+            "Equip / Unequip + Civilian/Crafted filters + cost display\n\n" +
+            "Reference: Retinues ClanScreen_TroopsPanel.xml line 1951 (slot layout) + 3097 (picker rows)";
+        private string _skillsPendingText =
+            "Phase 5a Skill editor · Coming later\n\n" +
+            "20+ skill rows with sliders (OneHanded · TwoHanded · Polearm · Bow · Crossbow · Throwing · " +
+            "Riding · Athletics · Crafting · Tactics · Scouting · Roguery · Charm · Leadership · " +
+            "Trade · Steward · Medicine · Engineering · Smithing · 等)\n" +
+            "Skill level 0-275 (vanilla cap) · slider or inc/dec button\n\n" +
+            "Reference: Retinues SkillsScreen · 4 skill row layouts";
+        private string _metaPendingText =
+            "Phase 5b Meta edit · Coming later\n\n" +
+            "Name (TextInquiry · in-place rename)\n" +
+            "Gender toggle (Male / Female · 影响 BodyProperties range)\n" +
+            "Age preset (Young / Middle / Old)\n" +
+            "Culture dropdown (BasicCultureObject.All picker)\n" +
+            "DefaultFormationClass dropdown (Infantry / Ranged / Cavalry / HorseArcher / 等)\n" +
+            "FormationGroup edit (0-7)\n\n" +
+            "Reference: Retinues TroopScreen · Gender toggle + Age/Height presets";
 
         private readonly List<TroopListItemVM> _allTroops = new List<TroopListItemVM>();
         private MBBindingList<TroopListItemVM> _troops = new MBBindingList<TroopListItemVM>();
@@ -187,6 +228,22 @@ namespace CustomBattleTroopBuilder.UI
         public void ExecuteSetModeCombat() => SetMode(ModeCombat);
         public void ExecuteSetModeAll() => SetMode(ModeAll);
         public void ExecuteSetModeCivilian() => SetMode(ModeCivilian);
+
+        private void SetTab(int newTab)
+        {
+            if (_tab == newTab) return;
+            _tab = newTab;
+            IsSummaryTab = (newTab == TabSummary);
+            IsEquipmentTab = (newTab == TabEquipment);
+            IsSkillsTab = (newTab == TabSkills);
+            IsMetaTab = (newTab == TabMeta);
+            CBTBSubModule.Log($"[CBTB] SetTab · {newTab}");
+        }
+
+        public void ExecuteSetTabSummary()    => SetTab(TabSummary);
+        public void ExecuteSetTabEquipment()  => SetTab(TabEquipment);
+        public void ExecuteSetTabSkills()     => SetTab(TabSkills);
+        public void ExecuteSetTabMeta()       => SetTab(TabMeta);
 
         public void ExecuteClone()
         {
@@ -374,5 +431,20 @@ namespace CustomBattleTroopBuilder.UI
         [DataSourceProperty] public string PreviewBody    { get => _previewBody;    set { if (value != _previewBody)    { _previewBody    = value; OnPropertyChangedWithValue(value, "PreviewBody"); } } }
         [DataSourceProperty] public bool   HasSelection   { get => _hasSelection;   set { if (value != _hasSelection)   { _hasSelection   = value; OnPropertyChangedWithValue(value, "HasSelection"); } } }
         [DataSourceProperty] public string CloneText      { get => _cloneText;      set { if (value != _cloneText)      { _cloneText      = value; OnPropertyChangedWithValue(value, "CloneText"); } } }
+
+        // Tab bar DataSourceProperty (Phase 3d)
+        [DataSourceProperty] public string TabSummaryText    { get => _tabSummaryText;    set { if (value != _tabSummaryText)    { _tabSummaryText    = value; OnPropertyChangedWithValue(value, "TabSummaryText"); } } }
+        [DataSourceProperty] public string TabEquipmentText  { get => _tabEquipmentText;  set { if (value != _tabEquipmentText)  { _tabEquipmentText  = value; OnPropertyChangedWithValue(value, "TabEquipmentText"); } } }
+        [DataSourceProperty] public string TabSkillsText     { get => _tabSkillsText;     set { if (value != _tabSkillsText)     { _tabSkillsText     = value; OnPropertyChangedWithValue(value, "TabSkillsText"); } } }
+        [DataSourceProperty] public string TabMetaText       { get => _tabMetaText;       set { if (value != _tabMetaText)       { _tabMetaText       = value; OnPropertyChangedWithValue(value, "TabMetaText"); } } }
+
+        [DataSourceProperty] public bool IsSummaryTab    { get => _isSummaryTab;    set { if (value != _isSummaryTab)    { _isSummaryTab    = value; OnPropertyChangedWithValue(value, "IsSummaryTab"); } } }
+        [DataSourceProperty] public bool IsEquipmentTab  { get => _isEquipmentTab;  set { if (value != _isEquipmentTab)  { _isEquipmentTab  = value; OnPropertyChangedWithValue(value, "IsEquipmentTab"); } } }
+        [DataSourceProperty] public bool IsSkillsTab     { get => _isSkillsTab;     set { if (value != _isSkillsTab)     { _isSkillsTab     = value; OnPropertyChangedWithValue(value, "IsSkillsTab"); } } }
+        [DataSourceProperty] public bool IsMetaTab       { get => _isMetaTab;       set { if (value != _isMetaTab)       { _isMetaTab       = value; OnPropertyChangedWithValue(value, "IsMetaTab"); } } }
+
+        [DataSourceProperty] public string EquipmentPendingText  { get => _equipmentPendingText;  set { if (value != _equipmentPendingText)  { _equipmentPendingText  = value; OnPropertyChangedWithValue(value, "EquipmentPendingText"); } } }
+        [DataSourceProperty] public string SkillsPendingText     { get => _skillsPendingText;     set { if (value != _skillsPendingText)     { _skillsPendingText     = value; OnPropertyChangedWithValue(value, "SkillsPendingText"); } } }
+        [DataSourceProperty] public string MetaPendingText       { get => _metaPendingText;       set { if (value != _metaPendingText)       { _metaPendingText       = value; OnPropertyChangedWithValue(value, "MetaPendingText"); } } }
     }
 }

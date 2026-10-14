@@ -5,7 +5,7 @@
             Sprite="BlankWhiteSquare_9" Color="#000000FF" AlphaFactor="0.85">
       <Children>
 
-        <!-- Fullscreen panel · stretch with 24 margin to keep flat_panel_9 nine-slice visible -->
+        <!-- Fullscreen panel -->
         <Widget Id="CBTBEditorPanel"
                 WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
                 MarginLeft="24" MarginRight="24" MarginTop="24" MarginBottom="24"
@@ -26,13 +26,11 @@
                     VerticalAlignment="Top" HorizontalAlignment="Center"
                     MarginTop="100" MarginLeft="60" MarginRight="60">
               <Children>
-
                 <TextWidget Text="@SearchHint"
                             WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
                             SuggestedWidth="360"
                             HorizontalAlignment="Left" VerticalAlignment="Center"
                             Brush="MPEscapeMenu.ButtonText" />
-
                 <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
                         HorizontalAlignment="Center" VerticalAlignment="Center"
                         MarginLeft="370" MarginRight="300"
@@ -45,13 +43,11 @@
                                         Text="@SearchText" />
                   </Children>
                 </Widget>
-
                 <TextWidget Text="@CountText"
                             WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
                             SuggestedWidth="280"
                             HorizontalAlignment="Right" VerticalAlignment="Center"
                             Brush="MPEscapeMenu.ButtonText" />
-
               </Children>
             </Widget>
 
@@ -66,55 +62,37 @@
                 <ButtonWidget Id="CBTBModeCombat"
                               WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
                               SuggestedWidth="170"
-                              Brush="ButtonBrush1"
-                              DoNotPassEventsToChildren="true"
-                              UpdateChildrenStates="true"
-                              IsSelected="@IsModeCombat"
-                              Command.Click="ExecuteSetModeCombat"
-                              MarginRight="8">
+                              Brush="ButtonBrush1" DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                              IsSelected="@IsModeCombat" Command.Click="ExecuteSetModeCombat" MarginRight="8">
                   <Children>
-                    <TextWidget Text="@ModeCombatText"
-                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
-                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                Brush="Popup.Button.Text" />
+                    <TextWidget Text="@ModeCombatText" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Popup.Button.Text" />
                   </Children>
                 </ButtonWidget>
                 <ButtonWidget Id="CBTBModeAll"
                               WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
                               SuggestedWidth="170"
-                              Brush="ButtonBrush1"
-                              DoNotPassEventsToChildren="true"
-                              UpdateChildrenStates="true"
-                              IsSelected="@IsModeAll"
-                              Command.Click="ExecuteSetModeAll"
-                              MarginRight="8">
+                              Brush="ButtonBrush1" DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                              IsSelected="@IsModeAll" Command.Click="ExecuteSetModeAll" MarginRight="8">
                   <Children>
-                    <TextWidget Text="@ModeAllText"
-                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
-                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                Brush="Popup.Button.Text" />
+                    <TextWidget Text="@ModeAllText" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Popup.Button.Text" />
                   </Children>
                 </ButtonWidget>
                 <ButtonWidget Id="CBTBModeCivilian"
                               WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
                               SuggestedWidth="170"
-                              Brush="ButtonBrush1"
-                              DoNotPassEventsToChildren="true"
-                              UpdateChildrenStates="true"
-                              IsSelected="@IsModeCivilian"
-                              Command.Click="ExecuteSetModeCivilian">
+                              Brush="ButtonBrush1" DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                              IsSelected="@IsModeCivilian" Command.Click="ExecuteSetModeCivilian">
                   <Children>
-                    <TextWidget Text="@ModeCivilianText"
-                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
-                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                Brush="Popup.Button.Text" />
+                    <TextWidget Text="@ModeCivilianText" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Popup.Button.Text" />
                   </Children>
                 </ButtonWidget>
               </Children>
             </ListPanel>
 
-            <!-- Main row · Horizontal split: List (left) + Preview (right)
-                 两个 StretchToParent 子由 StackLayout 自动等分 · adapts 任何屏幕分辨率 -->
+            <!-- Main row · Horizontal split: Troop list (left) + Tab panel (right) -->
             <ListPanel Id="CBTBMainRow"
                        WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
                        VerticalAlignment="Top" HorizontalAlignment="Center"
@@ -122,12 +100,11 @@
                        StackLayout.LayoutMethod="HorizontalLeftToRight">
               <Children>
 
-                <!-- Left half · Troop list + scrollbar -->
+                <!-- Left half · Troop list + scrollbar (Phase 3a-scroll pattern · 保留) -->
                 <Widget Id="CBTBListFrame"
                         WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
                         MarginRight="12">
                   <Children>
-
                     <ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
                                      AutoHideScrollBars="true"
                                      ClipRect="CBTBClipRect"
@@ -148,14 +125,10 @@
                               <ItemTemplate>
                                 <ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
                                               SuggestedHeight="30"
-                                              Brush="ButtonBrush1"
-                                              DoNotPassEventsToChildren="true"
-                                              UpdateChildrenStates="true"
-                                              IsSelected="@IsSelected"
-                                              Command.Click="ExecuteSelect">
+                                              Brush="ButtonBrush1" DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                                              IsSelected="@IsSelected" Command.Click="ExecuteSelect">
                                   <Children>
-                                    <Widget IsVisible="@IsSelected"
-                                            DoNotAcceptEvents="true"
+                                    <Widget IsVisible="@IsSelected" DoNotAcceptEvents="true"
                                             WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
                                             Sprite="BlankWhiteSquare_9" Color="#C7AC8577" AlphaFactor="1.0" />
                                     <TextWidget Text="@SummaryLine"
@@ -172,17 +145,14 @@
                         </Widget>
                       </Children>
                     </ScrollablePanel>
-
                     <ScrollbarWidget Id="CBTBVerticalScrollbar"
                                      WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
                                      SuggestedWidth="8"
                                      HorizontalAlignment="Right" VerticalAlignment="Top"
                                      AlignmentAxis="Vertical"
-                                     Handle="CBTBScrollbarHandle"
-                                     MaxValue="100" MinValue="0">
+                                     Handle="CBTBScrollbarHandle" MaxValue="100" MinValue="0">
                       <Children>
-                        <Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
-                                SuggestedWidth="4"
+                        <Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="4"
                                 HorizontalAlignment="Center"
                                 Sprite="BlankWhiteSquare_9" Color="#5A4033FF" AlphaFactor="0.5" />
                         <ImageWidget Id="CBTBScrollbarHandle"
@@ -192,99 +162,159 @@
                                      Brush="FaceGen.Scrollbar.Handle" />
                       </Children>
                     </ScrollbarWidget>
-
                   </Children>
                 </Widget>
 
-                <!-- Right half · Preview panel (scrollable content + fixed bottom Clone button) -->
-                <Widget Id="CBTBPreviewFrame"
+                <!-- Right half · Tab panel (Phase 3d · 4-tab architecture) -->
+                <Widget Id="CBTBTabFrame"
                         WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
                         MarginLeft="12"
                         Sprite="BlankWhiteSquare_9" Color="#00000040" AlphaFactor="1.0">
                   <Children>
 
-                    <!-- Scrollable preview area · exclude bottom 90 for Clone button -->
-                    <Widget Id="CBTBPreviewScrollFrame"
+                    <!-- Tab bar (top · 4 button horizontal) -->
+                    <ListPanel Id="CBTBTabBar"
+                               WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed"
+                               SuggestedHeight="42"
+                               VerticalAlignment="Top" HorizontalAlignment="Center"
+                               MarginTop="12" MarginLeft="12" MarginRight="12"
+                               StackLayout.LayoutMethod="HorizontalLeftToRight">
+                      <Children>
+                        <ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                      Brush="ButtonBrush1" DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                                      IsSelected="@IsSummaryTab" Command.Click="ExecuteSetTabSummary" MarginRight="4">
+                          <Children>
+                            <TextWidget Text="@TabSummaryText" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Popup.Button.Text" />
+                          </Children>
+                        </ButtonWidget>
+                        <ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                      Brush="ButtonBrush1" DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                                      IsSelected="@IsEquipmentTab" Command.Click="ExecuteSetTabEquipment" MarginRight="4">
+                          <Children>
+                            <TextWidget Text="@TabEquipmentText" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Popup.Button.Text" />
+                          </Children>
+                        </ButtonWidget>
+                        <ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                      Brush="ButtonBrush1" DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                                      IsSelected="@IsSkillsTab" Command.Click="ExecuteSetTabSkills" MarginRight="4">
+                          <Children>
+                            <TextWidget Text="@TabSkillsText" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Popup.Button.Text" />
+                          </Children>
+                        </ButtonWidget>
+                        <ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                      Brush="ButtonBrush1" DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                                      IsSelected="@IsMetaTab" Command.Click="ExecuteSetTabMeta">
+                          <Children>
+                            <TextWidget Text="@TabMetaText" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Popup.Button.Text" />
+                          </Children>
+                        </ButtonWidget>
+                      </Children>
+                    </ListPanel>
+
+                    <!-- Tab content area (middle · 4 widget swap by IsVisible) -->
+                    <Widget Id="CBTBTabContent"
                             WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
                             VerticalAlignment="Top" HorizontalAlignment="Center"
-                            MarginBottom="90">
+                            MarginTop="66" MarginBottom="12" MarginLeft="12" MarginRight="12">
                       <Children>
 
-                        <ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
-                                         AutoHideScrollBars="true"
-                                         ClipRect="CBTBPrevClipRect"
-                                         InnerPanel="CBTBPrevClipRect\CBTBPrevInnerList"
-                                         VerticalScrollbar="..\CBTBPrevScrollbar">
+                        <!-- Summary tab · Phase 3b-1 preview 保留 -->
+                        <Widget Id="CBTBSummaryContent" IsVisible="@IsSummaryTab"
+                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
                           <Children>
-                            <Widget Id="CBTBPrevClipRect"
-                                    WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
-                                    ClipContents="true">
+                            <ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                             AutoHideScrollBars="true"
+                                             ClipRect="CBTBSummClipRect"
+                                             InnerPanel="CBTBSummClipRect\CBTBSummInnerList"
+                                             VerticalScrollbar="..\CBTBSummScrollbar">
                               <Children>
-
-                                <ListPanel Id="CBTBPrevInnerList"
-                                           WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
-                                           HorizontalAlignment="Left" VerticalAlignment="Top"
-                                           StackLayout.LayoutMethod="VerticalTopToBottom"
-                                           MarginLeft="30" MarginRight="30" MarginTop="20" MarginBottom="12">
+                                <Widget Id="CBTBSummClipRect"
+                                        WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"
+                                        ClipContents="true">
                                   <Children>
-                                    <TextWidget Text="@PreviewHeading"
-                                                WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
-                                                HorizontalAlignment="Center" VerticalAlignment="Top"
-                                                MarginBottom="20"
-                                                Brush="MPEscapeMenu.Title" />
-                                    <TextWidget Text="@PreviewBody"
-                                                WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
-                                                HorizontalAlignment="Left" VerticalAlignment="Top"
-                                                Brush="MPEscapeMenu.ButtonText" />
+                                    <ListPanel Id="CBTBSummInnerList"
+                                               WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                                               StackLayout.LayoutMethod="VerticalTopToBottom"
+                                               MarginLeft="20" MarginRight="30" MarginTop="8" MarginBottom="12">
+                                      <Children>
+                                        <TextWidget Text="@PreviewHeading"
+                                                    WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Top"
+                                                    MarginBottom="16"
+                                                    Brush="MPEscapeMenu.Title" />
+                                        <TextWidget Text="@PreviewBody"
+                                                    WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                    Brush="MPEscapeMenu.ButtonText" />
+                                      </Children>
+                                    </ListPanel>
                                   </Children>
-                                </ListPanel>
-
+                                </Widget>
                               </Children>
-                            </Widget>
+                            </ScrollablePanel>
+                            <ScrollbarWidget Id="CBTBSummScrollbar"
+                                             WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
+                                             SuggestedWidth="8"
+                                             HorizontalAlignment="Right" VerticalAlignment="Top"
+                                             AlignmentAxis="Vertical"
+                                             Handle="CBTBSummScrollbarHandle" MaxValue="100" MinValue="0">
+                              <Children>
+                                <Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="4"
+                                        HorizontalAlignment="Center"
+                                        Sprite="BlankWhiteSquare_9" Color="#5A4033FF" AlphaFactor="0.5" />
+                                <ImageWidget Id="CBTBSummScrollbarHandle"
+                                             WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
+                                             SuggestedHeight="10" SuggestedWidth="10"
+                                             HorizontalAlignment="Center"
+                                             Brush="FaceGen.Scrollbar.Handle" />
+                              </Children>
+                            </ScrollbarWidget>
                           </Children>
-                        </ScrollablePanel>
+                        </Widget>
 
-                        <ScrollbarWidget Id="CBTBPrevScrollbar"
-                                         WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
-                                         SuggestedWidth="8"
-                                         HorizontalAlignment="Right" VerticalAlignment="Top"
-                                         AlignmentAxis="Vertical"
-                                         Handle="CBTBPrevScrollbarHandle"
-                                         MaxValue="100" MinValue="0">
+                        <!-- Equipment tab · Phase 4a Pending placeholder -->
+                        <Widget Id="CBTBEquipmentContent" IsVisible="@IsEquipmentTab"
+                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
                           <Children>
-                            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent"
-                                    SuggestedWidth="4"
-                                    HorizontalAlignment="Center"
-                                    Sprite="BlankWhiteSquare_9" Color="#5A4033FF" AlphaFactor="0.5" />
-                            <ImageWidget Id="CBTBPrevScrollbarHandle"
-                                         WidthSizePolicy="Fixed" HeightSizePolicy="Fixed"
-                                         SuggestedHeight="10" SuggestedWidth="10"
-                                         HorizontalAlignment="Center"
-                                         Brush="FaceGen.Scrollbar.Handle" />
+                            <TextWidget Text="@EquipmentPendingText"
+                                        WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                        HorizontalAlignment="Center" VerticalAlignment="Top"
+                                        MarginTop="30" MarginLeft="30" MarginRight="30"
+                                        Brush="MPEscapeMenu.ButtonText" />
                           </Children>
-                        </ScrollbarWidget>
+                        </Widget>
+
+                        <!-- Skills tab · Phase 5a Pending placeholder -->
+                        <Widget Id="CBTBSkillsContent" IsVisible="@IsSkillsTab"
+                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+                          <Children>
+                            <TextWidget Text="@SkillsPendingText"
+                                        WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                        HorizontalAlignment="Center" VerticalAlignment="Top"
+                                        MarginTop="30" MarginLeft="30" MarginRight="30"
+                                        Brush="MPEscapeMenu.ButtonText" />
+                          </Children>
+                        </Widget>
+
+                        <!-- Meta tab · Phase 5b Pending placeholder -->
+                        <Widget Id="CBTBMetaContent" IsVisible="@IsMetaTab"
+                                WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+                          <Children>
+                            <TextWidget Text="@MetaPendingText"
+                                        WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren"
+                                        HorizontalAlignment="Center" VerticalAlignment="Top"
+                                        MarginTop="30" MarginLeft="30" MarginRight="30"
+                                        Brush="MPEscapeMenu.ButtonText" />
+                          </Children>
+                        </Widget>
 
                       </Children>
                     </Widget>
-
-                    <!-- Clone button · fixed at bottom · outside scroll · not clipped -->
-                    <ButtonWidget Id="CBTBCloneButton"
-                                  WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
-                                  VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                                  MarginBottom="24"
-                                  Brush="ButtonBrush1"
-                                  IsEnabled="@HasSelection"
-                                  DoNotPassEventsToChildren="true"
-                                  UpdateChildrenStates="true"
-                                  Command.Click="ExecuteClone">
-                      <Children>
-                        <TextWidget Text="@CloneText"
-                                    WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
-                                    HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    MarginLeft="36" MarginRight="36" MarginTop="10" MarginBottom="10"
-                                    Brush="Popup.Button.Text" />
-                      </Children>
-                    </ButtonWidget>
 
                   </Children>
                 </Widget>
@@ -292,23 +322,41 @@
               </Children>
             </ListPanel>
 
-            <!-- Close button · global bottom -->
-            <ButtonWidget Id="CBTBCloseButton"
-                          WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
-                          VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                          MarginBottom="36"
-                          Brush="ButtonBrush1"
-                          DoNotPassEventsToChildren="true"
-                          UpdateChildrenStates="true"
-                          Command.Click="ExecuteClose">
+            <!-- Bottom bar · Clone + Close 并列 -->
+            <ListPanel Id="CBTBBottomBar"
+                       WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                       VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                       MarginBottom="30"
+                       StackLayout.LayoutMethod="HorizontalLeftToRight">
               <Children>
-                <TextWidget Text="@CloseText"
-                            WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
-                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                            MarginLeft="36" MarginRight="36" MarginTop="12" MarginBottom="12"
-                            Brush="Popup.Button.Text" />
+                <ButtonWidget Id="CBTBCloneButton"
+                              WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                              Brush="ButtonBrush1" IsEnabled="@HasSelection"
+                              DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                              Command.Click="ExecuteClone" MarginRight="20">
+                  <Children>
+                    <TextWidget Text="@CloneText"
+                                WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                MarginLeft="36" MarginRight="36" MarginTop="12" MarginBottom="12"
+                                Brush="Popup.Button.Text" />
+                  </Children>
+                </ButtonWidget>
+                <ButtonWidget Id="CBTBCloseButton"
+                              WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                              Brush="ButtonBrush1"
+                              DoNotPassEventsToChildren="true" UpdateChildrenStates="true"
+                              Command.Click="ExecuteClose">
+                  <Children>
+                    <TextWidget Text="@CloseText"
+                                WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                MarginLeft="36" MarginRight="36" MarginTop="12" MarginBottom="12"
+                                Brush="Popup.Button.Text" />
+                  </Children>
+                </ButtonWidget>
               </Children>
-            </ButtonWidget>
+            </ListPanel>
 
           </Children>
         </Widget>

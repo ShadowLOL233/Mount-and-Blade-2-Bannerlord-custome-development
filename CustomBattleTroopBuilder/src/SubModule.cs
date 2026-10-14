@@ -32,7 +32,7 @@ namespace CustomBattleTroopBuilder
                 _extender = UIExtender.Create(ModuleId);
                 _extender.Register(typeof(CBTBSubModule).Assembly);
                 _extender.Enable();
-                Log($"[CBTB] OnSubModuleLoad OK · v0.4.3 · Harmony id={HarmonyId} · UIExtender enabled · Patch deferred to OnBeforeInitialModuleScreenSetAsRoot");
+                Log($"[CBTB] OnSubModuleLoad OK · v0.4.4 · Harmony id={HarmonyId} · UIExtender enabled · Patch + Registry Restore 延迟到 OnBeforeInitialModuleScreenSetAsRoot");
             }
             catch (Exception e)
             {
@@ -46,7 +46,6 @@ namespace CustomBattleTroopBuilder
             try
             {
                 // v0.4.3: Apply Harmony patch 延迟到此时机 · CustomBattle.dll 已完全 load
-                // · AccessTools.TypeByName lazy resolve · 零 eager typed reference
                 if (_harmony != null)
                 {
                     try
@@ -59,9 +58,21 @@ namespace CustomBattleTroopBuilder
                     }
                 }
 
-                Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 3b-2b v0.4.3 ready");
+                // v0.4.4: Restore clones · OnBeforeInitialModuleScreenSetAsRoot fire 多次
+                // (游戏启动 + 每次 Back-to-main-menu 都 fire · Game re-init 清空 MBObjectManager pool)
+                // Registry 保存 blueprint 跨 Game re-init · 这里重 clone 回 pool
+                try
+                {
+                    CustomBattleTroopBuilder.CBTBClonesRegistry.Restore();
+                }
+                catch (Exception rx)
+                {
+                    Log($"[CBTB] CBTBClonesRegistry.Restore failed (non-fatal): {rx}");
+                }
+
+                Log($"[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 3b-2b v0.4.4 ready · registry blueprints={CustomBattleTroopBuilder.CBTBClonesRegistry.Count}");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.4.3 loaded. Phase 3b-2b retry: Harmony patch via AccessTools lazy load · reopen Custom Battle menu to see clones.", Colors.Yellow));
+                    "[CBTB] v0.4.4 loaded. Phase 3b-2b: CBTBClonesRegistry persists clones across Back-to-menu Game re-init.", Colors.Yellow));
             }
             catch (Exception e)
             {

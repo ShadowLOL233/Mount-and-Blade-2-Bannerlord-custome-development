@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.4.3 Phase 3b-2b lazy-load 重试**: Explore 核实 ArmyCompositionGroupVM 真实 fully qualified name + ctor 签名 + field 名 **全对**（Explore 原推断没错）· 真因是 `typeof(ArmyCompositionGroupVM)` + `CtorPostfix(ArmyCompositionGroupVM __instance)` typed param 触发 CBTB.dll metadata eager verify · touch CustomBattle.dll · bootstrap crash · v0.4.3 全走 `AccessTools.TypeByName()` lazy load + `object __instance` 代替 typed · Patch Apply 延迟到 OnBeforeInitialModuleScreenSetAsRoot · 教训入 memory [[bannerlord-cross-dll-typeof]] · DLL 31 KB
+- **主力机 CBTB v0.4.4 Phase 3b-2b CBTBClonesRegistry**: 用户实测 v0.4.3 patch 100% fire 但 clone 跨 Back-to-main-menu 仍丢失 · log 铁证 OnBeforeInitialModuleScreenSetAsRoot 在 Back 时也 fire（Bannerlord Game re-init）· MBObjectManager pool 清掉 non-vanilla objects（pool 2223 → 2222）· 新架构 CBTBClonesRegistry 保存 blueprint（StringId+Name+Source）· OnBeforeInitialModuleScreenSetAsRoot 后自动 Restore 重 clone · 新 helper CBTBCloneHelper 抽 reflection 逻辑 · DLL 34 KB
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3907,6 +3907,84 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-14 session · 🎯 CBTB v0.4.4 Phase 3b-2b CBTBClonesRegistry · 跨 Game re-init 持久
+
+**触发**：v0.4.3 lazy-load patch 实测 · 用户按正确流程（Back → Reopen Custom Battle）后 clone 仍不出现在 culture slot。查 log 发现**真因不是 patch** · 而是 Bannerlord lifecycle 行为：
+
+**Log 铁证**（23:49-23:51 这段 · 单一 game session 内）：
+```
+23:49:22  OnSubModuleLoad (真·游戏启动)
+23:49:50  第 1 次开 Custom Battle · CtorPostfix × 2 · pool=2222 · snapshot=1451 (vanilla · 无 clone)
+23:50:35  进 editor
+23:50:41  Clone imperial_elite_cataphract_clone · pool 2222 → 2133（CBTB RefreshFilter log shown=3/2133 确认 clone 在 pool）
+23:50:45  Close editor
+23:50:52  🔴 OnBeforeInitialModuleScreenSetAsRoot 第 2 次 fire（Back-to-main-menu 时！）
+23:51:07  第 2 次开 Custom Battle · CtorPostfix × 4 · pool=2222 · snapshot=1451（🔴 pool 退回 2222 · clone 消失）
+```
+
+**真因**：Bannerlord 的 `OnBeforeInitialModuleScreenSetAsRoot` lifecycle hook **不止在 bootstrap 时 fire** · 用户 Back-to-main-menu 也 fire · 意味着 **Game instance 被 re-init** · MBObjectManager pool 清掉所有 non-vanilla objects（CBTB clone 自然丢失）。之前假设 "Back 只 destroy ArmyCompositionGroupVM · pool 不动" **错了**。
+
+**v0.4.4 架构修复** · 不再依赖 "pool 持久" · 改成 **blueprint registry + auto restore**：
+
+- **新** `src/CBTBCloneHelper.cs`（98 行 · reflection 逻辑 extract）
+  - `CallFillFrom(target, source)` · reflection 调 protected FillFrom
+  - `SetName(target, displayName)` · reflection 设 `_basicName` protected field（fallback Name property setter）
+  - `SetIsSoldier(target, bool)` · reflection 调 IsSoldier private setter
+  - `CloneTroop(source, newStringId, displayName)` · 一体化 CreateObject + 3 reflection step · 返新 instance
+  - 被 CBTBEditorVM.CompleteClone **和** CBTBClonesRegistry.Restore 共用
+
+- **新** `src/CBTBClonesRegistry.cs`（97 行 · static blueprint registry）
+  - `class CloneBlueprint` · 存 NewStringId + NewName + SourceStringId（**不存 instance ref** · instance 会随 Game re-init 消失）
+  - `static List<CloneBlueprint> _blueprints` · process-level 持久（跨 Game re-init · Bannerlord 进程退出才丢）
+  - `Register(newStringId, newName, sourceStringId)` · dedupe + log
+  - `Restore()` · 遍历 blueprint · GetObject<T> 检查是否已在 pool（避 duplicate · 第 1 次开菜单时 clone 还在 · 不需 restore）· 否则 GetObject source + CloneHelper.CloneTroop + log 结果（restored / already-present / source-missing / create-failed 四分类）
+
+- **改** `src/UI/CBTBEditorVM.cs` · `CompleteClone` 从 70 行 reflection 简化到 20 行：
+  - 调 `CBTBCloneHelper.CloneTroop(source, newStringId, displayName)` 一键 clone
+  - 立刻 `CBTBClonesRegistry.Register(newStringId, displayName, source.StringId)` 注册 blueprint
+  - Success Inquiry 更新文案（标 Phase 3b-2b v0.4.4 · 承诺跨 Back-to-menu 持久）
+
+- **改** `src/SubModule.cs` `OnBeforeInitialModuleScreenSetAsRoot`：
+  - 在现有 `Patch.Apply(_harmony)` 之后 · 新加 `CBTBClonesRegistry.Restore()` 调用
+  - log 加 `registry blueprints=N` 便追踪
+  - 每次 Game re-init 后（含 bootstrap + 每次 Back）自动 restore 所有 blueprints
+
+- **csproj Version** 0.4.3 → **0.4.4** · **SubModule.xml** 同步 · SubModule.cs 2 处 version 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 34,304 B（v0.4.3 的 31,744 → +2.5 KB · Helper + Registry 代码）
+SubModule.xml 1,818 B @ 00:12:31 ✓
+CustomBattleTroopBuilder.dll 34,304 B @ 00:12:36 ✓
+```
+
+**用户 v0.4.4 实测清单**（关键·按步骤走 · log 会证明每步）：
+
+1. **完全退出游戏 · 再 Launch**（新 Registry 需要 OnSubModuleLoad apply）
+2. 主菜单看黄字 `v0.4.4 loaded. Phase 3b-2b: CBTBClonesRegistry persists clones across Back-to-menu Game re-init.`
+3. log 应有 `OnBeforeInitialModuleScreenSetAsRoot · Phase 3b-2b v0.4.4 ready · registry blueprints=0`（启动时 registry 空）
+4. 进 Custom Battle 菜单 → log 应有 `CtorPostfix · pool=2222 · snapshot=1451` × N 次
+5. 进 editor · Clone `imperial_elite_cataphract` → 看 Success Inquiry 带 v0.4.4 标记
+6. log 应有 `[CBTB.Registry] Register blueprint · imperial_elite_cataphract_clone (source=imperial_elite_cataphract) · total=1`
+7. Close editor
+8. 🔴 **Custom Battle 右下角圆箭头 Back** → 回主菜单
+9. log 应有 `OnBeforeInitialModuleScreenSetAsRoot · ... v0.4.4 ready · registry blueprints=1` **再加一行** `[CBTB.Registry] Restore · 1 restored · 0 already-present ...`
+10. 再 Custom Battle → log 应有 `CtorPostfix · pool=2223 · snapshot=1452`（🔴 **+1** 比 Step 4 的 2222/1451）
+11. 展开 Empire **Cavalry** picker → **应看到 Imperial Elite Cataphract (Clone)**
+
+**失败路径分析**：
+- 若 Step 9 没 `Restore` log → OnBeforeInitialModuleScreenSetAsRoot 在 Back 时**不 fire** · Registry 没触发 · 需要换 hook（可能 CustomBattleScreen.OnFinalize or 其他）
+- 若 Step 9 `Restore · 0 restored · 0 already-present · 1 source-missing` → source troop 真的从 pool 消失了 · 需要更早的 Restore（在 pool reset 之后立刻）
+- 若 Step 9 `restored · 1` 但 Step 10 snapshot=1451 还是没 +1 → Restore 跑完但 Patch CtorPostfix 之前 pool 又被清 · 需要调整时机
+- 若 Step 11 看不到 clone 但 Step 10 snapshot=1452 → vanilla IsValidUnitItem 过滤要求 IsMounted/Equipment · Phase 3b-3 Equipment deep copy 必做
+
+**Phase 3b-3 预览**（若 v0.4.4 测试通过）：
+- Equipment deep copy（修 IsMounted=False 问题 · clone 应有自己的马 equipment）
+- Skills deep copy
+- 或 Phase 4 Equipment picker（让用户给 clone 配独立装备）
 
 ---
 

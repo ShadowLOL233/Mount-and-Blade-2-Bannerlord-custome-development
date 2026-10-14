@@ -16,7 +16,7 @@ namespace CustomBattleTroopBuilder.UI
 
         private readonly Action _closeAction;
 
-        private string _title = "CBTB Editor · Phase 3b-2b v0.4.3";
+        private string _title = "CBTB Editor · Phase 3b-2b v0.4.4";
         private string _closeText = "Close";
         private string _searchHint = "Search by StringId / Name / Culture…";
         private string _searchText = "";
@@ -253,71 +253,16 @@ namespace CustomBattleTroopBuilder.UI
                 if (string.IsNullOrWhiteSpace(displayName))
                     displayName = newStringId;
 
-                BasicCharacterObject? newTroop = null;
-                try
-                {
-                    newTroop = MBObjectManager.Instance?.CreateObject<BasicCharacterObject>(newStringId);
-                }
-                catch (Exception e)
-                {
-                    CBTBSubModule.Log($"[CBTB] CreateObject failed: {e}");
-                    ShowInfoInquiry("Clone Failed", $"MBObjectManager.CreateObject threw: {e.Message}");
-                    return;
-                }
+                var newTroop = CBTBCloneHelper.CloneTroop(source, newStringId, displayName);
 
                 if (newTroop == null)
                 {
-                    ShowInfoInquiry("Clone Failed", "MBObjectManager.CreateObject returned null.");
+                    ShowInfoInquiry("Clone Failed", "CBTBCloneHelper.CloneTroop returned null (CreateObject or reflection failed · see log).");
                     return;
                 }
 
-                // FillFrom is protected · reflection to invoke
-                try
-                {
-                    var fillFromMethod = typeof(BasicCharacterObject).GetMethod("FillFrom",
-                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-                        null, new Type[] { typeof(BasicCharacterObject) }, null);
-                    fillFromMethod?.Invoke(newTroop, new object[] { source });
-                }
-                catch (Exception e)
-                {
-                    CBTBSubModule.Log($"[CBTB] FillFrom reflection failed: {e}");
-                    ShowInfoInquiry("Clone Partial Fail", $"FillFrom reflection threw: {e.Message}");
-                    // keep going · newTroop still exists in pool
-                }
-
-                // Name has no public setter in v1.4.7 · reflection to _basicName field
-                try
-                {
-                    var nameField = typeof(BasicCharacterObject).GetField("_basicName",
-                        BindingFlags.Instance | BindingFlags.NonPublic);
-                    if (nameField != null)
-                    {
-                        nameField.SetValue(newTroop, new TaleWorlds.Localization.TextObject(displayName));
-                    }
-                    else
-                    {
-                        // Fallback · try Name setter via reflection (might be non-public)
-                        var nameProp = typeof(BasicCharacterObject).GetProperty("Name");
-                        nameProp?.GetSetMethod(nonPublic: true)?.Invoke(newTroop,
-                            new object[] { new TaleWorlds.Localization.TextObject(displayName) });
-                    }
-                }
-                catch (Exception e)
-                {
-                    CBTBSubModule.Log($"[CBTB] set Name reflection failed: {e}");
-                }
-
-                try
-                {
-                    var prop = typeof(BasicCharacterObject).GetProperty("IsSoldier",
-                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                    prop?.GetSetMethod(nonPublic: true)?.Invoke(newTroop, new object[] { source.IsSoldier });
-                }
-                catch (Exception e)
-                {
-                    CBTBSubModule.Log($"[CBTB] IsSoldier reflection fix failed: {e}");
-                }
+                // Register blueprint for Restore after Bannerlord Game re-init (Back-to-menu wipes pool)
+                CBTBClonesRegistry.Register(newStringId, displayName, source.StringId);
 
                 CBTBSubModule.Log($"[CBTB] Cloned '{source.StringId}' → '{newStringId}' · name='{displayName}' · IsSoldier={newTroop.IsSoldier}");
 
@@ -335,11 +280,11 @@ namespace CustomBattleTroopBuilder.UI
                         $"  Name:      {displayName}\n" +
                         $"  Source:    {source.StringId}\n" +
                         $"  IsSoldier: {newTroop.IsSoldier}\n\n" +
-                        "The clone is registered in MBObjectManager and visible in the CBTB list (search for it).\n\n" +
-                        "⚠ Phase 3b-2a limitations:\n" +
-                        "  • Equipment/Skills are shared with source (shallow copy · Phase 3b-3)\n" +
-                        "  • Custom Battle troop selector may need refresh (Phase 3b-2b patch)\n" +
-                        "  • Clone persists only this game session (JSON save = Phase 6)",
+                        "✅ Phase 3b-2b v0.4.4 · 跨 Back-to-menu 持久 (CBTBClonesRegistry 蓝图)\n" +
+                        "✅ Custom Battle 文化 slot: Back → Reopen Custom Battle · clone 可见\n\n" +
+                        "⚠ 已知限制:\n" +
+                        "  • Equipment/Skills shallow copy (Phase 3b-3 deep copy)\n" +
+                        "  • Clone 只持续 Bannerlord 进程 (Phase 6 JSON save 跨 process)",
                     isAffirmativeOptionShown: true,
                     isNegativeOptionShown: false,
                     affirmativeText: "OK",

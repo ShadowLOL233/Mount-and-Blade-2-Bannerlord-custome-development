@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.4.1 Phase 3b-2b 新 troop 跨菜单可见**: 用户实测 v0.4.0 Clone verify 1-3 全通但 Custom Battle 菜单文化 slot 看不到新 troop · 调研发现 `ArmyCompositionGroupVM..ctor` 把 `_allCharacterObjects` 一次性 snapshot · 后续不 refresh · 加 Harmony Postfix patch · reflection 覆写 field 为 fresh enumerate · 用户 Close editor → Back → 再 Custom Battle 可见 clone · DLL 30 KB
+- **主力机 CBTB v0.4.2 紧急回滚**: v0.4.1 的 ArmyCompositionGroupVMPatch.Apply 导致 bootstrap crash（CBTB log 没 OnSubModuleLoad 条目 · 跟 v0.3.1 Standard.VerticalScrollbar + v0.3.8 CenterMenu attribute 同 crash 模式）· 回滚注释 Patch Apply 调用 · 保留 Patch class 文件供下 session 诊断 · Clone 核心功能可用但 Custom Battle 菜单 see-clone fix 待下 session 深度 diagnose · DLL 30 KB
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3907,6 +3907,55 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · 🔴 CBTB v0.4.2 紧急回滚 · v0.4.1 Patch bootstrap crash
+
+**触发**：用户 v0.4.1 启动 · "游戏无法进入主菜单且弹出崩溃报错窗口"。CBTB log 最后一条是 19:54（v0.4.0 Clone 测试 · Close editor）· **v0.4.1 OnSubModuleLoad 没写入 log** · 证实 bootstrap 挂（跟 v0.3.1 + v0.3.8 同模式）。
+
+**第 3 次 bootstrap crash · 模式一致**：
+| 版本 | 触发 | 症状 |
+|---|---|---|
+| v0.3.1 | Standard.VerticalScrollbar Prefab reference | bootstrap crash · log 卡 shader warn |
+| v0.3.8 | descendant::Widget[@VisualDefinition='CenterMenu']/Children XPath | bootstrap crash · log 卡 shader warn |
+| **v0.4.1** | ArmyCompositionGroupVMPatch.Apply(_harmony) · typeof(ArmyCompositionGroupVM) | **bootstrap crash · log 卡**（本次同模式）|
+
+**假设根因**（未诊断 · v0.4.2 回滚后下 session 查）：
+- `typeof(ArmyCompositionGroupVM)` 在 OnSubModuleLoad 内直接 reference · JIT 触发 CustomBattle.dll 的 type load · 可能此时 CustomBattle.dll 还没完全 ready（虽然 SubModule.xml 声明了 `<DependedModule Id="CustomBattle">`）
+- 或 class 的实际 fully qualified name 跟 Explore agent 推断的 `TaleWorlds.MountAndBlade.CustomBattle.ArmyCompositionGroupVM` 不同（可能有嵌套 namespace）
+- 或 Explore agent 看错的 class 名（可能叫 `CustomBattleCompositionGroupVM` 或别的）
+- 或 ArmyCompositionGroupVM 是 private/internal 类 · 外部不能 reference
+- OnSubModuleLoad 的 try/catch 应该 catch TypeInitializationException · 但 Log() 没写入 · 说明挂在 try/catch 之前（CBTB.dll assembly load / type verify 阶段）
+
+**v0.4.2 紧急回滚（2026-10-13 ✅ build+deploy）**：
+- **改** `src/SubModule.cs` · 注释 `ArmyCompositionGroupVMPatch.Apply(_harmony);` 调用
+- **保留** `src/Patches/ArmyCompositionGroupVMPatch.cs` 文件（code 不删 · 下 session 诊断用）
+- 加 comment 说明 crash + 下 session 诊断方向
+- 版本号 v0.4.1 → v0.4.2 · SubModule.xml 同步 · OnSubModuleLoad log 字符串更新
+
+**用户实测清单（v0.4.2）**：
+1. **完全退出游戏 · 再 Launch**
+2. 应能进主菜单（verify 回滚成功）
+3. 主菜单看黄字 `v0.4.2 loaded. Emergency rollback from v0.4.1 Patch crash · Clone 核心可用 · Custom Battle 菜单 see-clone fix TODO next session.`
+4. Clone 流程仍可用（v0.4.0 功能保留）· 但新 troop 仍在 Custom Battle 菜单看不到（Phase 3b-2b 问题未解决）
+
+**🔴 下 session Phase 3b-2b 诊断方向**（避免再撞 bootstrap crash）：
+1. **延迟 Patch 到更晚时机**：从 OnSubModuleLoad → OnBeforeInitialModuleScreenSetAsRoot（Native/CustomBattle 都已 ready）
+2. **用 reflection AccessTools.TypeByName 代替 typeof()**：lazy resolve type · 不在 CBTB.dll metadata 里 record hard reference
+   ```csharp
+   var vmType = AccessTools.TypeByName("TaleWorlds.MountAndBlade.CustomBattle.ArmyCompositionGroupVM");
+   if (vmType == null) { Log("class not found"); return; }
+   ```
+3. **先 Grep ArmyCompositionGroupVM 的真实 fully qualified name**：ilspycmd 列 CustomBattle.dll 所有 class · 确认是否存在 + 全名
+4. **若 class 真实名不同**：改 patch target
+5. **保守方案**：Phase 3b-2b 不用 Harmony patch · 改成 Clone 后弹 Inquiry 告诉用户 "重开 Custom Battle 菜单" + 教用户用某种 vanilla UI 操作触发 refresh（如果有）
+
+**吸取教训**（第 3 次 bootstrap crash · 入 memory）：
+- 新 Harmony patch 的 target class 若在**其他 mod/DLL** 的 class · 不能用 `typeof()` 直接 reference · 必须用 `AccessTools.TypeByName()` lazy resolve
+- 否则 CBTB.dll 加载时 .NET 可能 eager verify metadata reference · touch 到还没 ready 的 DLL · bootstrap crash
+- OnSubModuleLoad 的 try/catch 无法 catch assembly load / type verify 阶段的 crash（更早的生命周期）
+- **铁律候选**：任何引用 CustomBattle / Sandbox / 其他 mod class 的 code · 必须用 reflection lazy load · 不用 typeof
 
 ---
 

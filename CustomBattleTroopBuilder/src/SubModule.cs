@@ -32,7 +32,7 @@ namespace CustomBattleTroopBuilder
                 _extender = UIExtender.Create(ModuleId);
                 _extender.Register(typeof(CBTBSubModule).Assembly);
                 _extender.Enable();
-                Log($"[CBTB] OnSubModuleLoad OK · v0.4.4 · Harmony id={HarmonyId} · UIExtender enabled · Patch + Registry Restore 延迟到 OnBeforeInitialModuleScreenSetAsRoot");
+                Log($"[CBTB] OnSubModuleLoad OK · v0.4.5 · Harmony id={HarmonyId} · UIExtender enabled · Restore moved to CtorPostfix (MBObjectManager ready) · !IsHero filter removed");
             }
             catch (Exception e)
             {
@@ -72,7 +72,7 @@ namespace CustomBattleTroopBuilder
 
                 Log($"[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 3b-2b v0.4.4 ready · registry blueprints={CustomBattleTroopBuilder.CBTBClonesRegistry.Count}");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.4.4 loaded. Phase 3b-2b: CBTBClonesRegistry persists clones across Back-to-menu Game re-init.", Colors.Yellow));
+                    "[CBTB] v0.4.5 loaded. Phase 3b-2b: Restore in CtorPostfix (fix OnBefore-null) · filter aligned with vanilla (restore Retinues placeholders).", Colors.Yellow));
             }
             catch (Exception e)
             {

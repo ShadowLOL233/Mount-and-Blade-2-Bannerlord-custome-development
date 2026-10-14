@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.4.4 Phase 3b-2b CBTBClonesRegistry**: 用户实测 v0.4.3 patch 100% fire 但 clone 跨 Back-to-main-menu 仍丢失 · log 铁证 OnBeforeInitialModuleScreenSetAsRoot 在 Back 时也 fire（Bannerlord Game re-init）· MBObjectManager pool 清掉 non-vanilla objects（pool 2223 → 2222）· 新架构 CBTBClonesRegistry 保存 blueprint（StringId+Name+Source）· OnBeforeInitialModuleScreenSetAsRoot 后自动 Restore 重 clone · 新 helper CBTBCloneHelper 抽 reflection 逻辑 · DLL 34 KB
+- **主力机 CBTB v0.4.5 Phase 3b-2b timing + filter fix**: 用户实测 v0.4.4 Register 成功但 Restore log 显示 `MBObjectManager.Instance null · skip` · OnBeforeInitialModuleScreenSetAsRoot 时 Game 还没完全 init 所以 Instance null · Restore 全跳过。同时用户发现 Retinues 自定义兵种占位全丢失 · 真因是 Patch 覆写 _allCharacterObjects 时多加 !IsHero filter 过滤掉 IsHero=true 的 soldier template。两 fix：Restore 移到 CtorPostfix 开头（MBObjectManager 已 ready）· filter 对齐 vanilla 删 !IsHero · DLL 34.8 KB
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3907,6 +3907,65 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-14 session · 🎯 CBTB v0.4.5 Phase 3b-2b · timing fix + Retinues 占位恢复
+
+**触发**：用户 v0.4.4 实测反馈：
+- ❌ Cavalry picker 仍看不到 clone
+- 🔴 **新发现**：Custom Battle 菜单里 **Retinues 自定义兵种占位全丢失**（之前能见到的占位 slot 现在没了）
+
+**查 log 发现两个真因**：
+
+**真因 1 · Registry.Restore 时机错**：
+```
+00:31:11.656  [CBTB.Registry] Restore skipped · MBObjectManager.Instance null
+00:31:30.053  [CBTB.Patch] CtorPostfix · pool=2222 · fresh snapshot=1451  (clone 没在)
+```
+OnBeforeInitialModuleScreenSetAsRoot 时 Bannerlord 的 `MBObjectManager.Instance` 还没 init · Restore 全跳过。CtorPostfix 跑时 Instance 已 ready（能 enumerate pool）· 但 blueprint 还没重 clone。
+
+**真因 2 · Patch filter 多了 `!IsHero`**：
+- Vanilla ArmyCompositionGroupVM..ctor filter: `IsSoldier && !IsObsolete`（Explore 核实）
+- 我 v0.4.3-v0.4.4 Patch 覆写 `_allCharacterObjects` 时多加了 `!IsHero`
+- **Retinues 占位可能 IsHero=true 的 soldier template**（Retinues 架构 · 用 Hero 实体作 custom troop placeholder）· 被我多余过滤排除
+- vanilla 原本会包含它们 · 覆写后丢失
+
+**v0.4.5 两 fix**：
+
+- **改** `src/Patches/ArmyCompositionGroupVMPatch.cs`：
+  - **CtorPostfix 开头先调 `CBTBClonesRegistry.Restore()`**（这时 MBObjectManager 已 ready · pool 包含 clone 后再 enum snapshot）
+  - **删 filter 的 `!IsHero`** · 跟 vanilla 对齐 · 恢复 Retinues 占位
+- `src/SubModule.cs` OnBeforeInitialModuleScreenSetAsRoot 的 `Registry.Restore()` **保留**（无害 soft-skip · 以防某些 state 下 Instance 已 ready）· 但不再是主要 restore 时机
+- **csproj** 0.4.4 → **0.4.5** · **SubModule.xml** 同步 · 2 处 version 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 34,816 B（v0.4.4 的 34,304 → +0.5 KB · 2 行 Restore + 1 行注释）
+SubModule.xml 1,818 B @ 00:34:46 ✓
+CustomBattleTroopBuilder.dll 34,816 B @ 00:34:59 ✓
+```
+
+**用户 v0.4.5 实测清单**（按步 · log 会证明每步）：
+
+1. **完全退出游戏 · 再 Launch**
+2. 主菜单看黄字 `v0.4.5 loaded. Phase 3b-2b: Restore in CtorPostfix (fix OnBefore-null) · filter aligned with vanilla (restore Retinues placeholders).`
+3. 第 1 次进 Custom Battle 菜单 · log 应有 `CtorPostfix · pool=2222 · fresh snapshot=1455+`（🔴 比之前的 1451 **多几个** · 因为删 !IsHero 后 Retinues 占位回来）
+4. 展开 Empire **Cavalry** picker · 应看到 Retinues 占位（之前消失的那些 "Custom Cavalry" 之类）**回来了**
+5. 进 editor · Clone imperial_elite_cataphract → Close → **Back → 再 Custom Battle**
+6. log 应有 `[CBTB.Patch] CtorPostfix` + 内嵌 `[CBTB.Registry] Restore · 1 restored · 0 already-present` + `pool=2223 · fresh snapshot=1456+`（+1）
+7. 展开 Empire Cavalry picker · 应看到 **Imperial Elite Cataphract (Clone)** 跟其他 Empire Cavalry 并列
+
+**失败路径**：
+- Step 3 snapshot 还是 1451 → !IsHero 不是 Retinues 占位丢失的原因 · 还有别的 filter
+- Step 6 Restore 还是 null skip → MBObjectManager 在 CtorPostfix 时也 null（不太可能 · Explore agent 说 ctor 内就能 enum pool）
+- Step 7 看到 clone 但 IsMounted 问题导致它在 cav slot 显示奇怪 → Phase 3b-3 Equipment deep copy
+- Step 7 看不到 clone 但 Step 6 Restore log OK → vanilla PopulateTroopTypes.IsValidUnitItem 用 IsMounted/Equipment 过滤 · Phase 3b-3 必做
+
+**IsMounted 问题 预览**（Phase 3b-3）：
+- Preview 显示 IsMounted=False 但 FormationClass=Cavalry · 矛盾
+- 真因假设：IsMounted 是从 Equipment slot 计算（马 slot 非空 → true）· FillFrom shallow copy 可能没真正 copy Equipment reference
+- 修法：reflection copy `_equipmentRoster` field · 或新建 Equipment 挂马 item
 
 ---
 

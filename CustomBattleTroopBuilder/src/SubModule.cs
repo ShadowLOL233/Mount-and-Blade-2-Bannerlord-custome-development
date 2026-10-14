@@ -32,7 +32,7 @@ namespace CustomBattleTroopBuilder
                 _extender = UIExtender.Create(ModuleId);
                 _extender.Register(typeof(CBTBSubModule).Assembly);
                 _extender.Enable();
-                Log($"[CBTB] OnSubModuleLoad OK · v0.5.1 · Harmony id={HarmonyId} · UIExtender enabled · Phase 3d 4-tab architecture skeleton");
+                Log($"[CBTB] OnSubModuleLoad OK · v0.5.2 · Harmony id={HarmonyId} · UIExtender enabled · ROLLBACK v0.5.1 Prefab (5th bootstrap crash)");
             }
             catch (Exception e)
             {
@@ -63,7 +63,7 @@ namespace CustomBattleTroopBuilder
 
                 Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · v0.5.0 Phase 3b-2b 弃 · Track A (Editor functions) + Track B (Test Battle launcher) ready to start");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.5.1 loaded. Phase 3d: 4-tab architecture (Summary / Equipment / Skills / Meta) · Equipment/Skills/Meta tabs are Phase 4a/5a/5b pending placeholders.", Colors.Yellow));
+                    "[CBTB] v0.5.2 loaded. 5th bootstrap crash emergency rollback · Prefab reverted to v0.5.0 Preview layout · VM Tab code dormant · next session incremental Prefab experiments.", Colors.Yellow));
             }
             catch (Exception e)
             {

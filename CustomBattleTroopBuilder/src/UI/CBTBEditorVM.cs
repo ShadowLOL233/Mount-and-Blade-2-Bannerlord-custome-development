@@ -21,7 +21,7 @@ namespace CustomBattleTroopBuilder.UI
 
         private readonly Action _closeAction;
 
-        private string _title = "CBTB Editor · v0.5.1 · Phase 3d · 4-tab architecture";
+        private string _title = "CBTB Editor · v0.5.2 · Phase 3d rollback (5th bootstrap crash · Prefab reverted · VM Tab code dormant)";
         private string _closeText = "Close";
         private string _searchHint = "Search by StringId / Name / Culture…";
         private string _searchText = "";

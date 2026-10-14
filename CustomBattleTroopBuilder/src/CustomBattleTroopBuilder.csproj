@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>CustomBattleTroopBuilder</RootNamespace>
     <AssemblyName>CustomBattleTroopBuilder</AssemblyName>
-    <Version>0.5.1</Version>
+    <Version>0.5.2</Version>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>

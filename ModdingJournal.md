@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.5.1 Phase 3d 4-tab 架构骨架**: 用户要先攻坚 UI 再做 Phase 4 · Explore 深度调研 Retinues v1.4.14.31 Troop Editor UI（3 栏 + 4 tab 架构 · Equipment 是列式非 grid · Picker 右侧独立 popup）· 简化 2 栏复现（跳 Character Tableau 3D）· 右面板从 Preview 改成 4 tab（Summary / Equipment / Skills / Meta）· Clone+Close 挪到底部并列 · Equipment/Skills/Meta 为 Phase 4a/5a/5b pending 文字占位 · DLL 39 KB
+- **主力机 CBTB v0.5.2 紧急回滚**: v0.5.1 Phase 3d 4-tab Prefab **第 5 次 bootstrap crash** · 跟 v0.3.1/v0.3.8/v0.4.1/v0.4.5 完全同模式（CBTB log 没 OnSubModuleLoad）· 真因 Prefab 层面（VM Tab code 没变化 · code 不会 bootstrap crash）· 可疑点：`IsVisible="@IsXTab"` bool binding 可能 Bannerlord Gauntlet 不支持 · 或新 ScrollablePanel 第 3 组嵌套太深 · git checkout v0.5.0 Prefab · VM Tab code 保留 dormant · 下 session incremental 加 Prefab 元素定位真因
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3910,7 +3910,54 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ---
 
-## 📅 2026-10-14 session · 🎯 CBTB v0.5.1 Phase 3d · 4-tab 架构骨架 · UI 攻坚起步
+## 📅 2026-10-14 session · 🔴 CBTB v0.5.2 紧急回滚 · v0.5.1 第 5 次 bootstrap crash
+
+**触发**：用户 v0.5.1 启动 · 游戏无法启动 · crash dump 窗口。
+
+**诊断**：
+- CBTB log 最后一条是 v0.4.4 的 00:33:24 · **v0.5.1 OnSubModuleLoad 没触发**
+- **第 5 次 bootstrap crash · 完全同模式**（v0.3.1 Standard.VerticalScrollbar / v0.3.8 CenterMenu attribute XPath / v0.4.1 ArmyCompositionGroupVM typeof / v0.4.5 using+inline Restore / v0.5.1 Prefab 4-tab 重构）
+
+**真因假设**（Prefab 层面 · code 不会 bootstrap crash）：
+- `IsVisible="@IsXTab"` bool DataSource binding · 之前 CBTB 没用过 bool 绑 IsVisible · Bannerlord Gauntlet 可能需特殊语法
+- Summary tab 内的新 ScrollablePanel + ScrollbarWidget（CBTBSummScrollbar/Handle）· 第 3 组独立 id · 嵌套在 Tab content 内可能触发 Gauntlet parse issue
+- Tab button 用 `StretchToParent + HorizontalStackLayout` 等分（跟 Mode row 一样 · 应该不是）
+- Clone+Close 底部 Horizontal ListPanel（简单结构 · 不太可能）
+
+**v0.5.2 紧急回滚**：
+- **git checkout 969057b** · 恢复 v0.5.0 的 CBTBEditor.xml（Preview 单栏布局 · Clone 在 Preview panel 内底部 · Close 单独 bottom）
+- **保留** CBTBEditorVM.cs 的 Tab state code（SetTab/ExecuteSetTabX + 4 bool + 3 PendingText）· VM 多余 property 不被 Prefab reference · 无害 dormant
+- csproj Version 0.5.1 → **0.5.2** · SubModule.xml 同步 · log 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 39,936 B（跟 v0.5.1 的 39,424 差 +0.5 KB · 只是 title/log 字符串变长）
+SubModule.xml 1,818 B @ 04:02:11 ✓
+CustomBattleTroopBuilder.dll 39,936 B @ 04:02:23 ✓
+```
+
+**用户 v0.5.2 实测清单**：
+1. 完全退出游戏 · 再 Launch · **应能进主菜单**
+2. 主菜单看黄字 `v0.5.2 loaded. 5th bootstrap crash emergency rollback...`
+3. editor UI 回到 v0.5.0 布局（Preview 单栏 · Clone 在 Preview 底部 · Close 单独 bottom）· 功能全保留
+
+**🔴 下 session 诊断策略**（吸取 5 次 bootstrap crash 教训）：
+
+**Incremental Prefab 实验**（一次只加一个元素 · 定位真因）：
+- 实验 1：只加 Tab bar（4 button）· 不加 Tab content swap · 看能否启动
+- 实验 2：加 `IsVisible="@IsSummaryTab"` 到单个 widget · 看能否启动
+- 实验 3：加 Summary tab 独立 ScrollablePanel · 看能否启动
+- 实验 4：全套 4 tab · 对比哪步 crash
+
+每实验 build+deploy+启动测试 · 定位到具体元素再修。预估 2-3 session incremental verify。
+
+**替代方案**（若 incremental 定位不到）：
+- 用 vanilla 已 proven 的 TabWidget pattern（如 vanilla Encyclopedia 的 tab 切换）
+- 或放弃 Prefab 层 tab · 用 code 层 ScreenBase swap（多个 CBTBEditorScreen 跟 Phase 3b-2 的 switch screen 类似）
+
+---
+
+## 📅 2026-10-14 session · 🎯 CBTB v0.5.1 Phase 3d · 4-tab 架构骨架 · UI 攻坚起步 · 🔴 已 regression
 
 **触发**：用户 v0.5.0 架构转向后判断"现阶段必须攻坚 UI · 当前 UI 无法做 Phase 4 工作" · 要求读 Retinues editor UI + 思考 CBTB 复现。
 

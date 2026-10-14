@@ -16,7 +16,7 @@ namespace CustomBattleTroopBuilder.UI
 
         private readonly Action _closeAction;
 
-        private string _title = "CBTB Editor · Phase 3b-2b v0.4.5";
+        private string _title = "CBTB Editor · v0.5.0 · Pending Phase 3c Test Battle + Phase 4 Equipment + Phase 5 Skill";
         private string _closeText = "Close";
         private string _searchHint = "Search by StringId / Name / Culture…";
         private string _searchText = "";
@@ -280,11 +280,13 @@ namespace CustomBattleTroopBuilder.UI
                         $"  Name:      {displayName}\n" +
                         $"  Source:    {source.StringId}\n" +
                         $"  IsSoldier: {newTroop.IsSoldier}\n\n" +
-                        "✅ Phase 3b-2b v0.4.4 · 跨 Back-to-menu 持久 (CBTBClonesRegistry 蓝图)\n" +
-                        "✅ Custom Battle 文化 slot: Back → Reopen Custom Battle · clone 可见\n\n" +
-                        "⚠ 已知限制:\n" +
-                        "  • Equipment/Skills shallow copy (Phase 3b-3 deep copy)\n" +
-                        "  • Clone 只持续 Bannerlord 进程 (Phase 6 JSON save 跨 process)",
+                        "✅ Clone saved to CBTB blueprint registry (session-persistent)\n\n" +
+                        "ℹ v0.5.0 架构转向 · 弃 Phase 3b-2b (vanilla Custom Battle picker 对抗 · 4 次 bootstrap crash 证实是技术死胡同)\n\n" +
+                        "下阶段 Retinues 模式复现 (独立于 vanilla UI):\n" +
+                        "  • Phase 3c · \"Test Battle\" button (editor 内直接开战)\n" +
+                        "  • Phase 4 · Equipment 10-slot picker (ItemObject.All 配装)\n" +
+                        "  • Phase 5 · Skill editor (20+ skills slider)\n" +
+                        "  • Phase 6 · JSON save/load preset (跨 Bannerlord process)",
                     isAffirmativeOptionShown: true,
                     isNegativeOptionShown: false,
                     affirmativeText: "OK",

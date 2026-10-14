@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.4.6 紧急回滚**: v0.4.5 两 fix（CtorPostfix 开头 Restore + 删 !IsHero）**第 4 次 bootstrap crash** · 跟 v0.3.1/v0.3.8/v0.4.1 完全同模式（log 卡 shader warn · CBTB OnSubModuleLoad 没触发）· 真因未明（v0.4.5 改动理论上不该触发 · 可能是 `using CustomBattleTroopBuilder;` + inline Restore 调用链触发某种 eager type resolution · 或是用户新装的 CustomClanPartySize/GarrisonDrills mod 冲突）· 保守回滚到 v0.4.4 code · 优先游戏能启动
+- **主力机 CBTB v0.5.0 架构转向**: 用户 reflection 问 "这几轮为何多阻碍" · 重审 Phase 3b-2b 定位发现**跟 Retinues 模式不匹配**（Retinues 也不改 vanilla culture slot picker · 是独立 editor + party pool 注入）· 死磕 ArmyCompositionGroupVM snapshot 跟 vanilla cache / Game re-init 对抗导致 4 次 bootstrap crash · 彻底弃 Phase 3b-2b · 转向两条新 track：Track A (Phase 3c Test Battle launcher · editor 内自己构造 Mission 绕过 vanilla picker) + Track B (Phase 4 Equipment picker + Phase 5 Skill editor + Phase 6 JSON save)· DLL 34 KB (code 没减 · 只注释 Apply 调用保留 Patch class 供下次调研)
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3910,7 +3910,91 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ---
 
-## 📅 2026-10-14 session · 🔴 CBTB v0.4.6 紧急回滚 · v0.4.5 第 4 次 bootstrap crash
+## 📅 2026-10-14 session · 🎯 CBTB v0.5.0 架构转向 · 彻底弃 Phase 3b-2b · 转 Retinues 模式独立 editor + Test Battle launcher
+
+**触发**：用户 v0.4.6 测试后 reflection 质询"这几轮测试都遇到阻碍 · 这是为什么"。重审 Phase 3b-2b 定位发现：
+
+**Phase 3b-2b 定位错误**（跟用户目标不匹配）：
+- 我一直在推"让 clone 出现在 vanilla Custom Battle 菜单的 culture slot picker"
+- 用户的真·目的："在 Custom Battle 内复现 Retinues 模式的部队编辑"
+- **Retinues 本身也不改 culture slot picker** · 是独立 editor UI + party pool 自动注入
+- 跟 vanilla UI 对抗（ArmyCompositionGroupVM snapshot / Game re-init / cache）**不是 Retinues 路径**
+
+**4 次 bootstrap crash 的根因**（多个 compounding）：
+1. 对 Bannerlord vanilla lifecycle 行为**过度乐观假设**（OnBefore timing · pool 持久性 · VM cache · 等每次假设都被实测打脸才改）
+2. 每次改**多个改动一起** · regression 时无法 bisect（v0.4.5 一次 3 改动 · crash 后不知道哪个触发）
+3. Explore agent 结论**偏差 10-30%**（FillFrom 实际 protected · Name 实际 read-only · 等）但我盲信实施
+4. memory 教训吸取**不彻底** · v0.4.1 入 [[bannerlord-cross-dll-typeof]] · 但 v0.4.5 可能触发类似 CLR eager resolution（未证实）
+5. **架构 moving target** · 一开始以为 "patch ctor 就行" · 实际每揭开一层发现下面还有一层
+6. 用户测试环境变化（新装 mod）**没纳入诊断**
+
+**架构转向：Retinues 模式真·复现**
+
+对标 Retinues UX：
+| Retinues 流程 | CBTB 新对应 |
+|---|---|
+| Clan menu → Troop Editor（独立 UI） | Custom Battle 菜单 → Troop Builder（CBTB editor） |
+| 编辑 base + equipment + skills + name | 编辑 fields（Phase 4/5） |
+| 关 editor · troop 进 party pool | 关 editor · 点 "Test Battle" button（Phase 3c） |
+| 下次 battle 用新 troop | battle 立刻用新 troop |
+
+**新 Phase 分解**：
+- **Track A · 独立 editor 功能**（Retinues editor 的 CBTB 对应）：
+  - Phase 4 · Equipment 10-slot picker（ItemObject.All 配装 · 2-3 session）
+  - Phase 5 · Skill editor（20+ skills slider · 2-3 session）
+  - Phase 6 · JSON save/load preset（跨 Bannerlord process 持久 · 1-2 session）
+- **Track B · battle launcher**（完全绕过 vanilla Custom Battle 菜单）：
+  - Phase 3c · editor 内 "Test Battle" button · 自己构造 Mission（attacker/defender culture + map + clone 填 roster · 2-3 session）
+- **彻底弃 Phase 3b-2b**：Clone 出现在 vanilla culture slot picker **不做** · 作为"vanilla UI 的技术限制" accepted
+
+**v0.5.0 架构清理（2026-10-14 ✅ build+deploy）**：
+- **改** `src/SubModule.cs` OnBeforeInitialModuleScreenSetAsRoot：
+  - **删** `ArmyCompositionGroupVMPatch.Apply(_harmony)` 调用
+  - **删** `CBTBClonesRegistry.Restore()` 调用
+  - 保留 Harmony instance 本身（Phase 3c Test Battle 可能需要）
+  - 新 log 说明架构转向
+- **保留**（下阶段仍需）：
+  - `src/CBTBCloneHelper.cs` · Clone reflection 逻辑 · Phase 3c/4/5 都用
+  - `src/CBTBClonesRegistry.cs` · blueprint 存储 · Phase 6 JSON save 要用来 serialize
+  - `src/Patches/ArmyCompositionGroupVMPatch.cs` · code 保留作调研参考 · Apply 不调
+- **改** `src/UI/CBTBEditorVM.cs`：
+  - Title: "Phase 3b-2b v0.4.5" → "v0.5.0 · Pending Phase 3c + Phase 4 + Phase 5"
+  - Clone Successful Inquiry 文案：删 Phase 3b-2b 承诺 · 加新 phase roadmap
+- **csproj Version** 0.4.6 → **0.5.0**（新 phase · minor bump）
+- **SubModule.xml** v0.4.6 → **v0.5.0** · SubModule.cs 2 处 version 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 34,304 B（跟 v0.4.6 一致 · 只删 Apply 调用 · code 保留）
+SubModule.xml 1,818 B @ 01:13:18 ✓
+CustomBattleTroopBuilder.dll 34,304 B @ 01:13:39 ✓
+```
+
+**用户 v0.5.0 实测清单**（简单 verify · 不是功能测试）：
+1. 启动游戏 · 应能进主菜单（verify 架构清理没破坏 Clone 核心）
+2. 主菜单看黄字 `v0.5.0 loaded. 架构转向 · 弃 Phase 3b-2b vanilla picker 对抗 · 下阶段 Phase 3c Test Battle + Phase 4 Equipment + Phase 5 Skill + Phase 6 JSON save.`
+3. Custom Battle → Troop Builder → Clone imperial_elite_cataphract（verify Clone 核心仍可用）
+4. Success Inquiry 应显示新文案（删 Phase 3b-2b 承诺 · 加新 roadmap）
+5. **不需要** 测 Back-to-menu / culture slot picker · 那是弃掉的 Phase 3b-2b
+
+**🎯 Phase 3c 和 Phase 4 下 session 启动点**（用户选 Track）：
+- **Track B · Phase 3c "Test Battle" launcher** 启动：
+  - 反编译 `CustomBattleState / Mission / CustomBattleGameManager` · 看 vanilla 怎么从菜单构造 battle
+  - editor 内加 "Test Battle" button · click → Inquiry 选 culture + map → 自己构造 Mission 填 clone roster
+  - 预估：2-3 session（最复杂的 phase · 需深度反编译）
+- **Track A · Phase 4 Equipment picker** 启动：
+  - 反编译 `ItemObject` + `MBEquipmentRoster` + `Equipment` · 看 10-slot 配装 API
+  - editor 右面板加 Equipment 10-slot grid · click 展开 ItemObject.All 的 picker（跟 Phase 3a 的 troop picker 同风格）
+  - 预估：2-3 session（最有价值的 phase · Retinues 核心功能）
+
+**我推荐 Track A 先**（Phase 4 → 5 → 6）：
+- 把 editor 功能先完善（Equipment / Skill / JSON）· 价值 clear
+- Track B（Test Battle）等 Track A 做完再做 · 这时 clone 已有完整字段 · test battle 更有意义
+- 两 track 不冲突 · 可以独立推进
+
+---
+
+## 📅 2026-10-14 session · 🔴 CBTB v0.4.6 紧急回滚 · v0.4.5 第 4 次 bootstrap crash · 架构转向触发点
 
 **触发**：用户 v0.4.5 实测 · 游戏无法启动 · crash dump 窗口。
 

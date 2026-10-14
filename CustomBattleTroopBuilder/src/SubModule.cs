@@ -32,7 +32,7 @@ namespace CustomBattleTroopBuilder
                 _extender = UIExtender.Create(ModuleId);
                 _extender.Register(typeof(CBTBSubModule).Assembly);
                 _extender.Enable();
-                Log($"[CBTB] OnSubModuleLoad OK · v0.4.6 · Harmony id={HarmonyId} · UIExtender enabled · ROLLBACK from v0.4.5 bootstrap crash (same crash pattern · root cause unknown)");
+                Log($"[CBTB] OnSubModuleLoad OK · v0.5.0 · Harmony id={HarmonyId} · UIExtender enabled · 架构转向 · Phase 3b-2b 弃用");
             }
             catch (Exception e)
             {
@@ -45,34 +45,25 @@ namespace CustomBattleTroopBuilder
             base.OnBeforeInitialModuleScreenSetAsRoot();
             try
             {
-                // v0.4.3: Apply Harmony patch 延迟到此时机 · CustomBattle.dll 已完全 load
-                if (_harmony != null)
-                {
-                    try
-                    {
-                        CustomBattleTroopBuilder.Patches.ArmyCompositionGroupVMPatch.Apply(_harmony);
-                    }
-                    catch (Exception px)
-                    {
-                        Log($"[CBTB] ArmyCompositionGroupVMPatch.Apply failed (non-fatal): {px}");
-                    }
-                }
+                // v0.5.0 架构转向：Phase 3b-2b 彻底弃
+                // ArmyCompositionGroupVMPatch.Apply + CBTBClonesRegistry.Restore 调用全删
+                // 真因：试图让 clone 出现在 vanilla Custom Battle 菜单的 culture slot picker
+                // 跟 Retinues 模式其实不匹配 (Retinues 也不改 culture slot picker)
+                // 4 次 bootstrap crash + 多轮 timing/filter 迭代证明是技术死胡同
+                //
+                // Patch class 文件 (ArmyCompositionGroupVMPatch.cs) 保留 code 作调研参考
+                // CBTBClonesRegistry 保留 (Phase 6 JSON save 要用 blueprint 持久化)
+                // CBTBCloneHelper 保留 (Clone 流程仍需要)
+                //
+                // 新方向：editor 内独立实现 Retinues 模式
+                //   Phase 3c: editor 加 "Test Battle" button · 自己构造 Mission 绕过 vanilla
+                //   Phase 4: Equipment 10-slot picker (ItemObject.All 配装)
+                //   Phase 5: Skill editor (20+ skills slider)
+                //   Phase 6: JSON save/load preset (跨 Bannerlord process 持久)
 
-                // v0.4.4: Restore clones · OnBeforeInitialModuleScreenSetAsRoot fire 多次
-                // (游戏启动 + 每次 Back-to-main-menu 都 fire · Game re-init 清空 MBObjectManager pool)
-                // Registry 保存 blueprint 跨 Game re-init · 这里重 clone 回 pool
-                try
-                {
-                    CustomBattleTroopBuilder.CBTBClonesRegistry.Restore();
-                }
-                catch (Exception rx)
-                {
-                    Log($"[CBTB] CBTBClonesRegistry.Restore failed (non-fatal): {rx}");
-                }
-
-                Log($"[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 3b-2b v0.4.4 ready · registry blueprints={CustomBattleTroopBuilder.CBTBClonesRegistry.Count}");
+                Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · v0.5.0 Phase 3b-2b 弃 · Track A (Editor functions) + Track B (Test Battle launcher) ready to start");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.4.6 loaded. Emergency rollback from v0.4.5 (4th bootstrap crash) · back to v0.4.4 behavior · Clone 核心可用.", Colors.Yellow));
+                    "[CBTB] v0.5.0 loaded. 架构转向 · 弃 Phase 3b-2b vanilla picker 对抗 · 下阶段 Phase 3c Test Battle + Phase 4 Equipment + Phase 5 Skill + Phase 6 JSON save.", Colors.Yellow));
             }
             catch (Exception e)
             {

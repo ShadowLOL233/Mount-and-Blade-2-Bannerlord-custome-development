@@ -2,7 +2,7 @@
 <Module>
   <Name value="Custom Battle Troop Builder" />
   <Id value="CustomBattleTroopBuilder" />
-  <Version value="v0.4.6" />
+  <Version value="v0.5.0" />
   <SingleplayerModule value="true" />
   <MultiplayerModule value="false" />
   <Official value="false" />

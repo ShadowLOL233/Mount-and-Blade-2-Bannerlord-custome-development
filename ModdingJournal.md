@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.5.2 紧急回滚**: v0.5.1 Phase 3d 4-tab Prefab **第 5 次 bootstrap crash** · 跟 v0.3.1/v0.3.8/v0.4.1/v0.4.5 完全同模式（CBTB log 没 OnSubModuleLoad）· 真因 Prefab 层面（VM Tab code 没变化 · code 不会 bootstrap crash）· 可疑点：`IsVisible="@IsXTab"` bool binding 可能 Bannerlord Gauntlet 不支持 · 或新 ScrollablePanel 第 3 组嵌套太深 · git checkout v0.5.0 Prefab · VM Tab code 保留 dormant · 下 session incremental 加 Prefab 元素定位真因
+- **主力机 CBTB v0.5.2 紧急回滚 · 10-13→10-14 session 收官**: v0.5.1 Phase 3d 4-tab Prefab **第 5 次 bootstrap crash** · 跟 v0.3.1/v0.3.8/v0.4.1/v0.4.5 完全同模式 · git checkout 969057b 恢复 v0.5.0 Prefab · 用户确认 v0.5.2 能启动。**本轮总结见下方 "CBTB 10-13→10-14 session 总结" 章节** · 新 memory [[bannerlord-prefab-incremental]] 入档 Prefab 改动铁律 · 下 session 做 incremental Prefab 实验 (一次加 1 个 widget/binding) 定位 v0.5.1 crash 真因
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3907,6 +3907,97 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 → 2026-10-14 session 总结 · CBTB 从 v0.4.0 到 v0.5.2 全程回顾
+
+**跨 2 天 · 跨 session 累积工作总结**（给未来 session 快速 context recovery · 不想读 10+ 章节细节的话读这里）。
+
+### 🟢 成就
+
+| 版本 | 里程碑 |
+|---|---|
+| v0.4.0 | **Phase 3b-2a 核心 Clone 实化** · MBObjectManager.CreateObject + reflection FillFrom/Name/IsSoldier · 整个 CBTB 技术路线 proven |
+| v0.4.4 | **CBTBCloneHelper + CBTBClonesRegistry 架构** · blueprint 持久 · Clone reflection 逻辑 extract 到 helper |
+| v0.5.0 | **架构转向** · 彻底弃 Phase 3b-2b (跟 vanilla picker 对抗)· 转向 Retinues 模式 (独立 editor + Test Battle launcher) |
+| v0.5.1 | **UI 攻坚起步** · Explore 调研 Retinues editor UI blueprint · 4-tab 架构骨架设计 |
+
+### 🔴 失败 / 教训（5 次 bootstrap crash）
+
+| 版本 | Crash 真因 | 回滚产物 | memory |
+|---|---|---|---|
+| v0.3.1 | 新 `Standard.VerticalScrollbar` prefab reference | v0.3.2 safe · 手工 ScrollbarWidget | [[bannerlord-prefab-incremental]] |
+| v0.3.8 | 新 XPath `[@VisualDefinition='CenterMenu']` | v0.3.9 回 inline CenterControls | 同上 |
+| v0.4.1 | 新 `typeof(ArmyCompositionGroupVM)` typed param | v0.4.2 回 code · v0.4.3 AccessTools.TypeByName | [[bannerlord-cross-dll-typeof]] |
+| v0.4.5 | 新 `using CustomBattleTroopBuilder` + inline Restore 组合 | v0.4.6 回 v0.4.4 code · 真因未明 | [[bannerlord-prefab-incremental]] 覆盖 |
+| v0.5.1 | 新 Prefab 一次 4 改动 (Tab bar + bool binding + 独立 Scrollbar + 布局重排) | v0.5.2 回 v0.5.0 Prefab · 真因未明 | [[bannerlord-prefab-incremental]] |
+
+### 🎯 多次 Prefab 开发导致崩溃的 pattern 深度分析
+
+**共同症状**（5 次 crash 完全一致）：
+- CBTB log **没 OnSubModuleLoad 条目**（crash 发生在 CBTB code 执行前）
+- rgl log 卡在 `rgl_post_warning_line: Shader cache version ... FieldSiegeEngines`
+- watchdog 显示 `Crash occurred · User canceled dump`
+- try/catch 完全无效（crash 在 CBTB 生命周期之前）
+
+**真因分类**：
+- **UIExt v3 Prefab preload 阶段挂**（4/5 次都是）：
+  - 新 Prefab reference 不支持（v0.3.1 Standard.VerticalScrollbar）
+  - 新 XPath attribute 不支持（v0.3.8 @VisualDefinition）
+  - 新 binding 模式未验证（v0.5.1 疑 `IsVisible="@IsXTab"` bool）
+  - 多元素打包改动 bisect 不出来（v0.5.1）
+- **CLR assembly load 阶段挂**（1/5 次）：
+  - 跨 DLL class typed reference 触发 eager verify（v0.4.1）
+  - using + inline 跨 class call 可能触发类似（v0.4.5 真因未明）
+
+**根本教训**：
+1. **Prefab 改动是高风险 category** · 不是 "改个 XML 不会 crash" 的直觉
+2. **UIExt v3 的 XPath/binding/widget 支持面有 undocumented limitations** · 不能靠 Explore agent 推断
+3. **多元素打包 commit 是 bisect 杀手** · regression 后只能全回滚 · 浪费 2-3 session
+4. **"启动能进主菜单"是基本 verify** · 不是功能性测试
+
+**系统性 fix**（已入 memory [[bannerlord-prefab-incremental]]）：
+- 每个 Prefab 新元素独立 build+deploy 启动验证
+- 定义"新元素"：新 widget 类型 / 新 attribute binding / 新 XPath / 新 Prefab reference / 新嵌套深度
+- 开 git branch 做增量 · 每单元独立 commit
+- 启动 crash 立刻 fallback last-known-good
+
+### 🎯 当前 state (v0.5.2 收官状态)
+
+**可用功能**（editor v0.5.0 布局）：
+- Picker 2044 条 BasicCharacterObject (search / mode)
+- Preview 14 字段 (右面板单栏)
+- Clone 核心 (CreateObject + reflection) · session 内可用
+- CBTBCloneHelper + CBTBClonesRegistry 架构准备好
+
+**未落地**（下阶段候选）：
+- 新 UI 架构 (4-tab) · v0.5.1 crash 未定位 · 下 session incremental 实验
+- Phase 4 Equipment picker (待 UI 新架构 proven)
+- Phase 5 Skill editor (待 UI 新架构 proven)
+- Phase 6 JSON save/load (独立 track · 可随时开)
+- Phase 3c Test Battle launcher (独立 track · 可随时开)
+
+### 🔴 下 session 方向（用户决策）
+
+**选项 A · Prefab 新架构 incremental 实验**（主路 · 必须解锁 Phase 4）：
+- 实验 5a: 只加 Tab bar (4 button) · 不 swap content
+- 实验 5b: 加 `IsVisible="@IsSummaryTab"` 单 widget 测 bool binding
+- 实验 5c: 加 Summary tab 独立 ScrollablePanel
+- 2-3 session incremental 定位真因
+
+**选项 B · 换 track 到 Phase 6 JSON save**（独立 · 不需新 UI）：
+- blueprint JSON serialize 到硬盘
+- OnSubModuleLoad 时 load + restore
+- 跨 Bannerlord process 持久
+- 1-2 session
+
+**选项 C · 换 track 到 Phase 3c Test Battle launcher**（独立 · 不需新 UI）：
+- 反编译 CustomBattleState / Mission
+- editor 加 "Test Battle" button · 自构造 Mission
+- 2-3 session
+
+**我推荐选项 A** · UI 新架构是 Phase 4/5 的前提 · 必须尽早解锁。但 Phase 6 (选 B) 价值 clear 可随时并行。
 
 ---
 

@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.4.0 Phase 3b-2a 核心里程碑**: Clone + Register 实化 · MBObjectManager.CreateObject + reflection FillFrom + reflection _basicName + reflection IsSoldier setter · 用户选 troop → 2 轮 TextInquiry 输 StringId+Name → 新 BasicCharacterObject 注册到 pool · 自动选中新 troop · 待实测 "Custom Battle 菜单能否 pick 新 troop" 决定 3b-2b 是否需 Harmony patch · DLL 28 KB （中间 v0.3.6→3.7→3.8 crash→3.9 回滚→4.0 核心推进历程详见下方 session 段）
+- **主力机 CBTB v0.4.1 Phase 3b-2b 新 troop 跨菜单可见**: 用户实测 v0.4.0 Clone verify 1-3 全通但 Custom Battle 菜单文化 slot 看不到新 troop · 调研发现 `ArmyCompositionGroupVM..ctor` 把 `_allCharacterObjects` 一次性 snapshot · 后续不 refresh · 加 Harmony Postfix patch · reflection 覆写 field 为 fresh enumerate · 用户 Close editor → Back → 再 Custom Battle 可见 clone · DLL 30 KB
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3907,6 +3907,80 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · CBTB v0.4.1 Phase 3b-2b · Harmony patch ArmyCompositionGroupVM
+
+**触发**：用户 v0.4.0 实测反馈
+- ✅ Verify 1-3 全通（Clone 流程 proven · 新 troop 真实注册到 MBObjectManager pool · CBTB list 能看到）
+- ❌ Bonus verify：Close editor → Custom Battle 菜单文化 slot 展开 troop picker · **看不到新 clone**
+
+**调研**（Explore agent 反编译 TaleWorlds.MountAndBlade.CustomBattle.dll）：
+- Custom Battle 文化 troop list **不走** `BasicCultureObject.BasicTroops`
+- 真数据源：`ArmyCompositionGroupVM._allCharacterObjects` private List<BasicCharacterObject>
+- `ArmyCompositionGroupVM..ctor` **一次性 snapshot**：扫 global pool 过滤 `IsSoldier && !IsObsolete`
+- 之后文化切换只从 snapshot filter（by Culture + DefaultFormationClass）· 不再 enumerate
+- → CBTB clone 发生在 ctor 之后 · snapshot 没包含 · 看不到
+- 关键 class = `TaleWorlds.MountAndBlade.CustomBattle.ArmyCompositionGroupVM`
+
+**Phase 3b-2b 产物（2026-10-13 ✅ build+deploy）**：
+
+- **新** `src/Patches/ArmyCompositionGroupVMPatch.cs`（Harmony Postfix patch · 125 行）
+  - `Apply(Harmony)` static method · 用 reflection 查 `_allCharacterObjects` field · patch 所有 ctor overload
+  - `CtorPostfix(ArmyCompositionGroupVM __instance)` postfix · reflection 覆写 field 为 fresh enumerate（filter IsSoldier && !IsHero && !IsObsolete）
+  - 显式 TargetMethod 风格（manual Harmony.Patch · 遵守 [[harmony-private-method]] 教训避 silent fail）
+  - IsObsolete 用 reflection 查 property · 不存在时跳过 filter（兼容 v1.4.7 可能的 schema 差异）
+- **改** `src/SubModule.cs` OnSubModuleLoad · 新建 Harmony instance 后立刻 Apply patch · 比 UIExtender 注册早
+- **改** `src/UI/CBTBEditorVM.cs` · Title "Phase 3b-2" → "Phase 3b-2b"
+- **csproj Version** 0.4.0 → **0.4.1** · **SubModule.xml** v0.4.0 → **v0.4.1** · SubModule.cs 2 处 version 字符串同步
+
+**UX 流程**（关键 · 用户须知）：
+```
+1. 开 Custom Battle 菜单（触发 ArmyCompositionGroupVM..ctor · patch 跑 · snapshot = N）
+2. 点 Troop Builder → editor → clone 新 troop（pool N+1 · 但 snapshot 还是 N）
+3. Close editor（回 Custom Battle 菜单 · ArmyCompositionGroupVM 还 alive · snapshot 还是 N）
+4. **Back**（退 Custom Battle · ArmyCompositionGroupVM destroy）
+5. **再 Custom Battle**（新 ArmyCompositionGroupVM ctor · patch 跑 · snapshot = N+1 · 新 troop 入列）
+6. 展开 culture slot troop picker · 新 troop 可见
+```
+
+**build+deploy 验证**：
+```
+build OK · DLL 30,720 B（v0.4.0 的 28,160 → +2.5 KB · Harmony patch class 代码合理）
+SubModule.xml 1,818 B @ 20:00:04 ✓
+CustomBattleTroopBuilder.dll 30,720 B @ 20:00:14 ✓
+```
+
+**用户 Phase 3b-2b 实测清单**：
+
+1. **完全退出游戏 · 再 Launch**（新 Harmony patch 需 OnSubModuleLoad 时 apply）
+2. 主菜单看黄字 `v0.4.1 loaded. Phase 3b-2b: Harmony patch ArmyCompositionGroupVM · clone appears after reopen Custom Battle menu.`
+3. **查 log**：`CustomBattleTroopBuilder.log` 应有 `[CBTB.Patch] ArmyCompositionGroupVM ctor patched · 1/N ctor(s) hooked`
+4. 进 Custom Battle 菜单 · 查 log 应有 `[CBTB.Patch] ArmyCompositionGroupVM ctor postfix · pool=XXXX · fresh snapshot=YYYY`
+5. 进 editor · Clone 一个 troop（例 Aserai Faris → `my_test_faris`）
+6. Close editor → **Back**（出 Custom Battle 菜单回主菜单）
+7. **再进 Custom Battle 菜单**（关键 · 触发新 ctor）
+8. 查 log 应又有一行 `[CBTB.Patch] ArmyCompositionGroupVM ctor postfix · fresh snapshot=YYYY+1`（+1 比上次）
+9. **🔴 核心 verify**：展开 Aserai 的 Cavalry slot（因为 Faris 是 cav）· 应看到 `My Elite Guard` 或你命名的新 troop
+10. 若还是看不到 · 查 log 看 patch 是否 fire（可能 ArmyCompositionGroupVM 的 field 名不同 · 或 IsSoldier reflection 没真正 set 到 true）
+
+**可能的翻车点**：
+- `_allCharacterObjects` field 名不同（例 `allCharacterObjects` 或 `_characters`）· patch log 会写 "field NOT FOUND" · 需要 refetch 确切名字
+- `ArmyCompositionGroupVM` ctor 签名跟 Explore agent 推断的不同 · 可能 patch 挂错 ctor · 需查 ctors 列表
+- CBTB clone 的 `IsSoldier` reflection 失败 · 新 troop IsSoldier=false · patch filter 排除掉 · 需 verify CBTB log 的 "IsSoldier={true/false}" 字段
+- 新 troop 的 `DefaultFormationClass` 没正确复制 · 只在 culture slot 的某种 unit type 下显示（比如 clone 骑兵 troop · 只在 cav slot 看到）
+- 新 troop 的 Culture reference 没正确复制（source.Culture 可能是 null）· clone culture 为空 · 不出现在任何 culture slot
+
+**Phase 3b-3 下 session 候选**：
+- Equipment deep copy（避免 clone/source 共享 Equipment 被 mutate）
+- 或 Phase 4 Equipment picker（让 clone 配独立装备）
+- 或优化 UX：Clone 后弹 Inquiry 告诉用户 "重开菜单才可见"
+
+**🔴 若 v0.4.1 仍不工作**：
+- 加 PopulateTroopTypes postfix（更低频 patch 点 · UX 更即时）
+- 或反编译 ArmyCompositionGroupVM 看真实 field 名
+- 下 session 深度 diagnose
 
 ---
 

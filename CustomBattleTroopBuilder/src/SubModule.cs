@@ -27,10 +27,11 @@ namespace CustomBattleTroopBuilder
             try
             {
                 _harmony = new Harmony(HarmonyId);
+                CustomBattleTroopBuilder.Patches.ArmyCompositionGroupVMPatch.Apply(_harmony);
                 _extender = UIExtender.Create(ModuleId);
                 _extender.Register(typeof(CBTBSubModule).Assembly);
                 _extender.Enable();
-                Log($"[CBTB] OnSubModuleLoad OK · v0.4.0 · Harmony id={HarmonyId} · UIExtender enabled");
+                Log($"[CBTB] OnSubModuleLoad OK · v0.4.1 · Harmony id={HarmonyId} · UIExtender enabled · ArmyCompositionGroupVM patch applied");
             }
             catch (Exception e)
             {
@@ -45,7 +46,7 @@ namespace CustomBattleTroopBuilder
             {
                 Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 2b-2 ready");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.4.0 loaded. Phase 3b-2a: Clone + Register (MBObjectManager.CreateObject · FillFrom · reflection IsSoldier).", Colors.Yellow));
+                    "[CBTB] v0.4.1 loaded. Phase 3b-2b: Harmony patch ArmyCompositionGroupVM · clone appears after reopen Custom Battle menu.", Colors.Yellow));
             }
             catch (Exception e)
             {

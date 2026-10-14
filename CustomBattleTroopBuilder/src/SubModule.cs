@@ -27,15 +27,12 @@ namespace CustomBattleTroopBuilder
             try
             {
                 _harmony = new Harmony(HarmonyId);
-                // v0.4.2 ROLLBACK: v0.4.1 的 ArmyCompositionGroupVMPatch.Apply 导致 bootstrap crash
-                // (CBTB log 没 OnSubModuleLoad 条目 · 说明 assembly load 阶段挂 · 可能 typeof(ArmyCompositionGroupVM)
-                // JIT 时 CustomBattle.dll 还没完全 ready · 或 class 名/namespace 跟 Explore agent 推断不同)
-                // 下 session 深度诊断 · 可能方案：lazy reflection AccessTools.TypeByName · 延迟到 OnBeforeInitialModuleScreenSetAsRoot
-                // CustomBattleTroopBuilder.Patches.ArmyCompositionGroupVMPatch.Apply(_harmony);
+                // v0.4.3: Patch Apply 延迟到 OnBeforeInitialModuleScreenSetAsRoot (CustomBattle.dll ready 后)
+                // · 遵守 [[bannerlord-cross-dll-typeof]] 铁律 · 跨 DLL class 必须 lazy load
                 _extender = UIExtender.Create(ModuleId);
                 _extender.Register(typeof(CBTBSubModule).Assembly);
                 _extender.Enable();
-                Log($"[CBTB] OnSubModuleLoad OK · v0.4.2 · Harmony id={HarmonyId} · UIExtender enabled · ArmyCompositionGroupVM patch DISABLED (v0.4.1 crash rollback)");
+                Log($"[CBTB] OnSubModuleLoad OK · v0.4.3 · Harmony id={HarmonyId} · UIExtender enabled · Patch deferred to OnBeforeInitialModuleScreenSetAsRoot");
             }
             catch (Exception e)
             {
@@ -48,9 +45,23 @@ namespace CustomBattleTroopBuilder
             base.OnBeforeInitialModuleScreenSetAsRoot();
             try
             {
-                Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 2b-2 ready");
+                // v0.4.3: Apply Harmony patch 延迟到此时机 · CustomBattle.dll 已完全 load
+                // · AccessTools.TypeByName lazy resolve · 零 eager typed reference
+                if (_harmony != null)
+                {
+                    try
+                    {
+                        CustomBattleTroopBuilder.Patches.ArmyCompositionGroupVMPatch.Apply(_harmony);
+                    }
+                    catch (Exception px)
+                    {
+                        Log($"[CBTB] ArmyCompositionGroupVMPatch.Apply failed (non-fatal): {px}");
+                    }
+                }
+
+                Log("[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 3b-2b v0.4.3 ready");
                 InformationManager.DisplayMessage(new InformationMessage(
-                    "[CBTB] v0.4.2 loaded. Emergency rollback from v0.4.1 Patch crash · Clone 核心可用 · Custom Battle 菜单 see-clone fix TODO next session.", Colors.Yellow));
+                    "[CBTB] v0.4.3 loaded. Phase 3b-2b retry: Harmony patch via AccessTools lazy load · reopen Custom Battle menu to see clones.", Colors.Yellow));
             }
             catch (Exception e)
             {

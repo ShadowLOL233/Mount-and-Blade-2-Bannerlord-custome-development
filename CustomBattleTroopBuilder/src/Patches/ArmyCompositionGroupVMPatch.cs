@@ -1,56 +1,79 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using TaleWorlds.Core;
-using TaleWorlds.MountAndBlade.CustomBattle;
 using TaleWorlds.ObjectSystem;
+// 禁 `using TaleWorlds.MountAndBlade.CustomBattle;` · 遵守 [[bannerlord-cross-dll-typeof]] 铁律
+// 本 class 完全不直接 reference ArmyCompositionGroupVM typed · 全走 reflection
 
 namespace CustomBattleTroopBuilder.Patches
 {
-    // Phase 3b-2b fix: Custom Battle 文化 troop picker 从 ArmyCompositionGroupVM._allCharacterObjects
-    // 读 troop list · 这个字段在 ctor 时一次性 snapshot 从 MBObjectManager pool
-    // (过滤 IsSoldier && !IsObsolete) · 之后不再 refresh · 所以 CBTB 运行时 clone 的
-    // 新 BasicCharacterObject 看不到。
+    // Phase 3b-2b v0.4.3: Harmony patch ArmyCompositionGroupVM..ctor · 让 CBTB clone
+    // 立刻出现在 Custom Battle 文化 troop picker.
     //
-    // 修复：ctor Postfix 时 reflection 覆写 _allCharacterObjects 为 fresh enumerate
-    // 用户必须 Close editor → Back → 再进 Custom Battle · 触发 ctor 新 snapshot
+    // v0.4.1 失败教训（第 3 次 bootstrap crash · 入 memory [[bannerlord-cross-dll-typeof]]）：
+    //   - typeof(ArmyCompositionGroupVM) + typed param CtorPostfix(ArmyCompositionGroupVM __instance)
+    //     触发 CBTB.dll 加载时 eager verify metadata · touch CustomBattle.dll
+    //   - 可能 timing 问题或 assembly resolve 失败 · 抛 TypeLoadException 更早于 OnSubModuleLoad
+    //   - try/catch 在 OnSubModuleLoad 无效 · 游戏 bootstrap crash
     //
-    // Why 不 patch PopulateTroopTypes: 更低频 patch target · 性能更好 · 1 patch 够用
-    // 若 UX 不理想（必须重开菜单）· Phase 3b-2c 再加 PopulateTroopTypes patch
+    // v0.4.3 修复：
+    //   - 零 typed reference (无 using TaleWorlds.MountAndBlade.CustomBattle · 无 typeof(ArmyComp...))
+    //   - CtorPostfix(object __instance) · runtime 内 __instance.GetType() 拿类型
+    //   - Apply() 用 AccessTools.TypeByName() lazy resolve · 不触发 eager verify
+    //   - Apply() 调用延迟到 OnBeforeInitialModuleScreenSetAsRoot (CustomBattle.dll ready 后)
     //
-    // 用 explicit TargetMethod 而不是 attribute[MethodType.Constructor] · 避开
-    // [[harmony-private-method]] 教训：private/ambiguous target 可能 silent fail
+    // 用户 UX 流程：
+    //   1. Custom Battle · 进 editor · clone troop (pool N+1 · snapshot 还是 N)
+    //   2. Close editor · Back · 再 Custom Battle (新 ctor · patch 跑 · snapshot = N+1)
+    //   3. 展开 culture slot · 看到 clone
     public static class ArmyCompositionGroupVMPatch
     {
+        private const string TargetTypeName = "TaleWorlds.MountAndBlade.CustomBattle.ArmyCompositionGroupVM";
+        private const string TargetFieldName = "_allCharacterObjects";
+
         private static FieldInfo? _allCharObjField;
+        private static PropertyInfo? _isObsoleteProp;
+        private static bool _isObsoleteResolved;
 
         public static void Apply(Harmony harmony)
         {
             try
             {
-                var vmType = typeof(ArmyCompositionGroupVM);
-                _allCharObjField = vmType.GetField("_allCharacterObjects",
+                var vmType = AccessTools.TypeByName(TargetTypeName);
+                if (vmType == null)
+                {
+                    CBTBSubModule.Log($"[CBTB.Patch] TypeByName returned null for {TargetTypeName} · patch inactive");
+                    return;
+                }
+
+                _allCharObjField = vmType.GetField(TargetFieldName,
                     BindingFlags.Instance | BindingFlags.NonPublic);
 
                 if (_allCharObjField == null)
                 {
-                    CBTBSubModule.Log("[CBTB.Patch] _allCharacterObjects field NOT FOUND on ArmyCompositionGroupVM · Phase 3b-2b fix inactive");
+                    CBTBSubModule.Log($"[CBTB.Patch] field {TargetFieldName} not found on {vmType.FullName} · patch inactive");
                     return;
                 }
 
                 var ctors = vmType.GetConstructors(
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-                if (ctors.Length == 0)
+                if (ctors == null || ctors.Length == 0)
                 {
-                    CBTBSubModule.Log("[CBTB.Patch] ArmyCompositionGroupVM has no constructors visible · patch inactive");
+                    CBTBSubModule.Log($"[CBTB.Patch] no constructors visible on {vmType.FullName} · patch inactive");
                     return;
                 }
 
                 var postfix = typeof(ArmyCompositionGroupVMPatch)
                     .GetMethod(nameof(CtorPostfix), BindingFlags.Static | BindingFlags.Public);
+
+                if (postfix == null)
+                {
+                    CBTBSubModule.Log("[CBTB.Patch] CtorPostfix MethodInfo not found · patch inactive");
+                    return;
+                }
 
                 int patched = 0;
                 foreach (var ctor in ctors)
@@ -62,11 +85,11 @@ namespace CustomBattleTroopBuilder.Patches
                     }
                     catch (Exception ex)
                     {
-                        CBTBSubModule.Log($"[CBTB.Patch] skip ctor {ctor} · {ex.Message}");
+                        CBTBSubModule.Log($"[CBTB.Patch] skip ctor overload · {ex.Message}");
                     }
                 }
 
-                CBTBSubModule.Log($"[CBTB.Patch] ArmyCompositionGroupVM ctor patched · {patched}/{ctors.Length} ctor(s) hooked");
+                CBTBSubModule.Log($"[CBTB.Patch] {vmType.FullName} ctor patched · {patched}/{ctors.Length} ctor(s) hooked · field={_allCharObjField.Name}");
             }
             catch (Exception e)
             {
@@ -74,7 +97,9 @@ namespace CustomBattleTroopBuilder.Patches
             }
         }
 
-        public static void CtorPostfix(ArmyCompositionGroupVM __instance)
+        // CRITICAL: param 必须是 object · 不是 typed ArmyCompositionGroupVM
+        // 否则 CBTB.dll metadata 里 record typed reference · 触发 eager verify crash
+        public static void CtorPostfix(object __instance)
         {
             try
             {
@@ -83,7 +108,7 @@ namespace CustomBattleTroopBuilder.Patches
                 var pool = MBObjectManager.Instance?.GetObjectTypeList<BasicCharacterObject>();
                 if (pool == null)
                 {
-                    CBTBSubModule.Log("[CBTB.Patch] MBObjectManager pool null · skip");
+                    CBTBSubModule.Log("[CBTB.Patch] CtorPostfix · MBObjectManager pool null · skip");
                     return;
                 }
 
@@ -94,24 +119,19 @@ namespace CustomBattleTroopBuilder.Patches
                     if (ch == null) continue;
                     if (ch.IsHero) continue;
                     if (!ch.IsSoldier) continue;
-                    // Note: BasicCharacterObject.IsObsolete may not exist in v1.4.7 ·
-                    // vanilla filter checked via reflection to avoid compile break
                     if (IsObsolete(ch)) continue;
                     fresh.Add(ch);
                 }
 
                 _allCharObjField.SetValue(__instance, fresh);
 
-                CBTBSubModule.Log($"[CBTB.Patch] ArmyCompositionGroupVM ctor postfix · pool={poolTotal} · fresh snapshot={fresh.Count}");
+                CBTBSubModule.Log($"[CBTB.Patch] CtorPostfix · pool={poolTotal} · fresh snapshot={fresh.Count}");
             }
             catch (Exception e)
             {
                 CBTBSubModule.Log($"[CBTB.Patch] CtorPostfix failed: {e}");
             }
         }
-
-        private static PropertyInfo? _isObsoleteProp;
-        private static bool _isObsoleteResolved;
 
         private static bool IsObsolete(BasicCharacterObject ch)
         {

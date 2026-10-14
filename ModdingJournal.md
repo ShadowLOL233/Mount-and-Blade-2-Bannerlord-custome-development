@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.4.2 紧急回滚**: v0.4.1 的 ArmyCompositionGroupVMPatch.Apply 导致 bootstrap crash（CBTB log 没 OnSubModuleLoad 条目 · 跟 v0.3.1 Standard.VerticalScrollbar + v0.3.8 CenterMenu attribute 同 crash 模式）· 回滚注释 Patch Apply 调用 · 保留 Patch class 文件供下 session 诊断 · Clone 核心功能可用但 Custom Battle 菜单 see-clone fix 待下 session 深度 diagnose · DLL 30 KB
+- **主力机 CBTB v0.4.3 Phase 3b-2b lazy-load 重试**: Explore 核实 ArmyCompositionGroupVM 真实 fully qualified name + ctor 签名 + field 名 **全对**（Explore 原推断没错）· 真因是 `typeof(ArmyCompositionGroupVM)` + `CtorPostfix(ArmyCompositionGroupVM __instance)` typed param 触发 CBTB.dll metadata eager verify · touch CustomBattle.dll · bootstrap crash · v0.4.3 全走 `AccessTools.TypeByName()` lazy load + `object __instance` 代替 typed · Patch Apply 延迟到 OnBeforeInitialModuleScreenSetAsRoot · 教训入 memory [[bannerlord-cross-dll-typeof]] · DLL 31 KB
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3907,6 +3907,73 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-MaxTroopTier8-20260918` | Retinues `MaxTroopTier` 从 8 改 10 前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-XpEconomy-20260918` | Retinues XP 经济四键改零/开启前 |
 | `Configs\ModSettings\Retinues\Retinues.Settings.xml.bak-Doctrines-20260918` | Retinues Doctrine 三键改零前 |
+
+---
+
+## 📅 2026-10-13 session · 🎯 CBTB v0.4.3 Phase 3b-2b lazy-load 重试 · 教训入 memory
+
+**触发**：v0.4.2 回滚稳定 · 用户要求"进入下一步工作 + 记录吸取的教训"。
+
+**教训入 memory**（新 memory [[bannerlord-cross-dll-typeof]]）：
+- **铁律**：Bannerlord 自研 mod 的 C# 代码 · 若引用**其他 mod / 其他 TaleWorlds DLL** 的 class · **不能用 `typeof(SomeClass)` 直接 reference** · 必须用 `HarmonyLib.AccessTools.TypeByName("Full.Name")` lazy resolve
+- 原因：CBTB.dll 加载时 .NET assembly loader 可能 eager verify metadata reference · touch 其他 DLL · 若那 DLL 还没 ready 或 class 名/accessibility 不对 → TypeLoadException · **这个异常发生在 OnSubModuleLoad 之前的生命周期** · try/catch 无效 · bootstrap crash
+- 症状跟 Prefab XML parse 失败一样（log 卡 shader warn · 游戏弹 crash dump · CBTB.OnSubModuleLoad 没触发）· 很难区分
+- **safe typeof**：自己 mod 内 class · Core/Native/Library 等 CBTB 已 reference 的 vanilla 稳定 class
+- **必须 lazy load**：其他 mod / 其他 TaleWorlds DLL (CustomBattle · CampaignSystem · SandBox · 等) · 即使 csproj 已 reference
+
+**Explore 验证**（确认 class name 完全正确）：
+- Fully qualified: `TaleWorlds.MountAndBlade.CustomBattle.ArmyCompositionGroupVM`
+- Accessibility: **public**
+- Single constructor: `(TroopTypeSelectionPopUpVM troopTypeSelectionPopUp)`
+- Field: `_allCharacterObjects : List<BasicCharacterObject>`
+- ctor filter: `IsSoldier && !IsObsolete`
+- → **v0.4.1 的 class name 100% 正确** · 失败不是 name 问题 · 是 typed reference 触发 eager verify
+
+**v0.4.3 产物（2026-10-13 ✅ build+deploy）**：
+
+- **大改** `src/Patches/ArmyCompositionGroupVMPatch.cs`（zero typed reference 重写）：
+  - **删** `using TaleWorlds.MountAndBlade.CustomBattle;`（关键 · 避免 metadata 层面 touch 其他 DLL）
+  - **删** `typeof(ArmyCompositionGroupVM)` · 全部换 `AccessTools.TypeByName("TaleWorlds.MountAndBlade.CustomBattle.ArmyCompositionGroupVM")` lazy resolve
+  - **删** `CtorPostfix(ArmyCompositionGroupVM __instance)` typed param · 换 `CtorPostfix(object __instance)` · 运行时拿 `__instance.GetType()`
+  - Apply() 全 reflection-based · 找不到 class/field/ctor 时 log 警告 · 不 crash
+  - Fallback 覆盖：class 可能 nested / 可能 field 名不同 / 可能 ctor 签名不同 · 都 soft-fail
+- **改** `src/SubModule.cs`：
+  - OnSubModuleLoad **不再** 调 Apply（之前 v0.4.1 的做法 · 触发 eager verify）
+  - Apply 调用**延迟到 OnBeforeInitialModuleScreenSetAsRoot**（此时 Native/CustomBattle 都 ready · AccessTools.TypeByName 能找到 class）
+  - Apply 调用包 try/catch · fail 时 soft 继续（不阻塞 CBTB 其他功能）
+- **csproj Version** 0.4.2 → **0.4.3** · **SubModule.xml** v0.4.2 → **v0.4.3** · log 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 31,744 B（v0.4.2 的 30,720 → +1 KB · lazy load 代码轻微增）
+SubModule.xml 1,818 B @ 23:05:36 ✓
+CustomBattleTroopBuilder.dll 31,744 B @ 23:05:42 ✓
+```
+
+**用户 Phase 3b-2b v0.4.3 实测清单**（关键 verify）：
+
+1. **完全退出游戏 · 再 Launch**（新 patch init 需 OnBeforeInitialModuleScreenSetAsRoot 时 apply）
+2. 应能进主菜单（最关键 verify · 证明 lazy load 修复了 bootstrap crash）
+3. 主菜单看黄字 `v0.4.3 loaded. Phase 3b-2b retry: Harmony patch via AccessTools lazy load · reopen Custom Battle menu to see clones.`
+4. **查 log**（`CustomBattleTroopBuilder.log`）：
+   - 应有 `[CBTB] OnBeforeInitialModuleScreenSetAsRoot · Phase 3b-2b v0.4.3 ready`
+   - 应有 `[CBTB.Patch] TaleWorlds.MountAndBlade.CustomBattle.ArmyCompositionGroupVM ctor patched · 1/1 ctor(s) hooked · field=_allCharacterObjects`
+   - 若 log 有 "TypeByName returned null" → fully qualified name 实际跟 Explore 推断不同 · 需换名重试
+   - 若 log 有 "field not found" → _allCharacterObjects 真实名不同 · 需 Grep DLL 重试
+5. 第 1 次进 Custom Battle 菜单 · log 应有 `[CBTB.Patch] CtorPostfix · pool=XXXX · fresh snapshot=YYYY`
+6. 进 editor → Clone 一个 troop
+7. Close editor → **Back → 再 Custom Battle 菜单**（关键 · 触发新 ctor · patch 跑 · snapshot 包含 clone）
+8. log 应又有一行 `CtorPostfix · fresh snapshot=YYYY+1`（+1 比上次）
+9. **🔴 核心 verify**：展开对应 culture slot（例 Aserai Cavalry 若 clone 的是 Faris）· 应看到新 clone troop
+
+**可能的翻车点**：
+- 游戏仍 bootstrap crash → lazy load 没完全避免 touch · 可能 CBTB.dll 的其他 reference 也触发（例如 CBTBMenuButtonExtension.cs 的 attribute）· 下 session 深度查
+- Patch 运行但新 troop 还是看不到 → `IsSoldier` reflection 没真 set true · 或 culture reference 没正确 clone · 或 DefaultFormationClass 没对
+- Patch log "field not found" → `_allCharacterObjects` 真实名需 verify
+
+**🔴 若 v0.4.3 还 crash**：
+- Fallback A：注释 Apply 调用 · 代码保留 · 用 UX 替代（Clone 后弹 Inquiry 教用户手动做某种操作 refresh）
+- Fallback B：彻底放弃 Harmony patch · Phase 3b-2b 作为 "known limitation" · 继续 Phase 3b-3 Equipment deep copy 或 Phase 4
 
 ---
 

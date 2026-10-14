@@ -4,9 +4,10 @@ using System.Reflection;
 using HarmonyLib;
 using TaleWorlds.Core;
 using TaleWorlds.ObjectSystem;
-using CustomBattleTroopBuilder;
 // 禁 `using TaleWorlds.MountAndBlade.CustomBattle;` · 遵守 [[bannerlord-cross-dll-typeof]] 铁律
-// 本 class 完全不直接 reference ArmyCompositionGroupVM typed · 全走 reflection
+// v0.4.6 ROLLBACK: v0.4.5 加 using CustomBattleTroopBuilder + inline Registry.Restore
+// 导致 bootstrap crash (第 4 次 · 跟之前完全同模式 · log 卡 shader warn · CBTB OnSubModuleLoad 没触发)
+// 不理解 crash 真因 · 保守回滚到 v0.4.4 的 Patch 行为 · 优先游戏能启动
 
 namespace CustomBattleTroopBuilder.Patches
 {
@@ -106,10 +107,6 @@ namespace CustomBattleTroopBuilder.Patches
             {
                 if (_allCharObjField == null || __instance == null) return;
 
-                // v0.4.5: 先 Restore clones (这时 MBObjectManager 已 ready · OnBefore 时还没)
-                try { CBTBClonesRegistry.Restore(); }
-                catch (Exception rx) { CBTBSubModule.Log($"[CBTB.Patch] inline Restore failed (non-fatal): {rx}"); }
-
                 var pool = MBObjectManager.Instance?.GetObjectTypeList<BasicCharacterObject>();
                 if (pool == null)
                 {
@@ -118,12 +115,11 @@ namespace CustomBattleTroopBuilder.Patches
                 }
 
                 int poolTotal = pool.Count;
-                // v0.4.5: Filter 跟 vanilla 对齐 (IsSoldier && !IsObsolete) · 删 !IsHero
-                // 之前 !IsHero 多余 · 可能过滤掉 Retinues 自定义兵种占位 (IsHero=true 的 soldier template)
                 var fresh = new List<BasicCharacterObject>();
                 foreach (var ch in pool)
                 {
                     if (ch == null) continue;
+                    if (ch.IsHero) continue;
                     if (!ch.IsSoldier) continue;
                     if (IsObsolete(ch)) continue;
                     fresh.Add(ch);

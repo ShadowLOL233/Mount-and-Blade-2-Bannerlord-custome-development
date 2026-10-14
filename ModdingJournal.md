@@ -1,7 +1,7 @@
 # Bannerlord 骑马与砍杀2 模组开发日志
 
 **最后更新**：2026-10-13 (晚 · 三条并行)
-- **主力机 CBTB v0.4.5 Phase 3b-2b timing + filter fix**: 用户实测 v0.4.4 Register 成功但 Restore log 显示 `MBObjectManager.Instance null · skip` · OnBeforeInitialModuleScreenSetAsRoot 时 Game 还没完全 init 所以 Instance null · Restore 全跳过。同时用户发现 Retinues 自定义兵种占位全丢失 · 真因是 Patch 覆写 _allCharacterObjects 时多加 !IsHero filter 过滤掉 IsHero=true 的 soldier template。两 fix：Restore 移到 CtorPostfix 开头（MBObjectManager 已 ready）· filter 对齐 vanilla 删 !IsHero · DLL 34.8 KB
+- **主力机 CBTB v0.4.6 紧急回滚**: v0.4.5 两 fix（CtorPostfix 开头 Restore + 删 !IsHero）**第 4 次 bootstrap crash** · 跟 v0.3.1/v0.3.8/v0.4.1 完全同模式（log 卡 shader warn · CBTB OnSubModuleLoad 没触发）· 真因未明（v0.4.5 改动理论上不该触发 · 可能是 `using CustomBattleTroopBuilder;` + inline Restore 调用链触发某种 eager type resolution · 或是用户新装的 CustomClanPartySize/GarrisonDrills mod 冲突）· 保守回滚到 v0.4.4 code · 优先游戏能启动
 - **第二设备 OSABalance Phase 0.B v6 完成**: OSAIds.cs 从 Phase 0.A 的 15 件 safe subset 扩到 **307 件 Tier A**（POM 187 / PBS 23 / CFM 97）· 严格 reclassifier v1→v6 迭代（v5: `\bplated\b` + head≥45&elite 晋升；v6: mail 优先于 open · head≥50 自动晋升 · gladiator/secutor 剔除）· PBS Tier B 清零 · CFM Tier B 从 62 降到 31（真正需 mesh 预览的中等 head helmet）· 本机 build+deploy D: 验证（DLL 23040 bytes · 铁律 1 通过）
 - **第二设备 OSABalance Phase 1 audit 完成**: 1760 决议 scan · **292 件（16.6%）字段缺口** · 🔴 CRITICAL 176 件 HeadArmor body_armor=0（Face 吃 0 防护 · 完全验证 §影响 2）· 🟡 Cape arm_armor=0 106 件 · ✅ MaterialType 0 mismatch（§影响 4 暗坑不存在 · OSA 标得很准）
 - **第二设备 OSABalance Phase 1.1 预分析（废稿）**: 用户指正 4 条方法论偏差 — ①单靠 id/name 不可能准确分类 ②文化分 bucket 错位 (真差异在材质/工艺/层级) ③OSA 作者站在原版框架·不是 RBM·"OSA 作者没执行 §48"是误判 ④anchor 应从 RBM overhaul 来不从 OSA 既有来。废原预分析，重做
@@ -3910,7 +3910,59 @@ IG 默认配置（Bug #4 发现当时的状态，未开启食物采集）：
 
 ---
 
-## 📅 2026-10-14 session · 🎯 CBTB v0.4.5 Phase 3b-2b · timing fix + Retinues 占位恢复
+## 📅 2026-10-14 session · 🔴 CBTB v0.4.6 紧急回滚 · v0.4.5 第 4 次 bootstrap crash
+
+**触发**：用户 v0.4.5 实测 · 游戏无法启动 · crash dump 窗口。
+
+**诊断**：
+- CBTB log 最后一条是 v0.4.4 的 00:33:24 · **v0.4.5 OnSubModuleLoad 没触发**
+- `rgl_log_71492.txt` 停在 `rgl_post_warning_line: Shader cache version of the external module (FieldSiegeEngines) is invalid.`
+- `watchdog_log_71492.txt` 显示 `Crash occurred · User canceled dump`
+- **第 4 次 bootstrap crash · 完全同模式**（v0.3.1 Standard.VerticalScrollbar / v0.3.8 CenterMenu attribute / v0.4.1 ArmyCompositionGroupVM typeof / 本次 v0.4.5）
+
+**真因假设**（**未 proven** · 下 session 深度查）：
+v0.4.5 相对 v0.4.4 的改动理论上不该触发 bootstrap crash：
+1. 加 `using CustomBattleTroopBuilder;` 到 Patch file · namespace 冗余但不该 metadata 层面触发
+2. CtorPostfix 开头 inline `CBTBClonesRegistry.Restore()` 调用 · lazy JIT · 不该 bootstrap crash
+3. filter 删 `!IsHero` · runtime 行为 · 不影响 bootstrap
+
+**可能真因**：
+- 可能是**用户装了新 mod**（launcher arguments 显示多了 `CustomClanPartySize` 和 `GarrisonDrills` · 不在之前的 crash 对比 arguments 里）· 跟 CBTB 无关
+- 或 Patch class 的 `using CustomBattleTroopBuilder;` + 调用 Registry 组合 · 触发 CLR 某种 eager type resolution（跟 [[bannerlord-cross-dll-typeof]] 教训类似 · 但这次是自己 mod 内部的 class · 不该触发）
+- 或 Harmony Patch 跟 Registry 的交互 · 下 session 查
+
+**v0.4.6 紧急回滚**：
+- `src/Patches/ArmyCompositionGroupVMPatch.cs` **完全回到 v0.4.4 code**：
+  - 删 `using CustomBattleTroopBuilder;`
+  - 删 CtorPostfix 开头的 `CBTBClonesRegistry.Restore()` 调用
+  - 恢复 filter 的 `!IsHero`
+- 其他 class（CBTBCloneHelper · CBTBClonesRegistry · CBTBEditorVM · SubModule）保留 v0.4.4 行为
+- csproj 0.4.5 → **0.4.6** · SubModule.xml 同步 · log 字符串同步
+
+**build+deploy 验证**：
+```
+build OK · DLL 34,304 B（跟 v0.4.4 完全一致 · 确认 code 回到 v0.4.4 状态）
+SubModule.xml 1,818 B @ 00:40:24 ✓
+CustomBattleTroopBuilder.dll 34,304 B @ 00:40:34 ✓
+```
+
+**用户 v0.4.6 实测清单**：
+1. **完全退出游戏 · 再 Launch** · 应能进主菜单
+2. 若 **能启动** → v0.4.5 的改动确实触发 crash（真因待查）· 回到 v0.4.4 行为（clone 核心 OK · Registry 会被 OnBefore 调但 Instance null · 所以 clone 跨 Back-to-menu 仍丢失）
+3. 若 **仍 crash** → 是**新装的 CustomClanPartySize 或 GarrisonDrills mod** 导致 · 跟 CBTB 无关 · 需用户在 launcher 禁掉新 mod 测
+
+**🔴 下 session 诊断方向**（避免再撞 crash）：
+1. 先验证 v0.4.6 能启动（确认不是新 mod 冲突）
+2. 若能启动 · incremental 加功能 verify 到底是哪个 v0.4.5 改动触发：
+   - 单独加 `using CustomBattleTroopBuilder;` → 测
+   - 加 CtorPostfix 内的 inline Restore 调用 → 测
+   - 删 !IsHero filter → 测
+3. 定位真因后记入 memory（扩展 [[bannerlord-cross-dll-typeof]] 或新 memory）
+4. **替代方案**：如果 inline Restore 真的 crash · 换 **ArmyCompositionGroupVM.ctor Prefix patch**（在 ctor 跑之前 Restore）· 或 **PopulateTroopTypes Postfix**（更频繁 refresh）
+
+---
+
+## 📅 2026-10-14 session · 🎯 CBTB v0.4.5 Phase 3b-2b · timing fix + Retinues 占位恢复 · 🔴 已 regression
 
 **触发**：用户 v0.4.4 实测反馈：
 - ❌ Cavalry picker 仍看不到 clone
